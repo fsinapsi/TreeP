@@ -1,0 +1,95 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-chess (func)
+        (deflocal i)
+
+        (lmatch remove func "chess-")
+        (alt    (seq    (lmatch remove func "st->fen")
+                        (set func (+ "st-fen" func)) )
+                (seq    (= func "fen->st")
+                        (set func "fen-st") )
+                (seq    (= func "st->raw-short")
+                        (set func "st-raw-short") )
+                (seq    (= func "raw-short->st")
+                        (set func "raw-short-st") )
+                (seq    (= func "next")
+                        (set func "next-fun") )
+                (seq    (= func "move->alg")
+                        (set func "move-alg") )
+                (seq    (= func "qmoves->raw")
+                        (set func "qmoves-raw") )
+                (seq    (= func "raw->qmoves")
+                        (set func "raw-qmoves") )
+                (success) )
+        (for i in (expr-chess-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_chess_" (dash->underscore func) "(") ")")
+        (flag-true "chess") )
+
+(defun expr-chess-table ()
+        [ [ "eq"                                2 2 ]
+          [ "dominance"                         3 3 ]
+          [ "dominated-not-p"                   3 3 ]
+          [ "legal-moves"                       1 1 ]
+          [ "check"                             1 1 ]
+          [ "checkmate"                         1 1 ]
+          [ "stalemate"                         1 1 ]
+          [ "double-check"                      1 1 ]
+          [ "draw-by-insufficient-material"     1 1 ]
+          [ "threat-of-checkmate"               1 1 ]
+          [ "st-fen"                            1 1 ]
+          [ "st-fen-short"                      1 1 ]
+          [ "fen-st"                            1 1 ]
+          [ "st-raw-short"                      1 1 ]
+          [ "raw-short-st"                      1 1 ]
+          [ "start"                             0 0 ]
+          [ "color"                             1 1 ]
+          [ "arrcw"                             1 1 ]
+          [ "arrlw"                             1 1 ]
+          [ "arrcb"                             1 1 ]
+          [ "arrlb"                             1 1 ]
+          [ "enp"                               1 1 ]
+          [ "ply"                               1 1 ]
+          [ "mov"                               1 1 ]
+          [ "white-pieces"                      1 1 ]
+          [ "black-pieces"                      1 1 ]
+          [ "pieces"                            1 1 ]
+          [ "zero-moves"                        1 1 ]
+          [ "one-move-only"                     1 1 ]
+          [ "next-fun"                          1 2 ]
+          [ "diff"                              2 2 ]
+          [ "move-is-capture"                   2 2 ]
+          [ "move-is-capture-ep"                2 2 ]
+          [ "move-is-castle"                    2 2 ]
+          [ "move-is-promotion"                 2 2 ]
+          [ "move-is-check"                     2 2 ]
+          [ "move-is-checkmate"                 2 2 ]
+          [ "move-is-stalemate"                 2 2 ]
+          [ "move-is-discovery-check"           2 2 ]
+          [ "move-is-double-check"              2 2 ]
+          [ "move-alg"                          2 2 ]
+          [ "search-mate"                       2 3 ]
+          [ "perft"                             2 3 ]
+          [ "qmoves-raw"                        1 1 ]
+          [ "raw-qmoves"                        1 1 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

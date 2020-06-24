@@ -1,0 +1,55 @@
+
+(defstart fractal-tree)
+
+(defnet main-destroy (win)
+        (close win)
+        (gtk-main-quit) )
+
+(defnet clicked (event btn x y im a)
+        (set <a 12> -<a 12>) )
+
+(defnet update (im a)
+        (set <a 13> (% (+ <a 13> <a 12>) 12))
+        (gtk-image-set-from-pixbuf im <a <a 13>>) )
+
+(defnet setup ()
+        (deflocal win eb im a)
+
+        (set a (array 14))
+        (set <a  0> (pix-load-static "pics/tree00.png"))
+        (set <a  1> (pix-load-static "pics/tree01.png"))
+        (set <a  2> (pix-load-static "pics/tree02.png"))
+        (set <a  3> (pix-load-static "pics/tree03.png"))
+        (set <a  4> (pix-load-static "pics/tree04.png"))
+        (set <a  5> (pix-load-static "pics/tree05.png"))
+        (set <a  6> (pix-load-static "pics/tree06.png"))
+        (set <a  7> (pix-load-static "pics/tree07.png"))
+        (set <a  8> (pix-load-static "pics/tree08.png"))
+        (set <a  9> (pix-load-static "pics/tree09.png"))
+        (set <a 10> (pix-load-static "pics/tree10.png"))
+        (set <a 11> (pix-load-static "pics/tree11.png"))
+        (set <a 12> 1)
+        (set <a 13> 0)
+
+        (set win (gtk-window-new))
+        (gtk-window-set-title win "A Fractal TreeP")
+        (gtk-container-set-border-width win 50)
+        (gtk-signal-connect win "destroy" (netptr main-destroy) undef)
+
+                (set eb (gtk-event-box-new))
+                (gtk-container-add win eb)
+
+                (set im (gtk-image-new-from-pixbuf <a 0>))
+                (gtk-container-add eb im)
+
+                (gtk-signal-connect eb "button-press-event"
+                        (netptr clicked) im a )
+
+        (gtk-timeout-add (netptr update) 0.1 im a)
+        (gtk-window-set-position win (cmacro GTK_WIN_POS_CENTER))
+        (gtk-widget-show-all win) )
+
+(defnet fractal-tree ()
+        (setup)
+        (gtk-main) )
+

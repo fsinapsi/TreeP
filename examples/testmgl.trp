@@ -1,0 +1,57 @@
+
+(defstart testmgl)
+
+(defnet fun1 (gr)
+        (deflocal dt)
+
+        (set dt (mgl-create-data-size 50 50 1))
+
+        (mgl-data-modify dt "0.6*sin(2*pi*x)*sin(3*pi*y) + 0.4*cos(3*pi*(x*y))" 0)
+
+        (mgl-rotate gr 40 60 0)
+        (mgl-set-light gr)
+        (mgl-box gr)
+
+        (mgl-surf gr dt)
+
+        (close dt) )
+
+(defnet fun2 (gr)
+        (deflocal dt)
+
+        (set dt (mgl-create-data-size 50 3 1))
+
+        (mgl-data-modify dt "0.7*sin(2*pi*x) + 0.5*cos(3*pi*x) + 0.2*sin(pi*x)" 0)
+        (mgl-data-modify dt "sin(2*pi*x)" 1)
+        (mgl-data-modify dt "cos(2*pi*x)" 2)
+
+        (mgl-box gr)
+
+        (mgl-plot gr dt)
+
+        (close dt) )
+
+(defnet fun3 (gr)
+        (deflocal dt)
+
+        (set dt (mgl-create-data-file "z-data"))
+
+        (mgl-box gr)
+
+        (mgl-plot gr dt)
+
+        (close dt) )
+
+(defnet testmgl ()
+        (deflocal gr dt)
+
+        (set gr (mgl-create-graph-zb 600 400))
+        (print gr " - " (width gr) " x " (height gr) nl)
+
+        (fun1 gr)
+
+        (mgl-write-png gr "z-pippo.png")
+        (close gr) )
+
+
+

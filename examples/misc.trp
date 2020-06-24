@@ -1,0 +1,58 @@
+
+(defstart misc)
+
+(defun gcry-md5sum (obj) (gcry-md-hash (cmacro GCRY_MD_MD5) obj))
+(defun gcry-sha1sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA1) obj))
+
+(defun test-md5 ()
+        (= (nostatic (gcry-md5sum "testmd5"))
+           "32269ae63a25306bb46a03d6f38bd2b7" ))
+
+(defun test-sha1 ()
+        (= (nostatic (gcry-sha1sum "testsha1"))
+           "1dee4b1affb249bc74c20379e60166366b71394f" ))
+
+(defun data-morte-galois () (date 1832 5 31))
+
+(defun albero ()
+        (tree "radice"
+                (tree "primo figlio"
+                        (tree "figlio del primo figlio") )
+                (tree "secondo figlio") ))
+
+(defnet misc ()
+        (deflocal now)
+
+        (set now (now))
+
+        (print  nl
+                "quando sono stato compilato: " (cdate) nl
+                "il sistema su cui sono stato compilato: " (cuname) nl
+                "il sistema su cui sto girando: " (uname) nl
+                nl
+                "test md5sum: " (if (test-md5) "OK" "FALLITO!") nl
+                "test sha1sum: " (if (test-sha1) "OK" "FALLITO!") nl
+                nl
+                "la data in cui mori' Galois (era giovedi'): "
+                        (date-arpa (data-morte-galois)) nl
+                "(da allora sono trascorsi "
+                        (- now (data-morte-galois)) " secondi)" nl
+                nl
+                "data/ora di sistema: " now nl
+                "timezone = " (timezone) nl
+                "adesso in formato arpa = " (date-arpa now) nl
+                "tra dieci miliardi di secondi sara' esattamente "
+                        (date-arpa (date-gmt (+ now 10000000000))) nl
+                "dieci miliardi di secondi fa era esattamente "
+                        (date-arpa (date-gmt (- now 10000000000))) nl
+                nl
+                "cwd = " (cwd) nl
+                nl
+                (albero) nl
+                nl
+                (tree-swap (albero) 0 1) nl
+                nl
+                "free bytes/heap size: " (free-bytes) '/' (heap-size) nl ))
+
+
+

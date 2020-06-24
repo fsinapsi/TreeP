@@ -1,0 +1,8 @@
+
+(defstart testwn)
+
+(defnet testwn ()
+        (print (wn-license)) )
+
+
+

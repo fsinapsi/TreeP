@@ -1,0 +1,89 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-iup (func)
+        (deflocal i)
+
+        (lmatch remove func "iup-")
+        (for i in (expr-iup-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_iup_" (dash->underscore func) "(") ")")
+        (flag-true "iup") )
+
+(defun expr-iup-table ()
+        [ [ "version"                           0 0 ]
+          [ "version-date"                      0 0 ]
+          [ "version-number"                    0 0 ]
+          [ "get-global"                        1 1 ]
+          [ "get-attribute"                     2 2 ]
+          [ "get-str-attribute"                 2 2 ]
+          [ "get-int"                           2 2 ]
+          [ "get-int2"                          2 2 ]
+          [ "get-double"                        2 2 ]
+          [ "get-attribute-handle"              2 2 ]
+          [ "get-child-count"                   1 1 ]
+          [ "get-focus"                         0 0 ]
+          [ "timer"                             0 0 ]
+          [ "fill"                              0 0 ]
+          [ "dialog"                            0 1 ]
+          [ "vbox"                              0 undef ]
+          [ "zbox"                              0 undef ]
+          [ "hbox"                              0 undef ]
+          [ "cbox"                              0 undef ]
+          [ "normalizer"                        0 undef ]
+          [ "tabs"                              0 undef ]
+          [ "sbox"                              0 1 ]
+          [ "scroll-box"                        0 1 ]
+          [ "frame"                             0 1 ]
+          [ "radio"                             0 1 ]
+          [ "expander"                          0 1 ]
+          [ "split"                             2 2 ]
+          [ "label"                             0 undef ]
+          [ "animated-label"                    1 1 ]
+          [ "button"                            0 1 ]
+          [ "toggle"                            0 1 ]
+          [ "list"                              0 0 ]
+          [ "flatlist"                          0 0 ]
+          [ "text"                              0 0 ]
+          [ "user"                              0 0 ]
+          [ "clipboard"                         0 0 ]
+          [ "progress-bar"                      0 0 ]
+          [ "item"                              1 1 ]
+          [ "submenu"                           1 2 ]
+          [ "separator"                         0 0 ]
+          [ "menu"                              0 undef ]
+          [ "date-pick"                         0 0 ]
+          [ "calendar"                          0 0 ]
+          [ "image-rgba"                        1 1 ]
+          [ "file-dlg"                          0 0 ]
+          [ "message-dlg"                       0 0 ]
+          [ "color-dlg"                         0 0 ]
+          [ "font-dlg"                          0 0 ]
+          [ "progress-dlg"                      0 0 ]
+          [ "get-brother"                       1 1 ]
+          [ "get-parent"                        1 1 ]
+          [ "get-dialog"                        1 1 ]
+          [ "get-dialog-child"                  2 2 ]
+          [ "text-convert-lin-col-to-pos"       3 3 ]
+          [ "text-convert-pos-to-lin-col"       2 2 ]
+          [ "convert-xy-to-pos"                 3 3 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

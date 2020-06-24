@@ -1,0 +1,66 @@
+;
+; testsqlite3.trp
+; questo programma illustra le funzioni relative a SQLite3
+;
+; (nota: sqlite3-exec puo` essere usata sia come funzione che
+; come test; nell`ultimo caso ha un parametro aggiuntivo,
+; cioe` un puntatore a una rete di callback, che puo` essere undef)
+;
+
+(defstart testsqlite3)
+
+(defun dbpath () "prova.db")
+
+(defun query () "SELECT n,fac FROM tabella ORDER BY n")
+
+(defnet test-open (@db)
+        (deflocal create)
+
+        (set create (not (pathexists (dbpath))))
+        (set @db (sqlite3-open (dbpath)))
+        (<> @db undef)
+        (if create
+        then    (test-create @db) ))
+
+(defnet test-create (db)
+        (deflocal n)
+
+        (sqlite3-begin db)
+        (sqlite3-exec db undef
+                "CREATE TABLE tabella(n integer primary key,fac char)" )
+        (for n in 0 .. 40 do
+                (sqlite3-exec db undef
+                        "INSERT INTO tabella VALUES(" n ",'" (fac n) "')" ))
+        (sqlite3-end db) )
+
+(defnet test-query1 (db)
+        (deflocal res)
+
+        (for res in (sqlite3-exec db (query)) do
+                (print <res 0> "! = " <res 1> nl) ))
+
+(defnet test-query2 (db)
+        (sqlite3-exec db (netptr test-query2-cback) (query)) )
+
+(defnet test-query2-cback (n fac)
+        (print n " <-> " fac nl) )
+
+(defnet test-query3 (db)
+        (sqlite3-exec-data db (netptr test-query3-cback) "fattoriale: " (query)) )
+
+(defnet test-query3-cback (msg n fac)
+        (print msg n " -> " fac nl) )
+
+(defnet testsqlite3 ()
+        (deflocal db)
+
+        (test-open db)
+        (print db ", total changes = " (sqlite3-total-changes db) nl)
+        (test-query1 db)
+        (test-query2 db)
+        (test-query3 db)
+        (close db)
+        (print db nl) )
+
+
+

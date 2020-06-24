@@ -1,0 +1,124 @@
+
+(defstart testvid)
+
+(defnet usage ()
+        (print "uso: " (argv 0) " <path>" nl)
+        (exit -1) )
+
+(defun approx (x)
+        (/ (rint (* x 1000000)) 1000000) )
+
+(defun int2str (n len filler)
+        (int2str0 (sprint n) len filler) )
+(defun int2str0 (s len filler)
+        (if (>= (length s) len)
+                s
+                (+ (tile (- len (length s)) filler) s) ))
+
+(defun format-int (n)
+        (if (< n 1000) (sprint n)
+                (+ (format-int (div n 1000)) "," (int2str (% n 1000) 3 '0')) ))
+
+(defun qscale-avg (vid)
+        (/ (qscale-avg0 vid (if (= (vid-bitstream-type vid) 3) 4 3))
+           (qscale-cnt vid) ))
+(defun qscale-avg0 (vid n)
+        (if (< n 0) 0
+                (+ (vid-cnt-qscale-avg vid n 0 0)
+                   (qscale-avg0 vid (- n 1)) )))
+
+(defun qscale-cnt (vid)
+        (qscale-cnt0 vid (if (= (vid-bitstream-type vid) 3) 4 3)) )
+(defun qscale-cnt0 (vid n)
+        (if (< n 0) 0
+                (+ (vid-cnt-qscale-cnt vid n 0 0)
+                   (qscale-cnt0 vid (- n 1)) )))
+
+(defnet testvid ()
+        (deflocal avi f vid aud ismp3 tot i j ooold)
+
+        (if (<> (argc) 2)
+        then    (usage) )
+        (alt    (seq    (set avi (avi-open-input-file (argv 1)))
+                        (<> avi undef) )
+                (seq    (print (argv 1) ": avi non riconosciuto (o non trovato)" nl)
+                        (exit -2) ))
+
+        (set f (fopenro (argv 1)))
+        (set vid (vid-create f))
+
+        (print "file name = " (argv 1) nl)
+        (print "file size = " (format-int (length f)) " bytes" nl)
+        (print "video fourcc = " (avi-video-compressor avi) nl)
+        (print "video delay = " (* 1000 (avi-video-delay avi)) " ms" nl)
+        (print "video frames = " (avi-video-frames avi) nl)
+        (print "video keyframes = " (avi-video-keyframes avi) nl)
+        (print "video resolution = " (width avi) " x " (height avi) nl)
+        (print "video streamsize = " (format-int (avi-video-streamsize avi)) " bytes" nl)
+        (print "video framerate = " (avi-video-framerate avi) " fps" nl)
+        (print "video bitrate = " (approx (avi-video-bitrate avi)) " kbps" nl)
+        (print "video min keyint = " (avi-video-min-keyint avi) nl)
+        (print "video max keyint = " (avi-video-max-keyint avi) nl)
+        (set tot 0)
+        (for j in 1 .. (avi-video-frames avi) do
+                (if (= (% (for-pos) 500) 0) then (print "frame#" j "\r")(fflush (stdout)))
+                (opt    (fsetpos (avi-video-fpos avi (for-pos)) f)
+                        (vid-parse vid (avi-video-size avi (for-pos))) )
+                (set tot (+ tot (avi-video-size avi (for-pos)))) )
+        (if (<> tot (avi-video-streamsize avi))
+        then    (print "ATTENZIONE: la somma delle dimensioni non coincide con il totale ("
+                       tot "!=" (avi-video-streamsize avi) ")" nl ))
+        (if (> (vid-bitstream-type vid) 0)
+        then    (print "video (bitstream) type = "
+                        <(list "MPEG-4 ASP" "MS MPEG4" "H.264")  (- (vid-bitstream-type vid) 1)> nl
+                       "video (bitstream) average drf = "  (approx (qscale-avg vid)) nl ))
+        (print "audio tracks = " (avi-audio-tracks avi) nl)
+        (for i in 1 .. (avi-audio-tracks avi) do
+                (avi-set-audio-track avi (for-pos))
+                (print "audio track #" i " format = " (avi-audio-format avi) nl)
+                (print "audio track #" i " delay = " (* 1000 (avi-audio-delay avi)) " ms" nl)
+                (print "audio track #" i " chunks = " (avi-audio-chunks avi) nl)
+                (print "audio track #" i " streamsize = " (format-int (avi-audio-streamsize avi)) " bytes" nl)
+                (print "audio track #" i " channels = " (avi-audio-channels avi) nl)
+                (print "audio track #" i " frequency = " (avi-audio-frequency avi) " Hz" nl)
+                (print "audio track #" i " vbr = " (avi-audio-vbr avi) nl)
+                ;(print "audio track #" i " samplerate = " (avi-audio-samplerate avi) nl)
+                ;(print "audio track #" i " mp3rate = " (avi-audio-mp3rate avi) nl)
+                ;(print "audio track #" i " padrate = " (avi-audio-padrate avi) nl)
+                (set aud (aud-create f))
+                (set tot 0)
+                (for j in 1 .. (avi-audio-chunks avi) do
+                        (if (= (% (for-pos) 500) 0) then (print "chunk#" j "\r")(fflush (stdout)))
+                        (opt    (fsetpos (avi-audio-fpos avi (for-pos)) f)
+                                (aud-parse aud (avi-audio-size avi (for-pos))) )
+                        (set tot (+ tot (avi-audio-size avi (for-pos)))) )
+                (if (<> tot (avi-audio-streamsize avi))
+                then    (print "ATTENZIONE: la somma delle dimensioni non coincide con il totale ("
+                               tot "!=" (avi-audio-streamsize avi) ")" nl ))
+                (if (<> (aud-codec aud) undef)
+                then    (set ismp3 (= (aud-codec aud) "MP3"))
+                        (print
+                        "audio track #" i " (bitstream) codec: " (aud-codec aud) (if ismp3 (sprint " (MPEG-" (aud-version aud) " Layer " (tile (aud-layer aud) 'I') ")") "") nl
+                        (if (<> (aud-encoder aud) undef) (+
+                        "audio track #" i " (bitstream) encoder: " (aud-encoder aud) nl ) "" )
+                        "audio track #" i " (bitstream) frames: " (aud-frames aud) nl
+                        "audio track #" i " (bitstream) chunk-aligned: " (not (aud-splitted aud)) nl
+                        "audio track #" i " (bitstream) duration: " (date-s2hhmmss (aud-duration aud)) " (" (approx (aud-duration aud)) " s)" nl
+                        "audio track #" i " (bitstream) bitrate: " (aud-bitrate aud) " kbps " (if (aud-vbr aud) "VBR" "CBR") nl
+                        "audio track #" i " (bitstream) frequency: " (aud-frequency aud) " Hz" nl
+                        "audio track #" i " (bitstream) mode: " (aud-mode aud) nl
+                        (if (<> (aud-emphasis aud) undef) (+
+                        "audio track #" i " (bitstream) emphasis: " (aud-emphasis aud) nl ) "" ) (if ismp3 (sprint
+                        "audio track #" i " (bitstream) padding: " (if (aud-padding aud) "yes" "no") nl ) "" )
+                        (if (> (aud-initial-skip aud) 0) (sprint
+                        "audio track #" i " (bitstream) initial skip: " (aud-initial-skip aud) nl ) "" )
+                        (if (> (aud-internal-skip aud) 0) (sprint
+                        "audio track #" i " (bitstream) internal skip: " (aud-internal-skip aud) nl ) "" )
+                        (if (> (aud-buf-act aud) 0) (sprint
+                        "audio track #" i " (bitstream) final skip: " (aud-buf-act aud) nl ) "" )))
+                (close aud) )
+        (close avi vid f)
+        (print "free bytes/heap size: " (free-bytes) '/' (heap-size) nl) )
+
+
+

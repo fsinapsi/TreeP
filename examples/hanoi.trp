@@ -1,0 +1,29 @@
+;;;
+;;; hanoi.trp
+;;; risolve il classico gioco delle torri di hanoi
+;;;
+
+(defstart hanoi)
+
+(defnet usage ()
+        (print "uso: " (argv 0) " <numero-intero>" nl)
+        (exit -1) )
+
+(defnet hanoi ()
+        (deflocal n)
+
+        (if (<> (argc) 2)
+        then    (usage) )
+        (set n (str->num (argv 1)))
+        (if (or (not (integerp n)) (< n 1))
+        then    (print (argv 1) " non e' un numero intero positivo valido" nl)
+                (exit -2) )
+        (sposta n "A" "B" "C") )
+
+(defnet sposta (n src aux dst)
+        (if (= n 1)
+        then    (print "sposta un disco dalla pila " src " alla pila " dst nl)
+        else    (sposta (- n 1) src dst aux)
+                (print "sposta un disco dalla pila " src " alla pila " dst nl)
+                (sposta (- n 1) aux src dst) ))
+

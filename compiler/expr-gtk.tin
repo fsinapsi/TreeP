@@ -1,0 +1,120 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-gtk (func)
+        (deflocal i)
+
+        (lmatch remove func "gtk-")
+        (for i in (expr-gtk-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_gtk_" (dash->underscore func) "(") ")")
+        (flag-true "gtk") )
+
+(defun expr-gtk-table ()
+        [ [ "signal-connect"                            3 undef ]
+          [ "timeout-add"                               2 undef ]
+          [ "idle-add"                                  1 undef ]
+          [ "window-new"                                0 1 ]
+          [ "window-get-position"                       1 1 ]
+          [ "hbox-new"                                  2 2 ]
+          [ "vbox-new"                                  2 2 ]
+          [ "label-new"                                 1 2 ]
+          [ "label-get-text"                            1 1 ]
+          [ "button-new"                                0 1 ]
+          [ "toggle-button-new"                         0 1 ]
+          [ "toggle-button-get-active"                  1 1 ]
+          [ "toggle-button-get-mode"                    1 1 ]
+          [ "toggle-button-get-inconsistent"            1 1 ]
+          [ "check-button-new"                          0 1 ]
+          [ "file-chooser-get-filename"                 1 1 ]
+          [ "file-chooser-dialog-new"                   2 3 ]
+          [ "file-chooser-widget-new"                   1 1 ]
+          [ "color-button-new"                          0 1 ]
+          [ "color-button-get-color"                    1 1 ]
+          [ "color-selection-get-current-color"         1 1 ]
+          [ "color-selection-dialog-new"                1 2 ]
+          [ "event-box-new"                             0 0 ]
+          [ "notebook-new"                              0 0 ]
+          [ "notebook-append-page"                      2 3 ]
+          [ "notebook-get-current-page"                 1 1 ]
+          [ "image-new"                                 2 2 ]
+          [ "image-new-from-file"                       1 1 ]
+          [ "image-new-from-pixbuf"                     1 1 ]
+          [ "image-get-image"                           1 1 ]
+          [ "adjustment-new"                            6 6 ]
+          [ "adjustment-get-value"                      1 1 ]
+          [ "adjustment-get-lower"                      1 1 ]
+          [ "adjustment-get-upper"                      1 1 ]
+          [ "scrolled-window-new"                       2 2 ]
+          [ "scrolled-window-get-hadjustment"           1 1 ]
+          [ "scrolled-window-get-vadjustment"           1 1 ]
+          [ "scrolled-window-get-hscrollbar"            1 1 ]
+          [ "scrolled-window-get-vscrollbar"            1 1 ]
+          [ "dialog-run"                                1 1 ]
+          [ "entry-new"                                 0 1 ]
+          [ "entry-get-text"                            1 1 ]
+          [ "spin-button-new"                           3 3 ]
+          [ "spin-button-new-with-range"                3 3 ]
+          [ "spin-button-get-value"                     1 1 ]
+          [ "hscale-new"                                1 1 ]
+          [ "vscale-new"                                1 1 ]
+          [ "hscale-new-with-range"                     3 3 ]
+          [ "vscale-new-with-range"                     3 3 ]
+          [ "range-get-value"                           1 1 ]
+          [ "range-get-lower-stepper-sensitivity"       1 1 ]
+          [ "range-get-upper-stepper-sensitivity"       1 1 ]
+          [ "combo-box-new"                             0 0 ]
+          [ "combo-box-text-new"                        0 0 ]
+          [ "combo-box-get-active"                      1 1 ]
+          [ "text-view-new"                             0 1 ]
+          [ "text-buffer-get-text"                      1 2 ]
+          [ "progress-bar-new"                          0 0 ]
+          [ "font-button-new"                           0 1 ]
+          [ "font-button-get-font-name"                 1 1 ]
+          [ "hseparator-new"                            0 0 ]
+          [ "vseparator-new"                            0 0 ]
+          [ "frame-new"                                 0 1 ]
+          [ "menu-item-new"                             0 1 ]
+          [ "menu-bar-new"                              0 0 ]
+          [ "menu-new"                                  0 0 ]
+          [ "tree-view-new"                             0 0 ]
+          [ "message-dialog-new"                        5 undef ]
+          [ "calendar-new"                              0 0 ]
+          [ "calendar-get-date"                         1 1 ]
+
+          [ "locale-to-utf8"                            1 1 ]
+          [ "locale-from-utf8"                          1 1 ]
+          [ "filename-to-utf8"                          1 1 ]
+          [ "filename-display-name"                     1 1 ]
+          [ "filename-display-basename"                 1 1 ]
+          [ "get-host-name"                             0 0 ]
+          [ "get-user-name"                             0 0 ]
+          [ "get-real-name"                             0 0 ]
+          [ "major-version"                             0 0 ]
+          [ "minor-version"                             0 0 ]
+          [ "micro-version"                             0 0 ]
+          [ "width"                                     0 1 ]
+          [ "height"                                    0 1 ]
+          [ "depth"                                     0 0 ]
+          [ "events-pending"                            0 0 ]
+          [ "get-default-language"                      0 0 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

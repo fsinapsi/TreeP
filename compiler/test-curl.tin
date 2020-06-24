@@ -1,0 +1,93 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-curl (func)
+        (deflocal i)
+
+        (lmatch remove func "curl-easy-")
+        (for i in (test-curl-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-ext <i 1> <i 2> (+ "  if(trp_curl_easy_" (dash->underscore func) "(") "))")
+        (flag-true "curl") )
+
+(defun test-curl-table ()
+        [ [ "reset"                             1 1 ]
+          [ "perform"                           1 1 ]
+          [ "setopt-errorbuffer"                2 2 ]
+          [ "setopt-url"                        1 2 ]
+          [ "setopt-postfields"                 1 2 ]
+          [ "setopt-writefunction"              2 3 ]
+          [ "setopt-readfunction"               3 4 ]
+          [ "setopt-progressfunction"           2 3 ]
+          [ "setopt-filetime"                   2 2 ]
+          [ "setopt-proxy"                      1 2 ]
+          [ "setopt-proxyport"                  2 2 ]
+          [ "setopt-noproxy"                    1 2 ]
+          [ "setopt-httpproxytunnel"            2 2 ]
+          [ "setopt-username"                   1 2 ]
+          [ "setopt-password"                   1 2 ]
+          [ "setopt-proxyusername"              1 2 ]
+          [ "setopt-proxypassword"              1 2 ]
+          [ "setopt-autoreferer"                2 2 ]
+          [ "setopt-referer"                    1 2 ]
+          [ "setopt-useragent"                  1 2 ]
+          [ "setopt-resume-from"                2 2 ]
+          [ "setopt-httpget"                    2 2 ]
+          [ "setopt-post"                       2 2 ]
+          [ "setopt-followlocation"             2 2 ]
+          [ "setopt-maxredirs"                  2 2 ]
+          [ "setopt-crlf"                       2 2 ]
+          [ "setopt-cookie"                     1 2 ]
+          [ "setopt-cookiefile"                 1 2 ]
+          [ "setopt-cookiejar"                  1 2 ]
+          [ "setopt-cookiesession"              2 2 ]
+          [ "setopt-sslcert"                    1 2 ]
+          [ "setopt-ssl-cipher-list"            1 2 ]
+          [ "setopt-keypasswd"                  1 2 ]
+          [ "setopt-capath"                     2 2 ]
+          [ "setopt-ssl-verifypeer"             2 2 ]
+          [ "setopt-cainfo"                     1 2 ]
+          [ "setopt-ftpport"                    1 2 ]
+          [ "setopt-interface"                  1 2 ]
+          [ "setopt-customrequest"              1 2 ]
+          [ "setopt-krblevel"                   1 2 ]
+          [ "setopt-nobody"                     2 2 ]
+          [ "setopt-quote"                      1 undef ]
+          [ "setopt-postquote"                  1 undef ]
+          [ "setopt-prequote"                   1 undef ]
+          [ "setopt-httpheader"                 1 undef ]
+          [ "setopt-stderr"                     1 2 ]
+          [ "setopt-verbose"                    2 2 ]
+          [ "setopt-failonerror"                2 2 ]
+          [ "setopt-random-file"                1 2 ]
+          [ "setopt-egdsocket"                  1 2 ]
+          [ "setopt-ignore-content-length"      2 2 ]
+          [ "setopt-ssh-public-keyfile"         1 2 ]
+          [ "setopt-ssh-private-keyfile"        1 2 ]
+          [ "setopt-dirlistonly"                2 2 ]
+          [ "setopt-append"                     2 2 ]
+          [ "setopt-ftp-account"                1 2 ]
+          [ "setopt-maxconnects"                2 2 ]
+          [ "setopt-fresh-connect"              2 2 ]
+          [ "setopt-forbid-reuse"               2 2 ]
+          [ "setopt-low-speed"                  3 3 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

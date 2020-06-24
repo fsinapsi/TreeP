@@ -1,0 +1,86 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-vid (func)
+        (deflocal i)
+
+        (lmatch remove func "vid-")
+        (for i in (expr-vid-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_vid_" (dash->underscore func) "(") ")")
+        (flag-true "vid") )
+
+(defun expr-vid-table ()
+        [ [ "create"                    1 1 ]
+          [ "bitstream-type"            1 1 ]
+          [ "error"                     1 1 ]
+          [ "userdata"                  1 1 ]
+          [ "missing-vol"               1 1 ]
+          [ "cnt-vol"                   1 1 ]
+          [ "cnt-vop"                   1 1 ]
+          [ "max-frame-size"            1 1 ]
+          [ "avg-frame-size"            1 1 ]
+          [ "cnt-size-frame"            2 2 ]
+          [ "cnt-type-frame"            2 2 ]
+          [ "cnt-qscale-frame"          2 2 ]
+          [ "cnt-qscale"                5 5 ]
+          [ "cnt-qscale-cnt"            4 4 ]
+          [ "cnt-qscale-max"            4 4 ]
+          [ "cnt-qscale-avg"            4 4 ]
+          [ "cnt-qscale-var"            4 4 ]
+          [ "par"                       1 2 ]
+          [ "par-w"                     1 2 ]
+          [ "par-h"                     1 2 ]
+          [ "packed"                    1 1 ]
+          [ "interlaced"                1 1 ]
+          [ "tff"                       1 1 ]
+          [ "alternate-scan"            1 1 ]
+          [ "sprite-enable"             1 1 ]
+          [ "sprite-warping-points"     1 1 ]
+          [ "mpeg-quant"                1 1 ]
+          [ "quant-matrix"              3 4 ]
+          [ "qpel"                      1 1 ]
+          [ "max-bframes"               1 1 ]
+          [ "cnt-bframes"               2 2 ]
+          [ "cnt-warp-points-used"      2 2 ]
+          [ "time-inc-bits"             1 1 ]
+          [ "sps-cnt"                   1 1 ]
+          [ "sps-id"                    2 2 ]
+          [ "pps-cnt"                   1 1 ]
+          [ "pps-id"                    2 2 ]
+          [ "pps-sps-id"                2 2 ]
+          [ "num-ref-frames"            2 2 ]
+          [ "profile-idc"               2 2 ]
+          [ "level-idc"                 2 2 ]
+          [ "chroma-format-idc"         2 2 ]
+          [ "entropy-coding-mode"       2 2 ]
+          [ "weighted-pred"             2 2 ]
+          [ "weighted-bipred-idc"       2 2 ]
+          [ "transform_8x8_mode_flag"   2 2 ]
+          [ "mp4-track-size"            1 1 ]
+          [ "mp4-sample-size"           2 2 ]
+          [ "mp4-sample-offset"         2 2 ]
+          [ "qscale-correction-a"       1 1 ]
+          [ "qscale-correction-b"       1 1 ]
+          [ "search-next"               7 8 ]
+          [ "search-prev"               7 8 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -1,0 +1,54 @@
+
+(defstart main)
+
+(defnet main ()
+        (deflocal a1 a2 a3 b)
+
+        (set a1 (thread-create (netptr a) (thread-self)))
+        (set a2 (thread-create (netptr a) (thread-self)))
+        (set a3 (thread-create (netptr a) (thread-self)))
+        (set b (thread-create (netptr b) a1 a2 a3))
+        (send b to a1)
+        (send b to a2)
+        (send b to a3)
+        (thread-join b)
+        (thread-join a1)
+        (thread-join a2)
+        (thread-join a3)
+        (gc)
+        (print nl
+               "in tutto ho creato " (- (thread-max) 1) " threads" nl
+               "threads correnti: " (thread-cur) " - " (thread-list) nl
+               "free bytes/heap size: " (free-bytes) '/' (heap-size) nl
+               "terminazione corretta" nl
+               nl ))
+
+(defnet a (parent)
+        (deflocal b i)
+
+        (receive b from parent)
+        (for i in 1 .. 10000 do
+                (sendbuf 5 i to b) ))
+
+(defnet b (a1 a2 a3)
+        (deflocal p1 p2 p3 msg)
+
+        (set p1 0)
+        (set p2 0)
+        (set p3 0)
+        (thread-case*
+           priority p1 (receive msg from a1) ->
+                (print a1 " -> " msg nl)
+                (set p2 (+ p2 1))
+                (set p3 (+ p3 1))
+        [] priority p2 (receive msg from a2) ->
+                (print a2 " -> " msg nl)
+                (set p1 (+ p1 1))
+                (set p3 (+ p3 1))
+        [] priority p3 (receive msg from a3) ->
+                (print a3 " -> " msg nl)
+                (set p1 (+ p1 1))
+                (set p2 (+ p2 1)) ))
+
+
+

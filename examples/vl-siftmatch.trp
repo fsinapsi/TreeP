@@ -1,0 +1,59 @@
+
+(include "common.tin")
+
+(defstart vl-siftmatch)
+
+(defnet usage ()
+        (print "usage: vl-siftmatch <img1> <img2>" nl)
+        (exit) )
+
+(defnet vl-siftmatch ()
+        (deflocal pix pix1 pix2 filt1 filt2 m sh i)
+
+        (print "VLFeat version " (vl-version) nl)
+
+        (if (<> (argc) 3)
+        then    (usage) )
+
+        (set pix1 (pix-load (argv 1)))
+        (if (not (pixp pix1))
+        then    (print "apertura immagine " (argv 1) " fallita" nl)
+                (exit) )
+        (set pix2 (pix-load (argv 2)))
+        (if (not (pixp pix2))
+        then    (print "apertura immagine " (argv 2) " fallita" nl)
+                (exit) )
+
+        (set sh (height pix1))
+
+        (set pix (pix-create (max (width pix1) (width pix2)) (+ sh (height pix2))))
+        (pixp pix)
+
+        (pix-draw-pix pix 0 0 pix1)
+        (pix-draw-pix pix 0 sh pix2)
+
+        (set filt1 (vl-sift-new (width pix1) (height pix1) -1 3 -1))
+        (set filt2 (vl-sift-new (width pix2) (height pix2) -1 3 -1))
+        (set m (vl-sift-match filt1 filt2 pix1 pix2 0))
+
+        (print "keypoints immagine 1: " (length filt1) nl
+               "keypoints immagine 2: " (length filt2) nl
+               "matches: " (length m) nl )
+
+        (close pix1 pix2 filt1 filt2)
+
+        (for i in m do
+                (pix-draw-line pix
+                        (car (car i)) (cdr (car i))
+                        (car (cdr i)) (+ (cdr (cdr i)) sh)
+                        (pix-color 0xff 0x00 0xff) )
+                (print (int->str (for-pos) 5 '0') ": ("
+                       (rint (car (car i))) "," (rint (cdr (car i))) ") <-> ("
+                       (rint (car (cdr i))) "," (rint (cdr (cdr i))) ")"
+                       nl ))
+
+        (pix-save-png pix "sift-match.png")
+        (close pix) )
+
+
+

@@ -1,0 +1,364 @@
+
+Installazione veloce
+--------------------
+
+Per chi ha fretta e non ha tempo di leggere tutto questo file,
+queste sono le istruzioni per compilare e installare il linguaggio
+sul proprio sistema (chi usa Ubuntu veda la prossima sezione):
+
+1) impartire da questa directory il comando "make"
+   (se tutto va bene, nella directory "libs" verranno creati dei
+   file con estensione ".a" e ".so":
+   questi vanno copiati in una directory contenente librerie, tipo
+   /usr/local/lib dopodiche' occorre impartire da root il comando
+   /sbin/ldconfig )
+
+2) impartire il comando "cd compiler ; make bootstrap"
+   (se tutto va bene, verra' creato il file eseguibile trpc
+   che andra' copiato in una directory contenuta nel path, tipo
+   /usr/local/bin )
+
+Se il punto 1) fallisce, molto probabilmente occorre installare
+qualche pacchetto mancante (vedi piu' avanti, nella sezione
+"Pacchetti e librerie necessarie").
+
+
+
+Installazione veloce su Ubuntu 10.04 (e forse altre versioni)
+-------------------------------------------------------------
+
+Impartire il seguente comando (tutto su una unica riga):
+
+sudo apt-get install libgc-dev libgmp3-dev libmysqlclient-dev
+  libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+  libcv-dev libcvaux-dev libhighgui-dev libleptonica-dev
+  libgcrypt11-dev libgpg-error-dev libgpgme11-dev
+  libcurl4-openssl-dev libid3tag0-dev libsqlite3-dev
+  libexif-dev libmgl-dev libmagic-dev libgtk2.0-dev
+  zlib1g-dev libjpeg62-dev libpng12-dev build-essential
+
+Per quanto riguarda VLFeat, seguire le istruzioni nella sezione
+"Installazione di VLFeat".
+
+Se non vengono riportati errori, impartire il comando:
+
+make bootstrap
+
+Se non vengono riportati errori, il linguaggio dovrebbe essere stato
+installato correttamente.
+Altrimenti, si provi a leggere il resto di questo file.
+
+
+
+Introduzione
+------------
+
+Questo archivio contiene il codice sorgente del compilatore e del
+"supporto a tempo di esecuzione" (rts) per un nuovo linguaggio di
+programmazione.
+Le motivazioni alla base di questo progetto sono molte; queste le
+piu' importanti:
+
+1) progettare e implementare un linguaggio e' di per se' molto
+   divertente e stimolante (questa e' la motivazione principale);
+
+2) il linguaggio ottenuto sara' potente, affidabile e abbastanza
+   piu' facile da usare della maggior parte degli altri linguaggi
+   (o, almeno, queste sono le mie speranze ;-) );
+
+3) il linguaggio sara' totalmente indipendente dalla piattaforma su
+   cui dovranno essere eseguiti i programmi; un programma scritto
+   nel linguaggio potra' essere compilato ed eseguito su qualsiasi
+   piattaforma per la quale esistono supporto e compilatore, senza
+   dover apportare alcuna modifica.
+
+Il linguaggio e' composto da due componenti:
+
+- il supporto a tempo di esecuzione;
+- il compilatore.
+
+Entrambe le componenti devono essere compilate e installate sul
+proprio sistema, e cio' deve essere fatto in due fasi distinte.
+
+Nella prima fase occorre compilare il supporto a tempo di
+esecuzione, il cui codice sorgente e' contenuto nelle directory il
+cui nome inizia con "trp".
+La directory "trp" contiene il codice sorgente della libreria base;
+senza di essa non puo' funzionare nulla.
+Se non si riesce a compilare una libreria del supporto diversa da
+quella di base, sara' comunque possibile compilare e installare il
+compilatore, e quindi usare il linguaggio, anche se in modo
+limitato (nota: il compilatore necessita, oltre della libreria
+di base, anche di libtrppix).
+
+La compilazione del supporto costruisce librerie che consistono di
+file il cui nome inizia con "libtrp".
+La libreria "libtrp" e' la libreria base.
+
+Una volta ottenute le librerie di supporto, occorre installarle sul
+proprio sistema. Cio' vuol dire semplicemente copiarle in una
+directory di librerie di sistema, dove verranno trovate dai linker
+senza troppi problemi (una directory candidata su sistemi Linux
+potrebbe essere /usr/local/lib oppure /opt/local/lib).
+
+Dopo avere correttamente installato le librerie di supporto, e'
+possibile procedere con la seconda fase: la compilazione del
+compilatore.
+
+Il codice sorgente del compilatore e' contenuto nella directory
+"compiler".
+Il compilatore e' un programma interamente scritto in TreeP, quindi
+la prima volta il suo codice sorgente non puo' essere compilato
+direttamente, perche' ancora non si possiede il compilatore!
+
+Pero' nella directory "compiler" degli zip che distribuisco sara'
+sempre presente, oltre al codice sorgente in TreeP, anche il file
+trpc.c, che e' il risultato della traduzione da TreeP a C del
+codice sorgente originale.
+Quindi, impartendo il comando "make bootstrap", verra' compilato il
+file trpc.c dal compilatore gcc, e il risultato verra' linkato alle
+librerie di supporto, precedentemente compilate e installate.
+
+Se tutto va bene, tale compilazione dara' come esito il file
+eseguibile "trpc", e questo e' finalmente un compilatore TreeP
+usabile, che puo' essere spostato in una directory contenuta nel
+path (su sistemi Linux, una directory candidata potrebbe essere
+/usr/local/bin).
+
+A questo punto sara' possibile compilare direttamente i programmi
+TreeP.
+
+Ad esempio, un buon banco di prova consiste nel compilare il
+compilatore stesso, stavolta pero' senza impartire il comando
+"make bootstrap", ma partendo dal codice sorgente originale, cioe'
+impartendo il comando "trpc trpc.trp".
+(Per tradurre un programma da TreeP a C, va usata l'opzione "-c" del
+compilatore; ad esempio, per ottenere il file trpc.c prima di creare
+lo zip da distribuire, a me basta impartire il comando
+"trpc -c trpc.trp".)
+
+La directory "examples" contiene molti programmini scritti in TreeP.
+Sono i programmi che scrivo per testare le parti del linguaggio che,
+di volta in volta, sto implementando.
+Per chi volesse iniziare a capire il funzionamento del linguaggio,
+un utile esercizio potrebbe essere quello di leggere i file
+sorgenti di tali programmini e cercare di indovinare cosa stampera'
+il programma, una volta compilato ed eseguito. E poi verificare.
+Naturalmente sarebbe ancora piu' utile provare a editare tali
+sorgenti modificando le istruzioni e aggiungendone di nuove, per
+testarne gli effetti.
+
+
+
+Pacchetti e librerie necessarie per la compilazione
+---------------------------------------------------
+
+Per compilare la libreria di base (libtrp) occorre avere
+preventivamente installato le seguenti librerie (e relativi
+headers, cioe' i pacchetti di sviluppo):
+
+- libz
+- libgmp
+- libgc
+- libjpeg
+- libpng
+
+Per compilare le altre librerie occorre avere installato anche le
+seguenti librerie (e relativi pacchetti di sviluppo):
+
+- GTK2
+- SQLite3
+- cURL (libcurl)
+- OpenCV
+- libleptonica
+- libmagic (pacchetto "file")
+- libid3tag-0.15.1b
+- libexif
+- libmysqlclient
+- libavcodec
+- libmgl (pacchetto MathGL)
+- VLFeat
+
+Il pacchetto zlib e' molto diffuso, e comunque, se dovesse mancare,
+puo' essere scaricato da questa pagina:
+
+http://www.zlib.net/
+
+Il pacchetto GMP (GNU Multiple Precision Arithmetic) e' molto
+diffuso, e comunque puo' essere scaricato da questa pagina:
+
+http://gmplib.org/
+
+Il pacchetto GC (garbage collector di Boehm-Demers-Weiser) puo'
+essere scaricato da questa pagina:
+
+http://www.hpl.hp.com/personal/Hans_Boehm/gc/
+
+Una versione di libgc che dovrebbe andare bene e' la 7.1 che puo'
+essere scaricata da questa pagina:
+
+http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/
+
+Per compilarla e installarla si decomprima l'archivio e si
+impartiscano i seguenti comandi:
+
+./configure --enable-threads=posix      [continua nella riga succ.]
+--enable-thread-local-alloc --enable-parallel-mark
+make
+make install
+
+(l'ultimo comando va impartito da root)
+
+
+
+Installazione di VLFeat
+-----------------------
+
+Se per la propria distribuzione non esiste il pacchetto di VLFeat,
+lo si puo' installare scaricando il "binary package" dalla pagina
+http://www.vlfeat.org/download.html
+Bastera' copiare nella directory /usr/local/lib il file libvl.so
+appropriato per il proprio sistema (si veda la directory "bin" del
+"binary package") e creare la directory /usr/local/include/vl in
+cui vanno copiati tutti i file con estensione ".h" e ".th" che si
+trovano nella directory "vl" del "binary package".
+Infine dare il comando "sudo ldconfig".
+Se non si vuole il supporto a VLFeat, basta togliere le relative
+righe dal makefile principale.
+
+
+
+Compilazione del runtime
+------------------------
+
+Il codice sorgente della libreria di base (libtrp) si trova tutto
+dentro la directory trp.
+In breve, si tratta semplicemente di compilare tutti i file con
+estensione *.c e costruire la libreria con i file 'oggetto' ottenuti.
+Per chi usa il compilatore C e gli strumenti GNU (gcc, ld, ar, gmake,
+ecc.) i semplici Makefile presenti dovrebbero essere sufficienti.
+Se qualcosa va storto, bisognera' procedere in altri modi (fatemi
+sapere...)
+
+Se durante la compilazione ottenete molti messaggi di warning,
+del tipo:
+
+warning: pointer targets in initialization differ in signedness
+
+potete tranquillamente ignorarli.
+
+
+
+Compilazione del compilatore
+----------------------------
+
+cd compiler
+make bootstrap
+
+
+
+Modifiche ai file headers (*** solo per programmatori)
+======================================================
+
+Nel caso in cui aveste la necessita' di modificare qualche file
+headers (ad esempio, la parte iniziale di trp/trp.h) per
+riadattarli al vostro specifico sistema, mandatemi le modifiche,
+in modo che possa rilasciare una nuova versione. Altrimenti, molto
+probabilmente non potreste comunque effettuare il bootstrap del
+compilatore, perche' nel suo codice C sono incapsulati gli headers
+della versione precedente alle modifiche.
+
+
+
+Test del compilatore
+--------------------
+
+Impartendo il comando "trpc -v" dovrebbero venire stampate alcune
+righe sullo standard output.
+Per compilare un sorgente TreeP, tipicamente basta impartire il
+comando "trpc nomefile.trp".
+
+
+
+Aggiornamento
+-------------
+
+Resta adesso da spiegare come si procede in caso di aggiornamento.
+
+Basta seguire questa semplice regola: ogni volta che prendete un
+nuovo zip, occorre ricompilare sia le librerie di supporto che il
+compilatore (in questo ordine).
+
+Una volta ricompilate le librerie di supporto, le nuove librerie
+andranno semplicemente sovrascritte alle vecchie (fate attenzione a
+non installare diverse versioni delle librerie in directory diverse;
+usate sempre la stessa directory di installazione ed eviterete
+problemi).
+
+Una volta che avete sostituito le librerie di supporto, potete
+compilare la nuova versione del compilatore con "make bootstrap".
+
+A questo punto bastera' sovrascrivere il nuovo file eseguibile
+"trpc" a quello vecchio, dovunque lo avevate messo.
+
+E questo conclude la fase di aggiornamento.
+
+E' opportuno notare che tipicamente una versione piu' vecchia del
+compilatore trpc non sara' in grado di compilare con successo una
+versione piu' recente.
+In pratica, le cose stanno nel modo seguente: quando modifico il
+compilatore, sono costretto a utilizzare soltanto la parte di
+linguaggio che il compilatore attuale puo' tradurre, quindi ho una
+successione di questo tipo:
+
+trpc1 -> trpc2 -> trpc3 -> trpc4 -> trpc5 ...
+
+Ogni versione del compilatore puo' compilare la versione
+immediatamente successiva, pero', dato che ogni versione puo'
+tradurre qualche parte del linguaggio che la precedente non poteva
+tradurre e che le versioni successive potranno usare tali parti del
+linguaggio, puo' succedere che non potra' tradurre quelle
+ulteriormente successive.
+
+Ad esempio, la versione trpc2 puo' tradurre sicuramente trpc3, ma
+non e' detto che potra' tradurre trpc4; trpc3 potra' tradurre trpc4,
+e cosi' via...
+
+Ovviamente non faccio una release dopo ogni singola modifica al
+compilatore (e al supporto), quindi, ad esempio, capitera' che
+rilasci la versione trpc2 e successivamente la trpc5, ma non le
+intermedie.
+
+Quindi, ogni volta che avete voglia di aggiornare, dovrete
+ricompilare da zero sia le nuove librerie di supporto che il
+compilatore e sovrascriverli alle versioni precedenti.
+
+
+
+Ringraziamenti
+--------------
+
+Un ringraziamento particolare alle seguenti persone:
+
+* Gabriele Marcelli (compilazioni e test sotto Mac OS X)
+
+* giu73 (test, segnalazioni bug)
+
+* Jean Meslier (test, suggerimenti)
+
+* buzzqw (test)
+
+* xemertix (test)
+
+* HoHoHo (test, debugging, suggerimenti)
+
+* Stefano Balocco (makefile, pacchetti deb)
+
+* Marainos (test, suggerimenti, pacchetti deb)
+
+* Liander (compilazioni e test sotto Max OS X, debugging)
+
+Vi ringrazio per la collaborazione e per i preziosi feedback :-)
+
+fsinapsi@yahoo.it
+

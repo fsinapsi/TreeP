@@ -1,0 +1,87 @@
+;;;
+;;; mp3split.trp
+;;; illustra le funzioni della libreria libtrpaud
+;;; spezza un file MP3 o AC3 in due parti
+;;;
+
+(defstart mp3split)
+
+(defnet usage ()
+        (print "uso: " (argv 0) " <path> <seconds>" nl)
+        (exit -1) )
+
+(defnet mp3split ()
+        (deflocal ipath opath1 opath2 s f g m t pos)
+
+        (if (<> (argc) 3)
+        then    (usage) )
+
+        (set ipath (argv 1))
+
+        (alt    (seq    (search "." ipath t (maxint))
+                        (set s (sub t (maxint) ipath))
+                        (set t (sub 0 t ipath)) )
+                (seq    (set s "")
+                        (set t ipath) ))
+        (set opath1 (+ t "-1" s))
+        (set opath2 (+ t "-2" s))
+
+        (if (or (pathexists opath1)
+                (pathexists opath2) )
+        then    (print "i file di output esistono" nl)
+                (exit -2) )
+
+        (set s (str->num (argv 2)))
+        (if (= s undef)
+        then    (print "errore di sintassi" nl)
+                (exit -3) )
+
+        (set f (fopenro ipath))
+        (if (= f undef)
+        then    (print ipath ": file non trovato" nl)
+                (exit -4) )
+
+        ;(set m (aud-create f 3))
+        (set m (aud-create f))
+
+        (set t 0)
+        (set pos 0)
+        (opt*   (aud-parse-step m)
+                (set t (aud-duration m))
+                (< t s)
+                (set pos (- (fpos f) (aud-buf-act m))) )
+
+        (if (= (aud-codec m) undef)
+        then    (close m f)
+                (print ipath ": file non riconosciuto" nl)
+                (exit -5) )
+
+        (if (>= (- s t) (abs (- (aud-duration m) s)))
+        then    (set t (aud-duration m))
+                (set pos  (- (fpos f) (aud-buf-act m))) )
+
+        (close m)
+
+        (print t " <-> " pos nl)
+
+        (set g (fcreate opath1))
+        (<> g undef)
+        (fsetpos 0 f)
+        (fcopy f g pos)
+        (close g)
+
+        (set g (fcreate opath2))
+        (<> g undef)
+        (fcopy f g (- (length f) pos))
+        (close g) )
+
+(defnet fcopy (fsrc fdst cnt)
+        (deflocal r)
+
+        (set r (raw 65536))
+        (while (> cnt 0) do
+                (set cnt (- cnt (raw-write r fdst (raw-read r fsrc (min (length r) cnt))))) )
+        (close r) )
+
+
+

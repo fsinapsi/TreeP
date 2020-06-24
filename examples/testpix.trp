@@ -1,0 +1,27 @@
+
+(defstart testpix)
+
+(defnet testpix ()
+        (deflocal pix)
+
+        (set pix (pix-load "pics/heckert_gnu.small.png"))
+        (<> pix undef)
+
+        (gcry-stego-insert pix "una pass phrase di prova" "messaggio segreto!")
+
+        (print "salvo l'immagine `testpix.png'" nl)
+        (pix-save-png pix "testpix.png")
+        (close pix)
+
+        (set pix (pix-load "testpix.png"))
+        (<> pix undef)
+
+        (print (gcry-stego-extract pix "una pass phrase di pr") nl)
+        (print (gcry-stego-extract pix "una pass phrase di pro") nl)
+        (print (gcry-stego-extract pix "una pass phrase di prov") nl)
+        (print (gcry-stego-extract pix "una pass phrase di prova") nl)
+
+        (close pix) )
+
+
+

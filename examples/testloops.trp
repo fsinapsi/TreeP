@@ -1,0 +1,113 @@
+;;;
+;;; testloops.trp
+;;; questo programma illustra i costrutti del linguaggio che permettono
+;;; di eseguire iterativamente un gruppo di test
+;;;
+
+(defstart testloops)
+
+(defnet testloops ()
+        (test-while)
+        (test-for) )
+
+(defnet test-while ()
+        (deflocal i)
+
+        (print nl "-- test del costrutto 'while' --" nl)
+
+        (print nl "stampa gli interi da 0 a 9:" nl)
+
+        (set i 0)
+        (while (< i 10) do
+                (print i nl)
+                (set i (+ i 1)) ))
+
+(defnet test-for ()
+        (deflocal i)
+
+        (print nl "-- test del costrutto 'for' --" nl)
+
+        (print nl "stampa in ordine inverso gli interi da 35! a 35!+20 (step=3):" nl)
+
+        ; la parola chiave 'rev' va inserita appena prima di 'do';
+        ; specificando 'rev' vengono scanditi gli stessi elementi che
+        ; si avrebbero senza 'rev', ma in ordine inverso;
+        ; la parola chiave 'step' va inserita dopo l`estremo superiore
+        ; (se viene omessa, si assume per default step=1) e puo` essere
+        ; usata solo se si scandisce un intervallo di interi (come in
+        ; questo caso)
+
+        (for i in (fac 35) .. (+ (fac 35) 20) step 3 rev do
+                (print i nl) )
+
+        ; l`espressione (for-pos) deve comparire all`interno di un 'for'
+        ; e il suo valore e` il numero intero (a partire da 0) che indica
+        ; il passo di iterazione del ciclo;
+        ; in caso di cicli 'for' annidati uno dentro l`altro, (for-pos)
+        ; indica il passo del ciclo piu` interno
+
+        (print nl "stampa in ordine inverso gli elementi di una lista:" nl)
+
+        (for i in (list "pere" "mele" "banane" "ciliegie") rev do
+                (print "valore di i al passo " (for-pos) ": " i nl) )
+
+        (print nl "stampa gli elementi di una coda:" nl)
+
+        (set i (queue))
+        (queue-put i 45)
+        (queue-put i 38)
+        (queue-put i 26)
+        (for i in i do
+                (print "valore di i al passo " (for-pos) ": " i nl) )
+
+        (print nl "stampa gli elementi di un array in ordine inverso:" nl)
+
+        (set i (array 3))
+        (set <i 0> 45)
+        (set <i 1> 38)
+        (set <i 2> 26)
+        (for i in i rev do
+                (print "valore di i al passo " (for-pos) ": " i nl) )
+
+        (print nl "stampa gli elementi di un array associativo:" nl)
+
+        (set i (assoc))
+        (set <i "name"> "Smith")
+        (set <i "height"> 180)
+        (for i in i do
+                (print "valore di i al passo " (for-pos) ": " i nl) )
+
+        (print nl "stampa una stringa decorata:" nl)
+
+        (print '~')
+        (for i in "IRUGUA" rev do
+                (print i '~') )
+        (print nl)
+
+        (print nl "stampa un numero decorato:" nl)
+
+        (print '~')
+        (for i in 458323829014 do
+                (print i '~') )
+        (print nl)
+
+        (print nl "stampa un numero decorato:" nl)
+
+        ; notare la differenza con il caso precedente:
+        ; questa volta viene scandito un intervallo di interi
+        ; mentre prima veniva scandita la sequenza delle cifre
+        ; del numero stesso
+
+        (print '~')
+        (for i in 458323829014 .. 458323829014 do
+                (print i '~') )
+        (print nl)
+
+        (print nl "stampa un intervallo di caratteri:" nl)
+
+        (for i in 'd' .. 's' rev do
+                (print i) )
+        (print nl) )
+
+
+

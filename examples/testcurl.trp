@@ -1,0 +1,84 @@
+;;;
+;;; testcurl.trp
+;;;
+
+(include "common.tin")
+
+(defstart testcurl)
+
+(defun url-base () "http://fsinapsi.altervista.org/")
+(defun url-base-trp () (+ (url-base) "code/treep/"))
+
+(defnet usage ()
+        (print "uso: " (argv 0) " i | d | p" nl)
+        (exit -1) )
+
+(defnet testcurl ()
+        (case (argv 1) of
+                "i"     (fsinapsi-info)
+                "d"     (fsinapsi-download "trp")
+                "p"     (fsinapsi-download "arch")
+                default (usage) ))
+
+;;;
+;;;
+;;;
+
+(defnet fsinapsi-info ()
+        (deflocal c url date)
+
+        (set c (curl-easy-init))
+        (<> c undef)
+        (curl-easy-setopt-followlocation c true)
+        (curl-easy-setopt-maxredirs c 10)
+        (curl-easy-setopt-errorbuffer c true)
+        (curl-easy-setopt-filetime c true)
+        (curl-easy-setopt-nobody c true)
+        (print nl
+               "Ultime modifiche `fsinapsi.altervista.org'" nl
+               "==========================================" nl
+               nl )
+        (for url in (list "news.html"
+                          "code/treep/index.html"
+                          "code/lescienze/index.html" 
+                          "code/imdb/index.html"
+                          "code/avinaptic/index.html" ) do
+                (curl-easy-setopt-url c (+ (url-base) url))
+                (alt    (seq    (curl-easy-perform c)
+                                (set date (curl-easy-getinfo-filetime c))
+                                (print date " -> " url
+                                       (if (> date (cdate)) " (UPDATED)" "") nl ))
+                        (print "errore: " (curl-easy-getinfo-errorbuffer c) nl) ))
+        (close c) )
+
+;;;
+;;;
+;;;
+
+(defnet fsinapsi-download (base)
+        (deflocal c)
+
+        (set c (curl-easy-init))
+        (<> c undef)
+        (curl-easy-setopt-followlocation c true)
+        (curl-easy-setopt-maxredirs c 10)
+        (curl-easy-setopt-errorbuffer c true)
+        (alt    (seq    (fsinapsi-download-int c base)
+                        (fprint (stderr) "download concluso con successo" nl) )
+                (fprint (stderr) "download fallito: " (curl-easy-getinfo-errorbuffer c) nl) )
+        (close c) )
+
+(defnet fsinapsi-download-int (c base)
+        (deflocal name i)
+
+        (download-as-string-curl c (+ (url-base-trp) "index.html") name)
+        (search (+ base "-20") name i)
+        (set name (sub i (maxint) name))
+        (search "zip" name i)
+        (set name (sub 0 (+ i 3) name))
+        (download-as-file-curl c (+ (url-base-trp) name) name) )
+
+;;;
+;;;
+;;;
+

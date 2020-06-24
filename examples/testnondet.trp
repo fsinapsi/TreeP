@@ -1,0 +1,153 @@
+;
+; testnondet.trp
+; questo programma illustra i costrutti non deterministici del
+; linguaggio (alt, opt, opt*)
+;
+
+(defstart testnondet)
+
+(defnet testnondet ()
+        (opt (test-alt))
+        (test-opt)
+        (test-opt*) )
+
+(defnet test-alt ()
+        (deflocal i)
+
+        (print nl "-- test del costrutto 'alt' --" nl nl)
+
+        ; assegnamo ad i il valore 5
+
+        (set i 5)
+
+        ; quale valore verra` stampato? (questa e` facile...)
+
+        (print "valore di i prima di 'alt': " i nl)
+
+        (alt
+                ; questa e` la prima alternativa
+
+                (seq    (set i 12)
+
+                        ; quale valore verra` stampato?
+
+                        (print "valore di i nella prima alternativa: " i nl)
+
+                        ; forziamo il fallimento della prima alternativa,
+                        ; quindi verra` tentata anche la seconda alternativa
+                        ; (se, invece, non fosse fallita, tutte le successive
+                        ; alternative sarebbero state ignorate)
+
+                        (fail) )
+
+                ; questa e` la seconda alternativa
+
+                (seq    ; quale valore verra` stampato?
+
+                        (print "valore di i nella seconda alternativa: " i nl)
+
+                        ; facciamo fallire anche la seconda alternativa
+
+                        (fail) )
+
+                ; questa e` la terza alternativa
+
+                (set i 18)
+
+                ; questa e` la quarta alternativa
+
+                (set i 42) )
+
+        ; quale valore verra` stampato?
+
+        (print "valore di i dopo 'alt': " i nl)
+
+        ; e se tutte le alternative fallissero, quale valore
+        ; verrebbe stampato? Nessuno! Perche` tutto cio` che segue (nella
+        ; stessa sequenza) il costrutto 'alt' non verrebbe eseguito...
+
+        (skip) )
+
+(defnet test-opt ()
+        (deflocal i)
+
+        (print nl "-- test del costrutto 'opt' --" nl nl)
+
+        ; il costrutto 'opt' impedisce il fallimento di una sequenza di test
+        ; quindi, se vogliamo essere sicuri che un pezzo di codice non
+        ; fallisca, basta che gli mettiamo 'opt' davanti;
+
+        (opt    (fail)
+
+                ; in questo caso, la print non viene eseguita perche` la
+                ; sequenza di cui fa parte fallisce sicuramente prima della
+                ; sua esecuzione; tuttavia, esternamente ad 'opt' non si ha
+                ; fallimento ('opt' sta per 'optional', cioe`: se la sequenza
+                ; che racchiude puo` essere eseguita, allora viene eseguita,
+                ; altrimenti non importa: si procede lo stesso).
+
+                (print "questo e' codice irraggiungibile" nl) )
+
+        ; quindi, se vogliamo commentare un pezzo di codice, un modo strambo
+        ; (ma efficace) per farlo e` quello di farlo precedere da "(opt(fail)";
+
+        ; assegnamo ad i il valore 36
+
+        (set i 36)
+
+        (opt    (set i 18)
+                (fail) )
+
+        ; quale valore verra` stampato?
+
+        (print "valore di i dopo 'opt' non eseguito per intero: " i nl)
+
+        (opt    (set i 85))
+
+        ; quale valore verra` stampato?
+
+        (print "valore di i dopo 'opt' eseguito per intero: " i nl)
+
+        ; si noti che se la sequenza opzionale viene eseguita per intero,
+        ; gli effetti prodotti sono gli stessi che si sarebbero avuti se la
+        ; sequenza non fosse stata opzionale
+
+        (skip) )
+
+(defnet test-opt* ()
+        (deflocal i)
+
+        (print nl "-- test del costrutto 'opt*' --" nl nl)
+
+        ; il test 'opt*' e` simile a 'opt' in quanto non fallisce mai,
+        ; tuttavia la sequenza opzionale non viene eseguita una sola
+        ; volta, ma viene continuamente eseguita finche` non fallisce
+        ; (la sequenza fallisce se e solo se fallisce un test
+        ; appartenente alla sequenza); quindi, quando la sequenza
+        ; fallisce, il test 'opt*' si conclude (con successo)
+
+        (set i 0)
+        (opt*   (set i (+ i 1))
+
+                ; il prossimo test ha successo se e solo se i < 10
+                ; quindi fallira` non appena i raggiunge il valore 10
+
+                (< i 10)
+
+                (print "valore di i all'interno di opt*: " i nl) )
+
+        ; quale valore verra` stampato? (questa e` piu` difficile...)
+        ; per rispondere a questa domanda, si riconsideri il test 'opt':
+        ; cosa succedeva alla variabile i quando la sequenza opzionale
+        ; falliva (e non veniva eseguita per intero)?
+        ; In questo caso la situazione e` analoga: quando il test (< i 10)
+        ; fallisce, la sequenza non viene eseguita per intero, quindi
+        ; il precedente aggiornamento della variabile i (quello che gli
+        ; assegna il valore 10) non ha effetto...
+
+        (print "valore di i dopo 'opt*': " i nl)
+
+        (skip) )
+
+
+

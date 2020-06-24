@@ -1,0 +1,1341 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defglobal
+        _expr_code
+        _expr_const_enabled
+        _expr_const
+        _expr_const_val
+        )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(include "expr-gtk.tin")
+(include "expr-iup.tin")
+(include "expr-thread.tin")
+(include "expr-license.tin")
+(include "expr-gcrypt.tin")
+(include "expr-chess.tin")
+(include "expr-suf.tin")
+(include "expr-aud.tin")
+(include "expr-vid.tin")
+(include "expr-avi.tin")
+(include "expr-id3tag.tin")
+(include "expr-magic.tin")
+(include "expr-exif.tin")
+(include "expr-quirc.tin")
+(include "expr-pix.tin")
+(include "expr-curl.tin")
+(include "expr-mysql.tin")
+(include "expr-sqlite3.tin")
+(include "expr-wn.tin")
+(include "expr-avcodec.tin")
+(include "expr-cv.tin")
+(include "expr-vlfeat.tin")
+(include "expr-mgl.tin")
+(include "expr-lept.tin")
+(include "expr-cgraph.tin")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr ()
+        (set _expr_const_enabled false)
+        (set _expr_code "")
+        (expr-basic)
+        (if (last-pass)
+        then    (fprint _dst _expr_code) ))
+
+(defnet exprseq (a b pre post)
+        (set _expr_const_enabled false)
+        (set _expr_code "")
+        (exprseq-basic a b pre post)
+        (if (last-pass)
+        then    (fprint _dst _expr_code) ))
+
+(defnet expr-ident ()
+        (set _expr_const_enabled false)
+        (set _expr_code "")
+        (expr-ident-basic)
+        (if (last-pass)
+        then    (fprint _dst _expr_code) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-basic ()
+        (set _expr_const false)
+        (next-token)
+        (case _token of
+                "identificatore"        (expr-ident-basic)
+                "carattere"             (expr-constant _tokenval)
+                "stringa"               (expr-constant _tokenval)
+                "numero"                (expr-constant _tokenval)
+                "dollaro"               (expr-multilang)
+                "aperta"                (expr-func)
+                "apertaquadra"          (expr-static-list)
+                "relop"                 (if (= _tokenval "min")
+                                        then    (expr-nth)
+                                        else    (syntax-error) )
+                "arop"                  (if (= _tokenval "minus")
+                                        then    (expr-neg)
+                                        else    (syntax-error) )
+                default                 (syntax-error) ))
+
+(defnet exprseq-basic (a b pre post)
+        (deflocal nargs)
+
+        (exprseq-basic-basic a b pre post nargs) )
+
+(defnet exprseq-basic-basic (a b pre post @nargs)
+        (deflocal const-state q code j)
+
+        (set const-state _expr_const_enabled)
+        (if _expr_const_enabled
+        then    (set q (queue))
+        else    (if (and (last-pass) (<> pre undef))
+                then    (set _expr_code (+ _expr_code pre)) ))
+        (set @nargs 0)
+        (repeat (next-token)
+                until (= _token "chiusa")
+                (<> @nargs b)
+                (if (> @nargs 0)
+                then    (expr-virgola) )
+                (token-retract)
+                (if _expr_const_enabled
+                then    (set code _expr_code)
+                        (set _expr_code "")
+                        (expr-basic)
+                        (if _expr_const
+                        then    (queue-put q _expr_const_val)
+                                (set _expr_code code)
+                        else    (set _expr_const_enabled false)
+                                (set j _expr_code)
+                                (set _expr_code code)
+                                (set code j)
+                                (if (and (last-pass) (<> pre undef))
+                                then    (inc _expr_code pre) )
+                                (for j in q do
+                                        (if (> (for-pos) 0)
+                                        then    (expr-virgola) )
+                                        (expr-constant j) )
+                                (if (> @nargs 0)
+                                then    (expr-virgola) )
+                                (if (last-pass)
+                                then    (inc _expr_code code) ))
+                else    (expr-basic) )
+                (inc @nargs) )
+        (>= @nargs a)
+        (if _expr_const_enabled
+        then    (set _expr_const_val q)
+                (set _expr_const true)
+        else    (if (last-pass)
+                then    (if (or (= b undef) (and (= @nargs a) (= b (+ a 1))))
+                        then    (inc _expr_code (if (> @nargs 0) "," "") "NULL") )
+                        (if (<> post undef)
+                        then    (inc _expr_code post) ))
+                (set _expr_const false)
+                (set _expr_const_enabled const-state) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-ident-basic ()
+        (deflocal i)
+
+        (alt    (seq    (alt    (seq    (= _tokenval "undef")
+                                        (set i undef) )
+                                (seq    (= _tokenval "nil")
+                                        (set i nil) )
+                                (seq    (= _tokenval "true")
+                                        (set i true) )
+                                (seq    (= _tokenval "false")
+                                        (set i false) )
+                                (seq    (= _tokenval "nl")
+                                        (set i nl) ))
+                        (expr-constant i) )
+                (seq    (alt    (seq    (in _tokenval _act_params i)
+                                        (set i (sprint (if (lmatch _tokenval "@") '*' "") 'i' i)) )
+                                (seq    (in _tokenval _act_locals i)
+                                        (set i (sprint 'j' i)) )
+                                (seq    (set i <_glb _tokenval>)
+                                        (<> i undef)
+                                        (if (last-pass)
+                                        then    (set i (sprint "_glb[" i ']'))
+                                        else    (assoc-inc _act_calls (+ "glb_" _tokenval)) )))
+                        (if (last-pass)
+                        then    (set _expr_code (+ _expr_code i)) ))
+                (seq    ; potrebbe trattarsi di una globale
+                        ; che viene dichiarata successivamente
+                        (= _pass 1)
+                        (lmatch _tokenval "_")
+                        (assoc-inc _act_calls (+ "glb_" _tokenval)) )
+                (error (+ _tokenval ": undeclared symbol")) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-multilang ()
+        (deflocal code i)
+
+        (set _expr_const_enabled true)
+        (set code _expr_code)
+        (set _expr_code "")
+        (expr-basic)
+        (if (not _expr_const)
+        then    (error "multiple language expression must be constant") )
+        (set _expr_const_enabled false)
+        (queue-append _ml_cst _expr_const_val)
+        (in _expr_const_val _ml_cst i)
+        (expr-constant _expr_const_val)
+        (if (last-pass)
+        then    (set _expr_code (+ code "trp_const(_lang_sel[_lang][" i "])")) )
+        (set _expr_const false) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-constant (cst)
+        (deflocal i)
+
+        (if _expr_const_enabled
+        then    (set _expr_const_val cst)
+                (set _expr_const true)
+        else    (set _expr_const false)
+                (if (not (last-pass))
+                then    (if (not (or (charp cst)
+                                     (in cst [ undef nil true false nl "" 0 1 10 (maxint) (minint) ]) ))
+                        then    (if (in cst _cst)
+                                then    (if (or (rawp cst) (pixp cst))
+                                        then    (close cst) )
+                                else    (queue-put _cst cst) ))
+                else    (if (charp cst)
+                        then    (inc _expr_code "trp_char(" (length cst) ')')
+                        else    (case cst of
+                                        undef   (inc _expr_code "UNDEF")
+                                        nil     (inc _expr_code "NIL")
+                                        true    (inc _expr_code "TRP_TRUE")
+                                        false   (inc _expr_code "TRP_FALSE")
+                                        nl      (inc _expr_code "NL")
+                                        ""      (inc _expr_code "EMPTYCORD")
+                                        0       (inc _expr_code "ZERO")
+                                        1       (inc _expr_code "UNO")
+                                        10      (inc _expr_code "DIECI")
+                                        (maxint)(inc _expr_code "TRP_MAXINT")
+                                        (minint)(inc _expr_code "TRP_MININT")
+                                        default (seq    (in cst _cst i)
+                                                        (if (or (rawp cst) (pixp cst))
+                                                        then    (close cst) )
+                                                        (inc _expr_code "trp_const(" i ')') ))))))
+
+(defnet expr-constant-warning-if-undef (cst)
+        (if (and (= cst undef) (not (last-pass)))
+        then    (print "warning: undefined value detected (likely a bug)" nl
+                       "         in " <_fnames 0> nl
+                       "         line " (fposline _f) nl ))
+        (expr-constant cst) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-virgola ()
+        (if (and (not _expr_const_enabled) (last-pass))
+        then    (inc _expr_code ",") ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-func ()
+        (deflocal const-state)
+
+        (set const-state _expr_const_enabled)
+        (set _expr_const_enabled false)
+        (next-token)
+        (case _token of
+                "arop"          (case _tokenval of
+                                        "mod"   (expr-static-fun const-state 2 2 "math_mod")
+                                        default (expr-arop const-state _tokenval) )
+                "relop"         (expr-relop const-state _tokenval)
+                "identificatore"(alt    (expr-func-basic const-state _tokenval)
+                                        (expr-gtk _tokenval)
+                                        (expr-iup _tokenval)
+                                        (expr-thread _tokenval)
+                                        (expr-license _tokenval)
+                                        (expr-gcrypt _tokenval)
+                                        (expr-chess _tokenval)
+                                        (expr-suf _tokenval)
+                                        (expr-aud _tokenval)
+                                        (expr-vid _tokenval)
+                                        (expr-avi _tokenval)
+                                        (expr-id3tag _tokenval)
+                                        (expr-magic _tokenval)
+                                        (expr-exif _tokenval)
+                                        (expr-quirc _tokenval)
+                                        (expr-pix const-state _tokenval)
+                                        (expr-curl _tokenval)
+                                        (expr-mysql _tokenval)
+                                        (expr-sqlite3 _tokenval)
+                                        (expr-wn _tokenval)
+                                        (expr-avcodec _tokenval)
+                                        (expr-cv _tokenval)
+                                        (expr-vlfeat _tokenval)
+                                        (expr-mgl _tokenval)
+                                        (expr-lept _tokenval)
+                                        (expr-cgraph _tokenval)
+                                        (expr-user-defined const-state _tokenval) )
+                default         (syntax-error) )
+        (set _expr_const_enabled const-state) )
+
+(defnet expr-func-basic (const-state func)
+        (case func of
+                "call"          (exprseq-basic 1 undef "trp_funptr_call(" ')')
+                "heap-size"     (exprseq-basic 0 0 "trp_heap_size(" ')')
+                "free-bytes"    (exprseq-basic 0 0 "trp_free_bytes(" ')')
+                "endianness"    (exprseq-basic 0 0 "trp_endianness(" ')')
+                "multithreaded" (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant (thread))
+                                        (set _expr_const_enabled false) )
+                "thread-cur"    (seq    (chiusa)
+                                        (if (thread)
+                                        then    (if (last-pass)
+                                                then    (set _expr_code (+ _expr_code "trp_thread_cur()")) )
+                                        else    (set _expr_const_enabled const-state)
+                                                (expr-constant 1)
+                                                (set _expr_const_enabled false) ))
+                "thread-max"    (seq    (chiusa)
+                                        (if (thread)
+                                        then    (if (last-pass)
+                                                then    (set _expr_code (+ _expr_code "trp_thread_max()")) )
+                                        else    (set _expr_const_enabled const-state)
+                                                (expr-constant 1)
+                                                (set _expr_const_enabled false) ))
+                "argc"          (exprseq-basic 0 0 "trp_argc(" ')')
+                "argv"          (exprseq-basic 1 1 "trp_argv(" ')')
+                "min"           (exprseq-basic 1 undef "trp_min(" ')')
+                "max"           (exprseq-basic 1 undef "trp_max(" ')')
+
+                "cmacro"        (seq    (next-token)
+                                        (if (<> _token "identificatore")
+                                        then    (error "`cmacro' requires a C macro") )
+                                        (if (last-pass)
+                                        then    (set _expr_code (+ _expr_code "trp_sig64(" _tokenval ")")) )
+                                        (chiusa) )
+
+                ;"trp2ptr"       (exprseq-basic 1 1 "trp_trp2ptr(" ')')
+                ;"ptr2trp"       (exprseq-basic 1 1 "trp_ptr2trp(" ')')
+
+                "nostatic"      (expr-nostatic)
+
+                "or"            (expr-static-fun const-state 1 undef "or")
+                "and"           (expr-static-fun const-state 1 undef "and")
+                "not"           (expr-static-fun const-state 1 1 "not")
+
+                "typeof"        (expr-static-fun const-state 1 1 "typeof")
+                "typec"         (exprseq-basic 0 0 "trp_typec(" ')')
+                "typev"         (exprseq-basic 1 1 "trp_typev(" ')')
+                "reverse"       (expr-static-fun const-state 1 1 "reverse")
+
+                "integerp"      (exprseq-basic 1 1 "trp_integerp(" ')')
+                "rationalp"     (exprseq-basic 1 1 "trp_rationalp(" ')')
+                "complexp"      (exprseq-basic 1 1 "trp_complexp(" ')')
+                "stringp"       (exprseq-basic 1 1 "trp_stringp(" ')')
+                "rawp"          (exprseq-basic 1 1 "trp_rawp(" ')')
+                "listp"         (exprseq-basic 1 1 "trp_listp(" ')')
+                "booleanp"      (exprseq-basic 1 1 "trp_booleanp(" ')')
+                "charp"         (exprseq-basic 1 1 "trp_charp(" ')')
+                "datep"         (exprseq-basic 1 1 "trp_datep(" ')')
+                "queuep"        (exprseq-basic 1 1 "trp_queuep(" ')')
+                "arrayp"        (exprseq-basic 1 1 "trp_arrayp(" ')')
+                "assocp"        (exprseq-basic 1 1 "trp_assocp(" ')')
+                "treep"         (exprseq-basic 1 1 "trp_treep(" ')')
+                "pixp"          (exprseq-basic 1 1 "trp_pixp(" ')')
+                "threadp"       (exprseq-basic 1 1 "trp_threadp(" ')')
+                "gtkp"          (exprseq-basic 1 1 "trp_gtkp(" ')')
+                "audp"          (exprseq-basic 1 1 "trp_audp(" ')')
+                "vidp"          (exprseq-basic 1 1 "trp_vidp(" ')')
+
+                "eq"            (exprseq-basic 2 2 "TRP_EQP(" ')')
+
+                "length"        (expr-static-fun const-state 1 1 "length")
+                "width"         (expr-static-fun const-state 1 1 "width")
+                "height"        (expr-static-fun const-state 1 1 "height")
+                "nth"           (expr-static-fun const-state 2 2 "nth")
+                "sub"           (expr-static-fun const-state 3 3 "sub")
+                "in"            (expr-in const-state)
+                "for-pos"       (if (= _lastfor undef)
+                                then    (error "(for-pos) is not defined")
+                                else    (chiusa)
+                                        (if (last-pass)
+                                        then    (set _expr_code (+ _expr_code "trp_for_pos(t" _lastfor ')')) ))
+
+                "lang"          (seq    (chiusa)
+                                        (if (last-pass)
+                                        then    (inc _expr_code (if (= (length _ml_cst) 0)"ZERO" "trp_sig64(_lang)")) ))
+
+                "date"          (expr-date const-state)
+                "now"           (exprseq-basic 0 0 "trp_date_now(" ')')
+                "timezone"      (exprseq-basic 0 1 "trp_date_timezone(" ')')
+                "change-timezone"
+                                (exprseq-basic 2 2 "trp_date_change_timezone(" ')')
+                "date-gmt"      (exprseq-basic 1 1 "trp_date_change_timezone(" ",ZERO)")
+                "date-local"    (exprseq-basic 1 1 "trp_date_change_timezone(" ",trp_date_timezone(NULL))")
+                "date-arpa"     (exprseq-basic 1 1 "trp_date_arpa(" ')')
+                "date-ctime"    (exprseq-basic 1 1 "trp_date_ctime(" ')')
+                "date-year"     (exprseq-basic 1 1 "trp_date_year(" ')')
+                "date-month"    (exprseq-basic 1 1 "trp_date_month(" ')')
+                "date-day"      (exprseq-basic 1 1 "trp_date_day(" ')')
+                "date-hours"    (exprseq-basic 1 1 "trp_date_hours(" ')')
+                "date-minutes"  (exprseq-basic 1 1 "trp_date_minutes(" ')')
+                "date-seconds"  (exprseq-basic 1 1 "trp_date_seconds(" ')')
+                "date-usec"     (exprseq-basic 1 1 "trp_date_usec(" ')')
+                "date-wday"     (exprseq-basic 1 1 "trp_date_wday(" ')')
+                "date-s2hhmmss" (exprseq-basic 1 1 "trp_date_s2hhmmss(" ')')
+                "cdate"         (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant <_kv "cdate">)
+                                        (set _expr_const_enabled false) )
+                "cstatic"       (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant _cstatic)
+                                        (set _expr_const_enabled false) )
+                "sysbits"       (exprseq-basic 0 0 "trp_sig64(8*sizeof(void *)" ')')
+                "csysbits"      (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant (sysbits))
+                                        (set _expr_const_enabled false) )
+                "uname"         (exprseq-basic 0 0 "trp_uname(" ')')
+                "cuname"        (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant (uname))
+                                        (set _expr_const_enabled false) )
+
+                "gc-version-major"
+                                (exprseq-basic 0 0 "trp_gc_version_major(" ')')
+                "gc-version-minor"
+                                (exprseq-basic 0 0 "trp_gc_version_minor(" ')')
+
+                "readlink"      (exprseq-basic 1 1 "trp_readlink(" ')')
+                "ipv4-address"  (exprseq-basic 0 0 "trp_ipv4_address(" ')')
+                "lstat-mode"    (exprseq-basic 1 1 "trp_lstat_mode(" ')')
+                "isreg"         (exprseq-basic 1 1 "trp_isreg(" ')')
+                "isdir"         (exprseq-basic 1 1 "trp_isdir(" ')')
+                "ischr"         (exprseq-basic 1 1 "trp_ischr(" ')')
+                "isblk"         (exprseq-basic 1 1 "trp_isblk(" ')')
+                "isfifo"        (exprseq-basic 1 1 "trp_isfifo(" ')')
+                "islnk"         (exprseq-basic 1 1 "trp_islnk(" ')')
+                "issock"        (exprseq-basic 1 1 "trp_issock(" ')')
+                "inode"         (exprseq-basic 1 1 "trp_inode(" ')')
+
+                "int2char"      (expr-static-fun const-state 1 1 "int2char")
+                "int->char"     (expr-static-fun const-state 1 1 "int2char")
+                "cons"          (expr-static-fun const-state 2 2 "cons")
+                "car"           (expr-static-fun const-state 1 1 "car")
+                "cdr"           (expr-static-fun const-state 1 1 "cdr")
+                "list"          (expr-static-fun const-state 0 undef "list")
+                "if"            (expr-if const-state)
+                "utf8-length"   (expr-static-fun const-state 1 1 "cord_utf8_length")
+                "iso->utf8"     (expr-static-fun const-state 1 1 "cord_iso2utf8")
+                "utf8->iso"     (expr-static-fun const-state 1 1 "cord_utf82iso")
+                "koi8-r->utf8"  (expr-static-fun const-state 1 1 "cord_koi8_r2utf8")
+                "greek->utf8"   (expr-static-fun const-state 1 1 "cord_greek2utf8")
+                "windows1252->utf8"
+                                (expr-static-fun const-state 1 1 "cord_windows12522utf8")
+                "str->num"      (expr-static-fun const-state 1 1 "cord_str2num")
+                "search"        (expr-search const-state)
+                "lmatch"        (expr-match const-state 'l')
+                "rmatch"        (expr-match const-state 'r')
+                "ltrim"         (exprseq-basic 1 undef "trp_cord_ltrim(" ')')
+                "rtrim"         (exprseq-basic 1 undef "trp_cord_rtrim(" ')')
+                "max-prefix"    (expr-static-fun const-state 2 2 "cord_max_prefix")
+                "max-prefix-case"
+                                (expr-static-fun const-state 2 2 "cord_max_prefix_case")
+                "max-suffix"    (expr-static-fun const-state 2 2 "cord_max_suffix")
+                "max-suffix-case"
+                                (expr-static-fun const-state 2 2 "cord_max_suffix_case")
+                "tile"          (exprseq-basic 1 undef "trp_cord_tile(" ')')
+                "utf8-tile"     (exprseq-basic 1 undef "trp_cord_utf8_tile(" ')')
+                "utf8-head"     (expr-static-fun const-state 2 2 "cord_utf8_head")
+                "utf8-toupper"  (exprseq-basic 1 undef "trp_cord_utf8_toupper(" ')')
+                "utf8-tolower"  (exprseq-basic 1 undef "trp_cord_utf8_tolower(" ')')
+                "subsequencep"  (expr-static-fun const-state 2 2 "cord_subsequencep")
+                "circular-eq"   (expr-static-fun const-state 2 2 "cord_circular_eq")
+                "hamming-distance"
+                                (expr-static-fun const-state 2 2 "cord_hamming_distance")
+                "edit-distance" (expr-static-fun const-state 2 2 "cord_edit_distance")
+                "protein-weight"(expr-static-fun const-state 1 1 "cord_protein_weight")
+                "weight->amino" (expr-static-fun const-state 1 1 "cord_weight2amino")
+                "alignment-score"
+                                (expr-static-fun const-state 3 4 "cord_alignment_score")
+                "alignment-score-affine"
+                                (expr-static-fun const-state 4 5 "cord_alignment_score_affine")
+                "lcs"           (expr-static-fun const-state 2 2 "cord_lcs")
+                "lcs-length"    (expr-static-fun const-state 2 2 "cord_lcs_length")
+                "edit-alignment"(expr-static-fun const-state 2 2 "cord_edit_alignment")
+                "global-alignment"
+                                (expr-static-fun const-state 3 4 "cord_global_alignment")
+                "global-alignment-affine"
+                                (expr-static-fun const-state 4 5 "cord_global_alignment_affine")
+                "fitting-alignment"
+                                (expr-static-fun const-state 3 4 "cord_fitting_alignment")
+                "global-alignment-score"
+                                (expr-static-fun const-state 3 4 "cord_global_alignment_score")
+                "local-alignment"
+                                (expr-static-fun const-state 3 4 "cord_local_alignment")
+                "local-alignment-affine"
+                                (expr-static-fun const-state 4 5 "cord_local_alignment_affine")
+                "semiglobal-alignment"
+                                (expr-static-fun const-state 3 4 "cord_semiglobal_alignment")
+                "overlap-alignment"
+                                (expr-static-fun const-state 3 4 "cord_overlap_alignment")
+                "explode"       (exprseq-basic 1 1 "trp_cord_explode(" ')')
+                "implode"       (exprseq-basic 1 1 "trp_sprint_list(" ",NULL)")
+                "sprint"        (exprseq-basic 0 undef "trp_sprint(" ')')
+                "sprintl"       (exprseq-basic 1 2 "trp_sprint_list(" ')')
+                "stdin"         (exprseq-basic 0 0 "trp_stdin(" ')')
+                "stdout"        (exprseq-basic 0 0 "trp_stdout(" ')')
+                "stderr"        (exprseq-basic 0 0 "trp_stderr(" ')')
+                "fopenro"       (exprseq-basic 1 1 "trp_file_openro(" ')')
+                "fopenrw"       (exprseq-basic 1 1 "trp_file_openrw(" ')')
+                "fcreate"       (exprseq-basic 1 1 "trp_file_create(" ')')
+                "fopenclient"   (exprseq-basic 2 2 "trp_file_open_client(" ')')
+                "popenr"        (exprseq-basic 1 undef "trp_file_popenr(" ')')
+                "popenw"        (exprseq-basic 1 undef "trp_file_popenw(" ')')
+                "freadchar"     (exprseq-basic 1 1 "trp_read_char(" ')')
+                "freadline"     (exprseq-basic 1 1 "trp_read_line(" ')')
+                "freadstr"      (exprseq-basic 2 2 "trp_read_str(" ')')
+                "freaduint-le"  (exprseq-basic 2 2 "trp_read_uint_le(" ')')
+                "freaduint-be"  (exprseq-basic 2 2 "trp_read_uint_be(" ')')
+                "freadsint-le"  (exprseq-basic 2 2 "trp_read_sint_le(" ')')
+                "freadsint-be"  (exprseq-basic 2 2 "trp_read_sint_be(" ')')
+                "freadfloat-le" (exprseq-basic 2 2 "trp_read_float_le(" ')')
+                "freadfloat-be" (exprseq-basic 2 2 "trp_read_float_be(" ')')
+                "fpos"          (exprseq-basic 1 1 "trp_file_pos(" ')')
+                "fposline"      (exprseq-basic 1 1 "trp_file_pos_line(" ')')
+                "pathexists"    (exprseq-basic 1 1 "trp_pathexists(" ')')
+                "ftime"         (exprseq-basic 1 1 "trp_ftime(" ')')
+                "fsize"         (exprseq-basic 1 1 "trp_fsize(" ')')
+                "getrusage"     (exprseq-basic 0 0 "trp_getrusage(" ')')
+                "getrusage-children"
+                                (exprseq-basic 0 0 "trp_getrusage_children(" ')')
+                "getrusage-thread"
+                                (exprseq-basic 0 0 "trp_getrusage_thread(" ')')
+                "getuid"        (exprseq-basic 0 0 "trp_getuid(" ')')
+                "geteuid"       (exprseq-basic 0 0 "trp_geteuid(" ')')
+                "realpath"      (exprseq-basic 1 1 "trp_realpath(" ')')
+                "cwd"           (exprseq-basic 0 0 "trp_cwd(" ')')
+                "regsearch"     (exprseq-basic 2 3 "trp_regsearch(" ')')
+                "regcomp"       (exprseq-basic 1 2 "trp_regcomp(" ')')
+                "regexec"       (exprseq-basic 2 3 "trp_regexec(" ')')
+                "str-load"      (exprseq-basic 1 1 "trp_cord_load(" ')')
+                "str-load-static"
+                                (expr-str-load-static const-state)
+                "compress"      (expr-static-fun const-state 1 2 "compress")
+                "uncompress"    (expr-static-fun const-state 1 1 "uncompress")
+
+                "array"         (expr-array const-state)
+                "queue"         (exprseq-basic 0 0 "trp_queue(" ')')
+                "queue-get"     (exprseq-basic 1 1 "trp_queue_get(" ')')
+                "stack"         (exprseq-basic 0 0 "trp_stack(" ')')
+                "pop"           (exprseq-basic 1 1 "trp_stack_pop(" ')')
+
+                "tree"          (expr-static-fun const-state 1 undef "tree")
+                "treel"         (expr-static-fun const-state 2 2 "tree_list")
+                "root"          (exprseq-basic 1 1 "trp_tree_root(" ')')
+                "tree-swap"     (exprseq-basic 3 3 "trp_tree_swap(" ')')
+
+                "assoc"         (exprseq-basic 0 0 "trp_assoc(" ')')
+                "assoc-get"     (expr-assoc-get)
+                "assoc-list"    (exprseq-basic 1 1 "trp_assoc_list(" ')')
+                "assoc-root"    (exprseq-basic 1 1 "trp_assoc_root(" ')')
+
+                "fibo"          (exprseq-basic 0 1 "trp_fibo(" ')')
+                "fibo-first"    (exprseq-basic 1 1 "trp_fibo_first(" ')')
+                "fibo-key"      (exprseq-basic 1 1 "trp_fibo_key(" ')')
+                "fibo-obj"      (exprseq-basic 1 1 "trp_fibo_obj(" ')')
+                "fibo-insert"   (exprseq-basic 2 3 "trp_fibo_insert(" ')')
+                "fibo-extract"  (exprseq-basic 1 1 "trp_fibo_extract(" ')')
+
+                "netptr"        (expr-netptr)
+                "funptr"        (expr-funptr)
+
+                "raw"           (exprseq-basic 1 1 "trp_raw(" ')')
+                "raw-mode"      (exprseq-basic 1 1 "trp_raw_mode(" ')')
+                "raw-compression-level"
+                                (exprseq-basic 1 1 "trp_raw_compression_level(" ')')
+                "raw-uncompressed-len"
+                                (exprseq-basic 1 1 "trp_raw_uncompressed_len(" ')')
+                "raw-uncompressed-type"
+                                (exprseq-basic 1 1 "trp_raw_uncompressed_type(" ')')
+                "raw-read"      (exprseq-basic 2 3 "trp_raw_read(" ')')
+                "raw-write"     (exprseq-basic 2 3 "trp_raw_write(" ')')
+                "raw->str"      (expr-static-fun const-state 1 2 "raw2str")
+                "raw-load"      (exprseq-basic 1 1 "trp_raw_load(" ')')
+                "raw-load-static"
+                                (expr-raw-load-static const-state)
+                "system"        (exprseq-basic 1 undef "trp_system(" ')')
+                "directory"     (exprseq-basic 0 1 "trp_directory(" ')')
+                "getenv"        (exprseq-basic 1 1 "trp_getenv(" ')')
+
+                "maxint"        (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant (maxint))
+                                        (set _expr_const_enabled false) )
+                "minint"        (seq    (chiusa)
+                                        (set _expr_const_enabled const-state)
+                                        (expr-constant (minint))
+                                        (set _expr_const_enabled false) )
+                "precision"     (exprseq-basic 0 0 "trp_math_get_prec(" ')')
+                "rndseed"       (exprseq-basic 0 0 "trp_math_get_seed(" ')')
+                "gmp-version"   (exprseq-basic 0 0 "trp_math_gmp_version(" ')')
+                "approximate"   (expr-static-fun const-state 1 1 "math_approximate")
+                "num"           (expr-static-fun const-state 1 1 "math_num")
+                "den"           (expr-static-fun const-state 1 1 "math_den")
+                "re"            (expr-static-fun const-state 1 1 "math_re")
+                "im"            (expr-static-fun const-state 1 1 "math_im")
+                "abs"           (expr-static-fun const-state 1 1 "length")
+                "floor"         (expr-static-fun const-state 1 1 "math_floor")
+                "ceil"          (expr-static-fun const-state 1 1 "math_ceil")
+                "rint"          (expr-static-fun const-state 1 1 "math_rint")
+                "gcd"           (expr-static-fun const-state 1 undef "math_gcd")
+                "lcm"           (expr-static-fun const-state 1 undef "math_lcm")
+                "fac"           (expr-static-fun const-state 1 1 "math_fac")
+                "mfac"          (expr-static-fun const-state 2 2 "math_mfac")
+                "primorial"     (expr-static-fun const-state 1 1 "math_primorial")
+                "bin"           (expr-static-fun const-state 2 2 "math_bin")
+                "fib"           (expr-static-fun const-state 1 1 "math_fib")
+                "lucnum"        (expr-static-fun const-state 1 1 "math_lucnum")
+                "probab-isprime"(expr-static-fun const-state 1 2 "math_probab_isprime")
+                "isprime"       (expr-static-fun const-state 1 1 "math_isprime")
+                "nextprime"     (expr-static-fun const-state 1 1 "math_nextprime")
+                "perfect-power" (expr-static-fun const-state 1 1 "math_perfect_power")
+                "perfect-square"(expr-static-fun const-state 1 1 "math_perfect_square")
+                "random"        (exprseq-basic 1 1 "trp_math_random(" ')')
+                "div"           (expr-static-fun const-state 2 2 "math_div")
+                "sqrt"          (expr-static-fun const-state 1 1 "math_sqrt")
+                "pow"           (expr-static-fun const-state 2 2 "math_pow")
+                "powm"          (expr-static-fun const-state 3 3 "math_powm")
+                "exp"           (expr-static-fun const-state 1 1 "math_exp")
+                "ln"            (expr-static-fun const-state 1 1 "math_ln")
+                "log"           (expr-static-fun const-state 2 2 "math_log")
+                "atan"          (expr-static-fun const-state 1 1 "math_atan")
+                "asin"          (expr-static-fun const-state 1 1 "math_asin")
+                "acos"          (expr-static-fun const-state 1 1 "math_acos")
+                "tan"           (expr-static-fun const-state 1 1 "math_tan")
+                "sin"           (expr-static-fun const-state 1 1 "math_sin")
+                "cos"           (expr-static-fun const-state 1 1 "math_cos")
+                "sift-analyze"  (exprseq-basic 1 1 "trp_sift_analyze(" ')')
+                default         (fail) ))
+
+(defnet expr-user-defined (const-state name)
+        (deflocal l i)
+
+        (set l <_const_fun name>)
+        (if (= l undef)
+        then    (if (last-pass)
+                then    (set i <_fun name>)
+                        (if (= i undef)
+                        then    (error (+ name ": undefined function")) )
+                        (set l (length (cdr i)))
+                        (alt    (exprseq-basic l l (+ "fun_" (car i) "(") ')')
+                                (error (+ "number of arguments does not match " \
+                                          "definition of function `" name "'")) )
+                else    (exprseq-basic 0 undef undef undef)
+                        (assoc-inc _act_calls (+ "fun_" name)) )
+        else    (skip-element)
+                (set _expr_const_enabled const-state)
+                (expr-constant (if (= l _const_fun) undef l))
+                (set _expr_const_enabled false) ))
+
+(defnet expr-in (const-state)
+        (if (last-pass)
+        then    (inc _expr_code "trp_in_func(") )
+        (expr-basic)
+        (expr-virgola)
+        (expr-basic)
+        (expr-virgola)
+        (next-token)
+        (if (= _token "intervallo")
+        then    (expr-basic)
+                (chiusa)
+        else    (= _token "chiusa")
+                (if (last-pass)
+                then    (inc _expr_code "NULL") ))
+        (if (last-pass)
+        then    (inc _expr_code ")") )
+        (set _expr_const false) )
+
+(defnet expr-if (const-state)
+        (deflocal code)
+
+        (set code _expr_code)
+        (set _expr_code "")
+        (set _expr_const_enabled _expr_const_optimize)
+        (expr-basic)
+        (if _expr_const
+        then    (if (not (booleanp _expr_const_val))
+                then    (error "`if' requires a boolean expression") )
+                (set _expr_code code)
+                (set _expr_const_enabled const-state)
+                (if _expr_const_val
+                then    (expr-basic)
+                        (skip-expr)
+                else    (skip-expr)
+                        (expr-basic)
+                (set _expr_const_enabled false) )
+        else    (set _expr_const_enabled false)
+                (set _expr_code (+ code "(" _expr_code "==TRP_TRUE)?("))
+                (expr-basic)
+                (if (last-pass)
+                then    (inc _expr_code "):(") )
+                (expr-basic)
+                (if (last-pass)
+                then    (inc _expr_code ")") )
+                (set _expr_const false) )
+        (chiusa) )
+
+(defnet expr-search (const-state)
+        (deflocal ignorecase)
+
+        (next-token)
+        (if (and (= _token "identificatore") (= _tokenval "case"))
+        then    (set ignorecase 1)
+        else    (set ignorecase 0)
+                (token-retract) )
+        (set _expr_const_enabled _expr_const_optimize)
+        (exprseq-basic 2 2 (sprint "trp_cord_search_func(" ignorecase ',') ')')
+        (if _expr_const
+        then    (set _expr_const_enabled const-state)
+                (expr-constant-warning-if-undef
+                        (if (= ignorecase 1)
+                                (search case <_expr_const_val 0> <_expr_const_val 1>)
+                                (search <_expr_const_val 0> <_expr_const_val 1>) )))
+        (set _expr_const_enabled false) )
+
+(defnet expr-match (const-state direction)
+        (deflocal ignorecase)
+
+        (next-token)
+        (if (and (= _token "identificatore") (= _tokenval "case"))
+        then    (set ignorecase 1)
+        else    (set ignorecase 0)
+                (token-retract) )
+        (exprseq-basic 2 undef (sprint "trp_cord_" direction "match_func(" ignorecase ',') ')'))
+
+(defnet expr-array (const-state)
+        (if (last-pass)
+        then    (inc _expr_code "trp_array_multi(") )
+        (next-token)
+        (if (and (= _token "identificatore") (= _tokenval "default"))
+        then    (expr-basic)
+        else    (token-retract)
+                (if (last-pass)
+                then    (inc _expr_code "UNDEF") ))
+        (exprseq-basic 1 undef "," ')'))
+
+(defnet expr-str-load-static (const-state)
+        (deflocal str i)
+
+        (set _expr_const_enabled true)
+        (expr-basic)
+        (if (not _expr_const)
+        then    (error "`str-load-static' requires a path") )
+        (set str (str-load (search-default-path _expr_const_val)))
+        (if (= str undef)
+        then    (error (+ "`str-load-static': cant't load a static string from " _expr_const_val)) )
+        (chiusa)
+        (set _expr_const_enabled const-state)
+        (expr-constant str)
+        (set _expr_const_enabled false) )
+
+(defnet expr-raw-load-static (const-state)
+        (deflocal raw i)
+
+        (set _expr_const_enabled true)
+        (expr-basic)
+        (if (not _expr_const)
+        then    (error "`raw-load-static' requires a path") )
+        (set raw (raw-load (search-default-path _expr_const_val)))
+        (if (= raw undef)
+        then    (error (+ "`raw-load-static': cant't load a static raw from " _expr_const_val)) )
+        (chiusa)
+        (set _expr_const_enabled const-state)
+        (expr-constant raw)
+        (set _expr_const_enabled false) )
+
+(defnet expr-assoc-get ()
+        (deflocal code a)
+
+        (set code _expr_code)
+        (set _expr_code "")
+        (expr-basic)
+        (set a _expr_code)
+        (repeat (set _expr_code "")
+                (expr-basic)
+                (if (last-pass)
+                then    (set a (+ "trp_assoc_get(" a ',' _expr_code ')')) )
+                (next-token)
+                until (= _token "chiusa")
+                (token-retract) )
+        (set _expr_code (+ code a))
+        (set _expr_const false) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-netptr ()
+        (deflocal i)
+
+        (next-token)
+        (if (<> _token "identificatore")
+        then    (error "identifier expected") )
+        (set i <_netptr _tokenval>)
+        (if (last-pass)
+        then    (inc _expr_code "_netptr[" i ']')
+        else    (if (= i undef)
+                then    (set <_netptr _tokenval> (length _netptr))
+                        (queue-append _cst _tokenval) )
+                (assoc-inc _act_calls (+ "net_" _tokenval)) )
+        (chiusa) )
+
+(defnet expr-funptr ()
+        (deflocal i)
+
+        (next-token)
+        (if (<> _token "identificatore")
+        then    (error "identifier expected") )
+        (set i <_funptr _tokenval>)
+        (if (last-pass)
+        then    (inc _expr_code "_funptr[" i ']')
+        else    (if (= i undef)
+                then    (set <_funptr _tokenval> (length _funptr))
+                        (queue-append _cst _tokenval) )
+                (assoc-inc _act_calls (+ "fun_" _tokenval)) )
+        (chiusa) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-static-fun (const-state a b fun)
+        (deflocal cst i)
+
+        (set _expr_const_enabled _expr_const_optimize)
+        (exprseq-basic a b (+ "trp_" fun "(") ')')
+        (if _expr_const
+        then    (set _expr_const_enabled const-state)
+                (case fun of
+                        "or"                    (seq    (set cst false)
+                                                        (for i in _expr_const_val do
+                                                                (if (not (booleanp i))
+                                                                then    (error "`or' requires a boolean expression") )
+                                                                (set cst (or cst i)) ))
+                        "and"                   (seq    (set cst true)
+                                                        (for i in _expr_const_val do
+                                                                (if (not (booleanp i))
+                                                                then    (error "`and' requires a boolean expression") )
+                                                                (set cst (and cst i)) ))
+                        "not"                   (seq    (set cst (queue-get _expr_const_val))
+                                                        (if (not (booleanp cst))
+                                                        then    (error "`not' requires a boolean expression") )
+                                                        (set cst (not cst)) )
+                        "typeof"                (set cst (typeof (queue-get _expr_const_val)))
+                        "reverse"               (set cst (reverse (queue-get _expr_const_val)))
+                        "length"                (set cst (length (queue-get _expr_const_val)))
+                        "width"                 (set cst (width (queue-get _expr_const_val)))
+                        "height"                (set cst (height (queue-get _expr_const_val)))
+                        "nth"                   (set cst <<_expr_const_val 1>  <_expr_const_val 0>>)
+                        "sub"                   (set cst (sub <_expr_const_val 0>
+                                                              <_expr_const_val 1>
+                                                              <_expr_const_val 2> ))
+                        "cord_utf8_length"      (set cst (utf8-length (queue-get _expr_const_val)))
+                        "cord_iso2utf8"         (set cst (iso->utf8 (queue-get _expr_const_val)))
+                        "cord_utf82iso"         (set cst (utf8->iso (queue-get _expr_const_val)))
+                        "cord_koi8_r2utf8"      (set cst (koi8-r->utf8 (queue-get _expr_const_val)))
+                        "cord_greek2utf8"       (set cst (greek->utf8 (queue-get _expr_const_val)))
+                        "cord_windows12522utf8" (set cst (windows1252->utf8 (queue-get _expr_const_val)))
+                        "cord_str2num"          (set cst (str->num (queue-get _expr_const_val)))
+                        "cord_max_prefix"       (set cst (max-prefix <_expr_const_val 0>
+                                                                     <_expr_const_val 1> ))
+                        "cord_max_prefix_case"  (set cst (max-prefix-case <_expr_const_val 0>
+                                                                          <_expr_const_val 1> ))
+                        "cord_max_suffix"       (set cst (max-suffix <_expr_const_val 0>
+                                                                     <_expr_const_val 1> ))
+                        "cord_max_suffix_case"  (set cst (max-suffix-case <_expr_const_val 0>
+                                                                          <_expr_const_val 1> ))
+                        "cord_utf8_head"        (set cst (utf8-head <_expr_const_val 0>
+                                                                    <_expr_const_val 1> ))
+                        "cord_subsequencep"     (set cst (subsequencep <_expr_const_val 0>
+                                                                       <_expr_const_val 1> ))
+                        "cord_circular_eq"      (set cst (circular-eq <_expr_const_val 0>
+                                                                      <_expr_const_val 1> ))
+                        "cord_hamming_distance" (set cst (hamming-distance <_expr_const_val 0>
+                                                                           <_expr_const_val 1> ))
+                        "cord_edit_distance"    (set cst (edit-distance <_expr_const_val 0>
+                                                                        <_expr_const_val 1> ))
+                        "cord_protein_weight"   (set cst (protein-weight (queue-get _expr_const_val)))
+                        "cord_weight2amino"     (set cst (weight->amino (queue-get _expr_const_val)))
+                        "cord_alignment_score"  (if (= (length _expr_const_val) 3)
+                                                then    (set cst (alignment-score <_expr_const_val 0>
+                                                                                  <_expr_const_val 1>
+                                                                                  <_expr_const_val 2> ))
+                                                else    (set cst (alignment-score <_expr_const_val 0>
+                                                                                  <_expr_const_val 1>
+                                                                                  <_expr_const_val 2>
+                                                                                  <_expr_const_val 3> )))
+                        "cord_alignment_score_affine"
+                                                (if (= (length _expr_const_val) 4)
+                                                then    (set cst (alignment-score-affine <_expr_const_val 0>
+                                                                                         <_expr_const_val 1>
+                                                                                         <_expr_const_val 2>
+                                                                                         <_expr_const_val 3> ))
+                                                else    (set cst (alignment-score-affine <_expr_const_val 0>
+                                                                                         <_expr_const_val 1>
+                                                                                         <_expr_const_val 2>
+                                                                                         <_expr_const_val 3>
+                                                                                         <_expr_const_val 4> )))
+                        "cord_lcs"              (set cst (lcs <_expr_const_val 0>
+                                                              <_expr_const_val 1> ))
+                        "cord_lcs_length"       (set cst (lcs-length <_expr_const_val 0>
+                                                                     <_expr_const_val 1> ))
+                        "cord_edit_alignment"   (set cst (edit-alignment <_expr_const_val 0>
+                                                                         <_expr_const_val 1> ))
+                        "cord_global_alignment" (if (= (length _expr_const_val) 3)
+                                                then    (set cst (global-alignment <_expr_const_val 0>
+                                                                                   <_expr_const_val 1>
+                                                                                   <_expr_const_val 2> ))
+                                                else    (set cst (global-alignment <_expr_const_val 0>
+                                                                                   <_expr_const_val 1>
+                                                                                   <_expr_const_val 2>
+                                                                                   <_expr_const_val 3> )))
+                        "cord_global_alignment_affine"
+                                                (if (= (length _expr_const_val) 4)
+                                                then    (set cst (global-alignment-affine <_expr_const_val 0>
+                                                                                          <_expr_const_val 1>
+                                                                                          <_expr_const_val 2>
+                                                                                          <_expr_const_val 3> ))
+                                                else    (set cst (global-alignment-affine <_expr_const_val 0>
+                                                                                          <_expr_const_val 1>
+                                                                                          <_expr_const_val 2>
+                                                                                          <_expr_const_val 3>
+                                                                                          <_expr_const_val 4> )))
+                        "cord_fitting_alignment"(if (= (length _expr_const_val) 3)
+                                                then    (set cst (fitting-alignment <_expr_const_val 0>
+                                                                                    <_expr_const_val 1>
+                                                                                    <_expr_const_val 2> ))
+                                                else    (set cst (fitting-alignment <_expr_const_val 0>
+                                                                                    <_expr_const_val 1>
+                                                                                    <_expr_const_val 2>
+                                                                                    <_expr_const_val 3> )))
+                        "cord_global_alignment_score"
+                                                (if (= (length _expr_const_val) 3)
+                                                then    (set cst (global-alignment-score <_expr_const_val 0>
+                                                                                         <_expr_const_val 1>
+                                                                                         <_expr_const_val 2> ))
+                                                else    (set cst (global-alignment-score <_expr_const_val 0>
+                                                                                         <_expr_const_val 1>
+                                                                                         <_expr_const_val 2>
+                                                                                         <_expr_const_val 3> )))
+                        "cord_local_alignment"  (if (= (length _expr_const_val) 3)
+                                                then    (set cst (local-alignment <_expr_const_val 0>
+                                                                                  <_expr_const_val 1>
+                                                                                  <_expr_const_val 2> ))
+                                                else    (set cst (local-alignment <_expr_const_val 0>
+                                                                                  <_expr_const_val 1>
+                                                                                  <_expr_const_val 2>
+                                                                                  <_expr_const_val 3> )))
+                        "cord_local_alignment_affine"
+                                                (if (= (length _expr_const_val) 4)
+                                                then    (set cst (local-alignment-affine <_expr_const_val 0>
+                                                                                         <_expr_const_val 1>
+                                                                                         <_expr_const_val 2>
+                                                                                         <_expr_const_val 3> ))
+                                                else    (set cst (local-alignment-affine <_expr_const_val 0>
+                                                                                         <_expr_const_val 1>
+                                                                                         <_expr_const_val 2>
+                                                                                         <_expr_const_val 3>
+                                                                                         <_expr_const_val 4> )))
+                        "cord_semiglobal_alignment"
+                                                (if (= (length _expr_const_val) 3)
+                                                then    (set cst (semiglobal-alignment <_expr_const_val 0>
+                                                                                       <_expr_const_val 1>
+                                                                                       <_expr_const_val 2> ))
+                                                else    (set cst (semiglobal-alignment <_expr_const_val 0>
+                                                                                       <_expr_const_val 1>
+                                                                                       <_expr_const_val 2>
+                                                                                       <_expr_const_val 3> )))
+                        "cord_overlap_alignment"(if (= (length _expr_const_val) 3)
+                                                then    (set cst (overlap-alignment <_expr_const_val 0>
+                                                                                    <_expr_const_val 1>
+                                                                                    <_expr_const_val 2> ))
+                                                else    (set cst (overlap-alignment <_expr_const_val 0>
+                                                                                    <_expr_const_val 1>
+                                                                                    <_expr_const_val 2>
+                                                                                    <_expr_const_val 3> )))
+                        "int2char"              (set cst (int->char (queue-get _expr_const_val)))
+                        "compress"              (if (= (length _expr_const_val) 1)
+                                                then    (set cst (compress (queue-get _expr_const_val)))
+                                                else    (set cst (compress <_expr_const_val 0>
+                                                                           <_expr_const_val 1> )))
+                        "uncompress"            (set cst (uncompress (queue-get _expr_const_val)))
+                        "cons"                  (set cst (cons <_expr_const_val 0>
+                                                               <_expr_const_val 1> ))
+                        "list"                  (seq    (set cst nil)
+                                                        (for i in _expr_const_val rev do
+                                                                (set cst (cons i cst)) ))
+                        "car"                   (set cst (car (queue-get _expr_const_val)))
+                        "cdr"                   (set cst (cdr (queue-get _expr_const_val)))
+                        "tree"                  (seq    (set i (queue-get _expr_const_val))
+                                                        (set cst (treel i _expr_const_val)) )
+                        "tree_list"             (set cst (treel <_expr_const_val 0>
+                                                                <_expr_const_val 1> ))
+                        "raw2str"               (if (= (length _expr_const_val) 1)
+                                                then    (set cst (raw->str (queue-get _expr_const_val)))
+                                                else    (set cst (raw->str <_expr_const_val 0>
+                                                                           <_expr_const_val 1> )))
+                        "math_mod"              (set cst (% <_expr_const_val 0>
+                                                            <_expr_const_val 1> ))
+                        "math_approximate"      (set cst (approximate (queue-get _expr_const_val)))
+                        "math_num"              (set cst (num (queue-get _expr_const_val)))
+                        "math_den"              (set cst (den (queue-get _expr_const_val)))
+                        "math_re"               (set cst (re (queue-get _expr_const_val)))
+                        "math_im"               (set cst (im (queue-get _expr_const_val)))
+                        "math_floor"            (set cst (floor (queue-get _expr_const_val)))
+                        "math_ceil"             (set cst (ceil (queue-get _expr_const_val)))
+                        "math_rint"             (set cst (rint (queue-get _expr_const_val)))
+                        "math_gcd"              (seq    (set cst 0)
+                                                        (for i in _expr_const_val do
+                                                                (set cst (gcd i cst)) ))
+                        "math_lcm"              (seq    (set cst 1)
+                                                        (for i in _expr_const_val do
+                                                                (set cst (gcd i cst)) ))
+                        "math_fac"              (set cst (fac (queue-get _expr_const_val)))
+                        "math_mfac"             (set cst (mfac <_expr_const_val 0>
+                                                               <_expr_const_val 1> ))
+                        "math_primorial"        (set cst (primorial (queue-get _expr_const_val)))
+                        "math_bin"              (set cst (bin <_expr_const_val 0>
+                                                              <_expr_const_val 1> ))
+                        "math_fib"              (set cst (fib (queue-get _expr_const_val)))
+                        "math_lucnum"           (set cst (lucnum (queue-get _expr_const_val)))
+                        "math_probab_isprime"   (if (= (length _expr_const_val) 1)
+                                                then    (set cst (probab-isprime (queue-get _expr_const_val)))
+                                                else    (set cst (probab-isprime <_expr_const_val 0>
+                                                                                 <_expr_const_val 1> )))
+                        "math_isprime"          (set cst (isprime (queue-get _expr_const_val)))
+                        "math_nextprime"        (set cst (nextprime (queue-get _expr_const_val)))
+                        "math_perfect_power"    (set cst (perfect-power (queue-get _expr_const_val)))
+                        "math_perfect_square"   (set cst (perfect-square (queue-get _expr_const_val)))
+                        "math_div"              (set cst (div <_expr_const_val 0>
+                                                              <_expr_const_val 1> ))
+                        "math_sqrt"             (set cst (sqrt (queue-get _expr_const_val)))
+                        "math_pow"              (set cst (pow <_expr_const_val 0>
+                                                              <_expr_const_val 1> ))
+                        "math_powm"             (set cst (powm <_expr_const_val 0>
+                                                               <_expr_const_val 1>
+                                                               <_expr_const_val 2> ))
+                        "math_exp"              (set cst (exp (queue-get _expr_const_val)))
+                        "math_ln"               (set cst (ln (queue-get _expr_const_val)))
+                        "math_log"              (set cst (log <_expr_const_val 0>
+                                                              <_expr_const_val 1> ))
+                        "math_atan"             (set cst (atan (queue-get _expr_const_val)))
+                        "math_asin"             (set cst (asin (queue-get _expr_const_val)))
+                        "math_acos"             (set cst (acos (queue-get _expr_const_val)))
+                        "math_tan"              (set cst (tan (queue-get _expr_const_val)))
+                        "math_sin"              (set cst (sin (queue-get _expr_const_val)))
+                        "math_cos"              (set cst (cos (queue-get _expr_const_val))) )
+                (expr-constant-warning-if-undef cst) )
+        (set _expr_const_enabled false) )
+
+(defnet expr-arop (const-state op)
+        (deflocal i l)
+
+        (set _expr_const_enabled _expr_const_optimize)
+        (exprseq-basic 1 undef (if (= op "cat") "trp_cat(" (+ "trp_math_" op "(")) ')')
+        (if _expr_const
+        then    (set _expr_const_enabled const-state)
+                (set l (queue-get _expr_const_val))
+                (for i in _expr_const_val do
+                        (case op of
+                                "cat"   (set l (+ l i))
+                                "minus" (set l (- l i))
+                                "times" (set l (* l i))
+                                "ratio" (set l (/ l i)) ))
+                (expr-constant-warning-if-undef l) )
+        (set _expr_const_enabled false) )
+
+(defnet expr-relop (const-state op)
+        (deflocal v a b)
+
+        (case op of
+                "equ"   (set v "equal")
+                "neq"   (set v "notequal")
+                "min"   (set v "less")
+                "minequ"(set v "less_or_equal")
+                "mag"   (set v "greater")
+                "magequ"(set v "greater_or_equal") )
+        (set _expr_const_enabled _expr_const_optimize)
+        (exprseq-basic 2 2 (+ "trp_" v "(") ')')
+        (if _expr_const
+        then    (set _expr_const_enabled const-state)
+                (set a (queue-get _expr_const_val))
+                (set b (queue-get _expr_const_val))
+                (case op of
+                        "equ"   (set v (= a b))
+                        "neq"   (set v (<> a b))
+                        "min"   (set v (< a b))
+                        "minequ"(set v (<= a b))
+                        "mag"   (set v (> a b))
+                        "magequ"(set v (>= a b)) )
+                (expr-constant-warning-if-undef v) )
+        (set _expr_const_enabled false) )
+
+(defnet expr-date (const-state)
+        (deflocal nargs i)
+
+        (set _expr_const_enabled _expr_const_optimize)
+        (exprseq-basic-basic 1 undef "trp_date(" undef nargs)
+        (if (> nargs 8)
+        then    (error "too much arguments passed to function `date'") )
+        (if _expr_const
+        then    (set _expr_const_enabled const-state)
+                (expr-constant-warning-if-undef
+                        (date <_expr_const_val 0>
+                              (if (< nargs 2) 0 <_expr_const_val 1>)
+                              (if (< nargs 3) 0 <_expr_const_val 2>)
+                              (if (< nargs 4) 24 <_expr_const_val 3>)
+                              (if (< nargs 5) 60 <_expr_const_val 4>)
+                              (if (< nargs 6) 60 <_expr_const_val 5>)
+                              (if (< nargs 7) 0 <_expr_const_val 6>)
+                              (if (< nargs 8) 0 <_expr_const_val 7>) ))
+        else    (if (last-pass)
+                then    (rmatch remove _expr_code ",NULL")
+                        (if (< nargs 2)
+                        then    (inc _expr_code ",ZERO") )
+                        (if (< nargs 3)
+                        then    (inc _expr_code ",ZERO") )
+                        (if (< nargs 4)
+                        then    (in 24 _cst i)
+                                (inc _expr_code ",trp_const(" i ")") )
+                        (if (< nargs 5)
+                        then    (in 60 _cst i)
+                                (inc _expr_code ",trp_const(" i ")") )
+                        (if (< nargs 6)
+                        then    (in 60 _cst i)
+                                (inc _expr_code ",trp_const(" i ")") )
+                        (if (< nargs 7)
+                        then    (inc _expr_code ",ZERO") )
+                        (if (< nargs 8)
+                        then    (inc _expr_code ",ZERO") )
+                        (inc _expr_code ")")
+                else    (if (< nargs 6)
+                        then    (queue-append _cst 60)
+                                (if (< nargs 4)
+                                then    (queue-append _cst 24) ))))
+        (set _expr_const_enabled false) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-static-list ()
+        (deflocal const-state q l i)
+
+        (set const-state _expr_const_enabled)
+        (set _expr_const_enabled true)
+        (set q (queue))
+        (repeat (next-token)
+                until (= _token "chiusaquadra")
+                until (and (= _token "punto") (> (length q) 0))
+                (token-retract)
+                (expr-basic)
+                (if (not _expr_const)
+                then    (if (last-pass)
+                        then    (error "static lists require constant members")
+                        else    (clr _expr_const_val) ))
+                (queue-put q _expr_const_val) )
+        (if (= _token "punto")
+        then    (expr-basic)
+                (if (not _expr_const)
+                then    (if (last-pass)
+                        then    (error "static lists require constant members")
+                        else    (clr _expr_const_val) ))
+                (set l _expr_const_val)
+                (next-token)
+                (= _token "chiusaquadra")
+        else    (set l nil) )
+        (for i in q rev do
+                (set l (cons i l)) )
+        (set _expr_const_enabled const-state)
+        (expr-constant l) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-nth ()
+        (deflocal const-state code obj st)
+
+        (set const-state _expr_const_enabled)
+        (set code _expr_code)
+        (set _expr_const_enabled false)
+        (set st (stack))
+        (repeat (next-token)
+                until (and (= _token "relop") (= _tokenval "mag"))
+                (token-retract)
+                (set _expr_code "")
+                (expr-basic)
+                (if (= obj undef)
+                then    (set obj _expr_code)
+                else    (push st _expr_code) ))
+        (if (= (length st) 0)
+        then    (error "invalid 'nth-expression'") )
+        (inc obj (tile (length st) ')'))
+        (set _expr_code code)
+        (while (> (length st) 0) do
+                (set _expr_code (+ _expr_code "trp_nth(" (pop st) ',')) )
+        (inc _expr_code obj)
+        (set _expr_const_enabled const-state) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-neg ()
+        (deflocal const-state code)
+
+        (set const-state _expr_const_enabled)
+        (set _expr_const_enabled _expr_const_optimize)
+        (set code _expr_code)
+        (set _expr_code "")
+        (expr-basic)
+        (if _expr_const
+        then    (set _expr_code code)
+                (set _expr_const_enabled const-state)
+                (expr-constant -_expr_const_val)
+        else    (set _expr_code (+ code "trp_math_minus(ZERO," _expr_code ",NULL)"))
+                (set _expr_const_enabled const-state) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-nostatic ()
+        (deflocal optim)
+
+        (set optim _expr_const_optimize)
+        (set _expr_const_optimize false)
+        (expr-basic)
+        (chiusa)
+        (set _expr_const_optimize optim) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -1,0 +1,18 @@
+
+(include "common.tin")
+
+(defstart testavcodec)
+
+(defnet test-sws-scale ()
+        (deflocal pix1 pix2)
+
+        (set pix1 (pix-load-static "pics/splat.png"))
+        (set pix2 (pix-sws-scale-bicubic pix1 (* 2 (width pix1)) (* 2 (height pix1))))
+        (print "saving `double-splat.png'..." nl)
+        (pix-save-png pix2 "double-splat.png") )
+
+(defnet testavcodec ()
+        (test-sws-scale) )
+
+
+

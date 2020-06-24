@@ -1,0 +1,24 @@
+;;;
+;;; testmagic.trp
+;;; produce piu` o meno lo stesso output della utility `file`
+;;;
+
+(defstart testmagic)
+
+(defnet usage ()
+        (print "uso: " (argv 0) " <path> ..." nl)
+        (exit -1) )
+
+(defnet testmagic ()
+        (deflocal i)
+
+        (if (not (magic-available))
+        then    (print "l'inizializzazione di 'libmagic' e' fallita" nl)
+                (exit -1) )
+        (if (< (argc) 2)
+        then    (usage) )
+        (for i in 1 .. (- (argc) 1) do
+                (print (argv i) ": " (magic-file (argv i)) nl) ))
+
+
+

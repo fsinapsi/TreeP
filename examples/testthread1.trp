@@ -1,0 +1,69 @@
+
+(defstart testthread1)
+
+(defnet testthread1 ()
+        (deflocal me clnt fac fib mult)
+
+        (set me (thread-self))
+
+        (set clnt (thread-create (netptr th-clnt) me))
+        (set mult (thread-create (netptr th-mult) me))
+        (set fac (thread-create (netptr th-fac) clnt mult))
+        (set fib (thread-create (netptr th-fib) clnt mult))
+
+        (send fac to clnt)
+        (send fib to clnt)
+        (send mult to clnt)
+        (send fac to mult)
+        (send fib to mult)
+        (send clnt to mult)
+
+        (thread-join clnt)
+        (thread-join fac)
+        (thread-join fib)
+        (thread-join mult)
+        (gc)
+        (print nl
+               "in tutto ho creato " (- (thread-max) 1) " threads" nl
+               "threads correnti: " (thread-cur) " - " (thread-list) nl
+               "free bytes/heap size: " (free-bytes) '/' (heap-size) nl
+               "terminazione corretta" nl
+               nl ))
+
+(defnet th-clnt (parent)
+        (deflocal fac fib mitt i n res)
+
+        (receive fac from parent)
+        (receive fib from parent)
+        (receive mitt from parent)
+        (for i in 1 .. 50000 do
+                (set n (random 30))
+                (send n to fac)
+                (send n to fib)
+                (receive res from mitt)
+                (print i " - fac(" n ") * fib(" n ") = " res nl) ))
+
+(defnet th-fac (mitt dest)
+        (deflocal n)
+
+        (repeat (receive n from mitt)
+                (send (fac n) to dest) ))
+
+(defnet th-fib (mitt dest)
+        (deflocal n)
+
+        (repeat (receive n from mitt)
+                (send (fib n) to dest) ))
+
+(defnet th-mult (parent)
+        (deflocal mitt1 mitt2 dest mitt n1 n2)
+
+        (receive mitt1 from parent)
+        (receive mitt2 from parent)
+        (receive dest from parent)
+        (repeat (receive n1 from mitt in { mitt1 mitt2 })
+                (receive n2 from (if (= mitt mitt1) mitt2 mitt1))
+                (send (* n1 n2) to dest) ))
+
+
+

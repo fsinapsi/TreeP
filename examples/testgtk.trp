@@ -1,0 +1,356 @@
+;;;
+;;; testgtk.trp
+;;;
+
+(use cv)
+
+(include "common.tin")
+
+(defstart testgtk)
+
+;;;
+;;;
+;;;
+
+(defun default-gamma () 1.4) ; (1=nop)
+(defun default-brightness () 0) ; (0=nop)
+(defun default-contrast () 1) ; (1=nop)
+(defun default-thumbnail-size () 200)
+(defun default-color () (pix-color 0 0 0))
+(defun default-font () "Fixed Bold 14")
+;(defun default-font () "Sans 12")
+
+;;;
+;;;
+;;;
+
+(defnet main-destroy (win)
+        (close win)
+        (gtk-main-quit) )
+
+;;;
+;;;
+;;;
+
+(defnet timeout-cback (label)
+        (gtk-label-set-text label
+                (date-arpa (now)) nl
+                "free: " (free-bytes) '/' (heap-size)) )
+
+;;;
+;;;
+;;;
+
+(defnet bug-splat (event btn x y im)
+        (= event (cmacro GDK_BUTTON_PRESS))
+        (gtk-image-set-from-pixbuf im
+                (pix-load-static "pics/splat2.png") ))
+
+;;;
+;;;
+;;;
+
+(defnet pix-scale-fullscreen (@pix win)
+        (deflocal wmax hmax w h rw rh newpix)
+
+        (set wmax (- (width win) 32))
+        (set hmax (- (height win) 61))
+        (set w (width @pix))
+        (set h (height @pix))
+        (set rw (/ wmax w))
+        (set rh (/ hmax h))
+        (if (> rw rh)
+        then    (set wmax (rint (* w rh)))
+        else    (set hmax (rint (* h rw))) )
+        (opt    (or (<> wmax w) (<> hmax h))
+                (set newpix (pix-scale @pix wmax hmax))
+                (<> newpix undef)
+                (close @pix)
+                (set @pix newpix) ))
+
+;;;
+;;;
+;;;
+
+(defnet full-image (event btn x y nb)
+        (deflocal gamma brightness contrast path pix sw eb im)
+
+        (= btn 1)
+        (= event (cmacro GDK_BUTTON_PRESS))
+        (set gamma (gtk-spin-button-get-value <<nb 3> 0>))
+        (set brightness (gtk-spin-button-get-value <<nb 3> 1>))
+        (set contrast (gtk-spin-button-get-value <<nb 3> 2>))
+        (set path <nb 2>)
+        (set pix (pix-load path))
+        (<> pix undef)
+        (if (> gamma 0)
+        then    (pix-gamma pix gamma) )
+        (pix-brightness pix brightness)
+        (pix-contrast pix contrast)
+        (pix-scale-fullscreen pix <nb 0>)
+        (set nb <nb 1>)
+        (search "/" path sw (maxint))
+        (set path (sub (+ sw 1) (maxint) path))
+        (set sw (gtk-scrolled-window-new undef undef))
+        (gtk-scrolled-window-set-policy sw
+                (cmacro GTK_POLICY_AUTOMATIC)
+                (cmacro GTK_POLICY_AUTOMATIC) )
+        (gtk-scrolled-window-add-with-viewport sw (gtk-image-new-from-pixbuf pix))
+        (close pix)
+        (gtk-widget-show-all sw)
+        (nb-append nb sw path) )
+
+(defnet thumb (win nb progress path @w spins)
+        (deflocal dir gamma brightness contrast thumbnail-size cols vb hb eb p pp pix cnt)
+
+        (gtk-widget-set-sensitive win false)
+        (gtk-widget-show progress)
+        (set gamma (gtk-spin-button-get-value <spins 0>))
+        (set brightness (gtk-spin-button-get-value <spins 1>))
+        (set contrast (gtk-spin-button-get-value <spins 2>))
+        (set thumbnail-size (gtk-spin-button-get-value <spins 3>))
+        (set cols (div (- (width win) 28 10) (+ thumbnail-size 5)))
+        (set cnt 0)
+        (set dir (array 0))
+        (for p in (directory path) do
+                (array-append dir p) )
+        (sort dir (funptr smart-min))
+        (for p in dir do
+                (gtk-progress-bar-pulse progress)
+                (while (gtk-events-pending) do
+                        (gtk-main-iteration) )
+                (opt    (set pp (+ path "/" p))
+                        (set pix (pix-load-thumbnail pp thumbnail-size))
+                        (<> pix undef)
+                        (if (> gamma 0)
+                        then    (pix-gamma pix gamma) )
+                        (pix-brightness pix brightness)
+                        (pix-contrast pix contrast)
+                        (if (= (% cnt cols) 0)
+                        then    (set hb (gtk-hbox-new true 5))
+                                (if (= vb undef)
+                                then    (set vb (gtk-vbox-new true 5))
+                                        (gtk-container-set-border-width vb 5) )
+                                (gtk-box-pack-start vb hb true false 0) )
+                        (set eb (gtk-event-box-new))
+                        (gtk-container-add eb (gtk-image-new-from-pixbuf pix))
+                        (close pix)
+                        (gtk-box-pack-start hb eb true false 0)
+                        (gtk-signal-connect eb "button-press-event" (netptr full-image)
+                                (list win nb pp spins) )
+                        (set cnt (+ cnt 1)) ))
+        (gtk-widget-hide progress)
+        (gtk-widget-set-sensitive win true)
+        (> cnt 0)
+        (set @w (gtk-scrolled-window-new undef undef))
+        (gtk-scrolled-window-set-policy @w
+                (cmacro GTK_POLICY_AUTOMATIC)
+                (cmacro GTK_POLICY_AUTOMATIC) )
+        (gtk-scrolled-window-add-with-viewport @w vb)
+        (gtk-widget-show-all @w) )
+
+(defnet dirsel-cback (win nb progress a spins)
+        (deflocal i path)
+
+        (set i (gtk-file-chooser-dialog-new "Seleziona una cartella"
+                        (cmacro GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER)
+                        win ))
+        (if (<> <a 0> undef)
+        then    (gtk-file-chooser-set-filename i <a 0>) )
+        (gtk-window-set-modal i true)
+        (gtk-window-set-position i (cmacro GTK_WIN_POS_CENTER))
+        (if (<> (gtk-dialog-run i) (cmacro GTK_RESPONSE_ACCEPT))
+        then    (close i)
+                (fail) )
+        (set path (gtk-file-chooser-get-filename i))
+        (close i)
+        (set <a 0> path)
+        (thumb win nb progress path i spins)
+        (nb-append nb i (str-ellipsize-middle (fullpath->name path) 20)) )
+
+;;;
+;;;
+;;;
+
+(defnet nb-append (nb child titolo)
+        (deflocal lb w)
+
+        (set lb (gtk-hbox-new false 5))
+
+        (set w (gtk-label-new titolo))
+        (gtk-box-pack-start lb w true true 0)
+        (gtk-label-set-ellipsize w (cmacro PANGO_ELLIPSIZE_MIDDLE))
+        (gtk-widget-set-size-request w 150 0)
+
+        (set w (gtk-event-box-new))
+        (gtk-signal-connect w "button-press-event" (netptr nb-remove) (cons nb child))
+        (gtk-box-pack-start lb w false false 0)
+
+        (gtk-container-add w (gtk-image-new-from-pixbuf
+                (pix-load-static "pics/fileclose.png") ))
+        (gtk-widget-show-all lb)
+
+        (gtk-notebook-append-page nb child lb)
+        (gtk-notebook-set-current-page nb -1) )
+
+(defnet nb-remove (event btn x y data)
+        (= btn 1)
+        (= event (cmacro GDK_BUTTON_PRESS))
+        (gtk-notebook-remove-page (car data) (cdr data)) )
+
+;;;
+;;;
+;;;
+
+(defnet setup-pagina1 (win nb @w @lb @progress)
+        (deflocal hb bt i gamma-sb brightness-sb contrast-sb thumbsize-sb text)
+
+        (set @w (gtk-vbox-new false 10))
+        (gtk-container-set-border-width @w 10)
+
+        (set hb (gtk-hbox-new false 5))
+        (gtk-box-pack-start @w hb false false 0)
+
+                (set i (gtk-label-new "Gamma"))
+                (gtk-box-pack-start hb i false false 0)
+
+                (set gamma-sb (gtk-spin-button-new-with-range 0 6 0.01))
+                (gtk-spin-button-set-value gamma-sb (default-gamma))
+                (gtk-spin-button-set-numeric gamma-sb true)
+                (gtk-spin-button-set-wrap gamma-sb false)
+                (gtk-box-pack-start hb gamma-sb false false 0)
+
+                (set i (gtk-label-new (iso->utf8 "Luminosità")))
+                (gtk-box-pack-start hb i false false 0)
+
+                (set brightness-sb (gtk-spin-button-new-with-range -2 2 0.01))
+                (gtk-spin-button-set-value brightness-sb (default-brightness))
+                (gtk-spin-button-set-numeric brightness-sb true)
+                (gtk-spin-button-set-wrap brightness-sb false)
+                (gtk-box-pack-start hb brightness-sb false false 0)
+
+                (set i (gtk-label-new "Contrasto"))
+                (gtk-box-pack-start hb i false false 0)
+
+                (set contrast-sb (gtk-spin-button-new-with-range 0 6 0.01))
+                (gtk-spin-button-set-value contrast-sb (default-contrast))
+                (gtk-spin-button-set-numeric contrast-sb true)
+                (gtk-spin-button-set-wrap contrast-sb false)
+                (gtk-box-pack-start hb contrast-sb false false 0)
+
+                (set i (gtk-label-new "Thumbsize"))
+                (gtk-box-pack-start hb i false false 0)
+
+                (set thumbsize-sb (gtk-spin-button-new-with-range 80 400 1))
+                (gtk-spin-button-set-value thumbsize-sb (default-thumbnail-size))
+                (gtk-spin-button-set-numeric thumbsize-sb true)
+                (gtk-spin-button-set-wrap thumbsize-sb false)
+                (gtk-box-pack-start hb thumbsize-sb false false 0)
+
+                (set @progress (gtk-progress-bar-new))
+                (gtk-box-pack-start hb @progress true true 0)
+
+        (set i (gtk-frame-new "Testo di prova"))
+        (gtk-box-pack-start @w i true true 0)
+
+        (set bt (gtk-scrolled-window-new undef undef))
+        (gtk-container-add i bt)
+        (gtk-container-set-border-width bt 8)
+        (gtk-scrolled-window-set-policy bt
+                (cmacro GTK_POLICY_AUTOMATIC)
+                (cmacro GTK_POLICY_AUTOMATIC) )
+
+        (set text (gtk-text-view-new))
+        (gtk-container-add bt text)
+        (gtk-text-view-set-editable text false)
+        (gtk-text-view-set-cursor-visible text false)
+        (gtk-text-view-set-wrap-mode text (cmacro GTK_WRAP_WORD_CHAR))
+        (gtk-widget-modify-font text (default-font))
+        (gtk-widget-modify-text text (cmacro GTK_STATE_NORMAL) (pix-color 0xff 0 0))
+        (gtk-widget-modify-base text (cmacro GTK_STATE_NORMAL) (pix-color 0 0 0))
+
+    ;    (for i in (directory "/usr/local/lib") do
+    ;            (gtk-text-buffer-append text i nl) )
+
+        (set hb (gtk-hbox-new false 0))
+        (gtk-box-pack-start @w hb false false 0)
+
+        (set bt (gtk-event-box-new))
+        (gtk-box-pack-start hb bt false false 0)
+        (set @lb (gtk-image-new-from-file "pics/bug.gif"))
+        (gtk-container-add bt @lb)
+        (gtk-signal-connect bt "button-press-event" (netptr bug-splat) @lb)
+
+        (set @lb (gtk-label-new ""))
+        (gtk-box-pack-start hb @lb true true 0)
+        (gtk-label-set-justify @lb (cmacro GTK_JUSTIFY_CENTER))
+
+        (set hb (gtk-hbox-new false 10))
+        (gtk-box-pack-start @w hb false false 0)
+
+                ;(set i (gtk-hscale-new-with-range 0 1000 1))
+                ;(gtk-box-pack-start hb i true true 0)
+                ;(gtk-scale-set-draw-value i false)
+
+                (set bt (gtk-button-new "Quit"))
+                (gtk-box-pack-end hb bt false false 0)
+                (gtk-signal-connect bt "clicked" (netptr main-destroy) win)
+
+                (set i (gtk-color-button-new (default-color)))
+                (gtk-box-pack-end hb i false false 0)
+                (gtk-color-button-set-use-alpha i true)
+                ;(gtk-color-button-set-title i "Scegli il colore")
+                ;(gtk-signal-connect i "color-set" (netptr color-selected) i)
+
+                (set i (gtk-font-button-new))
+                (gtk-box-pack-end hb i false false 0)
+                ;(gtk-font-button-set-show-style i true)
+                ;(gtk-font-button-set-use-font i true)
+                ;(gtk-font-button-set-title i "Scegli la fonte")
+                ;(gtk-signal-connect i "font-set" (netptr font-selected) i)
+
+                (set bt (gtk-button-new "File selection"))
+                (gtk-box-pack-end hb bt false false 0)
+                (gtk-signal-connect bt "clicked" (netptr dirsel-cback)
+                        win nb @progress (array 1)
+                        (list gamma-sb brightness-sb contrast-sb thumbsize-sb) ))
+
+;(defnet color-selected (cb)
+;        (print (gtk-color-button-get-color cb) nl) )
+
+;(defnet font-selected (fb)
+;        (print (gtk-font-button-get-font-name fb) nl) )
+
+(defnet setup ()
+        (deflocal win nb lb progress w)
+
+        (set win (gtk-window-new (cmacro GTK_WINDOW_TOPLEVEL)))
+        (gtk-window-set-title win "Titolo della finestra")
+        (gtk-container-set-border-width win 10)
+        (gtk-signal-connect win "destroy" (netptr main-destroy) undef)
+
+        (set nb (gtk-notebook-new))
+        (gtk-container-add win nb)
+
+        (gtk-notebook-set-scrollable nb true)
+
+        (setup-pagina1 win nb w lb progress)
+        (gtk-notebook-append-page nb w)
+
+        (gtk-drag-dest-set win (netptr received) undef)
+
+        (gtk-timeout-add (netptr timeout-cback) 0.15 lb)
+        (gtk-window-set-default-size win 800 480)
+        (gtk-window-set-position win (cmacro GTK_WIN_POS_CENTER))
+        (gtk-widget-show-all win)
+        (gtk-widget-hide progress) )
+
+(defnet received (info s)
+        (print s nl) )
+
+(defnet testgtk ()
+        (setup)
+        (gtk-main) )
+
+
+

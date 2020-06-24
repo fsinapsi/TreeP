@@ -1,0 +1,581 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(include "common.tin")
+
+(defstart iup-simple-notepad)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet bug-cb (l button pressed x y status)
+        (opt (bug-cb-basic l button pressed)) )
+
+(defnet bug-cb-basic (l button pressed)
+        (deflocal u i)
+
+        (= button (cmacro IUP_BUTTON1))
+        (= pressed 1)
+        ; (iup-set-callback l "BUTTON_CB")
+        (set u (iup-get-attribute l "ANIMATION_HANDLE"))
+        ; (= (iup-get-child-count u) 30)
+        (for i in 1 .. 30 do
+                (close <u 0>) )
+        (set i (iup-get-parent l))
+        (close u (iup-get-brother l))
+        ; (iup-detach l)
+        (close l)
+        (set l (iup-label))
+        (iup-set-attribute-handle l "IMAGE"
+                (iup-image-rgba (pix-load-static "pics/splat2.png")) )
+        (iup-append i l)
+        (iup-map l)
+        (set l (iup-fill))
+        (iup-append i l)
+        (iup-map l)
+        (iup-refresh i) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet find-next-cb (self)
+        (alt    (find-next-cb-basic self)
+                (iup-message "Avviso" "Testo non trovato.") ))
+
+(defnet find-next-cb-basic (self)
+        (deflocal text str strr find-pos str-to-find casesensitive pos)
+
+        (set text (iup-get-attribute self "MULTITEXT"))
+        (set str (iup-get-str-attribute text "VALUE"))
+        (set find-pos (iup-get-int text "FIND_POS"))
+        (set str-to-find (iup-get-str-attribute (iup-get-dialog-child self "FIND_TEXT") "VALUE"))
+        (set casesensitive (= (iup-get-int (iup-get-dialog-child self "FIND_CASE") "VALUE") 1))
+        (alt    (seq    (> find-pos 0)
+                        (set strr (sub find-pos (maxint) str))
+                        (if casesensitive
+                        then    (search str-to-find strr pos)
+                        else    (search case str-to-find strr pos) )
+                        (inc pos find-pos) )
+                (seq    (if casesensitive
+                        then    (search str-to-find str pos)
+                        else    (search case str-to-find str pos) )))
+        (iup-set-int text "FIND_POS" (+ pos (length str-to-find)))
+        (set pos (utf8-length (sub 0 pos str)))
+        (iup-set-str-attribute text "SELECTIONPOS"
+                pos ':' (+ pos (utf8-length str-to-find)) )
+        (iup-set-int text "SCROLLTOPOS" pos) )
+
+(defnet find-close-cb (self)
+        (iup-hide (iup-get-dialog self)) )
+
+(defnet item-find-cb (self)
+        (deflocal dlg text box hbox bt-next bt-close txt find-case)
+
+        (set dlg (iup-get-attribute self "FIND_DIALOG"))
+        (if (= dlg undef)
+        then    (set text (iup-get-dialog-child self "MULTITEXT"))
+                (set txt (iup-text))
+                (iup-set-str-attribute txt "NAME" "FIND_TEXT")
+                (iup-set-int txt "VISIBLECOLUMNS" 20)
+                (set find-case (iup-toggle "Case sensitive"))
+                (iup-set-str-attribute find-case "NAME" "FIND_CASE")
+                (set bt-next (iup-button "Trova successivo"))
+                (iup-set-str-attribute bt-next "PADDING" "10x2")
+                (iup-set-callback bt-next "ACTION" (netptr find-next-cb))
+                (set bt-close (iup-button "Chiudi"))
+                (iup-set-str-attribute bt-close "PADDING" "10x2")
+                (iup-set-callback bt-close "ACTION" (netptr find-close-cb))
+                (set hbox (iup-hbox
+                        (iup-fill)
+                        bt-next
+                        bt-close ))
+                (iup-set-str-attribute hbox "NORMALIZESIZE" "HORIZONTAL")
+                (set box (iup-vbox
+                        (iup-label "Cerca:")
+                        txt
+                        find-case
+                        hbox ))
+                (iup-set-str-attribute box "MARGIN" "10x10")
+                (iup-set-int box "GAP" 5)
+                (set dlg (iup-dialog box))
+                (iup-set-str-attribute dlg "TITLE" "Cerca")
+                (iup-set-str-attribute dlg "DIALOGFRAME" "YES")
+                (iup-set-attribute-handle dlg "DEFAULTENTER" bt-next)
+                (iup-set-attribute-handle dlg "DEFAULTESC" bt-close)
+                (iup-set-attribute-handle dlg "PARENTDIALOG" (iup-get-dialog self))
+                (iup-set-attribute dlg "MULTITEXT" text)
+                (iup-set-attribute self "FIND_DIALOG" dlg) )
+        (iup-show-xy dlg (cmacro IUP_CURRENT) (cmacro IUP_CURRENT)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet goto-ok-action-cb (self)
+        (deflocal line-count line)
+
+        (if (in (iup-get-int (iup-get-dialog-child self "LINE_TEXT") "VALUE")
+                1 .. (iup-get-int self "TEXT_LINECOUNT") )
+        then    (iup-ok-cb self)
+        else    (iup-message "Errore" "Numero di linea non valido.") ))
+
+(defnet item-goto-cb (self)
+        (deflocal text dlg box bt-ok bt-cancel txt lbl line-count hbox pos i)
+
+        (set text (iup-get-dialog-child self "MULTITEXT"))
+        (set line-count (iup-get-int text "LINECOUNT"))
+        (set lbl (iup-label "Numero di linea [1-" line-count "]:"))
+        (set txt (iup-text))
+        (iup-set-str-attribute txt "MASK" "/d+")
+        (iup-set-str-attribute txt "NAME" "LINE_TEXT")
+        (iup-set-int txt "VISIBLECOLUMNS" 20)
+        (set bt-ok (iup-button "OK"))
+        (iup-set-int bt-ok "TEXT_LINECOUNT" line-count)
+        (iup-set-str-attribute bt-ok "PADDING" "10x2")
+        (iup-set-callback bt-ok "ACTION" (netptr goto-ok-action-cb))
+        (set bt-cancel (iup-button "Annulla"))
+        (iup-set-str-attribute bt-cancel "PADDING" "10x2")
+        (iup-set-callback bt-cancel "ACTION" (netptr iup-cancel-cb))
+        (set hbox (iup-hbox (iup-fill) bt-ok bt-cancel))
+        (iup-set-str-attribute hbox "NORMALIZESIZE" "HORIZONTAL")
+        (set box (iup-vbox
+                lbl
+                txt
+                hbox ))
+        (iup-set-str-attribute box "MARGIN" "10x10")
+        (iup-set-int box "GAP" 5)
+        (set dlg (iup-dialog box))
+        (iup-set-str-attribute dlg "TITLE" "Vai alla linea")
+        (iup-set-str-attribute dlg "DIALOGFRAME" "YES")
+        (iup-set-int dlg "STATUS" 0)
+        (iup-set-attribute-handle dlg "DEFAULTENTER" bt-ok)
+        (iup-set-attribute-handle dlg "DEFAULTESC" bt-cancel)
+        (iup-set-attribute-handle dlg "PARENTDIALOG" (iup-get-dialog self))
+        (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (if (= (iup-get-int dlg "STATUS") 1)
+        then    (set i (iup-get-int txt "VALUE"))
+                (set pos (iup-text-convert-lin-col-to-pos text i 1))
+                (iup-set-int text "CARETPOS" pos)
+                (iup-set-int text "SCROLLTOPOS" pos)
+                (caret-label-cb text i 1) )
+        (close dlg)
+        (iup-set-focus text) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet item-font-cb (self)
+        (deflocal text fontdlg)
+
+        (set text (iup-get-dialog-child self "MULTITEXT"))
+        (set fontdlg (iup-font-dlg))
+        (iup-set-str-attribute fontdlg "VALUE" (iup-get-str-attribute text "FONT"))
+        (iup-set-attribute-handle fontdlg "PARENTDIALOG" (iup-get-dialog self))
+        (iup-popup fontdlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (if (= (iup-get-int fontdlg "STATUS") 1)
+        then    (iup-set-str-attribute text "FONT" (iup-get-str-attribute fontdlg "VALUE")) )
+        (close fontdlg)
+        (iup-set-focus text) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet item-open-cb (self)
+        (deflocal filedlg)
+
+        (set filedlg (iup-file-dlg))
+        (iup-set-str-attribute filedlg "DIALOGTYPE" "OPEN")
+        (iup-set-str-attribute filedlg "EXTFILTER" "Text Files|*.txt|All Files|*.*|")
+        (iup-set-attribute-handle filedlg "PARENTDIALOG" (iup-get-dialog self))
+        (iup-popup filedlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (if (<> (iup-get-int filedlg "STATUS") -1)
+        then    (replace-text-path self (iup-get-str-attribute filedlg "VALUE")) )
+        (close filedlg) )
+
+(defnet replace-text-path (self path)
+        (deflocal str)
+
+        (set str (str-load path))
+        (if (integerp (utf8-length str))
+        then    (replace-text self str)
+        else    (iup-message "Avviso" "File di testo UTF-8 non valido.") ))
+
+(defnet replace-text (self str)
+        (deflocal text)
+
+        (set text (iup-get-dialog-child self "MULTITEXT"))
+        (iup-set-str-attribute text "VALUE" "")
+        (iup-flush)
+        (iup-set-str-attribute text "VALUE" str)
+        (iup-set-int text "CARETPOS" 0)
+        (iup-set-int text "SCROLLTOPOS" 0)
+        (caret-label-cb text 1 1)
+        (iup-set-focus text) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet item-saveas-cb (self)
+        (deflocal text filedlg str)
+
+        (set text (iup-get-dialog-child self "MULTITEXT"))
+        (set filedlg (iup-file-dlg))
+        (iup-set-str-attribute filedlg "DIALOGTYPE" "SAVE")
+        (iup-set-str-attribute filedlg "EXTFILTER" "Text Files|*.txt|All Files|*.*|")
+        (iup-set-attribute-handle filedlg "PARENTDIALOG" (iup-get-dialog self))
+        (iup-popup filedlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (if (<> (iup-get-int filedlg "STATUS") -1)
+        then    (alt    (str-save (iup-get-str-attribute filedlg "VALUE") (iup-get-str-attribute text "VALUE"))
+                        (iup-message "Avviso" "Salvataggio fallito.") ))
+        (close filedlg)
+        (iup-set-focus text) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet dropfiles-cb (self path num x y)
+        (deflocal text)
+
+        (opt    (= num 0)
+                (if (linux)
+                then    (set text (iup-get-dialog-child self "MULTITEXT"))
+                        (if (= text self)
+                        then    (if (<> (iup-get-int text "TRP_DROP_ONCE") 1)
+                                then    (iup-set-int text "TRP_DROP_ONCE" 1)
+                                        (fail) )
+                                (iup-set-str-attribute text "TRP_DROP_ONCE") ))
+                ; (print (now) " " path " " x " " y nl)
+                (replace-text-path self path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet item-about-cb (self)
+        (iup-message "Info"
+                "   * * * Semplice notepad * * *" nl
+                nl
+                "Autori:" nl
+                "   Gustavo Lyrio" nl
+                "   Antonio Scuri" nl
+                "   Frank Sinapsi" nl
+                nl
+                "Data di sistema: " (now) nl
+                "Data di compilazione: " (date-arpa (cdate)) nl
+                "Sistema di compilazione: " (cuname) " (" (csysbits) "-bit)" nl
+                "Sistema di esecuzione: " (uname) nl
+                (sysbits) "-bit, "
+                (if (endianness) "little" "big") " endian, "
+                (if (cstatic) "statically" "dynamically") " linked, "
+                (if (multithreaded) "multi" "single-") "threaded" nl
+                "GMP version: " (gmp-version) nl
+                nl
+                "IUP version: " (iup-version) nl
+                "IUP version date: " (iup-version-date) nl
+                "IUP version number: " (iup-version-number) nl
+                "IUP system: " (iup-get-global "SYSTEM") nl
+                "IUP system version: " (iup-get-global "SYSTEMVERSION") nl
+                "IUP system locale: " (iup-get-global "SYSTEMLOCALE") nl
+                "IUP system language: " (iup-get-global "SYSTEMLANGUAGE") nl
+                "IUP computer name: " (iup-get-global "COMPUTERNAME") nl
+                "IUP user name: " (iup-get-global "USERNAME") nl
+                "IUP fullsize: " (iup-get-global "FULLSIZE") nl
+                "IUP screensize: " (iup-get-global "SCREENSIZE") nl
+                "IUP screendepth: " (iup-get-global "SCREENDEPTH") nl
+                "IUP screendpi: " (iup-get-global "SCREENDPI") ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet item-date-cb (self)
+        (set self (iup-choose-date self undef))
+        (if (datep self)
+        then    (iup-message "Info" "Hai scelto: " self) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet kb-cb (self c)
+        (case c of
+                (cmacro K_cO)   (item-open-cb self)
+                (cmacro K_cS)   (item-saveas-cb self)
+                (cmacro K_cF)   (item-find-cb self)
+                (cmacro K_cG)   (item-goto-cb self)
+                (cmacro K_cQ)   (fail) ))
+
+(defnet caret-label-cb (self lin col)
+        (iup-set-str-attribute (iup-get-dialog-child self "STATUSBAR")
+                "TITLE"
+                "Lin " lin ", Col " col ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-simple-notepad ()
+        (deflocal dlg text menu
+                  sub-menu-file file-menu item-exit item-open item-saveas btn-open btn-save
+                  sub-menu-edit edit-menu item-find item-goto btn-find
+                  sub-menu-format format-menu item-font
+                  sub-menu-help help-menu item-about item-date
+                  lbl-statusbar toolbar-hb i )
+
+        (set text (iup-text))
+        (iup-set-str-attribute text "MULTILINE" "YES")
+        (iup-set-str-attribute text "EXPAND" "YES")
+        (iup-set-str-attribute text "WORDWRAP" "YES")
+        (iup-set-str-attribute text "FORMATTING" "YES")
+        (iup-set-str-attribute text "SCROLLBAR" "YES")
+        (iup-set-str-attribute text "AUTOHIDE" "NO")
+        (iup-set-str-attribute text "PADDING" "2x2")
+        (iup-set-str-attribute text "NAME" "MULTITEXT")
+
+        (set lbl-statusbar (iup-label ""))
+        (iup-set-str-attribute lbl-statusbar "NAME" "STATUSBAR")
+        (iup-set-str-attribute lbl-statusbar "EXPAND" "HORIZONTAL")
+        (iup-set-str-attribute lbl-statusbar "PADDING" "10x5")
+
+        (set item-open (iup-item "&Apri...\tCtrl+O"))
+        (set btn-open (iup-button))
+        (iup-set-str-attribute btn-open "IMAGE" "IUP_FileOpen")
+        (iup-set-str-attribute btn-open "FLAT" "YES")
+        (iup-set-str-attribute btn-open "TIP" "Apri (Ctrl+O)")
+        (iup-set-str-attribute btn-open "CANFOCUS" "NO")
+
+        (set item-saveas (iup-item "&Salva come...\tCtrl+S"))
+        (set btn-save (iup-button))
+        (iup-set-str-attribute btn-save "IMAGE" "IUP_FileSave")
+        (iup-set-str-attribute btn-save "FLAT" "YES")
+        (iup-set-str-attribute btn-save "TIP" "Salva (Ctrl+S)")
+        (iup-set-str-attribute btn-save "CANFOCUS" "NO")
+
+        (set item-exit (iup-item "&Esci\tCtrl+Q"))
+
+        (set item-find (iup-item "&Trova...\tCtrl+F"))
+        (set btn-find (iup-button))
+        (iup-set-str-attribute btn-find "IMAGE" "IUP_EditFind")
+        (iup-set-str-attribute btn-find "FLAT" "YES")
+        (iup-set-str-attribute btn-find "TIP" "Cerca (Ctrl+F)")
+        (iup-set-str-attribute btn-find "CANFOCUS" "NO")
+
+        (set item-goto (iup-item "&Vai a...\tCtrl+G"))
+
+        (set item-font (iup-item "&Font..."))
+        (set item-about (iup-item "&Info..."))
+        (set item-date (iup-item "Scegli &data..."))
+
+        (set i (iup-label))
+        (iup-set-str-attribute i "SEPARATOR" "VERTICAL")
+
+        (set toolbar-hb (iup-hbox
+                btn-open
+                btn-save
+                i
+                btn-find ))
+
+        (set file-menu (iup-menu
+                item-open
+                item-saveas
+                (iup-separator)
+                item-exit ))
+        (set edit-menu (iup-menu
+                item-find
+                item-goto ))
+        (set format-menu (iup-menu
+                item-font ))
+        (set help-menu (iup-menu
+                item-about
+                item-date ))
+
+        (set sub-menu-file (iup-submenu "&File" file-menu))
+        (set sub-menu-edit (iup-submenu "&Edita" edit-menu))
+        (set sub-menu-format (iup-submenu "F&ormato" format-menu))
+        (set sub-menu-help (iup-submenu "&Aiuto" help-menu))
+
+        (set menu (iup-menu
+                sub-menu-file
+                sub-menu-edit
+                sub-menu-format
+                sub-menu-help ))
+
+        (set i (iup-user))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug00.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug01.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug02.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug03.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug04.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug05.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug06.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug07.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug08.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug09.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug10.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug11.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug12.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug13.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug14.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug15.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug16.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug17.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug18.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug19.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug20.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug21.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug22.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug23.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug24.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug25.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug26.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug27.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug28.png")))
+        (iup-append i (iup-image-rgba (pix-load-static "pics/bug29.png")))
+
+        (set i (iup-animated-label i))
+        (iup-set-int i "FRAMETIME" 110)
+        (iup-set-int i "START" 0)
+
+        (set dlg (iup-dialog (iup-vbox
+                toolbar-hb
+                (iup-hbox (iup-vbox (iup-fill) i (iup-fill)) text)
+                lbl-statusbar )))
+
+        (iup-set-callback i "BUTTON_CB" (netptr bug-cb))
+        (iup-set-callback item-open "ACTION" (netptr item-open-cb))
+        (iup-set-callback btn-open "ACTION" (netptr item-open-cb))
+        (iup-set-callback item-saveas "ACTION" (netptr item-saveas-cb))
+        (iup-set-callback btn-save "ACTION" (netptr item-saveas-cb))
+        (iup-set-callback item-exit "ACTION" (netptr iup-cancel-cb))
+        (iup-set-callback item-find "ACTION" (netptr item-find-cb))
+        (iup-set-callback btn-find "ACTION" (netptr item-find-cb))
+        (iup-set-callback item-goto "ACTION" (netptr item-goto-cb))
+        (iup-set-callback item-font "ACTION" (netptr item-font-cb))
+        (iup-set-callback item-about "ACTION" (netptr item-about-cb))
+        (iup-set-callback item-date "ACTION" (netptr item-date-cb))
+        (iup-set-callback text "CARET_CB" (netptr caret-label-cb))
+        (iup-set-callback text "DROPFILES_CB" (netptr dropfiles-cb))
+        (iup-set-callback dlg "DROPFILES_CB" (netptr dropfiles-cb))
+        (iup-set-callback dlg "K_ANY" (netptr kb-cb))
+
+        (iup-set-attribute-handle dlg "MENU" menu)
+        (iup-set-str-attribute dlg "TITLE" "Semplice notepad")
+        (iup-set-str-attribute dlg "SIZE" "HALFxHALF")
+
+        (iup-set-attribute-handle undef "PARENTDIALOG" dlg)
+        (iup-show-xy dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (iup-set-str-attribute dlg "USERSIZE")
+
+        (if (> (argc) 1)
+        then    (replace-text-path text (argv 1))
+        else    (replace-text text (initial-text)) )
+
+        ;(set i (iup-user))
+        ;(iup-set-str-attribute i "ALIGNMENT" "JUSTIFY")
+        ;(iup-set-str-attribute i "SELECTION" "ALL")
+        ;(iup-set-attribute text "ADDFORMATTAG_HANDLE" i)
+
+        (iup-main-loop) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun initial-text () "")
+;(defun initial-text- () (str-load-static "cecioni-monastra"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

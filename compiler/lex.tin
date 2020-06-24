@@ -1,0 +1,325 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defglobal
+        _token
+        _tokenval
+        _c
+        _cstack
+        _tstack
+        )
+
+;;;
+;;; legge il prossimo carattere valido dallo stack dei file;
+;;; non fallisce mai;
+;;; lascia il risultato su _c;
+;;; se _c = undef, abbiamo finito.
+;;;
+
+(defnet next-char ()
+        (repeat (set _c (pop _cstack))
+                until (<> _c undef)
+                (set _c (freadchar _f))
+                until (<> _c undef)
+                until (= (length _fstack) 0)
+                (close _f)
+                (set _f (pop _fstack))
+                (skip (pop _fnames)) ))
+
+;;;
+;;; reinserisce un token qualsiasi sullo stack
+;;;
+
+(defnet token-push (token tokenval)
+        (push _tstack tokenval)
+        (push _tstack token) )
+
+;;;
+;;; reinserisce l`ultimo token letto sullo stack
+;;;
+
+(defnet token-retract ()
+        (token-push _token _tokenval) )
+
+;;;
+;;; riconosce un token numero in base base
+;;; non fallisce
+;;; presuppone che _c contenga la prima cifra
+;;;
+
+(defnet token-number (base)
+        (deflocal i)
+
+        (set _tokenval 0)
+        (repeat until (= _c undef)
+                (set i (token-number-val base))
+                until (= i undef)
+                (set _tokenval (+ (* _tokenval base) i))
+                (next-char) )
+        (if (and (= base 10) (= _c '.'))
+        then    (next-char)
+                (if (= _c undef) then (lexical-error))
+                (set i (token-number-val 10))
+                (if (= i undef) then (lexical-error))
+                (set base 1)
+                (repeat (set _tokenval (+ (* _tokenval 10) i))
+                        (set base (* base 10))
+                        (next-char)
+                        until (= _c undef)
+                        (set i (token-number-val 10))
+                        until (= i undef) )
+                (set _tokenval (/ _tokenval base)) )
+        (push _cstack _c)
+        (set _token "numero") )
+
+(defun token-number-val (base)
+        (if (in _c '0' .. '9') (- (length _c) (length '0'))
+        (if (and (= base 16) (in _c 'a' .. 'f')) (+ 10 (- (length _c) (length 'a')))
+        (if (and (= base 16) (in _c 'A' .. 'F')) (+ 10 (- (length _c) (length 'A')))
+        undef ))))
+
+;;;
+;;; riconosce un token stringa
+;;;
+
+(defnet token-stringa ()
+        (deflocal comment c)
+
+        (set _tokenval (queue))
+        (repeat (repeat (next-char)
+                        until (= _c '"')
+                        (if (in _c [ '\n' '\r' '\f' undef ])
+                        then    (lexical-error) )
+                        (if (= _c '\\')
+                        then    (next-char)
+                                (case _c of
+                                        '\\'    (skip)
+                                        '"'     (skip)
+                                        'n'     (set _c '\n')
+                                        'r'     (set _c '\r')
+                                        'f'     (set _c '\f')
+                                        't'     (set _c '\t')
+                                        'v'     (set _c '\v')
+                                        default (if (in _c '0' .. '3')
+                                                then    (set c (* 64 (- (length _c) 48)))
+                                                        (next-char)
+                                                        (if (in _c '0' .. '7')
+                                                        then    (set c (+ c (* 8 (- (length _c) 48))))
+                                                                (next-char)
+                                                                (if (in _c '0' .. '7')
+                                                                then    (set _c (int->char (+ c (- (length _c) 48))))
+                                                                else    (lexical-error) )
+                                                        else    (lexical-error) )
+                                                else    (lexical-error) )))
+                        (queue-put _tokenval _c) )
+                (repeat (next-char)
+                        until (and (<> _c ' ') (<> _c '\t') (<> _c '\v')) )
+                until (<> _c '\\')
+                (set comment false)
+                (repeat (next-char)
+                        until (= _c undef)
+                        until (not (or comment (in _c [ ' ' '\t' '\v' ';' '\n' '\r' '\f' ])))
+                        (if (= _c ';')
+                        then    (set comment true)
+                        else (if (in _c [ '\n' '\r' '\f' ])
+                        then (set comment false) )))
+                (if (<> _c '"')
+                then    (lexical-error) ))
+        (push _cstack _c)
+        (set _token "stringa")
+        (set _tokenval (sprintl _tokenval)) )
+
+;;;
+;;; legge il prossimo token;
+;;; non fallisce mai;
+;;; lascia il risultato su _token (ed eventualmente _tokenval);
+;;; se il token non è valido esce;
+;;; se non ci sono più token, _token è undef
+;;;
+
+(defnet next-token ()
+        (if (> (length _tstack) 0)
+        then    (set _token (pop _tstack))
+                (set _tokenval (pop _tstack))
+        else    (next-token-basic) ))
+
+(defnet next-token-basic ()
+        (deflocal comment)
+
+        (set comment false)
+        (repeat (next-char)
+                until (= _c undef)
+                until (not (or comment (in _c [ ' ' '\t' '\v' ';' '\n' '\r' '\f' ])))
+                (if (= _c ';')
+                then    (set comment true)
+                else (if (in _c [ '\n' '\r' '\f' ])
+                then (set comment false) )))
+        (case _c of
+                undef   (clr _token)
+                '('     (set _token "aperta")
+                ')'     (set _token "chiusa")
+                '['     (set _token "apertaquadra")
+                ']'     (set _token "chiusaquadra")
+                '{'     (set _token "apertagraffa")
+                '}'     (set _token "chiusagraffa")
+                '$'     (set _token "dollaro")
+                '+'     (seq (set _token "arop") (set _tokenval "cat"))
+                '-'     (seq    (next-char)
+                                (if (= _c '>')
+                                then    (set _token "freccia")
+                                else    (push _cstack _c)
+                                        (set _token "arop")
+                                        (set _tokenval "minus") ))
+                '*'     (seq (set _token "arop") (set _tokenval "times"))
+                '/'     (seq (set _token "arop") (set _tokenval "ratio"))
+                '%'     (seq (set _token "arop") (set _tokenval "mod"))
+                '='     (seq (set _token "relop") (set _tokenval "equ"))
+                '>'     (seq    (set _token "relop")
+                                (next-char)
+                                (if (= _c '=')
+                                then    (set _tokenval "magequ")
+                                else    (push _cstack _c)
+                                        (set _tokenval "mag") ))
+                '<'     (seq    (set _token "relop")
+                                (next-char)
+                                (case _c of
+                                        '='     (set _tokenval "minequ")
+                                        '>'     (set _tokenval "neq")
+                                        default (seq    (push _cstack _c)
+                                                        (set _tokenval "min") )))
+                '\''    (seq    (next-char)
+                                (if (or (= _c undef) (= _c '\''))
+                                then    (lexical-error)
+                                else    (if (= _c '\\')
+                                        then    (next-char)
+                                                (case _c of
+                                                        'n'     (set _tokenval '\n')
+                                                        'r'     (set _tokenval '\r')
+                                                        'f'     (set _tokenval '\f')
+                                                        't'     (set _tokenval '\t')
+                                                        'v'     (set _tokenval '\v')
+                                                        '\''    (set _tokenval _c)
+                                                        '\\'    (set _tokenval _c)
+                                                        default (if (in _c '0' .. '3')
+                                                                then    (set _tokenval (* 64 (- (length _c) 48)))
+                                                                        (next-char)
+                                                                        (if (in _c '0' .. '7')
+                                                                        then    (set _tokenval (+ _tokenval (* 8 (- (length _c) 48))))
+                                                                                (next-char)
+                                                                                (if (in _c '0' .. '7')
+                                                                                then    (set _tokenval (int->char (+ _tokenval (- (length _c) 48))))
+                                                                                else    (lexical-error) )
+                                                                        else    (lexical-error) )
+                                                                else    (lexical-error) ))
+                                        else    (set _tokenval _c) )
+                                        (next-char)
+                                        (if (= _c '\'')
+                                        then    (set _token "carattere")
+                                        else    (lexical-error) )))
+                '"'     (token-stringa)
+                '.'     (seq    (next-char)
+                                (if (= _c '.')
+                                then    (set _token "intervallo")
+                                else    (push _cstack _c)
+                                        (set _token "punto") ))
+                default (next-token-default) ))
+
+(defnet next-token-default ()
+        (if (in _c '0' .. '9')
+        then    (set _tokenval _c)
+                (next-char)
+                (if (= _c 'x')
+                then    (next-char)
+                        (if (= _c undef) then (lexical-error))
+                        (if (= (token-number-val 16) undef) then (lexical-error))
+                        (token-number 16)
+                else    (push _cstack _c)
+                        (set _c _tokenval)
+                        (token-number 10) )
+        else    (if (or (in _c 'A' .. 'Z')
+                        (in _c 'a' .. 'z')
+                        (in _c [ '_' '$' '@' '#' ]) )
+                then    (set _tokenval (queue))
+                        (repeat (queue-put _tokenval _c)
+                                (next-char)
+                                until (or (= _c undef)
+                                          (not  (or (in _c 'A' .. 'Z')
+                                                    (in _c 'a' .. 'z')
+                                                    (in _c '0' .. '9')
+                                                    (in _c [ '+' '-' '*' '/' '%' '_' '<' '>' '$' '@' '#' ]) ))))
+                        (push _cstack _c)
+                        (set _token "identificatore")
+                        (set _tokenval (sprintl _tokenval))
+                        (opt*   ; un identificatore non può terminare con '>'!
+                                (rmatch remove _tokenval ">")
+                                (push _cstack '>') )
+                else    (lexical-error) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet skip-element ()
+        (deflocal cnt)
+
+        (set cnt 1)
+        (repeat (next-token)
+                (<> _token undef)
+                (if (= _token "chiusa")
+                then    (inc cnt -1) )
+                until (= cnt 0)
+                (if (= _token "aperta")
+                then    (inc cnt) )))
+
+(defnet skip-testseq ()
+        (repeat (next-token)
+                until (<> _token "aperta")
+                (skip-element) )
+        (token-retract) )
+
+(defnet skip-expr ()
+        (deflocal cnt tipo)
+
+        (repeat (next-token)
+                (<> _token undef)
+                until (or (<> _token "arop") (<> _tokenval "minus")) )
+        (if (= _token "aperta")
+        then    (skip-element)
+        else    (set tipo (if (= _token "apertaquadra") 1
+                          (if (and (= _token "relop") (= _tokenval "min")) 2
+                          0 )))
+                (if (> tipo 0)
+                then    (set cnt 1)
+                        (repeat (next-token)
+                                (<> _token undef)
+                                (if (or (and (= tipo 1) (= _token "chiusaquadra"))
+                                        (and (= tipo 2) (= _token "relop") (= _tokenval "mag")) )
+                                then    (inc cnt -1) )
+                                until (= cnt 0)
+                                (if (or (and (= tipo 1) (= _token "apertaquadra"))
+                                        (and (= tipo 2) (= _token "relop") (= _tokenval "min")) )
+                                then    (inc cnt) )))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

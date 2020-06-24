@@ -1,0 +1,104 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-pix (const-state func)
+        (lmatch remove func "pix-")
+        (case func of
+                "load-static"           (expr-pix-load-static const-state)
+                "color"                 (expr-pix-color const-state)
+                default                 (expr-pix-default func) )
+        (flag-true "pix") )
+
+(defnet expr-pix-default (func)
+        (deflocal i)
+
+        (for i in (expr-pix-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_pix_" (dash->underscore func) "(") ")") )
+
+(defnet expr-pix-load-static (const-state)
+        (deflocal i)
+
+        (set _expr_const_enabled true)
+        (expr-basic)
+        (if (not _expr_const)
+        then    (error "`pix-load-static' requires a path") )
+        (set i (pix-load (search-default-path _expr_const_val)))
+        (if (= i undef)
+        then    (error (+ "`pix-load-static': cant't load a static image from " _expr_const_val)) )
+        (chiusa)
+        (set _expr_const_enabled const-state)
+        (expr-constant i)
+        (set _expr_const_enabled false) )
+
+(defnet expr-pix-color (const-state)
+        (set _expr_const_enabled _expr_const_optimize)
+        (exprseq-basic 3 4 "trp_pix_color(" ")")
+        (if _expr_const
+        then    (set _expr_const_enabled const-state)
+                (expr-constant-warning-if-undef (if (= (length _expr_const_val) 3)
+                        (pix-color <_expr_const_val 0> <_expr_const_val 1> <_expr_const_val 2>)
+                        (pix-color <_expr_const_val 0> <_expr_const_val 1> <_expr_const_val 2>
+                                   <_expr_const_val 3>) )))
+        (set _expr_const_enabled false) )
+
+(defun expr-pix-table ()
+        [ [ "color-red"                         1 1 ]
+          [ "color-green"                       1 1 ]
+          [ "color-blue"                        1 1 ]
+          [ "color-alpha"                       1 1 ]
+          [ "create"                            1 2 ]
+          [ "info"                              1 1 ]
+          [ "load"                              1 1 ]
+          [ "load-multiple"                     1 1 ]
+          [ "load-memory"                       1 2 ]
+          [ "load-memory-ext"                   3 4 ]
+          [ "load-thumbnail"                    2 3 ]
+          [ "load-thumbnail-memory"             2 3 ]
+          [ "load-thumbnail-memory-ext"         4 5 ]
+          [ "image-format"                      1 1 ]
+          [ "save-jpg-memory"                   1 2 ]
+          [ "get-color"                         1 1 ]
+          [ "get-luminance"                     1 1 ]
+          [ "get-contrast"                      1 1 ]
+          [ "grayp"                             1 1 ]
+          [ "bwp"                               1 1 ]
+          [ "point"                             3 3 ]
+          [ "color-count"                       2 2 ]
+          [ "top-field"                         1 1 ]
+          [ "bottom-field"                      1 1 ]
+          [ "crop"                              5 5 ]
+          [ "rotate"                            2 2 ]
+          [ "scale"                             2 3 ]
+          [ "mse"                               2 2 ]
+          [ "gray-histogram"                    1 1 ]
+          [ "text"                              1 undef ]
+          [ "ssim"                              2 3 ]
+          [ "ssim-linear"                       2 2 ]
+          [ "ssim-gaussian"                     2 2 ]
+          [ "scd"                               4 4 ]
+          [ "scd-histogram"                     2 2 ]
+          [ "box-stat"                          5 5 ]
+          [ "is-empty"                          1 2 ]
+          [ "trim"                              2 3 ]
+          [ "trim-values"                       2 3 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -1,0 +1,37 @@
+
+(defstart testthread2)
+
+(defnet testthread2 ()
+        (deflocal q m th x)
+
+        (print "multithreaded: " (multithreaded) nl
+               "sono il thread principale (" (thread-self) ")" nl
+               "e la mia mailbox contiene " (length (thread-self)) " messaggi" nl
+               nl )
+        (set q (queue))
+        (for m in 1 .. 250 do
+                (set th (thread-create (netptr job) (random 30) (thread-self)))
+                until (= th undef)
+                (print "ho creato " th nl)
+                (queue-put q th) )
+        (for x in 1 .. (length q) do
+                (receive m from th in q)
+                (print "ho ricevuto " m " da " th nl)
+                (thread-join th)
+                (print th ": joined" nl) )
+        (gc)
+        (print nl
+               "in tutto ho creato " (- (thread-max) 1) " threads" nl
+               "threads correnti: " (thread-cur) " - " (thread-list) nl
+               "free bytes/heap size: " (free-bytes) '/' (heap-size) nl
+               "terminazione corretta" nl
+               nl ))
+
+(defnet job (n parent)
+        (print nl
+               "sono " (thread-self) ", mi e' stato chiesto di calcolare " n "!" nl
+               nl )
+        (send (cons n (fac n)) to parent) )
+
+
+

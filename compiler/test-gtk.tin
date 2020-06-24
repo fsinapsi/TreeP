@@ -1,0 +1,143 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-gtk (func)
+        (deflocal i)
+
+        (lmatch remove func "gtk-")
+        (for i in (test-gtk-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq <i 1> <i 2> (+ "  trp_gtk_" (dash->underscore func) "(") ");\n")
+        (flag-true "gtk") )
+
+(defun test-gtk-table ()
+        [ [ "main"                                      0 0 ]
+          [ "main-quit"                                 0 0 ]
+          [ "main-iteration"                            0 0 ]
+          [ "signal-connect"                            3 undef ]
+          [ "signal-handler-disconnect"                 2 2 ]
+          [ "signal-emit-by-name"                       2 2 ]
+          [ "timeout-add"                               2 undef ]
+          [ "idle-add"                                  1 undef ]
+          [ "container-add"                             2 2 ]
+          [ "container-remove"                          1 2 ]
+          [ "container-set-border-width"                2 2 ]
+          [ "widget-show"                               1 1 ]
+          [ "widget-hide"                               1 1 ]
+          [ "widget-show-all"                           1 1 ]
+          [ "widget-realize"                            1 1 ]
+          [ "widget-grab-focus"                         1 1 ]
+          [ "widget-set-sensitive"                      2 2 ]
+          [ "widget-set-size-request"                   3 3 ]
+          [ "widget-modify-font"                        1 2 ]
+          [ "widget-modify-fg"                          2 3 ]
+          [ "widget-modify-bg"                          2 3 ]
+          [ "widget-modify-text"                        2 3 ]
+          [ "widget-modify-base"                        2 3 ]
+          [ "widget-set-tooltip-text"                   2 2 ]
+          [ "window-set-title"                          2 undef ]
+          [ "window-set-transient-for"                  2 2 ]
+          [ "window-set-modal"                          2 2 ]
+          [ "window-set-resizable"                      2 2 ]
+          [ "window-set-default-size"                   3 3 ]
+          [ "window-set-position"                       2 2 ]
+          [ "window-maximize"                           1 1 ]
+          [ "window-unmaximize"                         1 1 ]
+          [ "window-fullscreen"                         1 1 ]
+          [ "window-unfullscreen"                       1 1 ]
+          [ "window-move"                               3 3 ]
+          [ "button-clicked"                            1 1 ]
+          [ "toggle-button-set-active"                  2 2 ]
+          [ "toggle-button-set-mode"                    2 2 ]
+          [ "toggle-button-set-inconsistent"            2 2 ]
+          [ "file-chooser-set-filename"                 2 2 ]
+          [ "file-chooser-set-current-name"             2 2 ]
+          [ "file-chooser-set-current-folder"           2 2 ]
+          [ "file-chooser-select-filename"              2 2 ]
+          [ "file-chooser-set-local-only"               2 2 ]
+          [ "file-chooser-set-show-hidden"              2 2 ]
+          [ "file-chooser-set-create-folders"           2 2 ]
+          [ "color-button-set-color"                    2 2 ]
+          [ "color-button-set-use-alpha"                2 2 ]
+          [ "color-button-set-title"                    2 2 ]
+          [ "color-selection-set-current-color"         2 2 ]
+          [ "color-selection-set-has-opacity-control"   2 2 ]
+          [ "box-pack-start"                            5 5 ]
+          [ "box-pack-end"                              5 5 ]
+          [ "label-set-text"                            2 undef ]
+          [ "label-set-justify"                         2 2 ]
+          [ "label-set-selectable"                      2 2 ]
+          [ "label-set-ellipsize"                       2 2 ]
+          [ "label-set-pattern"                         2 2 ]
+          [ "notebook-append-page"                      2 3 ]
+          [ "notebook-remove-page"                      1 2 ]
+          [ "notebook-set-scrollable"                   2 2 ]
+          [ "notebook-set-current-page"                 2 2 ]
+          [ "image-set-from-pixbuf"                     2 2 ]
+          [ "adjustment-set-value"                      2 2 ]
+          [ "scrolled-window-add-with-viewport"         2 2 ]
+          [ "scrolled-window-set-policy"                3 3 ]
+          [ "editable-set-editable"                     2 2 ]
+          [ "entry-set-text"                            2 2 ]
+          [ "entry-set-max-length"                      2 2 ]
+          [ "entry-set-visibility"                      2 2 ]
+          [ "spin-button-set-value"                     2 2 ]
+          [ "spin-button-set-numeric"                   2 2 ]
+          [ "spin-button-set-wrap"                      2 2 ]
+          [ "spin-button-set-range"                     3 3 ]
+          [ "spin-button-update"                        1 1 ]
+          [ "scale-set-draw-value"                      2 2 ]
+          [ "combo-box-text-append-text"                2 2 ]
+          [ "combo-box-text-remove"                     2 2 ]
+          [ "combo-box-set-active"                      2 2 ]
+          [ "text-view-set-editable"                    2 2 ]
+          [ "text-view-set-wrap-mode"                   2 2 ]
+          [ "text-view-set-cursor-visible"              2 2 ]
+          [ "text-view-set-overwrite"                   2 2 ]
+          [ "text-buffer-append"                        2 undef ]
+          [ "text-buffer-append-color"                  3 undef ]
+          [ "text-buffer-set-text"                      2 undef ]
+          [ "text-buffer-set-text-color"                3 undef ]
+          [ "text-buffer-select-all"                    1 1 ]
+          [ "range-set-value"                           2 2]
+          [ "progress-bar-pulse"                        1 1 ]
+          [ "progress-bar-set-text"                     2 undef ]
+          [ "progress-bar-set-fraction"                 2 2 ]
+          [ "progress-bar-set-pulse-step"               2 2 ]
+          [ "font-button-set-font-name"                 2 2 ]
+          [ "font-button-set-show-style"                2 2 ]
+          [ "font-button-set-show-size"                 2 2 ]
+          [ "font-button-set-use-font"                  2 2 ]
+          [ "font-button-set-use-size"                  2 2 ]
+          [ "font-button-set-title"                     2 2 ]
+          [ "frame-set-label"                           1 2 ]
+          [ "menu-shell-append"                         2 2 ]
+          [ "menu-item-set-submenu"                     1 2 ]
+          [ "calendar-set-date"                         2 2 ]
+
+          [ "drag-dest-set"                             3 3 ]
+          [ "drag-dest-unset"                           1 1 ]
+
+          [ "graph-qscale"                              3 3 ]
+          [ "graph-size"                                5 5 ]
+          [ "graph-vbvfill"                             7 7 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

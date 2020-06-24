@@ -1,0 +1,29 @@
+;;;
+;;; questo programma crea nove file di testo contenenti
+;;; le licenze open source preparate dalla fsf
+;;;
+
+(defstart testlicense)
+
+(defnet save (path license)
+        (deflocal f)
+
+        (print "creating '" path "'..." nl)
+        (set f (fcreate path))
+        (<> f undef)
+        (fprint f license)
+        (close f) )
+
+(defnet testlicense ()
+        (save "agpl-3.txt" (license-agpl3))
+        (save "fdl-1.1.txt" (license-fdl1-1))
+        (save "fdl-1.2.txt" (license-fdl1-2))
+        (save "gpl-1.txt" (license-gpl1))
+        (save "gpl-2.txt" (license-gpl2))
+        (save "gpl-3.txt" (license-gpl3))
+        (save "lgpl-2.txt" (license-lgpl2))
+        (save "lgpl-2.1.txt" (license-lgpl2-1))
+        (save "lgpl-3.txt" (license-lgpl3)) )
+
+
+

@@ -1,0 +1,192 @@
+
+(include "common.tin")
+
+(defstart cv-siftmatch)
+
+(defun nl () (if (cms-windows) "\r\n" nl))
+
+(defnet usage ()
+        (print "Usage: " (argv 0) " <img1> <img2>" nl
+               "OpenCV version " (cv-version) nl )
+        (exit) )
+
+(defnet can-t-create (path)
+        (print "can't create `" path "'" nl)
+        (exit) )
+
+(defnet png-save (pix path)
+        (alt    (pix-save-png pix path)
+                (can-t-create path) ))
+
+(defnet parse-args (@pix1 @pix2 @fout @p1path @p2path @pmpath @thr @crop @cropw @croph)
+        (deflocal path1 path2 outpath q i)
+
+        (clr @p1path @p2path @pmpath @cropw @croph)
+        (set @fout (stdout))
+        (set @thr 0.4)
+        (set @crop false)
+        (set q (queue))
+        (for i in 1 .. (- (argc) 1) do
+                (queue-put q (argv i)) )
+        (while (> (length q) 0) do
+                (set i (queue-get q))
+                (case i of
+                        "-t"            (seq    (set i (queue-get q))
+                                                (set @thr (str->num i))
+                                                (if (or (= @thr undef) (< @thr 0) (> @thr 1))
+                                                then    (print "`-t " i "': invalid option" nl)
+                                                        (exit) ))
+                        "-c"            (seq    (set @crop true)
+                                                (opt    (parse-resolution <q 0> @cropw @croph)
+                                                        (skip (queue-get q)) ))
+                        "-p1"           (set @p1path (queue-get q))
+                        "-p2"           (set @p2path (queue-get q))
+                        "-pm"           (set @pmpath (queue-get q))
+                        "-o"            (set outpath (queue-get q))
+                        default         (if (= path1 undef)
+                                        then    (set path1 i)
+                                        else    (if (= path2 undef)
+                                        then    (set path2 i)
+                                        else    (usage) ))))
+        (if (or (= path1 undef) (= path2 undef))
+        then    (usage) )
+        (set @pix1 (pix-load path1))
+        (if (not (pixp @pix1))
+        then    (print path1 ": unrecognized image" nl)
+                (exit) )
+        (set @pix2 (pix-load path2))
+        (if (not (pixp @pix2))
+        then    (close @pix1)
+                (print path2 ": unrecognized image" nl)
+                (exit) )
+        (if (<> outpath undef)
+        then    (set @fout (fcreate outpath))
+                (if (= @fout undef)
+                then    (close @pix1 @pix2)
+                        (can-t-create outpath) )))
+
+(defnet parse-resolution (s @w @h)
+        (deflocal i)
+
+        (search case "x" s i)
+        (set @w (str->num (sub 0 i s)))
+        (integerp @w)
+        (> @w 0)
+        (set @h (str->num (sub (+ i 1) (maxint) s)))
+        (integerp @h)
+        (> @h 0) )
+
+(defnet cv-siftmatch ()
+        (deflocal pix1 pix2 w1 h1 w2 h2 fout p1path p2path pmpath thr crop cropw croph
+                  pix feat1 feat2 cl1 cr1 ct1 cb1 cl2 cr2 ct2 cb2 m n a b i )
+
+        (parse-args pix1 pix2 fout p1path p2path pmpath thr crop cropw croph)
+
+        (if (or (= p1path undef) crop)
+        then    (set feat1 (cv-sift-features pix1))
+        else    (set feat1 (cv-sift-features-draw pix1))
+                (png-save pix1 p1path) )
+
+        (if (or (= p2path undef) crop)
+        then    (set feat2 (cv-sift-features pix2))
+        else    (set feat2 (cv-sift-features-draw pix2))
+                (png-save pix2 p2path) )
+
+        (set w1 (width pix1))
+        (set h1 (height pix1))
+        (set w2 (width pix2))
+        (set h2 (height pix2))
+
+        (if (<> pmpath undef)
+        then    (set pix (pix-create (max w1 w2) (+ h1 h2)))
+                (pix-draw-pix pix 0 0 pix1)
+                (pix-draw-pix pix 0 h1 pix2) )
+
+        (set m (cv-sift-match feat1 feat2 thr))
+
+        (print "keypoints immagine 1: " (length feat1) nl
+               "keypoints immagine 2: " (length feat2) nl
+               "matches: " (length m) nl )
+
+        (if crop
+        then    (set i (cdr (cdr (sift-analyze m))))
+                (set n <i 0>)
+                (if (= n 0)
+                then    (fprint fout "nd" (nl))
+                        (set cl1 0)
+                        (set cr1 0)
+                        (set cl2 0)
+                        (set cr2 0)
+                else    (set a (/ <i 2> n))
+                        (set b (/ <i 4> n))
+                        (set cl2 (rint b))
+                        (if (>= cl2 0)
+                        then    (set cl1 0)
+                        else    (set cl2 0)
+                                (set cl1 -(rint (/ b a))) )
+                        (set cr2 (- w2 (rint (+ (* a w1) b))))
+                        (if (>= cr2 0)
+                        then    (set cr1 0)
+                        else    (set cr2 0)
+                                (set cr1 (- w1 (rint (/ (- w2 b) a)))) )
+                        (fprint fout cl1 " " cr1 " " cl2 " " cr2 (nl)) )
+                (set n <i 1>)
+                (if (= n 0)
+                then    (fprint fout "nd" (nl))
+                        (set ct1 0)
+                        (set cb1 0)
+                        (set ct2 0)
+                        (set cb2 0)
+                else    (set a (/ <i 3> n))
+                        (set b (/ <i 5> n))
+                        (set ct2 (rint b))
+                        (if (>= ct2 0)
+                        then    (set ct1 0)
+                        else    (set ct2 0)
+                                (set ct1 -(rint (/ b a))) )
+                        (set cb2 (- h2 (rint (+ (* a h1) b))))
+                        (if (>= cb2 0)
+                        then    (set cb1 0)
+                        else    (set cb2 0)
+                                (set cb1 (- h1 (rint (/ (- h2 b) a)))) )
+                        (fprint fout ct1 " " cb1 " " ct2 " " cb2 (nl)) )
+                (if (<> p1path undef)
+                then    (set n (pix-crop pix1 cl1 ct1 (- w1 cl1 cr1) (- h1 ct1 cb1)))
+                        (if (and (<> cropw undef) (<> croph undef))
+                        then    (set i (pix-scale n cropw croph))
+                                (close n)
+                                (set n i) )
+                        (png-save n p1path)
+                        (close n) )
+                (if (<> p2path undef)
+                then    (set n (pix-crop pix2 cl2 ct2 (- w2 cl2 cr2) (- h2 ct2 cb2)))
+                        (if (and (<> cropw undef) (<> croph undef))
+                        then    (set i (pix-scale n cropw croph))
+                                (close n)
+                                (set n i) )
+                        (png-save n p2path)
+                        (close n) ))
+
+        (close pix1 pix2 feat1 feat2)
+
+        (if (or (not crop) (<> pmpath undef))
+        then    (for i in m do
+                        (if (not crop)
+                        then    (fprint fout (approx6 (car (car i))) " " (approx6 (cdr (car i))) " "
+                                             (approx6 (car (cdr i))) " " (approx6 (cdr (cdr i)))
+                                             (nl) ))
+                        (if (<> pmpath undef)
+                        then    (pix-draw-line pix
+                                        (car (car i)) (cdr (car i))
+                                        (car (cdr i)) (+ (cdr (cdr i)) h1)
+                                        (pix-color 0xff 0x00 0xff) ))))
+
+        (if (<> fout (stdout))
+        then    (close fout) )
+
+        (if (<> pmpath undef)
+        then    (png-save pix pmpath)
+                (close pix) ))
+
+
+

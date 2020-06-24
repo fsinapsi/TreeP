@@ -1,0 +1,80 @@
+;;;
+;;; testaud.trp
+;;; illustra le funzioni delle librerie libtrpaud
+;;; e libtrpid3tag: analizza un file MP3 o AC3 e
+;;; mostra alcune info
+;;;
+
+(defstart testaud)
+
+(defnet usage ()
+        (print "uso: " (argv 0) " <path>" nl)
+        (exit -1) )
+
+(defun approx (x)
+        (/ (rint (* x 1000)) 1000) )
+
+(defnet testaud ()
+        (deflocal path)
+
+        (if (<> (argc) 2)
+        then    (usage) )
+        (set path (argv 1))
+        (if (not (pathexists path))
+        then    (print path ": file non trovato" nl)
+                (exit -2) )
+        (opt    (id3tag-analyze path))
+        (alt    (aud-analyze path)
+                (seq    (print path ": file non riconosciuto" nl)
+                        (exit -3) )))
+
+(defnet id3tag-analyze (path)
+        (deflocal tag-list tag)
+
+        (set tag-list (id3tag-file path))
+        (<> tag-list undef)
+        (<> tag-list nil)
+        (print nl
+               "ID3 Tags" nl
+               "========" nl
+               nl )
+        (for tag in tag-list do
+                (print <tag 0> " (" <tag 1> "): "
+                       <tag 2> nl )))
+
+(defnet aud-analyze (path)
+        (deflocal f m ismp3)
+
+        (set f (fopenro path))
+        (<> f undef)
+        (set m (aud-create f))
+        (opt* (aud-parse m 65536))
+        (close f)
+        (<> (aud-codec m) undef)
+        (set ismp3 (= (aud-codec m) "MP3"))
+
+        (print nl
+               "Technical info" nl
+               "==============" nl
+               nl
+               "codec: " (aud-codec m) (if ismp3 (sprint " (MPEG-" (aud-version m) " Layer " (tile (aud-layer m) 'I') ")") "") nl
+               (if (<> (aud-encoder m) undef) (+
+               "encoder: " (aud-encoder m) nl ) "" )
+               "frames: " (aud-frames m) nl
+               "duration: " (date-s2hhmmss (aud-duration m)) " (" (approx (aud-duration m)) " s)" nl
+               "bitrate: " (aud-bitrate m) " kbps " (if (aud-vbr m) "VBR" "CBR") nl
+               "frequency: " (aud-frequency m) " Hz" nl
+               "mode: " (aud-mode m) nl
+               (if (<> (aud-emphasis m) undef) (+
+               "emphasis: " (aud-emphasis m) nl ) "" ) (if ismp3 (sprint
+               "padding: " (if (aud-padding m) "yes" "no") nl ) "" )
+               (if (> (aud-initial-skip m) 0) (sprint
+               "initial skip: " (aud-initial-skip m) nl ) "" )
+               (if (> (aud-internal-skip m) 0) (sprint
+               "internal skip: " (aud-internal-skip m) nl ) "" )
+               (if (> (aud-buf-act m) 0) (sprint
+               "final skip: " (aud-buf-act m) nl ) "" )
+               nl ))
+
+
+

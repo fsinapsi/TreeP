@@ -1,0 +1,209 @@
+;;;
+;;; philosophers.trp
+;;; risolve il classico problema di programmazione
+;;; concorrente dei filosofi a cena di Dijkstra
+;;;
+;;; (nota: questa versione non evita la starvation...
+;;; come va modificato per garantire l`impossibilita` di
+;;; starvation?)
+;;;
+
+(defstart philosophers)
+
+(defun nomi-filosofi ()
+        [ "Descartes"
+          "Spinoza"
+          "Hume"
+          "Kant"
+          "Schopenhauer"
+          "Locke" ] )
+
+(defnet philosophers ()
+        (deflocal iterazioni forchette filosofi i)
+
+        (set iterazioni 3)
+
+        (set forchette (thread-create (netptr forchette)
+                (thread-self) ))
+
+        (set filosofi (array 0))
+
+        (for i in (nomi-filosofi) do
+                (array-append filosofi (thread-create
+                        (netptr filosofo) i
+                        forchette iterazioni )))
+
+        (send filosofi to forchette)
+
+        (for i in filosofi do
+                (thread-join i) )
+        (thread-join forchette)
+
+        (gc)
+        (print nl
+               "in tutto ho creato " (- (thread-max) 1) " threads" nl
+               "threads correnti: " (thread-cur) " - " (thread-list) nl
+               "free bytes/heap size: " (free-bytes) '/' (heap-size) nl
+               "terminazione corretta" nl
+               nl ))
+
+;;;
+;;; rende la posizione del filosofo a destra
+;;;
+
+(defun pos-destra (i n)
+        (% (+ i 1) n) )
+
+;;;
+;;; rende la posizione del filosofo a sinistra
+;;;
+
+(defun pos-sinistra (i n)
+        (% (- i 1) n) )
+
+;;;
+;;; modifica le disponibilita` per il filosofo i
+;;;
+
+(defnet aggiorna-libere (libere i inc)
+        (set <libere i> (+ <libere i> inc)) )
+
+;;;
+;;; sospende per un tempo random compreso tra min e max
+;;; secondi
+;;;
+
+(defnet pausa-random (min max)
+        (deflocal prec)
+
+        (set prec 1000) ; precisione in millesimi di s
+        (sleep (+ min
+                  (/ (random (+ 1 (rint (* prec (- max min)))))
+                     prec ))))
+
+;;;
+;;; il processo `filosofo`
+;;;
+
+(defnet filosofo (nome forchette iterazioni)
+        (deflocal i ok)
+
+        (for i in 1 .. iterazioni do
+
+                ; chiedo di acquisire le forchette
+
+                (send "prendi" to forchette)
+                (receive ok from forchette)
+
+                (print nome " :- sto mangiando..." nl)
+
+                ; mangio per un tempo random
+                ; compreso tra 0.5 e 2 secondi
+
+                (pausa-random 0.5 2)
+
+                ; lascio le forchette e mi metto a pensare
+
+                (print nome " :- sto pensando..." nl)
+
+                (send "lascia" to forchette)
+
+                ; resto a pensare per un tempo random
+                ; compreso tra 1 e 3.5 secondi
+
+                (pausa-random 1 3.5) ))
+
+;;;
+;;; il processo `forchette` che gestisce le risorse
+;;;
+
+(defnet forchette (parent)
+        (deflocal filosofi n libere in-attesa
+                  richiesta mitt i )
+
+        ; ricevo la lista dei filosofi dal processo
+        ; principale
+
+        (receive filosofi from parent)
+
+        ; definisco il numero n dei filosofi (e quindi
+        ; delle risorse)
+
+        (set n (length filosofi))
+
+        ; creo un array che indica quante risorse
+        ; sono libere per il filosofo i-esimo
+
+        (set libere (array default 2 n))
+
+        ; creo un array che indica se il
+        ; filosofo i-esimo e` in attesa di
+        ; prendere le forchette
+
+        (set in-attesa (array default false n))
+
+        (repeat (receive richiesta from mitt in filosofi)
+                (in mitt filosofi i)
+                (case richiesta of
+                        "prendi" (prendi mitt i n libere
+                                         in-attesa )
+                        "lascia" (lascia filosofi i n libere
+                                         in-attesa ))))
+
+;;;
+;;; gestisce una richiesta di acquisizione
+;;;
+
+(defnet prendi (filosofo i n libere in-attesa)
+
+        (if (= <libere i> 2)
+        then
+                ; le risorse libere per il filosofo
+                ; i-esimo sono 2, quindi possiamo
+                ; dargli l`ok
+
+                (send "ok" to filosofo)
+
+                ; dobbiamo aggiornare le risorse
+                ; rimaste libere per i vicini
+
+                (aggiorna-libere libere
+                        (pos-destra i n) -1 )
+                (aggiorna-libere libere
+                        (pos-sinistra i n) -1 )
+
+        else
+                ; non resta che mettere il filosofo
+                ; in attesa
+
+                (set <in-attesa i> true) ))
+
+;;;
+;;; gestisce una comunicazione di rilascio
+;;;
+
+(defnet lascia (filosofi i n libere in-attesa)
+        (deflocal j)
+
+        (for j in (list (pos-destra i n)
+                        (pos-sinistra i n) ) do
+
+                (aggiorna-libere libere j 1)
+
+                ; avendo liberato una risorsa per il vicino
+                ; (dx/sx) dobbiamo controllare: (a) se tali
+                ; risorse sono tornate a essere 2; (b) se
+                ; tale vicino era in attesa; in tal caso
+                ; possiamo dargli l`ok...
+
+                (if (and (= <libere j> 2)
+                         <in-attesa j> )
+                then    (set <in-attesa j> false)
+                        (send "ok" to <filosofi j>)
+                        (aggiorna-libere libere
+                                (pos-destra j n) -1 )
+                        (aggiorna-libere libere
+                                (pos-sinistra j n) -1 ))))
+
+
+

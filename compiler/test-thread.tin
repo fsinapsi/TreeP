@@ -1,0 +1,287 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-thread (func)
+        (deflocal prefix)
+
+        (set prefix false)
+        (opt    (lmatch remove func "thread-")
+                (set prefix true) )
+        (if prefix
+        then    (alt    (test-thread-mandatory-prefix func)
+                        (test-thread-optional-prefix func) )
+        else    (test-thread-optional-prefix func) )
+        (flag-true "thread") )
+
+(defnet test-thread-mandatory-prefix (func)
+        (case func of
+                "join"                  (exprseq-ext 1 1 "  if(trp_thread_join(" "))")
+                "case"                  (test-thread-case false)
+                "case*"                 (test-thread-case true)
+                default                 (fail) ))
+
+(defnet test-thread-optional-prefix (func)
+        (case func of
+                "send"                  (test-thread-send 0 false)
+                "sendnb"                (test-thread-send 1 false)
+                "sendbuf"               (test-thread-send 0 true)
+                "receive"               (test-thread-receive 0)
+                "receivenb"             (test-thread-receive 1)
+                default                 (fail) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-thread-send (nb bsize)
+        (if (last-pass)
+        then    (fprint _dst "  if(trp_thread_send(" nb ",") )
+        (if bsize
+        then    (expr)
+        else    (if (last-pass)
+                then    (fprint _dst "ZERO") ))
+        (virgola)
+        (expr)
+        (parola-chiave "to")
+        (exprseq-ext 1 1 "," "))") )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-thread-receive (nb)
+        (deflocal asymm)
+
+        (if (last-pass)
+        then    (fprint _dst "  if(trp_thread_receive(" nb ",&(") )
+        (next-token)
+        (if (<> _token "identificatore")
+        then    (error "identifier expected") )
+        (not-predefined)
+        (expr-ident)
+        (parola-chiave "from")
+        (if (last-pass)
+        then    (fprint _dst "),") )
+        (set asymm false)
+        (next-token)
+        (if (and (= _token "identificatore")
+                 (not (in _tokenval (predefined))) )
+        then    (set nb _tokenval)
+                (next-token)
+                (set asymm (and (= _token "identificatore")
+                                (= _tokenval "in") ))
+                (token-retract)
+                (set _token "identificatore")
+                (set _tokenval nb) )
+        (token-retract)
+        (if asymm
+        then    (if (last-pass)
+                then    (fprint _dst "&(") )
+                (next-token)
+                (expr-ident)
+                (parola-chiave "in")
+                (next-token)
+                (if (= _token "apertagraffa")
+                then    (if (last-pass)
+                        then    (fprint _dst "),NULL") )
+                        (set nb 0)
+                        (repeat (next-token)
+                                until (= _token "chiusagraffa")
+                                (set nb (+ nb 1))
+                                (token-retract)
+                                (virgola)
+                                (expr) )
+                        (if (< nb 2)
+                        then    (error "asymmetric 'receive' requires at least two senders") )
+                        (chiusa)
+                        (if (last-pass)
+                        then    (fprint _dst ",NULL))goto l" _labfail ';' nl) )
+                else    (token-retract)
+                        (exprseq-ext 1 1 ")," "))") )
+        else    (exprseq-ext 1 1 "NULL," "))") ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-thread-case (repet)
+        (deflocal tmppath dst failed)
+
+        (if (last-pass)
+        then    (fcreatetmp tmppath dst)
+                (set failed true)
+                (opt    (test-thread-case-internal repet dst)
+                        (set failed false) )
+                (close dst)
+                (remove tmppath)
+                (not failed)
+        else    (test-thread-case-internal repet undef) ))
+
+(defnet test-thread-case-internal (repet dst)
+        (deflocal tmp asymm n l i j k)
+
+        (set tmp _tmp_tmp)
+        (set _tmp_tmp (+ _tmp_tmp 1))
+        (set _max_tmp (max _max_tmp _tmp_tmp))
+        (if (last-pass)
+        then    (set _label (+ _label 1))
+                (set l _label)
+                (if repet
+                then    (fprint _dst 'l' l ':' nl) )
+                (fprint _dst "  t" tmp "=trp_thread_case(") )
+        (set n 0)
+        (repeat (set n (+ n 1))
+                (next-token)
+                (if (and (= _token "identificatore")
+                         (= _tokenval "priority") )
+                then    (expr)
+                        (next-token)
+                else    (if (last-pass)
+                        then    (fprint _dst "ZERO") ))
+                (virgola)
+                (set i true)
+                (if (= _token "aperta")
+                then    (next-token)
+                        (if (and (= _token "identificatore")
+                                 (= _tokenval "receive") )
+                        then    (if (last-pass)
+                                then    (fprint _dst "TRP_TRUE") )
+                                (set i false) )
+                        (token-retract)
+                        (set _token "aperta") )
+                (if i
+                then    (if (= _token "freccia")
+                        then    (if (last-pass)
+                                then    (fprint _dst "TRP_TRUE") )
+                        else    (token-retract)
+                                (expr)
+                                (next-token) ))
+                (virgola)
+                (if (= _token "freccia")
+                then    (if (last-pass)
+                        then    (fprint _dst "NULL") )
+                else    (= _token "aperta")
+                        (parola-chiave "receive")
+                        (if (last-pass)
+                        then    (fprint _dst "&("))
+                        (next-token)
+                        (if (<> _token "identificatore")
+                        then    (error "identifier expected") )
+                        (not-predefined)
+                        (expr-ident)
+                        (parola-chiave "from")
+                        (if (last-pass)
+                        then    (fprint _dst "),") )
+                        (set asymm false)
+                        (next-token)
+                        (if (and (= _token "identificatore")
+                                 (not (in _tokenval (predefined))) )
+                        then    (set i _tokenval)
+                                (next-token)
+                                (set asymm (and (= _token "identificatore")
+                                                (= _tokenval "in") ))
+                                (token-retract)
+                                (set _token "identificatore")
+                                (set _tokenval i) )
+                        (token-retract)
+                        (if asymm
+                        then    (if (last-pass)
+                                then    (fprint _dst "&(") )
+                                (next-token)
+                                (expr-ident)
+                                (parola-chiave "in")
+                                (next-token)
+                                (if (last-pass)
+                                then    (fprint _dst "),") )
+                                (if (= _token "apertagraffa")
+                                then    (if (last-pass)
+                                        then    (fprint _dst "NULL") )
+                                        (set i 0)
+                                        (repeat (next-token)
+                                                until (= _token "chiusagraffa")
+                                                (set i (+ i 1))
+                                                (token-retract)
+                                                (virgola)
+                                                (expr) )
+                                        (if (< i 2)
+                                        then    (error "asymmetric 'receive' requires at least two senders") )
+                                        (if (last-pass)
+                                        then    (fprint _dst ",NULL") )
+                                else    (token-retract)
+                                        (expr) )
+                        else    (if (last-pass)
+                                then    (fprint _dst "NULL,") )
+                                (expr) )
+                        (chiusa)
+                        (next-token)
+                        (= _token "freccia") )
+                (virgola)
+                (set i _dst)
+                (set _dst dst)
+                (if (last-pass)
+                then    (fprint _dst '@' nl) )
+                (testseq)
+                (set _dst i)
+                (next-token)
+                until (= _token "chiusa")
+                (= _token "apertaquadra")
+                (next-token)
+                (= _token "chiusaquadra") )
+        (if (last-pass)
+        then    (fprint _dst "NULL);" nl)
+                (set j 0)
+                (fsetpos 0 dst)
+                (repeat (set i (freadline dst))
+                        until (= i undef)
+                        (if (= i "@")
+                        then    (set j (+ j 1))
+                                (if (> j 1)
+                                then    (fprint _dst "  goto l" l ';' nl
+                                                     'l' k ':' nl ))
+                                (if (or repet (< j n))
+                                then    (set _label (+ _label 1))
+                                        (set k _label) )
+                                (fprint _dst "  if(((trp_sig64_t *)t" tmp ")->val!=" j ")goto l"
+                                        (if (or repet (< j n)) k _labfail) ';' nl )
+                        else    (fprint _dst i nl) ))
+                (if repet
+                then    (fprint _dst "  goto l" l ';' nl
+                                     'l' k ':' nl )
+                else    (fprint _dst 'l' l ':' nl) ))
+        (set _tmp_tmp (- _tmp_tmp 1)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

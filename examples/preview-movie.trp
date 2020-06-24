@@ -1,0 +1,67 @@
+
+(include "common.tin")
+
+(defstart preview-movie)
+
+(defun w ()       4)
+(defun h ()       6)
+(defun size ()  160)
+(defun margin ()  6)
+(defun display-mv1 () 0)
+(defun display-mv2 () (+ (cmacro FF_DEBUG_VIS_MV_P_FOR)
+                         (cmacro FF_DEBUG_VIS_MV_B_FOR)
+                         (cmacro FF_DEBUG_VIS_MV_B_BACK) ))
+
+(defnet create-pframe (w h @pframe)
+        (if (>= w h)
+        then    (set h (/ h (/ w (size))))
+                (set w (size))
+        else    (set w (/ w (/ h (size))))
+                (set h (size)) )
+        (set @pframe (pix-create (rint w) (rint h))) )
+
+(defnet copy-thumbs (av pframe pix)
+        (deflocal framecnt step i j)
+
+        (set step (/ (av-index-entries av) (w) (h)))
+        (set framecnt (/ step 2))
+        (for i in 0 .. (- (h) 1) do
+        (for j in 0 .. (- (w) 1) do
+                (av-seek av (rint framecnt))
+                (inc framecnt step)
+                (av-read-frame av pframe)
+                (pix-draw-pix pix (+ (* j (width pframe))
+                                     (* (+ j 1) (margin)) )
+                                  (+ (* i (height pframe))
+                                     (* (+ i 1) (margin)) )
+                              pframe ))))
+
+(defnet preview-movie ()
+        (deflocal av pframe pix)
+
+        (print "libavformat version: " (av-format-version) nl
+               "libavcodec  version: " (av-codec-version) nl
+               "libavutil   version: " (av-util-version) nl
+               "libswscale  version: " (av-swscale-version) nl
+               nl )
+        (> (argc) 1)
+        (print "path: " (argv 1) nl)
+        (set av (av-open-input-file (argv 1) (display-mv1)))
+        (if (= av undef)
+        then    (print "apertura filmato fallita" nl)
+                (fail) )
+        (print "size: " (width av) " x " (height av) nl
+               "time base: " (av-time-base av) " s" nl
+               "index entries: " (av-index-entries av) nl )
+        (create-pframe (width av) (height av) pframe)
+        (set pix (pix-create (+ (* (w) (width pframe))
+                                (* (+ (w) 1) (margin)) )
+                             (+ (* (h) (height pframe))
+                                (* (+ (h) 1) (margin)) )))
+        (copy-thumbs av pframe pix)
+        (close av pframe)
+        (pix-save-jpg pix "thumbnails.jpg" 90)
+        (close pix) )
+
+
+

@@ -1,0 +1,29 @@
+
+(defstart testgcrypt)
+
+(defun pass () "abulafia")
+(defun dim () 20)
+
+(defun gcry-md5sum (obj) (gcry-md-hash (cmacro GCRY_MD_MD5) obj))
+(defun gcry-sha1sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA1) obj))
+(defun gcry-fmd5sum (path) (gcry-md-hash-file (cmacro GCRY_MD_MD5) path))
+(defun gcry-fsha1sum (path) (gcry-md-hash-file (cmacro GCRY_MD_SHA1) path))
+
+(defnet testgcrypt ()
+        (deflocal i)
+
+        (print nl "libgcrypt version " (gcry-version) nl nl)
+
+        (print "md5sum(\"" (pass) "\") = " (gcry-md5sum (pass)) nl
+               "sha1sum(\"" (pass) "\") = " (gcry-sha1sum (pass)) nl
+               nl )
+
+        (print "fmd5sum(\"" (argv 0) "\") = " (gcry-fmd5sum (argv 0)) nl
+               "fsha1sum(\"" (argv 0) "\") = " (gcry-fsha1sum (argv 0)) nl
+               nl )
+
+        (for i in 0 .. (- (dim) 1) do
+                (print i " -> " (gcry-permute (dim) (pass) i) nl) ))
+
+
+

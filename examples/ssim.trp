@@ -1,0 +1,50 @@
+
+(defun dimblock-default () 16)
+(defun radius-default () 8)
+
+(use cv)
+
+(include "common.tin")
+
+(defstart ssim)
+
+(defnet ssim ()
+        (deflocal pix1 pix2 dimblock radius t v)
+
+        (alt    (seq    (set pix1 (pix-load (argv 1)))
+                        (pixp pix1)
+                        (set pix2 (pix-load (argv 2)))
+                        (pixp pix2)
+                        (= (width pix1) (width pix2))
+                        (= (height pix1) (height pix2))
+                        (set dimblock (str->num (argv 3)))
+                        (set radius (str->num (argv 4)))
+                        (if (not (integerp dimblock))
+                        then    (set dimblock (dimblock-default)) )
+                        (if (not (integerp radius))
+                        then    (set radius (radius-default)) ))
+                (seq    (print "uso: ssim <pix1> <pix2> [ <dimblock> [ <radius> ] ]" nl
+                               "le due immagini devono avere le stesse dimensioni" nl )
+                        (fail) ))
+    ;    (pix-gray pix1)
+    ;    (pix-gray pix2)
+        (set t (now))
+        (set v (pix-ssim-linear pix1 pix2))
+        (set t (- (now) t))
+        (print "ssim (8x8 linear): " (approx5 v) " (" (* t 1000) " ms)" nl)
+        (set t (now))
+        (set v (pix-ssim-gaussian pix1 pix2))
+        (set t (- (now) t))
+        (print "ssim (11x11 gaussian): " (approx5 v) " (" (* t 1000) " ms)" nl)
+        (set t (now))
+        (set v (pix-scd pix1 pix2 dimblock radius))
+        (set t (- (now) t))
+        (print "scd: " (approx5 v) " (" (* t 1000) " ms)" nl)
+        (set t (now))
+        (set v (pix-mse pix1 pix2))
+        (set t (- (now) t))
+        (print "mse: " (approx5 v) " (" (* t 1000) " ms)" nl)
+        (close pix1 pix2) )
+
+
+

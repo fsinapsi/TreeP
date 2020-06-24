@@ -1,0 +1,65 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-avi (func)
+        (deflocal i)
+
+        (lmatch remove func "avi-")
+        (for i in (expr-avi-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_avi_" (dash->underscore func) "(") ")")
+        (flag-true "avi") )
+
+(defun expr-avi-table ()
+        [ [ "open-input-file"           1 2 ]
+          [ "has-index"                 1 1 ]
+          [ "audio-tracks"              1 1 ]
+          [ "audio-format"              1 1 ]
+          [ "audio-delay"               1 1 ]
+          [ "audio-chunks"              1 1 ]
+          [ "audio-fpos"                2 2 ]
+          [ "audio-size"                2 2 ]
+          [ "audio-streamsize"          1 1 ]
+          [ "audio-channels"            1 1 ]
+          [ "audio-frequency"           1 1 ]
+          [ "audio-vbr"                 1 1 ]
+          [ "audio-samplerate"          1 1 ]
+          [ "audio-mp3rate"             1 1 ]
+          [ "audio-padrate"             1 1 ]
+          [ "video-compressor"          1 1 ]
+          [ "video-delay"               1 1 ]
+          [ "video-frames"              1 1 ]
+          [ "video-keyframes"           1 1 ]
+          [ "video-width"               1 1 ]
+          [ "video-height"              1 1 ]
+          [ "video-fpos"                2 2 ]
+          [ "video-size"                2 2 ]
+          [ "video-max-size"            1 1 ]
+          [ "video-streamsize"          1 1 ]
+          [ "video-framerate"           1 1 ]
+          [ "video-bitrate"             1 1 ]
+          [ "video-min-keyint"          1 1 ]
+          [ "video-max-keyint"          1 1 ]
+          [ "video-frame-is-keyframe"   2 2 ]
+          [ "video-read"                2 2 ]
+          [ "parse-junk"                2 2 ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

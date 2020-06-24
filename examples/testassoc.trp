@@ -1,0 +1,37 @@
+
+(defstart testassoc)
+
+(defun path-extension (path) net path-extension)
+(defnet path-extension (path @ext)
+        (deflocal i)
+        (set @ext "")
+        (opt    (search "." path i (maxint))
+                (set @ext (sub (+ i 1) (maxint) path)) ))
+
+(defnet testassoc ()
+        (deflocal s a p ac ad)
+
+        (set s (assoc))
+        (print s " -> " (assoc-list s) nl)
+        (set <s "msg"> "hello")
+        (print s " -> " (assoc-list s) nl
+               "(in \"key\" s) = " (in "key" s) nl
+               "(in \"msg\" s) = " (in "msg" s) nl )
+
+        (set a (assoc))
+        (set <a "subassoc"> s)
+        (for p in (directory) do
+                (assoc-inc a (path-extension p)) )
+        (print a " -> " (assoc-list a) nl)
+        (print (iso->utf8 "profondità dell'albero: ") (height a) nl)
+        (print "programmini trovati: " <a "trp"> nl)
+        (print "subassoc->msg: " <a "subassoc" "msg"> nl)
+
+        (set ac (compress a 10))
+        (print "assoc compresso: " ac nl)
+        (set ad (uncompress ac))
+        (print ad " -> " (assoc-list ad) nl
+               "a e ad sono uguali? " (= a ad) nl ) )
+
+
+

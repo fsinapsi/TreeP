@@ -1,0 +1,18 @@
+
+(defstart testconstants)
+
+(defun a () (* (b) (b)))
+
+(defun b () 3)
+
+(defun c () (= (a) 9))
+
+(defun d () undef)
+
+(defnet testconstants ()
+        (print [ 4 (a) 16 (if (c) (a) (b))
+                 (- (cdate) (date 2008 11 1)) ] nl
+               (d) nl ))
+
+
+

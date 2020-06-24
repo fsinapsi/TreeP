@@ -1,0 +1,987 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(include "common.tin")
+(include "lex.tin")
+(include "expr.tin")
+(include "test.tin")
+
+(defstart trpc)
+
+(defglobal
+        _kv
+        _cstatic
+        _expr_const_optimize
+        _dst
+        _log
+        _f
+        _fstack
+        _fnames
+        _pass
+        _icon
+        _cst
+        _ml_cst
+        _ml_max
+        _ml_trans
+        _glb
+        _calls
+        _used
+        _netptr
+        _funptr
+        _net
+        _fun
+        _netfun
+        _const_fun
+        _start
+        _act_params
+        _act_locals
+        _act_calls
+        _max_tmp
+        _tmp_tmp
+        _label
+        _labfail
+        _lastfor
+        )
+
+(defun version () "0.0")
+
+(defun compile-time () (cdate))
+
+(defnet version ()
+        (print "This is " (app-name) ", version " (version) nl
+               "compile time: " (date-arpa (compile-time)) nl
+               "compiled on " (cuname) " (" (csysbits) "-bit)" nl
+               "running on " (uname) nl
+               (sysbits) "-bit, "
+               (if (endianness) "little" "big") " endian, "
+               (if (cstatic) "statically" "dynamically") " linked, "
+               (if (multithreaded) "multi" "single-") "threaded version" nl
+               "GMP version: " (gmp-version) nl )
+        (exit) )
+
+(defun optim-default () 3)
+
+(defun default-math-precision () 200)
+
+(defun app-name () (fullpath->name (argv 0)))
+
+(defun predefined () [ "undef" "nil" "true" "false" "nl" "default" ])
+
+(defnet error (msg)
+        (print msg nl)
+        (if (> (length _fnames) 0)
+        then    (print "in " (pop _fnames) nl
+                       "line " (fposline _f) nl ))
+        (clean)
+        (exit -1) )
+
+(defnet syntax-error ()
+        (error "syntax error") )
+
+(defnet lexical-error ()
+        (error "lexical error") )
+
+(defnet chiusa ()
+        (next-token)
+        (= _token "chiusa") )
+
+(defnet parola-chiave (parola-chiave)
+        (next-token)
+        (if (or (<> _token "identificatore")
+                (<> _tokenval parola-chiave) )
+        then    (error (+ "expecting `" parola-chiave "'")) ))
+
+(defnet not-predefined ()
+        (if (in _tokenval (predefined))
+        then    (error (+ _tokenval ": predefined symbol")) ))
+
+(defun last-pass () (= _pass 2))
+
+(defnet queue-append (q o)
+        (if (not (in o q))
+        then    (queue-put q o) ))
+
+(defnet virgola ()
+        (if (last-pass)
+        then    (fprint _dst ',' )) )
+
+(defun dash->underscore (str) (find-and-replace str "-" "_"))
+
+(defnet fcreatetmp (@tmppath @dst)
+        (deflocal i)
+
+        (set i 0)
+        (repeat (set @tmppath (sprint "trpc" i ".tmp"))
+                until (not (pathexists @tmppath))
+                (set i (+ i 1)) )
+        (set @dst (fcreate @tmppath))
+        (if (= @dst undef)
+        then    (error "creation of temporary file failed!") ))
+
+(defnet clean ()
+        (deflocal i)
+
+        (for i in _cst do
+                (if (or (rawp i) (pixp i))
+                then    (close i) ))
+        (close _log) )
+
+(defun gtk () <_kv "gtk">)
+(defun iup () <_kv "iup">)
+(defun thread () <_kv "thread">)
+(defun license () <_kv "license">)
+(defun gcrypt () <_kv "gcrypt">)
+(defun suf () <_kv "suf">)
+(defun aud () <_kv "aud">)
+(defun vid () <_kv "vid">)
+(defun avi () <_kv "avi">)
+(defun id3tag () <_kv "id3tag">)
+(defun magic () <_kv "magic">)
+(defun exif () <_kv "exif">)
+(defun quirc () <_kv "quirc">)
+(defun pix () <_kv "pix">)
+(defun curl () <_kv "curl">)
+(defun mysql () <_kv "mysql">)
+(defun sqlite3 () <_kv "sqlite3">)
+(defun wn () <_kv "wn">)
+(defun avcodec () <_kv "avcodec">)
+(defun cv () <_kv "cv">)
+(defun vlfeat () <_kv "vlfeat">)
+(defun mgl () <_kv "mgl">)
+(defun lept () <_kv "lept">)
+(defun cgraph () <_kv "cgraph">)
+(defun sdl () <_kv "sdl">)
+(defun chess () <_kv "chess">)
+
+(defnet flag-true (lib) (set <_kv lib> true))
+(defnet flag-false (lib) (set <_kv lib> false))
+
+(defun libs-list ()
+        [ "gtk" "iup" "thread" "license" "gcrypt" "suf"
+          "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
+          "pix" "curl" "mysql" "sqlite3" "wn" "avcodec" "cv"
+          "vlfeat" "mgl" "lept" "cgraph" "sdl" "chess" ])
+
+(defnet init-globals ()
+        (set _kv (assoc))
+        (set-precision (default-math-precision))
+        (set <_kv "cdate"> (now))
+        (set _cstack (stack))
+        (set _tstack (stack))
+        (set _fstack (stack))
+        (set _fnames (stack))
+        (set _const_fun (assoc))
+        (set _ml_max 1)
+        (init-globals-pass) )
+
+(defnet init-globals-pass ()
+        (deflocal lib)
+
+        (set _cst (queue))
+        (set _ml_cst (queue))
+        (set _ml_trans (queue))
+        (set _glb (assoc))
+        (set _calls (assoc))
+        (set _netptr (assoc))
+        (set _funptr (assoc))
+        (set _net (assoc))
+        (set _fun (assoc))
+        (set _netfun (assoc))
+        (for lib in (libs-list) do
+                (flag-false lib) )
+        (gc) )
+
+(defnet parse-args (@tpath @optim @debug @static @conly @overw @const @nomwin @wunus @log @libpaths)
+        (deflocal i)
+
+        (clr @tpath)
+        (set @optim (optim-default))
+        (set @debug false)
+        (set @static false)
+        (set @conly false)
+        (set @overw false)
+        (set @const true)
+        (set @nomwin false)
+        (set @wunus false)
+        (set @log false)
+        (set @libpaths (queue))
+        (for i in 1 .. (- (argc) 1) do
+                (case (argv i) of
+                        "-v"            (version)
+                        "-O0"           (set @optim 0)
+                        "-O1"           (set @optim 1)
+                        "-O2"           (set @optim 2)
+                        "-O3"           (set @optim 3)
+                        "-g"            (set @debug true)
+                        "-static"       (set @static true)
+                        "-c"            (set @conly true)
+                        "-f"            (set @overw true)
+                        "-d"            (set @const false)
+                        "-w"            (set @nomwin true)
+                        "-Wunused"      (set @wunus true)
+                        "-l"            (set @log true)
+                        default         (if (lmatch (argv i) "-L")
+                                        then    (queue-put @libpaths (sub 2 (maxint) (argv i)))
+                                        else    (set @tpath (argv i)) )))
+        (if (= @tpath undef)
+        then    (error (+ "usage: " (app-name) " [ -O0 | ... | -O3 ] [ -g ] [ -static ] [ -c ] [ -f ] [ -d ] [ -w ] [ -l ] [ -L<path> ] <path>")) )
+        (queue-put @libpaths "/usr/local/lib")
+        (queue-put @libpaths "/opt/local/lib") )
+
+(defnet trpc ()
+        (deflocal i unused tpath cpath lpath epath bpath ipath optim debug conly overw nomwin wunus log libpaths net fun glb)
+
+        (init-globals)
+        (parse-args tpath optim debug _cstatic conly overw _expr_const_optimize nomwin wunus log libpaths)
+        (if (not (pathexists tpath))
+        then    (error (+ tpath ": file not found")) )
+        (alt    (seq    (set epath tpath)
+                        (rmatch case remove epath ".trp")
+                        (set cpath (+ epath ".c"))
+                        (set lpath (+ epath ".log")) )
+                (error (+ tpath ": bad extension")) )
+        (opt    (= overw true)
+                (remove epath) )
+        (if (and (not conly) (pathexists epath))
+        then    (error (+ epath " exists, please remove it")) )
+
+        (set _f (fopenro tpath))
+        (<> _f undef)
+        (push _fnames (realpath tpath))
+
+        (if log
+        then    (opt (remove lpath))
+                (set _log (fcreate lpath))
+                (if (= _log undef)
+                then    (error "can't create log file") ))
+
+        (set _pass 1)
+        (print (app-name) ": pass " _pass " (syntax analysis)..." nl)
+        (parse-pass)
+        (if (= _start undef)
+        then    (error "initial symbol undefined") )
+        (if (not (in _start _net))
+        then    (error "initial symbol: undefined net") )
+        (create-icon epath ipath)
+        (analyze-calls unused)
+        (if (or (> (length _const_fun) 0)
+                unused
+                (<> (precision) (default-math-precision)) )
+        then    (if wunus
+                then    (set net _net)
+                        (set fun _fun)
+                        (set glb _glb) )
+                (repeat (print (app-name) ": pass " _pass " (code optimization)..." nl)
+                        (set i (length _const_fun))
+                        (init-globals-pass)
+                        (parse-pass)
+                        (analyze-calls unused)
+                        until (and (= (length _const_fun) i)
+                                   (not unused) ))
+                (if wunus
+                then    (warning-unused net fun glb)
+                        (clr net fun glb) ))
+
+        (conflicts)
+
+        (opt (remove cpath))
+        (set _dst (fcreate cpath))
+        (if (= _dst undef)
+        then    (error (+ "can't create file " cpath)) )
+
+        (dependences)
+
+        (set _pass 2)
+        (print (app-name) ": pass " _pass " (code generation)..." nl)
+        (print-prologue)
+        (parse-pass)
+        (close _dst)
+
+        (set i (+ (if false "clang" "gcc") " -O" optim " -pipe"
+                  " -Wno-pointer-sign"
+                  (if (darwin) " -headerpad_max_install_names" "")
+                  (if (ms-windows) " -mms-bitfields" "")
+                  (if (and (ms-windows) (or (gtk) (iup)) (not nomwin)) " -mwindows" "")
+                  (if (linux) " -fPIC" "")
+                  (if debug " -g" "")
+                  " -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
+                  " -isystem /usr/local/include -I/opt/local/include"
+                  (if (gtk) " `pkg-config --cflags gtk+-2.0`" "")
+                  (if (iup) " -I/usr/local/include/iup" "")
+                  (if (cv) (if (mingw)
+                                " -I/local/include/opencv"
+                                " `pkg-config --cflags opencv`" ) "" )
+                  " -o " (pathquote epath) (if (ms-windows) ".exe" "")
+                  " " (pathquote cpath)
+                  (if (= ipath undef) "" (+ " " (pathquote ipath)))
+                  " -L" (sprintl libpaths " -L")
+                  (if (thread) " -ltrpthread" "")
+                  (if (gtk) " -ltrpgtk `pkg-config --libs gtk+-2.0`" "")
+                ;  (if (iup) " -ltrpiup -liup -liupimglib" "")
+                  (if (iup) " -ltrpiup -liup" "")
+                  (if (license) " -ltrplicense" "")
+                  (if (gcrypt) " -ltrpgcrypt -lgcrypt -lgpg-error" "")
+                  (if (suf) " -ltrpsuf" "")
+                  (if (aud) " -ltrpaud" "")
+                  (if (vid) " -ltrpvid" "")
+                  (if (avi) " -ltrpavi" "")
+                  (if (id3tag) " -ltrpid3tag -lid3tag" "")
+                  (if (magic) " -ltrpmagic -lmagic" "")
+                  (if (exif) " -ltrpexif `pkg-config --libs libexif`" "")
+                  (if (quirc) " -ltrpquirc -lqrencode" "")
+                  (if (pix) " -ltrppix `pkg-config libpng --libs` -ljpeg -lgif" "")
+                  (if (curl)
+                        (if (mingw)
+                                " -ltrpcurl -lcurldll"
+                                " -ltrpcurl `pkg-config --libs libcurl`" ) "" )
+                  (if (mysql) " -ltrpmysql `mysql_config --libs`" "")
+                  (if (sqlite3) " -ltrpsqlite3 -lsqlite3" "")
+                  (if (wn) " -ltrpwn" "")
+                  (if (avcodec)
+                        (if (mingw)
+                                " -lpthreadGC2s -ltrpavcodec -lavformat -lavcodec -lavutil -lswscale"
+                                " -ltrpavcodec `pkg-config libavformat --libs` `pkg-config libavcodec --libs` `pkg-config libavutil --libs` `pkg-config libswscale --libs`" ) "" )
+                  (if (cv)
+                        (if (mingw)
+                                " -ltrpcv" \
+                                " -lopencv_calib3d230 -lopencv_highgui230" \
+                                " -lopencv_contrib230 -lopencv_imgproc230" \
+                                " -lopencv_core230 -lopencv_legacy230" \
+                                " -lopencv_features2d230 -lopencv_ml230" \
+                                " -lopencv_flann230 -lopencv_objdetect230" \
+                                " -lopencv_gpu230 -lopencv_video230"
+                                " -ltrpcv `pkg-config --libs opencv`" ) "" )
+                  (if (vlfeat) " -ltrpvlfeat -lvl" "")
+                  (if (mgl) " -ltrpmgl -lmgl" "")
+                  (if (lept) " -ltrplept -llept `pkg-config libpng --libs` -ljpeg -ltiff" "")
+                  (if (cgraph) " -ltrpcgraph `pkg-config libgvc --libs`" "")
+                  (if (sdl) " -ltrpsdl `pkg-config sdl2 --libs`" "")
+                  (if (chess) " -ltrpchess" "")
+                  (if (mingw)
+                        " -ltrp -lgmp -lgc -lpthreadGC2s -lws2_32 -lz -lm"
+                        " -ltrp -lgmp -lgc -lpthread -lz -lm" )
+                  (if _cstatic " -static" "") ))
+
+        (if (or conly (mingw))
+        then    (set bpath (+ epath "-compile"))
+                (set _dst (fcreate bpath))
+                (fprint _dst "#!/bin/sh" nl i nl)
+                (close _dst) )
+        (if (not conly)
+        then    (set _pass (+ _pass 1))
+                (print (app-name) ": pass " _pass " (cc)..." nl)
+                (if (mingw)
+                then    (system "sh " (pathquote bpath))
+                        (if (not debug)
+                        then    (system "strip -s " (pathquote epath) ".exe") )
+                        (remove bpath)
+                        (if (<> ipath undef)
+                        then    (remove ipath) )
+                else    (system i) )
+                (remove cpath) )
+        (clean)
+        (gc)
+        (print "DEBUG: free bytes/heap size = " (free-bytes) '/' (heap-size) nl) )
+
+(defnet create-icon (epath @ipath)
+        (deflocal rcpath f)
+
+        (alt    (not (mingw))
+                (= _icon undef)
+                (seq    (set rcpath (+ epath "-icon.rc"))
+                        (set @ipath (+ epath "-icon.o"))
+                        (set f (fcreate rcpath))
+                        (<> f undef)
+                        (fprint f "1 ICON \"" _icon "\"")
+                        (close f)
+                        (system "windres " (pathquote rcpath) " " (pathquote @ipath))
+                        (remove rcpath) )
+                (error "creation of icon failed") ))
+
+(defnet analyze-calls (@unused)
+        (deflocal q n i)
+
+        (set _used (assoc))
+        (gc)
+        (set q (queue))
+        (assoc-inc _used (+ "net_" _start))
+        (queue-put q (+ "net_" _start))
+        (while (> (length q) 0) do
+                (for i in <_calls (queue-get q)> do
+                        (set n (car i))
+                        (if (not (lmatch n "glb_"))
+                        then    (if (not (in n _used))
+                                then    (queue-put q n) ))
+                        (assoc-inc _used n) ))
+        (set @unused false)
+        (for i in _net do
+                until @unused
+                (set @unused (not (in (+ "net_" (car i)) _used))) )
+        (for i in _fun do
+                until @unused
+                (set @unused (not (in (+ "fun_" (car i)) _used))) )
+        (for i in _glb do
+                until @unused
+                (set @unused (not (in (+ "glb_" (car i)) _used))) ))
+
+(defnet warning-unused (net fun glb)
+        (deflocal i)
+
+        (for i in net do
+                (if (not (in (+ "net_" (car i)) _used))
+                then    (print "warning: unused net `" (car i) "'" nl) ))
+        (for i in fun do
+                (if (not (in (+ "fun_" (car i)) _used))
+                then    (print "warning: unused function `" (car i) "'" nl) ))
+        (for i in glb do
+                (if (not (in (+ "glb_" (car i)) _used))
+                then    (print "warning: unused global `" (car i) "'" nl) )))
+
+(defnet conflicts ()
+        (if (and (gtk) (iup))
+        then    (error "conflict: GTK2 vs IUP") )
+   ;     (if (and (cv) (iup))
+   ;     then    (error "conflict: CV (GTK2) vs IUP") )
+        (skip) )
+
+(defnet dependences ()
+        (if (or (gtk) (iup) (avcodec) (mgl) (lept) (cgraph) (cv) (vlfeat))
+        then    (flag-true "pix") ))
+
+(defnet parse-pass ()
+        (fsetpos 0 _f)
+        (repeat (next-token)
+                until (= _token undef)
+                (if (<> _token "aperta") then (syntax-error))
+                (next-token)
+                (if (<> _token "identificatore") then (syntax-error))
+                (alt    (case _tokenval of
+                                "include"       (call "include")
+                                "use"           (call "use")
+                                "defstart"      (call "defstart")
+                                "defglobal"     (call "defglobal")
+                                "defnet"        (call "defnet")
+                                "defun"         (call "defun")
+                                "deflang"       (call "deflang")
+                                default         (error "definition expected") )
+                        (syntax-error) )))
+
+(defnet include ()
+        (deflocal path rp f)
+
+        (next-token)
+        (= _token "stringa")
+        (set rp _tokenval)
+        (set path (search-default-path rp))
+        (chiusa)
+        (if (= path undef)
+        then    (error (+ rp ": file not found")) )
+        (set rp (realpath path))
+        (if (in rp _fnames)
+        then    (error (+ "include " path ": cyclic inclusion")) )
+        (set f (fopenro path))
+        (if (= f undef)
+        then    (error (+ path ": file not found")) )
+        (push _fstack _f)
+        (set _f f)
+        (push _fnames rp) )
+
+(defnet use ()
+        (next-token)
+        (= _token "identificatore")
+        (if (in _tokenval (libs-list))
+        then    (flag-true _tokenval)
+        else    (error (+ "module `" _tokenval "' doesn't exist")) )
+        (chiusa) )
+
+(defnet defstart ()
+        (next-token)
+        (= _token "identificatore")
+        (set _start _tokenval)
+        (chiusa) )
+
+(defnet defglobal ()
+        (repeat (next-token)
+                until (= _token "chiusa")
+                (if (= _pass 1)
+                then    (= _token "identificatore")
+                        (if (lmatch _tokenval "_")
+                        then    (if (in _tokenval _glb)
+                                then    (error (+ _tokenval ": global already defined")) )
+                                (if (or (= _used undef) (in (+ "glb_" _tokenval) _used))
+                                then    (set <_glb _tokenval> (length _glb)) )
+                        else    (error (+ _tokenval ": globals must start with '_'")) ))))
+
+(defnet defnet ()
+        (deflocal name)
+
+        (next-token)
+        (= _token "identificatore")
+        (set name _tokenval)
+        (if (or (= _used undef) (in (+ "net_" name) _used))
+        then    (defnet-basic name)
+        else    (skip-element) ))
+
+(defnet defnet-basic (name)
+        (deflocal i j)
+
+        (set i <_net name>)
+        (case _pass of
+                1       (seq    (if (<> i undef)
+                                then    (error (+ name ": net already defined")) )
+                                ; FIXME
+                                ; valutare se è il caso...
+                                ;(queue-append _cst name)
+                                (set _act_params (queue))
+                                (set _act_locals (queue))
+                                (set _act_calls (assoc)) )
+                2       (seq    (fprint _dst "static uns8b net_" <i 0> "(")
+                                (set _act_params <i 1>)
+                                (set _act_locals <i 2>)
+                                (for j in _act_params do
+                                        (fprint _dst
+                                                (if (> (for-pos) 0) ',' "")
+                                                "trp_obj_t *" (if (lmatch j "@") '*' "") 'i' (for-pos)) )
+                                (fprint _dst ')' nl
+                                             '{' nl )
+                                (for j in _act_locals do
+                                        (fprint _dst "  trp_obj_t *j" (for-pos) "=UNDEF;" nl) )
+                                (for j in 1 .. <i 3> do
+                                        (fprint _dst "  trp_obj_t *t" (for-pos) "=UNDEF;" nl) )))
+        (next-token)
+        (= _token "aperta")
+        (set i true)
+        (set j false)
+        (repeat (next-token)
+                until (= _token "chiusa")
+                (if (= _pass 1)
+                then    (= _token "identificatore")
+                        (set i (and i (not j)))
+                        (if (lmatch _tokenval "_")
+                        then    (error "formals can't start with '_'") )
+                        (if (in _tokenval _act_params)
+                        then    (error "double formal") )
+                        (not-predefined)
+                        ; FIXME
+                        ; valutare se è il caso...
+                        ;(queue-append _cst _tokenval)
+                        (queue-put _act_params _tokenval)
+                        (set j (lmatch _tokenval "@")) ))
+        (if (and (= _pass 1) i j)
+        then    (set <_netfun name> (- (length _act_params) 1)) )
+        (next-token)
+        (if (= _token "aperta")
+        then    (next-token)
+                (if (and (= _token "identificatore") (= _tokenval "deflocal"))
+                then    (repeat (next-token)
+                                until (= _token "chiusa")
+                                (if (= _pass 1)
+                                then    (= _token "identificatore")
+                                        (if (lmatch _tokenval "_" "@")
+                                        then    (error "locals can't start with '_' or '@'") )
+                                        (if (in _tokenval _act_locals)
+                                        then    (error "double local") )
+                                        (if (in _tokenval _act_params)
+                                        then    (error "local conflicts with formal") )
+                                        (not-predefined)
+                                        ; FIXME
+                                        ; valutare se è il caso...
+                                        ;(queue-append _cst _tokenval)
+                                        (queue-put _act_locals _tokenval) ))
+                else    (token-retract)
+                        (token-push "aperta" undef) )
+        else    (token-retract) )
+        (set _max_tmp 0)
+        (set _tmp_tmp 0)
+        (set _label 0)
+        (set _labfail 0)
+        (testseq)
+        (chiusa)
+        (if (= _pass 1)
+        then    (set <_net name> (list (length _net) _act_params _act_locals _max_tmp))
+                (set <_calls (+ "net_" name)> _act_calls)
+        else    (fprint _dst "  return 0;" nl
+                             "l0:" nl
+                             "  return 1;" nl
+                             '}' nl
+                             nl )))
+
+(defnet defun ()
+        (deflocal name)
+
+        (next-token)
+        (= _token "identificatore")
+        (set name _tokenval)
+        (if (or (= _used undef) (in (+ "fun_" name) _used))
+        then    (defun-basic name)
+        else    (skip-element) ))
+
+(defnet defun-basic (name)
+        (deflocal i j done)
+
+        (set _act_locals nil)
+        (set i <_fun name>)
+        (case _pass of
+                1       (seq    (if (<> i undef)
+                                then    (error (+ name ": function already defined")) )
+                                ; FIXME
+                                ; valutare se è il caso...
+                                ;(queue-append _cst _tokenval)
+                                (set _act_params (queue))
+                                (set _act_calls (assoc)) )
+                2       (seq    (fprint _dst "static trp_obj_t *fun_" (car i) "(")
+                                (set _act_params (cdr i))
+                                (for i in _act_params do
+                                        (fprint _dst (if (> (for-pos) 0) ',' "") "trp_obj_t *i" (for-pos)) )
+                                (fprint _dst ')' nl
+                                             '{' nl )))
+        (next-token)
+        (= _token "aperta")
+        (repeat (next-token)
+                until (= _token "chiusa")
+                (if (= _pass 1)
+                then    (= _token "identificatore")
+                        (if (lmatch _tokenval "_" "@")
+                        then    (error "formals can't start with '_' or '@'") )
+                        (if (in _tokenval _act_params)
+                        then    (error "double formal") )
+                        (not-predefined)
+                        (queue-put _act_params _tokenval) ))
+        (set done false)
+        (next-token)
+        (if (and (= _token "identificatore") (= _tokenval "net"))
+        then    (next-token)
+                (if (= _token "chiusa")
+                then    (token-retract)
+                        (set _token "identificatore")
+                        (set _tokenval "net")
+                else    (if (<> _token "identificatore")
+                        then    (syntax-error) )
+                        (if (last-pass)
+                        then    (set i <_netfun _tokenval>)
+                                (if (= i undef)
+                                then    (error (+ _tokenval ": invalid net")) )
+                                (if (< (length _act_params) i)
+                                then    (error (+ _tokenval ": too few arguments to net")) )
+                                (if (> (length _act_params) i)
+                                then    (error (+ _tokenval ": too many arguments to net")) )
+                                (fprint _dst "  trp_obj_t *r=UNDEF;" nl
+                                             "  return net_" <_net _tokenval 0> '(' )
+                                (for i in 1 .. i do
+                                        (fprint _dst 'i' (for-pos) ',') )
+                                (fprint _dst "&r)?UNDEF:r;" nl
+                                             '}' nl
+                                             nl )
+                        else    (assoc-inc _act_calls (+ "net_" _tokenval)) )
+                        (set done true) ))
+        (if (not done)
+        then    (token-retract)
+                (set _expr_const_enabled _expr_const_optimize)
+                (set _expr_code "")
+                (expr-basic)
+                (if _expr_const
+                then    (set <_const_fun name> (if (= _expr_const_val undef) _const_fun _expr_const_val))
+                        (set _expr_const_enabled false)
+                        (expr-constant _expr_const_val) )
+                (if (last-pass)
+                then    (fprint _dst "  return " _expr_code ';' nl
+                                     '}' nl
+                                     nl )))
+        (chiusa)
+        (if (= _pass 1)
+        then    (set <_fun name> (cons (length _fun) _act_params))
+                (set <_calls (+ "fun_" name)> _act_calls) ))
+
+(defnet deflang ()
+        (deflocal e n)
+
+        (repeat (next-token)
+                until (= _token "chiusa")
+                (token-retract)
+                (set _expr_const_enabled true)
+                (expr-basic)
+                (if (not _expr_const)
+                then    (error "deflang: constant expression expected") )
+                (set e _expr_const_val)
+                (set _expr_const_enabled true)
+                (expr-basic)
+                (if (not _expr_const)
+                then    (error "deflang: constant expression expected") )
+                (set n _expr_const_val)
+                (if (or (not (integerp n)) (< n 1))
+                then    (error "deflang: invalid index") )
+                (set _ml_max (max _ml_max (+ n 1)))
+                (set _expr_const_enabled true)
+                (expr-basic)
+                (if (not _expr_const)
+                then    (error "deflang: constant expression expected") )
+                (if (not (last-pass))
+                then    (queue-put _ml_trans (list e n _expr_const_val)) )))
+
+(defnet print-prologue ()
+        (deflocal cst-total-size i j l k)
+
+        (gc)
+        (fprint _dst "/*" nl
+                     " this code was generated by trpc v" (version) nl
+                     " */" nl )
+        (print-header (str-load-static "../trp/trp.h"))
+        (if (gtk)
+        then    (print-header (str-load-static "../trpgtk/trpgtk.h")) )
+        (if (iup)
+        then    (print-header (str-load-static "../trpiup/trpiup.h")) )
+        (if (thread)
+        then    (print-header (str-load-static "../trpthread/trpthread.h")) )
+        (if (license)
+        then    (print-header (str-load-static "../trplicense/trplicense.h")) )
+        (if (gcrypt)
+        then    (print-header (str-load-static "../trpgcrypt/trpgcrypt.h")) )
+        (if (suf)
+        then    (print-header (str-load-static "../trpsuf/trpsuf.h")) )
+        (if (aud)
+        then    (print-header (str-load-static "../trpaud/trpaud.h")) )
+        (if (vid)
+        then    (print-header (str-load-static "../trpvid/trpvid.h")) )
+        (if (avi)
+        then    (print-header (str-load-static "../trpavi/trpavi.h")) )
+        (if (id3tag)
+        then    (print-header (str-load-static "../trpid3tag/trpid3tag.h")) )
+        (if (magic)
+        then    (print-header (str-load-static "../trpmagic/trpmagic.h")) )
+        (if (exif)
+        then    (print-header (str-load-static "../trpexif/trpexif.h")) )
+        (if (quirc)
+        then    (print-header (str-load-static "../trpquirc/trpquirc.h")) )
+        (if (pix)
+        then    (print-header (str-load-static "../trppix/trppix.h")) )
+        (if (curl)
+        then    (print-header (str-load-static "../trpcurl/trpcurl.h")) )
+        (if (mysql)
+        then    (print-header (str-load-static "../trpmysql/trpmysql.h")) )
+        (if (sqlite3)
+        then    (print-header (str-load-static "../trpsqlite3/trpsqlite3.h")) )
+        (if (wn)
+        then    (print-header (str-load-static "../trpwn/trpwn.h")) )
+        (if (avcodec)
+        then    (print-header (str-load-static "../trpavcodec/trpavcodec.h")) )
+        (if (cv)
+        then    (print-header (str-load-static "../trpcv/trpcv.h")) )
+        (if (vlfeat)
+        then    (print-header (str-load-static "../trpvlfeat/trpvlfeat.h")) )
+        (if (mgl)
+        then    (print-header (str-load-static "../trpmgl/trpmgl.h")) )
+        (if (lept)
+        then    (print-header (str-load-static "../trplept/trplept.h")) )
+        (if (cgraph)
+        then    (print-header (str-load-static "../trpcgraph/trpcgraph.h")) )
+        (if (sdl)
+        then    (print-header (str-load-static "../trpsdl/trpsdl.h")) )
+        (if (chess)
+        then    (print-header (str-load-static "../trpchess/trpchess.h")) )
+
+        (fprint _dst "void trp_compiler_exit();" nl
+                      nl )
+
+        (if (> (length _ml_cst) 0)
+        then    (fprint _dst "static uns8b trp_set_lang(trp_obj_t *i);" nl
+                             nl
+                             "static uns32b _lang=0;" nl
+                             nl
+                             "static uns32b _lang_sel[" _ml_max "][" (length _ml_cst) "]={" nl )
+                (for i in 1 .. _ml_max do
+                        (fprint _dst "  {")
+                        (for j in _ml_cst do
+                                (set l false)
+                                (if (> i 1)
+                                then    (for k in _ml_trans do
+                                                (set l (and (= <k 0> j) (= <k 1> (- i 1))))
+                                                until l ))
+                                (if l
+                                then    (set l <k 2>)
+                                        (queue-append _cst l)
+                                else    (if (and (> i 1) (<> _log undef) (stringp j))
+                                        then    (set l (+ "\"" (find-and-replace (find-and-replace j "\"" "\\\"") "\n" "\\n") "\""))
+                                                (fprint _log l nl
+                                                             (- i 1) nl
+                                                             l nl
+                                                             nl ))
+                                        (set l j) )
+                                (in l _cst k)
+                                (fprint _dst (if (> (for-pos) 0) (+ "," (if (= (% (for-pos) 20) 0) "\n   " "")) "") k) )
+                        (fprint _dst "}" (if (< i _ml_max) "," "") nl) )
+                (fprint _dst "};" nl
+                             nl ))
+
+        (if (> (length _cst) 0)
+        then    (set cst-total-size 0)
+                (fprint _dst "static uns8b *_constc[" (length _cst) "]={" )
+                (set l (queue))
+                (for k in _cst do
+                        (set i (compress k 10))
+                        (queue-put l (raw-mode i))
+                        (queue-put l (raw-uncompressed-type i))
+                        (queue-put l (raw-compression-level i))
+                        (queue-put l (length i))
+                        (queue-put l (raw-uncompressed-len i))
+                        (fprint _dst
+                                (if (> (for-pos) 0) ',' "") nl "  \"" )
+                        (for j in 0 .. (- (length i) 1) do
+                                (if (and (= (% (for-pos) 15) 0) (> (for-pos) 0))
+                                then    (fprint _dst "\" \\" nl "  \"") )
+                                (set j (length <i j>))
+                                (fprint _dst '\\' (div j 64) (% (div j 8) 8) (% j 8)) )
+                        (fprint _dst '"')
+                        (set cst-total-size (+ cst-total-size (length i) 1))
+                        (if (<> i k)
+                        then    (close i) ))
+                (fprint _dst nl
+                        "};" nl
+                        nl
+                        "static trp_raw_t _constr[" (length _cst) "]={" )
+                (for i in 1 .. (length _cst) do
+                        (fprint _dst
+                                (if (> i 1) ',' "") nl "  {TRP_RAW," )
+                        (fprint _dst (queue-get l) ',')
+                        (fprint _dst (queue-get l) ',')
+                        (fprint _dst (queue-get l) ',')
+                        (fprint _dst (queue-get l) ',')
+                        (fprint _dst (queue-get l) ",NULL}") )
+                (fprint _dst nl
+                        "};" nl
+                        nl ))
+
+        (if (> (length _glb) 0)
+        then    (fprint _dst "static trp_obj_t *_glb[" (length _glb) "];" nl nl) )
+
+        (if (> (length _netptr) 0)
+        then    (fprint _dst "static trp_obj_t *_netptr[" (length _netptr) "];" nl nl) )
+
+        (if (> (length _funptr) 0)
+        then    (fprint _dst "static trp_obj_t *_funptr[" (length _funptr) "];" nl nl) )
+
+        (for i in _net do
+                (fprint _dst "static uns8b net_" <(cdr i) 0> '(')
+                (for j in <(cdr i) 1> do
+                        (fprint _dst
+                                (if (> (for-pos) 0) ',' "")
+                                "trp_obj_t *" (if (lmatch j "@") '*' "") ))
+                (fprint _dst ");" nl) )
+
+        (for i in _fun do
+                (fprint _dst "static trp_obj_t *fun_" (car (cdr i)) '(')
+                (for j in (cdr (cdr i)) do
+                        (fprint _dst
+                                (if (> (for-pos) 0) ',' "")
+                                "trp_obj_t *" ))
+                (fprint _dst ");" nl) )
+
+        (fprint _dst nl
+                     "int main(int argc,char *argv[])" nl
+                     "{" nl (if (gtk)
+                     "  if(trp_gtk_init(&argc,&argv))exit(-1);\n" "" ) (if (iup)
+                     "  if(trp_iup_init(&argc,&argv))exit(-1);\n" "" )
+                     "  trp_init(argc,argv);" nl (if (pix)
+                     "  if(trp_pix_init())exit(-1);\n" "" ) (if (curl)
+                     "  if(trp_curl_init())exit(-1);\n" "" ) (if (thread)
+                     "  if(trp_thread_init())exit(-1);\n" "" ) (if (wn)
+                     "  if(trp_wn_init())exit(-1);\n" "" ) (if (suf)
+                     "  if(trp_suf_init())exit(-1);\n" "" ) (if (aud)
+                     "  if(trp_aud_init())exit(-1);\n" "" ) (if (vid)
+                     "  if(trp_vid_init())exit(-1);\n" "" ) (if (avi)
+                     "  if(trp_avi_init())exit(-1);\n" "" ) (if (license)
+                     "  if(trp_license_init())exit(-1);\n" "" ) (if (gcrypt)
+                     "  if(trp_gcry_init())exit(-1);\n" "" ) (if (magic)
+                     "  if(trp_magic_init())exit(-1);\n" "" ) (if (exif)
+                     "  if(trp_exif_init())exit(-1);\n" "" ) (if (mysql)
+                     "  if(trp_mysql_init())exit(-1);\n" "" ) (if (sqlite3)
+                     "  if(trp_sqlite3_init())exit(-1);\n" "" ) (if (avcodec)
+                     "  if(trp_av_init())exit(-1);\n" "" ) (if (cv)
+                     "  if(trp_cv_init())exit(-1);\n" "" ) (if (vlfeat)
+                     "  if(trp_vl_init())exit(-1);\n" "" ) (if (mgl)
+                     "  if(trp_mgl_init())exit(-1);\n" "" ) (if (lept)
+                     "  if(trp_lept_init())exit(-1);\n" "" ) (if (cgraph)
+                     "  if(trp_ag_init())exit(-1);\n" "" ) (if (sdl)
+                     "  if(trp_sdl_init())exit(-1);\n" "" ) (if (chess)
+                     "  if(trp_chess_init())exit(-1);\n" "" )
+                      )
+        (if (> (length _cst) 0)
+        then    (fprint _dst
+                     "  trp_const_init(" (length _cst) ",_constr,_constc," cst-total-size ");" nl ))
+        (if (> (length _glb) 0)
+        then    (fprint _dst
+                     "  trp_glb_init(" (length _glb) ",_glb);" nl ))
+        (for i in _netptr do
+                (set j <_net (car i)>)
+                (if (= j undef)
+                then    (error (+ (car i) ": undefined net")) )
+                (in (car i) _cst k)
+                (set l <j 1>)
+                (fprint _dst "  _netptr[" (cdr i) "]=trp_netptr(net_" <j 0> ',' (length l) ",trp_const(" k "));" nl)
+                (for j in l do
+                        (if (lmatch j "@")
+                        then    (error (+ (car i) ": can't create a valid netptr")) )))
+        (for i in _funptr do
+                (set j <_fun (car i)>)
+                (if (= j undef)
+                then    (error (+ (car i) ": undefined function")) )
+                (in (car i) _cst k)
+                (fprint _dst "  _funptr[" (cdr i) "]=trp_funptr(fun_" (car j) ',' (length (cdr j)) ",trp_const(" k "));" nl) )
+        (set i <_net _start>)
+        (fprint _dst "  (void)net_" <i 0> '(')
+        (for i in <i 1> do
+                (if (lmatch i "@")
+                then    (error "initial net can't have reference parameters") )
+                (fprint _dst
+                        (if (> (for-pos) 0) ',' "")
+                        "UNDEF" ))
+        (fprint _dst ");" nl
+                     "  trp_exit(NULL);" nl
+                     "  return 0;" nl
+                     "}" nl
+                     nl
+                     "void trp_compiler_exit()" nl
+                     "{" nl (if (iup)
+                     "  trp_iup_quit();\n" "" ) (if (avcodec)
+                     "  trp_av_quit();\n" "" ) (if (gcrypt)
+                     "  trp_gcry_quit();\n" "" ) (if (sqlite3)
+                     "  trp_sqlite3_quit();\n" "" ) (if (pix)
+                     "  trp_pix_quit();\n" "" ) (if (curl)
+                     "  trp_curl_quit();\n" "" ) (if (sdl)
+                     "  trp_sdl_quit();\n" "" ) (if (magic)
+                     "  trp_magic_quit();\n" "" ) (if (thread)
+                     "  trp_thread_quit();\n" "" )
+                     "}" nl
+                     nl )
+        (if (> (length _ml_cst) 0)
+        then    (fprint _dst "static uns8b trp_set_lang(trp_obj_t *i)" nl
+                             "{" nl
+                             "  if(i->tipo!=TRP_SIG64)return 1;" nl
+                             "  if((((trp_sig64_t *)i)->val<0)||(((trp_sig64_t *)i)->val>" (- _ml_max 1) "))return 1;" nl
+                             "  _lang=(uns32b)(((trp_sig64_t *)i)->val);" nl
+                             "  return 0;" nl
+                             "}" nl
+                             nl )))
+
+(defnet print-header (header)
+        (deflocal i)
+
+        (search "*/" header i)
+        (fprint _dst (sub (+ i 2) (maxint) header) nl) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
