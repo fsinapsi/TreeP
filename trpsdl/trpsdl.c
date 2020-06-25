@@ -46,10 +46,10 @@ static void trp_sdl_wavplay_cback( void *userdata, uns8b *stream, int len )
 {
     trp_sdl_audio_cback_t *a = (trp_sdl_audio_cback_t *)userdata;
 
+    SDL_memset( stream, 0, len );
     if ( a->len ) {
         if ( len > a->len )
             len = a->len;
-        SDL_memset( stream, 0, len );
         SDL_MixAudio( stream, a->buf, len, a->vol );
         a->buf += len;
         a->len -= len;
@@ -84,8 +84,9 @@ uns8b trp_sdl_playwav( trp_obj_t *path, trp_obj_t *volume )
     if ( SDL_OpenAudio( &wav_spec, NULL ) < 0 )
         return 1;
     SDL_PauseAudio( 0 );
-    while ( a.len > 0 )
-        SDL_Delay( 100 );
+    while ( a.len )
+        SDL_Delay( 50 );
+    SDL_Delay( 350 );
     SDL_CloseAudio();
     SDL_FreeWAV( wav_buffer );
     return 0;
