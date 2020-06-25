@@ -42,11 +42,7 @@ cleanall:	clean
 install:	all installcopy
 
 installcopy:	../.installbin
-ifeq ($(UNAME), MINGW32_NT-5.1)
 	cp -f trpc$(EXT) `cat ../.installbin`
-else
-	sudo cp -f trpc$(EXT) `cat ../.installbin`
-endif
 
 bootstrap: ../.mycflags
 	$(CC) `cat ../.mycflags` -o trpc$(EXT) trpc.c $(LDFLAGS)

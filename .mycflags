@@ -1,0 +1,1 @@
+-O3 -pipe -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -Wno-parentheses -fPIC -Wno-unused-result -Wno-pointer-sign -isystem /usr/local/include -I/opt/local/include
