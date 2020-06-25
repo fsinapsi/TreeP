@@ -41,6 +41,7 @@ dumpflags:
 	echo $(PREFIX)/bin > .installbin
 
 rts:		dumpflags
+	mkdir -p libs
 	( cd trp && make )
 	( cd trpthread && make )
 	( cd trplicense && make )

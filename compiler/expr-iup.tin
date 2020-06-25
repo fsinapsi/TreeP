@@ -61,6 +61,7 @@
           [ "separator"                         0 0 ]
           [ "menu"                              0 undef ]
           [ "date-pick"                         0 0 ]
+          [ "val"                               0 0 ]
           [ "calendar"                          0 0 ]
           [ "image-rgba"                        1 1 ]
           [ "file-dlg"                          0 0 ]

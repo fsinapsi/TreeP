@@ -1,4 +1,6 @@
 
+(use cv)
+
 (include "common.tin")
 
 (defstart vl-siftmatch)
@@ -34,7 +36,9 @@
 
         (set filt1 (vl-sift-new (width pix1) (height pix1) -1 3 -1))
         (set filt2 (vl-sift-new (width pix2) (height pix2) -1 3 -1))
-        (set m (vl-sift-match filt1 filt2 pix1 pix2 0))
+        (vl-sift-match-descr filt1 pix1)
+        (vl-sift-match-descr filt2 pix2)
+        (set m (vl-sift-match filt1 filt2 0))
 
         (print "keypoints immagine 1: " (length filt1) nl
                "keypoints immagine 2: " (length filt2) nl

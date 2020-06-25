@@ -148,7 +148,6 @@
 (defun quirc () <_kv "quirc">)
 (defun pix () <_kv "pix">)
 (defun curl () <_kv "curl">)
-(defun mysql () <_kv "mysql">)
 (defun sqlite3 () <_kv "sqlite3">)
 (defun wn () <_kv "wn">)
 (defun avcodec () <_kv "avcodec">)
@@ -166,7 +165,7 @@
 (defun libs-list ()
         [ "gtk" "iup" "thread" "license" "gcrypt" "suf"
           "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
-          "pix" "curl" "mysql" "sqlite3" "wn" "avcodec" "cv"
+          "pix" "curl" "sqlite3" "wn" "avcodec" "cv"
           "vlfeat" "mgl" "lept" "cgraph" "sdl" "chess" ])
 
 (defnet init-globals ()
@@ -341,7 +340,6 @@
                         (if (mingw)
                                 " -ltrpcurl -lcurldll"
                                 " -ltrpcurl `pkg-config --libs libcurl`" ) "" )
-                  (if (mysql) " -ltrpmysql `mysql_config --libs`" "")
                   (if (sqlite3) " -ltrpsqlite3 -lsqlite3" "")
                   (if (wn) " -ltrpwn" "")
                   (if (avcodec)
@@ -763,8 +761,6 @@
         then    (print-header (str-load-static "../trppix/trppix.h")) )
         (if (curl)
         then    (print-header (str-load-static "../trpcurl/trpcurl.h")) )
-        (if (mysql)
-        then    (print-header (str-load-static "../trpmysql/trpmysql.h")) )
         (if (sqlite3)
         then    (print-header (str-load-static "../trpsqlite3/trpsqlite3.h")) )
         (if (wn)
@@ -899,8 +895,7 @@
                      "  if(trp_license_init())exit(-1);\n" "" ) (if (gcrypt)
                      "  if(trp_gcry_init())exit(-1);\n" "" ) (if (magic)
                      "  if(trp_magic_init())exit(-1);\n" "" ) (if (exif)
-                     "  if(trp_exif_init())exit(-1);\n" "" ) (if (mysql)
-                     "  if(trp_mysql_init())exit(-1);\n" "" ) (if (sqlite3)
+                     "  if(trp_exif_init())exit(-1);\n" "" ) (if (sqlite3)
                      "  if(trp_sqlite3_init())exit(-1);\n" "" ) (if (avcodec)
                      "  if(trp_av_init())exit(-1);\n" "" ) (if (cv)
                      "  if(trp_cv_init())exit(-1);\n" "" ) (if (vlfeat)

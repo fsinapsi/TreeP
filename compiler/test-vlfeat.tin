@@ -27,6 +27,7 @@
           [ "sift-process-first-octave" 2 2 ]
           [ "sift-process-next-octave"  1 1 ]
           [ "sift-detect"               1 1 ]
+          [ "sift-match-descr"          2 2 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
