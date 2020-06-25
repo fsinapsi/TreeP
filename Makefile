@@ -9,7 +9,7 @@ endif
 
 CC= gcc
 
-CFLAGS=  -O3 -pipe # -g
+CFLAGS?=  -O3 -pipe # -g
 CFLAGS+= -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CFLAGS+= -Wno-parentheses
 ifeq ($(UNAME), Linux)
