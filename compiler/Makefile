@@ -19,7 +19,7 @@ LDFLAGS+= -lz -lm
 
 all:		trpc$(EXT)
 
-trpc$(EXT):	trpc.trp ../../common/common.tin lex.tin expr.tin test.tin \
+trpc$(EXT):	trpc.trp lex.tin expr.tin test.tin \
 		expr-gtk.tin expr-iup.tin expr-thread.tin expr-license.tin \
 		expr-gcrypt.tin expr-chess.tin expr-sqlite3.tin \
 		expr-pix.tin expr-curl.tin expr-aud.tin expr-vid.tin expr-avi.tin \
