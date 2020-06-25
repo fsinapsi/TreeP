@@ -1,1 +1,0 @@
--L/usr/local/lib -L/opt/local/lib -lgmp -lgc -lpthread -lz -lm
