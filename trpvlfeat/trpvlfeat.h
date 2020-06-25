@@ -43,6 +43,7 @@ trp_obj_t *trp_vl_sift_get_norm_thresh( trp_obj_t *f );
 trp_obj_t *trp_vl_sift_get_magnif( trp_obj_t *f );
 trp_obj_t *trp_vl_sift_get_window_size( trp_obj_t *f );
 trp_obj_t *trp_vl_sift_get_gss( trp_obj_t *f, trp_obj_t *level );
-trp_obj_t *trp_vl_sift_match( trp_obj_t *f1, trp_obj_t *f2, trp_obj_t *pix1, trp_obj_t *pix2, trp_obj_t *cmp, trp_obj_t *thr );
+uns8b trp_vl_sift_match_descr( trp_obj_t *f, trp_obj_t *pix );
+trp_obj_t *trp_vl_sift_match( trp_obj_t *f1, trp_obj_t *f2, trp_obj_t *cmp, trp_obj_t *thr );
 
 #endif /* !__trpvlfeat__h */
