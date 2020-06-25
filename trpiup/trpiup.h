@@ -103,6 +103,7 @@ trp_obj_t *trp_iup_submenu( trp_obj_t *title, trp_obj_t *child );
 trp_obj_t *trp_iup_separator();
 trp_obj_t *trp_iup_menu( trp_obj_t *child, ... );
 trp_obj_t *trp_iup_date_pick();
+trp_obj_t *trp_iup_val();
 trp_obj_t *trp_iup_calendar();
 trp_obj_t *trp_iup_image_rgba( trp_obj_t *pix );
 trp_obj_t *trp_iup_file_dlg();

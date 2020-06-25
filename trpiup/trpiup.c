@@ -1081,6 +1081,11 @@ trp_obj_t *trp_iup_date_pick()
     return trp_iup_handle( IupDatePick() );
 }
 
+trp_obj_t *trp_iup_val()
+{
+    return trp_iup_handle( IupVal( NULL ) );
+}
+
 trp_obj_t *trp_iup_calendar()
 {
     return trp_iup_handle( IupCalendar() );
