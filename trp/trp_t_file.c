@@ -17,11 +17,11 @@
 */
 
 #include "trp.h"
-#ifndef __MINGW_H
+#ifndef MINGW
 #include <netdb.h>
 #endif
 
-#ifdef __MINGW_H
+#ifdef MINGW
 #define trp_off_t sig64b
 #define fseeko fseeko64
 #define ftello ftello64
@@ -195,7 +195,7 @@ trp_obj_t *trp_file_create( trp_obj_t *path )
 
 trp_obj_t *trp_file_open_client( trp_obj_t *server, trp_obj_t *port )
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return UNDEF;
 #else
     int fildes;
@@ -348,7 +348,7 @@ static uns8b trp_file_read_char2( FILE *fp, uns8b *c, uns8b issocket )
         if ( i < 0 )
             return 1;
         if ( issocket ) {
-#ifdef __MINGW_H
+#ifdef MINGW
             return 1;
 #else
             struct pollfd ufds[ 1 ];

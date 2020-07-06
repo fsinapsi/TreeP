@@ -20,9 +20,6 @@
 
 extern void trp_char_init();
 extern void trp_compiler_exit();
-#ifdef __MINGW_H
-extern int ptw32_processInitialize();
-#endif
 
 static void trp_init_check();
 static void trp_init_error( char *msg );
@@ -40,9 +37,6 @@ void trp_init( int argc, char *argv[] )
 {
     extern trp_obj_t *trp_date_19700101();
 
-#ifdef __MINGW_H
-    ptw32_processInitialize();
-#endif
     GC_INIT();
 //    _trp_gc_warn_proc = 
     GC_set_warn_proc( trp_gc_warn_proc );

@@ -17,7 +17,7 @@
 */
 
 #include "trp.h"
-#ifdef __MINGW_H
+#ifdef MINGW
 #include <io.h>
 #include <windows.h>
 #include <direct.h>
@@ -44,7 +44,7 @@
 #define RUSAGE_THREAD 1 /* FIXME controllare che sia giusto */
 #endif
 
-#ifdef __MINGW_H
+#ifdef MINGW
 
 void trp_convert_slash( uns8b *p )
 {
@@ -128,7 +128,7 @@ uns8b *trp_get_short_path_name( uns8b *path )
 
 trp_obj_t *trp_uname()
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return trp_cord( "MINGW32_NT-5.1" );
 #else
     trp_obj_t *res;
@@ -147,7 +147,7 @@ trp_obj_t *trp_uname()
 #endif
 }
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 static trp_obj_t *trp_timeval2seconds( struct timeval *tv )
 {
@@ -202,7 +202,7 @@ trp_obj_t *trp_getrusage_thread()
 
 trp_obj_t *trp_getuid()
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return UNO;
 #else
     return trp_sig64( (sig64b)getuid() );
@@ -211,14 +211,14 @@ trp_obj_t *trp_getuid()
 
 trp_obj_t *trp_geteuid()
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return UNO;
 #else
     return trp_sig64( (sig64b)geteuid() );
 #endif
 }
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 trp_obj_t *trp_realpath( trp_obj_t *obj )
 {
@@ -268,7 +268,7 @@ trp_obj_t *trp_realpath( trp_obj_t *obj )
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 trp_obj_t *trp_cwd()
 {
@@ -302,7 +302,7 @@ trp_obj_t *trp_cwd()
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 uns8b trp_chdir( trp_obj_t *path )
 {
@@ -331,7 +331,7 @@ uns8b trp_chdir( trp_obj_t *path )
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 uns8b trp_mkdir( trp_obj_t *path )
 {
@@ -365,7 +365,7 @@ uns8b trp_mkdir( trp_obj_t *path )
 
 uns8b trp_mkfifo( trp_obj_t *path )
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return 1;;
 #else
     uns8b *cpath = trp_csprint( path ), res;
@@ -379,7 +379,7 @@ uns8b trp_mkfifo( trp_obj_t *path )
 #endif
 }
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 uns8b trp_remove( trp_obj_t *path )
 {
@@ -408,7 +408,7 @@ uns8b trp_remove( trp_obj_t *path )
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 uns8b trp_rename( trp_obj_t *oldp, trp_obj_t *newp )
 {
@@ -458,7 +458,7 @@ trp_obj_t *trp_system( trp_obj_t *obj, ... )
     return trp_sig64( res );
 }
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 trp_obj_t *trp_pathexists( trp_obj_t *path )
 {
@@ -490,7 +490,7 @@ trp_obj_t *trp_pathexists( trp_obj_t *path )
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 trp_obj_t *trp_ftime( trp_obj_t *path )
 {
@@ -529,7 +529,7 @@ trp_obj_t *trp_ftime( trp_obj_t *path )
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 trp_obj_t *trp_fsize( trp_obj_t *path )
 {
@@ -572,7 +572,7 @@ uns8b trp_utime( trp_obj_t *path, trp_obj_t *actime, trp_obj_t *modtime )
 {
     uns8b *cpath;
     struct tm lt;
-#ifndef __MINGW_H
+#ifndef MINGW
     struct utimbuf timebuf;
 #else
     struct _utimbuf timebuf;
@@ -610,7 +610,7 @@ uns8b trp_utime( trp_obj_t *path, trp_obj_t *actime, trp_obj_t *modtime )
     if ( ( timebuf.modtime = mktime( &lt ) ) == (time_t)(-1) )
         return 1;
     cpath = trp_csprint( path );
-#ifndef __MINGW_H
+#ifndef MINGW
     res =  utime( cpath, &timebuf ) ? 1 : 0;
 #else
     {
@@ -628,7 +628,7 @@ uns8b trp_utime( trp_obj_t *path, trp_obj_t *actime, trp_obj_t *modtime )
     return res;
 }
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 trp_obj_t *trp_directory( trp_obj_t *obj )
 {
@@ -708,7 +708,7 @@ trp_obj_t *trp_getenv( trp_obj_t *obj )
     return trp_cord( p );
 }
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 uns8b trp_sleep( trp_obj_t *sec )
 {
@@ -755,7 +755,7 @@ uns8b trp_sleep( trp_obj_t *sec )
 
 #endif
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 static uns8b trp_path_mode( trp_obj_t *path, mode_t *mode )
 /*
@@ -870,7 +870,7 @@ trp_obj_t *trp_isfifo( trp_obj_t *path )
 
 trp_obj_t *trp_islnk( trp_obj_t *path )
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return TRP_FALSE;
 #else
     mode_t mode;
@@ -885,7 +885,7 @@ trp_obj_t *trp_islnk( trp_obj_t *path )
 
 trp_obj_t *trp_issock( trp_obj_t *path )
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return TRP_FALSE;
 #else
     mode_t mode;
@@ -900,7 +900,7 @@ trp_obj_t *trp_issock( trp_obj_t *path )
 
 trp_obj_t *trp_inode( trp_obj_t *path )
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return UNDEF;
 #else
     uns8b *cpath = trp_csprint( path );
@@ -936,7 +936,7 @@ trp_obj_t *trp_gc_version_minor()
 
 trp_obj_t *trp_readlink( trp_obj_t *path )
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return UNDEF;
 #else
     uns8b *cpath = trp_csprint( path );
@@ -956,12 +956,14 @@ trp_obj_t *trp_readlink( trp_obj_t *path )
 
 void trp_sync()
 {
+#ifndef MINGW
     sync();
+#endif
 }
 
 trp_obj_t *trp_ipv4_address()
 {
-#ifdef __MINGW_H
+#ifdef MINGW
     return UNDEF;
 #else
     int fd;

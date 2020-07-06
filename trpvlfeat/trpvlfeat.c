@@ -18,8 +18,9 @@
 
 #include "../trp/trp.h"
 #include "./trpvlfeat.h"
-#include "vlfeat.h"
 #include "../trppix/trppix_internal.h"
+#include "./vl/sift.h"
+#include "./vl/kdtree.h"
 
 #define NN_SQ_DIST_RATIO_THR 0.4 /* 0.2 ? */
 

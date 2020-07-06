@@ -67,7 +67,6 @@ uns8b trp_av_init()
     _trp_close_fun[ TRP_AVCODEC ] = trp_av_close;
     _trp_width_fun[ TRP_AVCODEC ] = trp_av_width;
     _trp_height_fun[ TRP_AVCODEC ] = trp_av_height;
-    av_register_all();
     av_log_set_callback( trp_av_log_default_callback );
     return 0;
 }

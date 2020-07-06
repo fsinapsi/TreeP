@@ -1,6 +1,4 @@
 
-UNAME := $(shell uname -s)
-
 myname=	 gtk
 mylibs=	 ../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	 trp$(myname).o trpgtk_internal.o trpgtk_callbacks.o
@@ -21,9 +19,9 @@ myobjs+= trpgtk_message_dialog.o
 myobjs+= trpgtk_calendar.o
 myobjs+= trpgtk_drag.o
 myobjs+= trpgtk_image_graph.o
-CC= `cat ../.mycc`
-CFLAGS= -c `cat ../.mycflags` `pkg-config --cflags gtk+-2.0`
-LDFLAGS= `cat ../.myldflags`
+
+CFLAGS= `cat ../.cflags` `pkg-config --cflags gtk+-2.0`
+LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)
 
@@ -32,8 +30,8 @@ clean:
 
 $(mylibs):		$(myobjs)
 	rm -f $(mylibs)
-	ar rcs ../libs/libtrp$(myname).a $(myobjs)
-ifeq ($(UNAME), Linux)
+	$(AR) rcs ../libs/libtrp$(myname).a $(myobjs)
+ifeq ($(TARGET), Linux)
 	$(CC) -shared $(LDFLAGS) -Wl,-soname,libtrp$(myname).so -o ../libs/libtrp$(myname).so $(myobjs)
 endif
 

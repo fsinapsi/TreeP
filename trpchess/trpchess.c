@@ -147,10 +147,49 @@ typedef struct {
 #define EP      0x10
 #define CAPTURE 0x08
 
+#if 1 /* __WORDSIZE == 64 */
+
 #define PopCount(bb) (__builtin_popcountll(bb)) /* return the number of bits sets of a bitboard */
 #define RevBB(bb) (__builtin_bswap64(bb)) /* reverse a bitboard */
 #define MSB(bb) (__builtin_clzll(bb)^0x3f) /* return the index of the most significant bit of the bitboard, bb must always be !=0 */
 #define LSB(bb) (__builtin_ctzll(bb)) /* return the index of the least significant bit of the bitboard, bb must always be !=0 */
+
+#else
+
+static uns64b PopCount( uns64b bb )
+{
+    /*
+     FIXME
+     */
+    return 0;
+}
+
+static uns64b RevBB( uns64b bb )
+{
+    /*
+     FIXME
+     */
+    return 0;
+}
+
+static uns64b MSB( uns64b bb )
+{
+    /*
+     FIXME
+     */
+    return 0;
+}
+
+static uns64b LSB( uns64b bb )
+{
+    /*
+     FIXME
+     */
+    return 0;
+}
+
+#endif
+
 #define ExtractLSB(bb) ((bb)&(-(bb))) /* extract the least significant bit of the bitboard */
 #define ClearLSB(bb) ((bb)&((bb)-1)) /* reset the least significant bit of bb */
 
@@ -415,14 +454,16 @@ static inline trp_chess_move_tt *GenerateQuiets( trp_chess_board_tt *pos, trp_ch
     trp_chess_bb_t occupation,opposing;
     occupation = Occupation( pos );
     opposing = occupation^pos->PM;
+    trp_chess_bb_t pieces, destinations;
+    trp_piece_type_t piece;
 
     trp_chess_move_tt *pquiets=quiets;
-    for ( trp_piece_type_t piece = KING ; piece >= KNIGHT ; piece-- ) { // generate moves from king to knight
+    for ( piece = KING ; piece >= KNIGHT ; piece-- ) { // generate moves from king to knight
         // generate moves for every piece of the same type of the side to move
-        for ( trp_chess_bb_t pieces = BBPieces( pos, piece ) & pos->PM ; pieces ; pieces = ClearLSB( pieces ) ) {
+        for ( pieces = BBPieces( pos, piece ) & pos->PM ; pieces ; pieces = ClearLSB( pieces ) ) {
             uns64b sq = LSB( pieces );
             // for every destinations on a free square generate a move
-            for ( trp_chess_bb_t destinations = ~occupation & BBDestinations( piece, sq, occupation ) ; destinations ; destinations = ClearLSB( destinations ) ) {
+            for ( destinations = ~occupation & BBDestinations( piece, sq, occupation ) ; destinations ; destinations = ClearLSB( destinations ) ) {
                 pquiets->MoveType = piece;
                 pquiets->From = sq;
                 pquiets->To = LSB( destinations );
@@ -434,7 +475,7 @@ static inline trp_chess_move_tt *GenerateQuiets( trp_chess_board_tt *pos, trp_ch
 
     /* one pawns push */
     trp_chess_bb_t push1 = ( ( ( Pawns( pos ) & pos->PM ) << 8 ) & ~occupation ) & 0x00FFFFFFFFFFFFFFULL;
-    for ( trp_chess_bb_t pieces = push1 ; pieces ; pieces = ClearLSB( pieces ) ) {
+    for ( pieces = push1 ; pieces ; pieces = ClearLSB( pieces ) ) {
         pquiets->MoveType = PAWN;
         pquiets->From = LSB( pieces ) - 8;
         pquiets->To = LSB( pieces );
@@ -443,10 +484,10 @@ static inline trp_chess_move_tt *GenerateQuiets( trp_chess_board_tt *pos, trp_ch
     }
 
     /* double pawns pushes */
-    for ( trp_chess_bb_t push2 = ( push1 << 8 ) & ~occupation & 0x00000000FF000000ULL ; push2 ; push2 = ClearLSB( push2 ) ) {
+    for ( pieces = ( push1 << 8 ) & ~occupation & 0x00000000FF000000ULL ; pieces ; pieces = ClearLSB( pieces ) ) {
         pquiets->MoveType = PAWN;
-        pquiets->From = LSB( push2 ) - 16;
-        pquiets->To = LSB( push2 );
+        pquiets->From = LSB( pieces ) - 16;
+        pquiets->To = LSB( pieces );
         pquiets->Prom = EMPTY;
         pquiets++;
     }
@@ -507,13 +548,15 @@ static inline trp_chess_move_eval_t *GenerateCapture( trp_chess_board_tt *pos, t
     occupation = Occupation( pos );
     opposing = pos->PM ^ occupation;
     trp_chess_move_eval_t *pcapture = capture;
+    trp_chess_bb_t pieces, destinations;
+    trp_piece_type_t piece;
 
-    for ( trp_piece_type_t piece = KING ; piece >= KNIGHT ; piece-- ) { // generate moves from king to knight
+    for ( piece = KING ; piece >= KNIGHT ; piece-- ) { // generate moves from king to knight
         // generate moves for every piece of the same type of the side to move
-        for ( trp_chess_bb_t pieces = BBPieces( pos, piece ) & pos->PM ; pieces ; pieces = ClearLSB( pieces ) ) {
+        for ( pieces = BBPieces( pos, piece ) & pos->PM ; pieces ; pieces = ClearLSB( pieces ) ) {
             uns64b sq = LSB( pieces );
             // for every destinations on an opponent pieces generate a move
-            for ( trp_chess_bb_t destinations = opposing & BBDestinations( piece, sq, occupation) ; destinations ; destinations = ClearLSB( destinations ) ) {
+            for ( destinations = opposing & BBDestinations( piece, sq, occupation) ; destinations ; destinations = ClearLSB( destinations ) ) {
                 pcapture->Move.MoveType = piece | CAPTURE;
                 pcapture->Move.From = sq;
                 pcapture->Move.To = LSB( destinations );
@@ -525,38 +568,38 @@ static inline trp_chess_move_eval_t *GenerateCapture( trp_chess_board_tt *pos, t
     }
 
     /* Generate pawns right captures */
-    trp_chess_bb_t pieces = Pawns( pos ) & pos->PM;
-    for ( trp_chess_bb_t captureri = ( pieces << 9 ) & 0x00FEFEFEFEFEFEFEULL & opposing ; captureri ; captureri = ClearLSB( captureri ) ) {
+    pieces = Pawns( pos ) & pos->PM;
+    for ( destinations = ( pieces << 9 ) & 0x00FEFEFEFEFEFEFEULL & opposing ; destinations ; destinations = ClearLSB( destinations ) ) {
         pcapture->Move.MoveType = PAWN | CAPTURE;
-        pcapture->Move.From = LSB( captureri ) - 9;
-        pcapture->Move.To = LSB( captureri );
+        pcapture->Move.From = LSB( destinations ) - 9;
+        pcapture->Move.To = LSB( destinations );
         pcapture->Move.Prom = EMPTY;
-        pcapture->Eval = ( Piece( pos, LSB( captureri ) ) << 4 ) | ( KING - PAWN );
+        pcapture->Eval = ( Piece( pos, LSB( destinations ) ) << 4 ) | ( KING - PAWN );
         pcapture++;
     }
     /* Generate pawns left captures */
-    for ( trp_chess_bb_t capturele = ( pieces << 7 ) & 0x007F7F7F7F7F7F7FULL & opposing;capturele ; capturele = ClearLSB( capturele ) ) {
+    for ( destinations = ( pieces << 7 ) & 0x007F7F7F7F7F7F7FULL & opposing; destinations ; destinations = ClearLSB( destinations ) ) {
         pcapture->Move.MoveType = PAWN | CAPTURE;
-        pcapture->Move.From = LSB( capturele ) - 7;
-        pcapture->Move.To = LSB( capturele );
+        pcapture->Move.From = LSB( destinations ) - 7;
+        pcapture->Move.To = LSB( destinations );
         pcapture->Move.Prom = EMPTY;
-        pcapture->Eval = ( Piece( pos, LSB( capturele ) ) << 4 ) | ( KING - PAWN );
+        pcapture->Eval = ( Piece( pos, LSB( destinations ) ) << 4 ) | ( KING - PAWN );
         pcapture++;
     }
 
     /* Generate pawns promotions */
     if ( pieces&0x00FF000000000000ULL ) {
         /* promotions with left capture */
-        for ( trp_chess_bb_t promo = ( pieces << 9 ) & 0xFE00000000000000ULL & opposing ; promo ; promo = ClearLSB( promo ) ) {
+        for ( destinations = ( pieces << 9 ) & 0xFE00000000000000ULL & opposing ; destinations ; destinations = ClearLSB( destinations ) ) {
             trp_chess_move_tt move;
             move.MoveType = PAWN | PROMO | CAPTURE;
-            move.From = LSB( promo ) - 9;
-            move.To = LSB( promo );
+            move.From = LSB( destinations ) - 9;
+            move.To = LSB( destinations );
             move.Prom = QUEEN;
             pcapture->Move = move;
             pcapture->Eval = ( QUEEN << 4 ) | ( KING - PAWN );
             pcapture++;
-            for ( trp_piece_type_t piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
+            for ( piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
                 move.Prom = piece;
                 pcapture->Move = move;
                 pcapture->Eval = piece - ROOK - 1; /* keep behind the other captures-promotions */
@@ -564,16 +607,16 @@ static inline trp_chess_move_eval_t *GenerateCapture( trp_chess_board_tt *pos, t
             }
         }
         /* promotions with right capture */
-        for ( trp_chess_bb_t promo = ( pieces << 7 ) & 0x7F00000000000000ULL & opposing ; promo ; promo = ClearLSB( promo ) ) {
+        for ( destinations = ( pieces << 7 ) & 0x7F00000000000000ULL & opposing ; destinations ; destinations = ClearLSB( destinations ) ) {
             trp_chess_move_tt move;
             move.MoveType = PAWN | PROMO | CAPTURE;
-            move.From = LSB( promo ) - 7;
-            move.To = LSB( promo );
+            move.From = LSB( destinations ) - 7;
+            move.To = LSB( destinations );
             move.Prom = QUEEN;
             pcapture->Move = move;
             pcapture->Eval = ( QUEEN << 4 ) | ( KING - PAWN );
             pcapture++;
-            for ( trp_piece_type_t piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
+            for ( piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
                 move.Prom = piece;
                 pcapture->Move = move;
                 pcapture->Eval = piece - ROOK - 1; /* keep behind the other captures-promotions */
@@ -581,16 +624,16 @@ static inline trp_chess_move_eval_t *GenerateCapture( trp_chess_board_tt *pos, t
             }
         }
         /* no capture promotions */
-        for ( trp_chess_bb_t promo = ( ( pieces << 8 ) & ~occupation ) & 0xFF00000000000000ULL ; promo ; promo = ClearLSB( promo ) ) {
+        for ( destinations = ( ( pieces << 8 ) & ~occupation ) & 0xFF00000000000000ULL ; destinations ; destinations = ClearLSB( destinations ) ) {
             trp_chess_move_tt move;
             move.MoveType = PAWN | PROMO;
-            move.From = LSB( promo ) - 8;
-            move.To = LSB( promo );
+            move.From = LSB( destinations ) - 8;
+            move.To = LSB( destinations );
             move.Prom = QUEEN;
             pcapture->Move = move;
             pcapture->Eval = ( QUEEN << 4 ) | ( KING - PAWN );
             pcapture++;
-            for ( trp_piece_type_t piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
+            for ( piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
                 move.Prom = piece;
                 pcapture->Move = move;
                 pcapture->Eval = piece - ROOK - 1; /* keep behind the other captures-promotions */
@@ -601,9 +644,9 @@ static inline trp_chess_move_eval_t *GenerateCapture( trp_chess_board_tt *pos, t
 
     if ( pos->EnPassant != 8 ) {
         /* Generate EnPassant captures */
-        for ( trp_chess_bb_t enpassant = pieces & EnPassant[ pos->EnPassant ] ; enpassant ; enpassant = ClearLSB( enpassant ) ) {
+        for ( destinations = pieces & EnPassant[ pos->EnPassant ] ; destinations ; destinations = ClearLSB( destinations ) ) {
             pcapture->Move.MoveType = PAWN | EP | CAPTURE;
-            pcapture->Move.From = LSB( enpassant );
+            pcapture->Move.From = LSB( destinations );
             pcapture->Move.To = 40 + pos->EnPassant;
             pcapture->Move.Prom = EMPTY;
             pcapture->Eval = ( PAWN << 4 ) | ( KING - PAWN );
@@ -620,13 +663,15 @@ static inline trp_chess_move_tt *GenerateCapture2( trp_chess_board_tt *pos, trp_
     occupation = Occupation( pos );
     opposing = pos->PM ^ occupation;
     trp_chess_move_tt *pcapture = capture;
+    trp_chess_bb_t pieces, destinations;
+    trp_piece_type_t piece;
 
-    for ( trp_piece_type_t piece = KING ; piece >= KNIGHT ; piece-- ) { // generate moves from king to knight
+    for ( piece = KING ; piece >= KNIGHT ; piece-- ) { // generate moves from king to knight
         // generate moves for every piece of the same type of the side to move
-        for ( trp_chess_bb_t pieces = BBPieces( pos, piece ) & pos->PM ; pieces ; pieces = ClearLSB( pieces ) ) {
+        for ( pieces = BBPieces( pos, piece ) & pos->PM ; pieces ; pieces = ClearLSB( pieces ) ) {
             uns64b sq = LSB( pieces );
             // for every destinations on an opponent pieces generate a move
-            for ( trp_chess_bb_t destinations = opposing & BBDestinations( piece, sq, occupation) ; destinations ; destinations = ClearLSB( destinations ) ) {
+            for ( destinations = opposing & BBDestinations( piece, sq, occupation) ; destinations ; destinations = ClearLSB( destinations ) ) {
                 pcapture->MoveType = piece | CAPTURE;
                 pcapture->From = sq;
                 pcapture->To = LSB( destinations );
@@ -637,19 +682,19 @@ static inline trp_chess_move_tt *GenerateCapture2( trp_chess_board_tt *pos, trp_
     }
 
     /* Generate pawns right captures */
-    trp_chess_bb_t pieces = Pawns( pos ) & pos->PM;
-    for ( trp_chess_bb_t captureri = ( pieces << 9 ) & 0x00FEFEFEFEFEFEFEULL & opposing ; captureri ; captureri = ClearLSB( captureri ) ) {
+    pieces = Pawns( pos ) & pos->PM;
+    for ( destinations = ( pieces << 9 ) & 0x00FEFEFEFEFEFEFEULL & opposing ; destinations ; destinations = ClearLSB( destinations ) ) {
         pcapture->MoveType = PAWN | CAPTURE;
-        pcapture->From = LSB( captureri ) - 9;
-        pcapture->To = LSB( captureri );
+        pcapture->From = LSB( destinations ) - 9;
+        pcapture->To = LSB( destinations );
         pcapture->Prom = EMPTY;
         pcapture++;
     }
     /* Generate pawns left captures */
-    for ( trp_chess_bb_t capturele = ( pieces << 7 ) & 0x007F7F7F7F7F7F7FULL & opposing;capturele ; capturele = ClearLSB( capturele ) ) {
+    for ( destinations = ( pieces << 7 ) & 0x007F7F7F7F7F7F7FULL & opposing; destinations ; destinations = ClearLSB( destinations ) ) {
         pcapture->MoveType = PAWN | CAPTURE;
-        pcapture->From = LSB( capturele ) - 7;
-        pcapture->To = LSB( capturele );
+        pcapture->From = LSB( destinations ) - 7;
+        pcapture->To = LSB( destinations );
         pcapture->Prom = EMPTY;
         pcapture++;
     }
@@ -657,45 +702,45 @@ static inline trp_chess_move_tt *GenerateCapture2( trp_chess_board_tt *pos, trp_
     /* Generate pawns promotions */
     if ( pieces&0x00FF000000000000ULL ) {
         /* promotions with left capture */
-        for ( trp_chess_bb_t promo = ( pieces << 9 ) & 0xFE00000000000000ULL & opposing ; promo ; promo = ClearLSB( promo ) ) {
+        for ( destinations = ( pieces << 9 ) & 0xFE00000000000000ULL & opposing ; destinations ; destinations = ClearLSB( destinations ) ) {
             trp_chess_move_tt move;
             move.MoveType = PAWN | PROMO | CAPTURE;
-            move.From = LSB( promo ) - 9;
-            move.To = LSB( promo );
+            move.From = LSB( destinations ) - 9;
+            move.To = LSB( destinations );
             move.Prom = QUEEN;
             pcapture->Move = move.Move;
             pcapture++;
-            for ( trp_piece_type_t piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
+            for ( piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
                 move.Prom = piece;
                 pcapture->Move = move.Move;
                 pcapture++;
             }
         }
         /* promotions with right capture */
-        for ( trp_chess_bb_t promo = ( pieces << 7 ) & 0x7F00000000000000ULL & opposing ; promo ; promo = ClearLSB( promo ) ) {
+        for ( destinations = ( pieces << 7 ) & 0x7F00000000000000ULL & opposing ; destinations ; destinations = ClearLSB( destinations ) ) {
             trp_chess_move_tt move;
             move.MoveType = PAWN | PROMO | CAPTURE;
-            move.From = LSB( promo ) - 7;
-            move.To = LSB( promo );
+            move.From = LSB( destinations ) - 7;
+            move.To = LSB( destinations );
             move.Prom = QUEEN;
             pcapture->Move = move.Move;
             pcapture++;
-            for ( trp_piece_type_t piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
+            for ( piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
                 move.Prom = piece;
                 pcapture->Move = move.Move;
                 pcapture++;
             }
         }
         /* no capture promotions */
-        for ( trp_chess_bb_t promo = ( ( pieces << 8 ) & ~occupation ) & 0xFF00000000000000ULL ; promo ; promo = ClearLSB( promo ) ) {
+        for ( destinations = ( ( pieces << 8 ) & ~occupation ) & 0xFF00000000000000ULL ; destinations ; destinations = ClearLSB( destinations ) ) {
             trp_chess_move_tt move;
             move.MoveType = PAWN | PROMO;
-            move.From = LSB( promo ) - 8;
-            move.To = LSB( promo );
+            move.From = LSB( destinations ) - 8;
+            move.To = LSB( destinations );
             move.Prom = QUEEN;
             pcapture->Move = move.Move;
             pcapture++;
-            for ( trp_piece_type_t piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
+            for ( piece = ROOK ; piece >= KNIGHT ; piece-- ) { /* generate underpromotions */
                 move.Prom = piece;
                 pcapture->Move = move.Move;
                 pcapture++;
@@ -705,9 +750,9 @@ static inline trp_chess_move_tt *GenerateCapture2( trp_chess_board_tt *pos, trp_
 
     if ( pos->EnPassant != 8 ) {
         /* Generate EnPassant captures */
-        for ( trp_chess_bb_t enpassant = pieces & EnPassant[ pos->EnPassant ] ; enpassant ; enpassant = ClearLSB( enpassant ) ) {
+        for ( destinations = pieces & EnPassant[ pos->EnPassant ] ; destinations ; destinations = ClearLSB( destinations ) ) {
             pcapture->MoveType = PAWN | EP | CAPTURE;
-            pcapture->From = LSB( enpassant );
+            pcapture->From = LSB( destinations );
             pcapture->To = 40 + pos->EnPassant;
             pcapture->Prom = EMPTY;
             pcapture++;

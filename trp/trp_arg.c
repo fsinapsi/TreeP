@@ -17,14 +17,14 @@
 */
 
 #include "trp.h"
-#ifdef __MINGW_H
+#ifdef MINGW
 #include <windows.h>
 #include <shellapi.h>
 #endif
 
 static trp_obj_t *trp_arg_internal( uns8b flags, uns32b argc, char *argv[] );
 
-#ifndef __MINGW_H
+#ifndef MINGW
 
 static trp_obj_t *trp_arg_internal( uns8b flags, uns32b argc, char *argv[] )
 {

@@ -50,6 +50,21 @@ void trp_magic_quit()
     trp_magic_unlock();
 }
 
+uns8b trp_magic_reinit( trp_obj_t *path )
+{
+    if ( _trp_magic == NULL ) {
+        uns8b *s = trp_csprint( path );
+
+        if ( _trp_magic = magic_open( MAGIC_CONTINUE ) )
+            if ( magic_load( _trp_magic, s ) ) {
+                magic_close( _trp_magic );
+                _trp_magic = NULL;
+            }
+        trp_csprint_free( s );
+    }
+    return _trp_magic ? 0 : 1;
+}
+
 trp_obj_t *trp_magic_available()
 {
     trp_obj_t *res;

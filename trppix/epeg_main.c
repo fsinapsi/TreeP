@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef __MINGW_H
+#ifdef MINGW
 #define trp_fstat _fstati64
 FILE *trp_fopen( const char *path, const char *mode );
 #else

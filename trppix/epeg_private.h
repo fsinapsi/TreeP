@@ -13,7 +13,7 @@
 #include <setjmp.h>
 #include <jpeglib.h>
 
-#ifdef __MINGW_H
+#ifdef MINGW
 #define trp_stat _stati64
 #else
 #define trp_stat stat

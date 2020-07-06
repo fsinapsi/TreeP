@@ -159,6 +159,29 @@
 (defun sdl () <_kv "sdl">)
 (defun chess () <_kv "chess">)
 
+(defun cc (win32 win64)
+        (if win32 "i686-w64-mingw32-gcc" (if win64 "x86_64-w64-mingw32-gcc" "gcc")) )
+
+(defun pkg-config-low (package option win32 win64) net pkg-config-low)
+(defnet pkg-config-low (package option win32 win64 @s)
+        (deflocal path)
+
+        (set @s " `")
+        (if (or win32 win64)
+        then    (inc @s (if win32 "i686-w64-mingw32-pkg-config" "x86_64-w64-mingw32-pkg-config"))
+                (set path (+ "/home/frank/wd/programming/mingw-w64/" (if win32 32 64) "/lib/pkgconfig/" package ".pc"))
+                (if (pathexists path)
+                then    (inc @s " " path)
+                else    (inc @s " " package) )
+        else    (inc @s "pkg-config " package) )
+        (inc @s " --" option "`") )
+
+(defun pkg-config-cflags (package win32 win64)
+        (pkg-config-low package "cflags" win32 win64) )
+
+(defun pkg-config-libs (package win32 win64)
+        (pkg-config-low package "libs" win32 win64) )
+
 (defnet flag-true (lib) (set <_kv lib> true))
 (defnet flag-false (lib) (set <_kv lib> false))
 
@@ -197,7 +220,7 @@
                 (flag-false lib) )
         (gc) )
 
-(defnet parse-args (@tpath @optim @debug @static @conly @overw @const @nomwin @wunus @log @libpaths)
+(defnet parse-args (@tpath @optim @debug @static @conly @overw @const @nomwin @win32 @win64 @wunus @log @libpaths)
         (deflocal i)
 
         (clr @tpath)
@@ -208,6 +231,8 @@
         (set @overw false)
         (set @const true)
         (set @nomwin false)
+        (set @win32 false)
+        (set @win64 false)
         (set @wunus false)
         (set @log false)
         (set @libpaths (queue))
@@ -218,27 +243,39 @@
                         "-O1"           (set @optim 1)
                         "-O2"           (set @optim 2)
                         "-O3"           (set @optim 3)
+                        "-O4"           (set @optim 4)
                         "-g"            (set @debug true)
                         "-static"       (set @static true)
                         "-c"            (set @conly true)
                         "-f"            (set @overw true)
                         "-d"            (set @const false)
                         "-w"            (set @nomwin true)
+                        "-win32"        (set @win32 true)
+                        "-win64"        (set @win64 true)
                         "-Wunused"      (set @wunus true)
                         "-l"            (set @log true)
                         default         (if (lmatch (argv i) "-L")
                                         then    (queue-put @libpaths (sub 2 (maxint) (argv i)))
                                         else    (set @tpath (argv i)) )))
-        (if (= @tpath undef)
-        then    (error (+ "usage: " (app-name) " [ -O0 | ... | -O3 ] [ -g ] [ -static ] [ -c ] [ -f ] [ -d ] [ -w ] [ -l ] [ -L<path> ] <path>")) )
-        (queue-put @libpaths "/usr/local/lib")
-        (queue-put @libpaths "/opt/local/lib") )
+        (if (or (= @tpath undef) (and @win32 @win64))
+        then    (error (+ "usage: " (app-name) " [ -O0 | ... | -O4 ] [ -g ] [ -static ] [ -c ] [ -f ] [ -d ] [ -w ] [ -win32 | -win64 ] [ -l ] [ -L<path> ] <path>")) )
+
+        (if @win32
+        then    (queue-put @libpaths "/usr/i686-w64-mingw32/lib")
+                (queue-put @libpaths "/home/frank/wd/programming/mingw-w64/32/lib")
+        else (if @win64
+        then    (queue-put @libpaths "/usr/x86_64-w64-mingw32/lib")
+                (queue-put @libpaths "/home/frank/wd/programming/mingw-w64/64/lib")
+        else    (queue-put @libpaths "/usr/local/lib")
+                (queue-put @libpaths "/opt/local/lib") )))
 
 (defnet trpc ()
-        (deflocal i unused tpath cpath lpath epath bpath ipath optim debug conly overw nomwin wunus log libpaths net fun glb)
+        (deflocal i unused tpath cpath lpath epath exepath bpath ipath optim debug conly overw nomwin win32 win64 wunus log libpaths
+                  mswin net fun glb )
 
         (init-globals)
-        (parse-args tpath optim debug _cstatic conly overw _expr_const_optimize nomwin wunus log libpaths)
+        (parse-args tpath optim debug _cstatic conly overw _expr_const_optimize nomwin win32 win64 wunus log libpaths)
+        (set mswin (or win32 win64))
         (if (not (pathexists tpath))
         then    (error (+ tpath ": file not found")) )
         (alt    (seq    (set epath tpath)
@@ -246,10 +283,14 @@
                         (set cpath (+ epath ".c"))
                         (set lpath (+ epath ".log")) )
                 (error (+ tpath ": bad extension")) )
+        (set exepath epath)
+        (if mswin
+        then    (inc exepath ".exe") )
         (opt    (= overw true)
-                (remove epath) )
-        (if (and (not conly) (pathexists epath))
-        then    (error (+ epath " exists, please remove it")) )
+                (remove exepath) )
+        (if (and (not conly) (pathexists exepath))
+        then    (error (+ exepath " exists, please remove it")) )
+
 
         (set _f (fopenro tpath))
         (<> _f undef)
@@ -268,7 +309,7 @@
         then    (error "initial symbol undefined") )
         (if (not (in _start _net))
         then    (error "initial symbol: undefined net") )
-        (create-icon epath ipath)
+        (create-icon mswin epath ipath)
         (analyze-calls unused)
         (if (or (> (length _const_fun) 0)
                 unused
@@ -303,28 +344,30 @@
         (parse-pass)
         (close _dst)
 
-        (set i (+ (if false "clang" "gcc") " -O" optim " -pipe"
+        (set i (+ (cc win32 win64) " -O" optim " -pipe"
+                  (if debug " -g" "")
                   " -Wno-pointer-sign"
                   (if (darwin) " -headerpad_max_install_names" "")
-                  (if (ms-windows) " -mms-bitfields" "")
-                  (if (and (ms-windows) (or (gtk) (iup)) (not nomwin)) " -mwindows" "")
-                  (if (linux) " -fPIC" "")
-                  (if debug " -g" "")
+                  (if (and mswin (or (gtk) (iup)) (not nomwin)) " -mwindows" "")
                   " -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
-                  " -isystem /usr/local/include -I/opt/local/include"
-                  (if (gtk) " `pkg-config --cflags gtk+-2.0`" "")
+                  (if win32 " -DMINGW -D__WORDSIZE=32 -I/usr/i686-w64-mingw32/include -I/home/frank/wd/programming/mingw-w64/32/include" "")
+                  (if win64 " -DMINGW -D__WORDSIZE=64 -I/usr/x86_64-w64-mingw32/include -I/home/frank/wd/programming/mingw-w64/64/include" "")
+                  (if mswin " -mms-bitfields" " -fPIC -I/usr/local/include -I/opt/local/include")
+                  (if (gtk) (pkg-config-cflags "gtk+-2.0" win32 win64) "")
                   (if (iup) " -I/usr/local/include/iup" "")
-                  (if (cv) (if (mingw)
+                  (if (cv) (if mswin
                                 " -I/local/include/opencv"
-                                " `pkg-config --cflags opencv`" ) "" )
-                  " -o " (pathquote epath) (if (ms-windows) ".exe" "")
+                                (pkg-config-cflags "opencv" win32 win64) ) "" )
+                  " -o " (pathquote exepath)
                   " " (pathquote cpath)
                   (if (= ipath undef) "" (+ " " (pathquote ipath)))
                   " -L" (sprintl libpaths " -L")
                   (if (thread) " -ltrpthread" "")
-                  (if (gtk) " -ltrpgtk `pkg-config --libs gtk+-2.0`" "")
-                ;  (if (iup) " -ltrpiup -liup -liupimglib" "")
-                  (if (iup) " -ltrpiup -liup" "")
+                  (if (gtk) (+ " -ltrpgtk" (pkg-config-libs "gtk+-2.0" win32 win64)) "")
+                  (if (iup)
+                        (if mswin
+                                " -ltrpiup -liup -lgdi32 -lcomctl32 -lcomdlg32 -lole32 -luuid"
+                                " -ltrpiup -liup" ) "" )
                   (if (license) " -ltrplicense" "")
                   (if (gcrypt) " -ltrpgcrypt -lgcrypt -lgpg-error" "")
                   (if (suf) " -ltrpsuf" "")
@@ -333,21 +376,18 @@
                   (if (avi) " -ltrpavi" "")
                   (if (id3tag) " -ltrpid3tag -lid3tag" "")
                   (if (magic) " -ltrpmagic -lmagic" "")
-                  (if (exif) " -ltrpexif `pkg-config --libs libexif`" "")
+                  (if (exif) (+ " -ltrpexif" (pkg-config-libs "libexif" win32 win64)) "")
                   (if (quirc) " -ltrpquirc -lqrencode" "")
-                  (if (pix) " -ltrppix `pkg-config libpng --libs` -ljpeg -lgif" "")
-                  (if (curl)
-                        (if (mingw)
-                                " -ltrpcurl -lcurldll"
-                                " -ltrpcurl `pkg-config --libs libcurl`" ) "" )
+                  (if (pix) (+ " -ltrppix" (pkg-config-libs "libpng" win32 win64) " -ljpeg -lgif") "")
+                  (if (curl) (+ " -ltrpcurl" (pkg-config-libs "libcurl" win32 win64)) "" )
                   (if (sqlite3) " -ltrpsqlite3 -lsqlite3" "")
                   (if (wn) " -ltrpwn" "")
                   (if (avcodec)
-                        (if (mingw)
-                                " -lpthreadGC2s -ltrpavcodec -lavformat -lavcodec -lavutil -lswscale"
+                        (if mswin
+                                " -lpthread -ltrpavcodec -lavformat -lavcodec -lavutil -lswscale"
                                 " -ltrpavcodec `pkg-config libavformat --libs` `pkg-config libavcodec --libs` `pkg-config libavutil --libs` `pkg-config libswscale --libs`" ) "" )
                   (if (cv)
-                        (if (mingw)
+                        (if mswin
                                 " -ltrpcv" \
                                 " -lopencv_calib3d230 -lopencv_highgui230" \
                                 " -lopencv_contrib230 -lopencv_imgproc230" \
@@ -356,42 +396,38 @@
                                 " -lopencv_flann230 -lopencv_objdetect230" \
                                 " -lopencv_gpu230 -lopencv_video230"
                                 " -ltrpcv `pkg-config --libs opencv`" ) "" )
-                  (if (vlfeat) " -ltrpvlfeat -lvl" "")
+                  (if (vlfeat) " -ltrpvlfeat" "")
                   (if (mgl) " -ltrpmgl -lmgl" "")
-                  (if (lept) " -ltrplept -llept `pkg-config libpng --libs` -ljpeg -ltiff" "")
-                  (if (cgraph) " -ltrpcgraph `pkg-config libgvc --libs`" "")
-                  (if (sdl) " -ltrpsdl `pkg-config sdl2 --libs`" "")
+                  (if (lept) (+ " -ltrplept" (pkg-config-libs "lept" win32 win64)) "")
+                  (if (cgraph) (+ " -ltrpcgraph" (pkg-config-libs "libgvc" win32 win64)) "")
+                  (if (sdl) (+ " -ltrpsdl" (pkg-config-libs "sdl2" win32 win64)) "")
                   (if (chess) " -ltrpchess" "")
-                  (if (mingw)
-                        " -ltrp -lgmp -lgc -lpthreadGC2s -lws2_32 -lz -lm"
-                        " -ltrp -lgmp -lgc -lpthread -lz -lm" )
+                  " -ltrp -lgmp" (pkg-config-libs "bdw-gc" win32 win64) " -lz -lm"
+                  (if mswin " -lregex" "")
                   (if _cstatic " -static" "") ))
 
-        (if (or conly (mingw))
+        (if conly
         then    (set bpath (+ epath "-compile"))
                 (set _dst (fcreate bpath))
                 (fprint _dst "#!/bin/sh" nl i nl)
                 (close _dst) )
         (if (not conly)
-        then    (set _pass (+ _pass 1))
+        then    (inc _pass)
                 (print (app-name) ": pass " _pass " (cc)..." nl)
-                (if (mingw)
-                then    (system "sh " (pathquote bpath))
-                        (if (not debug)
-                        then    (system "strip -s " (pathquote epath) ".exe") )
-                        (remove bpath)
-                        (if (<> ipath undef)
-                        then    (remove ipath) )
-                else    (system i) )
+                (system i)
+            ;    (if (not debug)
+            ;    then    (system "strip -s " (pathquote exepath)) )
+                (if (<> ipath undef)
+                then    (remove ipath) )
                 (remove cpath) )
         (clean)
         (gc)
         (print "DEBUG: free bytes/heap size = " (free-bytes) '/' (heap-size) nl) )
 
-(defnet create-icon (epath @ipath)
+(defnet create-icon (mswin epath @ipath)
         (deflocal rcpath f)
 
-        (alt    (not (mingw))
+        (alt    (not mswin)
                 (= _icon undef)
                 (seq    (set rcpath (+ epath "-icon.rc"))
                         (set @ipath (+ epath "-icon.o"))

@@ -33,7 +33,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#ifdef __MINGW_H
+#ifdef MINGW
 #define trp_off_t sig64b
 #else
 #define trp_off_t off_t

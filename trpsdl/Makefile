@@ -1,12 +1,10 @@
 
-UNAME := $(shell uname -s)
-
 myname=	sdl
 mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o
-CC= `cat ../.mycc`
-CFLAGS= -c `cat ../.mycflags` `pkg-config --cflags sdl2`
-LDFLAGS= `cat ../.myldflags`
+
+CFLAGS= `cat ../.cflags` `pkg-config --cflags sdl2`
+LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)
 
@@ -15,8 +13,8 @@ clean:
 
 $(mylibs):		$(myobjs)
 	rm -f $(mylibs)
-	ar rcs ../libs/libtrp$(myname).a $(myobjs)
-ifeq ($(UNAME), Linux)
+	$(AR) rcs ../libs/libtrp$(myname).a $(myobjs)
+ifeq ($(TARGET), Linux)
 	$(CC) -shared $(LDFLAGS) -Wl,-soname,libtrp$(myname).so -o ../libs/libtrp$(myname).so $(myobjs)
 endif
 

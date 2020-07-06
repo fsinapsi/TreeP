@@ -1,6 +1,4 @@
 
-UNAME := $(shell uname -s)
-
 myname=	pix
 mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o epeg_main.o
@@ -8,9 +6,9 @@ myobjs+= trppix_conv.o trppix_png.o trppix_jpg.o trppix_pnm.o
 myobjs+= trppix_gif.o trppix_yuv4mpeg2.o
 myobjs+= trppix_draw.o trppix_misc.o trppix_text.o
 myobjs+= trppix_ssim.o trppix_scd.o trppix_stat.o
-CC= `cat ../.mycc`
-CFLAGS= -c `cat ../.mycflags`
-LDFLAGS= `cat ../.myldflags`
+
+CFLAGS= `cat ../.cflags`
+LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)
 
@@ -19,8 +17,8 @@ clean:
 
 $(mylibs):		$(myobjs)
 	rm -f $(mylibs)
-	ar rcs ../libs/libtrp$(myname).a $(myobjs)
-ifeq ($(UNAME), Linux)
+	$(AR) rcs ../libs/libtrp$(myname).a $(myobjs)
+ifeq ($(TARGET), Linux)
 	$(CC) -shared $(LDFLAGS) -Wl,-soname,libtrp$(myname).so -o ../libs/libtrp$(myname).so $(myobjs)
 endif
 

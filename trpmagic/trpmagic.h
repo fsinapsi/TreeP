@@ -21,6 +21,7 @@
 
 uns8b trp_magic_init();
 void trp_magic_quit();
+uns8b trp_magic_reinit( trp_obj_t *path );
 trp_obj_t *trp_magic_available();
 trp_obj_t *trp_magic_file( trp_obj_t *path );
 trp_obj_t *trp_magic_buffer( trp_obj_t *raw, trp_obj_t *cnt );

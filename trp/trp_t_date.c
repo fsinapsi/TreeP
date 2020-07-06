@@ -52,7 +52,7 @@ static uns16b _trp_mese_offset[] = {
     0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365
 };
 
-#ifdef __MINGW_H
+#ifdef MINGW
 /*
  * WIN32 C runtime library had been made thread-safe
  * without affecting the user interface. Provide
@@ -71,7 +71,7 @@ static uns16b _trp_mese_offset[] = {
     ( *(_result) = *localtime( (_clock) ), \
     (_result) )
 #endif /* !localtime_r */
-#endif /* __MINGW_H */
+#endif /* MINGW */
 
 uns8b trp_date_print( trp_print_t *p, trp_date_t *obj )
 {

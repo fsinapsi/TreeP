@@ -59,17 +59,12 @@ uns8b dca_bits_per_sample[] = {
 void dca_bitstream_init (dca_state_t * state, uns8b * buf, int word_mode,
                          int bigendian_mode)
 {
-#ifdef __MINGW_H
-    uns32b align = ((uns32b)buf) & 3;
-    state->buffer_start = (uns32b *) (((uns32b)buf) - align);
-#else
 #if __WORDSIZE == 64
     uns64b align = ((uns64b)buf) & 3;
     state->buffer_start = (uns32b *) (((uns64b)buf) - align);
 #else
     uns32b align = ((uns32b)buf) & 3;
     state->buffer_start = (uns32b *) (((uns32b)buf) - align);
-#endif
 #endif
     state->bits_left = 0;
     state->current_word = 0;

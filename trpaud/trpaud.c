@@ -21,7 +21,7 @@
 #include "./dca.h"
 #include "./dca_internal.h"
 
-#ifdef __MINGW_H
+#ifdef MINGW
 #define trp_off_t sig64b
 #define fseeko fseeko64
 #define ftello ftello64

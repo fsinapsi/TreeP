@@ -19,7 +19,7 @@
 #include "trp.h"
 #include <zlib.h>
 
-#ifdef __MINGW_H
+#ifdef MINGW
 #define fseeko fseeko64
 #define ftello ftello64
 #endif

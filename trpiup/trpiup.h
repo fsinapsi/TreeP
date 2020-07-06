@@ -19,8 +19,8 @@
 #ifndef __trpiup__h
 #define __trpiup__h
 
-#include <iup.h>
-#include <iupkey.h>
+#include <iup/iup.h>
+#include <iup/iupkey.h>
 
 #define K_csLEFT iup_XkeyCtrl(K_sLEFT)
 #define K_csRIGHT iup_XkeyCtrl(K_sRIGHT)

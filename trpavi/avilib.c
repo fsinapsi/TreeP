@@ -35,7 +35,7 @@
 
 #define INFO_LIST
 
-#ifdef __MINGW_H
+#ifdef MINGW
 #define trp_off_t sig64b
 #define trp_stat _stati64
 #define trp_fstat _fstati64

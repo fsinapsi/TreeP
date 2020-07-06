@@ -1,22 +1,20 @@
 
-UNAME := $(shell uname -s)
-
 myname=	vlfeat
 mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
-myobjs=	trp$(myname).o
-CC= `cat ../.mycc`
-CFLAGS= -c `cat ../.mycflags`
-LDFLAGS= `cat ../.myldflags`
+myobjs=	trp$(myname).o vl/sift.o vl/kdtree.o vl/generic.o vl/random.o vl/host.o vl/imopv.o vl/mathop.o
+
+CFLAGS= `cat ../.cflags` -DVL_DISABLE_SSE2 -DVL_DISABLE_AVX -DVL_DISABLE_THREADS -DVL_DISABLE_OPENMP
+LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)
 
 clean:
-	rm -f *~ $(mylibs) $(myobjs)
+	rm -f *~ $(mylibs) $(myobjs) vl/*~
 
 $(mylibs):		$(myobjs)
 	rm -f $(mylibs)
-	ar rcs ../libs/libtrp$(myname).a $(myobjs)
-ifeq ($(UNAME), Linux)
+	$(AR) rcs ../libs/libtrp$(myname).a $(myobjs)
+ifeq ($(TARGET), Linux)
 	$(CC) -shared $(LDFLAGS) -Wl,-soname,libtrp$(myname).so -o ../libs/libtrp$(myname).so $(myobjs)
 endif
 

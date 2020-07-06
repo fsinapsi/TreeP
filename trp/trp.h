@@ -72,22 +72,19 @@
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
-#ifdef __MINGW_H
-#define PTW32_STATIC_LIB
-#endif
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#ifndef __MINGW_H
+#ifndef MINGW
 #include <sys/socket.h>
 #include <poll.h>
 #endif
 #include <regex.h>
 #include <gmp.h>
-#ifdef __MINGW_H
+#ifdef MINGW
 #define GC_WIN32_PTHREADS
 #define GC_THREADS
 #else
@@ -565,7 +562,7 @@ uns8b trp_for_next( trp_obj_t **fst );
 void trp_for_break( trp_obj_t **fst );
 trp_obj_t *trp_for_pos( trp_obj_t *fst );
 
-#ifdef __MINGW_H
+#ifdef MINGW
 void trp_convert_slash( uns8b *p );
 wchar_t *trp_utf8_to_wc( const uns8b *p );
 uns8b *trp_wc_to_utf8( const wchar_t *wp );

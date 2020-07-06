@@ -39,7 +39,7 @@
 #define  close    _close
 #define  read     _read
 #define  write    _write
-#define  lseek    _lseeki64
+// #define  lseek    _lseeki64
 #define  fsync    _commit
 #define  OPENFLAGS_WRITE _O_WRONLY|_O_CREAT|_O_BINARY|_O_TRUNC
 #define  OPEN_PERMISSIONS _S_IREAD | _S_IWRITE
@@ -167,7 +167,7 @@ typedef enum {
   NO_SLICES,
   FIXED_MB,
   FIXED_RATE,
-#ifdef __MINGW_H
+#ifdef MINGW
   CBACK,
 #else
   CALLBACK,

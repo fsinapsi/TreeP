@@ -855,14 +855,10 @@ static trp_obj_t *trp_cord_match_internal( uns8b flags, trp_obj_t **o, va_list a
             trp_array_insert( (trp_obj_t *)( &( m.a ) ),
                               NULL,
                               trp_cons( trp_queue(),
-#ifdef __MINGW_H
-                                        trp_cons( obj, (trp_obj_t *)( *idx ) )
-#else
 #if __WORDSIZE == 64
                                         trp_cons( obj, (trp_obj_t *)((uns64b)( *idx )) )
 #else
                                         trp_cons( obj, (trp_obj_t *)( *idx ) )
-#endif
 #endif
                                       ),
                               NULL );
@@ -888,14 +884,10 @@ static trp_obj_t *trp_cord_match_internal( uns8b flags, trp_obj_t **o, va_list a
         obj = NULL;
     } else {
         obj = ( (trp_cons_t *)( ( (trp_cons_t *)( m.a.data[ m.result ] ) )->cdr) )->car;
-#ifdef __MINGW_H
-        *idx = (uns32b)( ( (trp_cons_t *)( ( (trp_cons_t *)( m.a.data[ m.result ] ) )->cdr) )->cdr );
-#else
 #if __WORDSIZE == 64
         *idx = (uns32b)((uns64b)( ( (trp_cons_t *)( ( (trp_cons_t *)( m.a.data[ m.result ] ) )->cdr) )->cdr ));
 #else
         *idx = (uns32b)( ( (trp_cons_t *)( ( (trp_cons_t *)( m.a.data[ m.result ] ) )->cdr) )->cdr );
-#endif
 #endif
         res_len = ( (trp_queue_t *)( ( (trp_cons_t *)( m.a.data[ m.result ] ) )->car ) )->len;
     }

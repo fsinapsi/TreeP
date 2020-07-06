@@ -10,7 +10,7 @@ PRG+= testcurl testsqlite3 testwn cv-siftmatch vl-siftmatch testvlfeat # testmgl
 all:	$(PRG)
 
 clean:
-	rm -f *~ *.c *.txt *.db *.png *.ppm thumbnails.jpg *.zip fractal-tree $(PRG)
+	rm -f *~ *.c *.exe *.txt *.db *.png *.ppm thumbnails.jpg *.zip fractal-tree $(PRG)
 
 misc:		misc.trp
 	trpc -f misc.trp

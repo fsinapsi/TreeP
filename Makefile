@@ -1,76 +1,106 @@
 
-UNAME := $(shell uname -s)
+LOCAL_WIN_32 = /home/frank/wd/programming/mingw-w64/32
+LOCAL_WIN_64 = /home/frank/wd/programming/mingw-w64/64
 
-ifeq ($(UNAME), MINGW32_NT-5.1)
-PREFIX= /local
+ifeq ($(TARGET), i686-w64-mingw32)
+CC = i686-w64-mingw32-gcc
+AR = i686-w64-mingw32-ar
+PREFIX = $(LOCAL_WIN_32)
 else
-PREFIX= /usr/local
-endif
-
-CC= gcc
-
-CFLAGS?=  -O3 -pipe # -g
-CFLAGS+= -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-CFLAGS+= -Wno-parentheses
-ifeq ($(UNAME), Linux)
-CFLAGS+= -fPIC -Wno-unused-result
-endif
-ifeq ($(UNAME), MINGW32_NT-5.1)
-CFLAGS+= -mms-bitfields
+ifeq ($(TARGET), x86_64-w64-mingw32)
+CC = x86_64-w64-mingw32-gcc
+AR = x86_64-w64-mingw32-ar
+PREFIX = $(LOCAL_WIN_64)
 else
-CFLAGS+= -Wno-pointer-sign
+TARGET = $(shell uname -s)
+CC = gcc
+AR = ar
+PREFIX = /usr/local
 endif
-CFLAGS+= -isystem /usr/local/include -I/opt/local/include
+endif
 
-LDFLAGS=  -L/usr/local/lib -L/opt/local/lib
-LDFLAGS+= -lgmp -lgc -lpthread -lz -lm
+CFLAGS ?= -O3 -pipe # -g
+CFLAGS += -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CFLAGS += -Wno-parentheses -Wno-unused-result -Wno-pointer-sign
+ifeq ($(TARGET), Linux)
+CFLAGS += -fPIC
+CFLAGS += -I/usr/local/include -I/opt/local/include
+endif
+ifeq ($(TARGET), i686-w64-mingw32)
+CFLAGS += -mms-bitfields
+CFLAGS += -DMINGW -D__WORDSIZE=32
+CFLAGS += -I/usr/i686-w64-mingw32/include -I$(PREFIX)/include
+endif
+ifeq ($(TARGET), x86_64-w64-mingw32)
+CFLAGS += -mms-bitfields
+CFLAGS += -DMINGW -D__WORDSIZE=64
+CFLAGS += -I/usr/x86_64-w64-mingw32/include -I$(PREFIX)/include
+endif
+
+LDFLAGS =  -L/usr/local/lib -L/opt/local/lib
+LDFLAGS += -lgmp -lgc -lpthread -lz -lm
 
 all:		rts
 
 install:	rts
 	cp -f libs/libtrp* $(PREFIX)/lib
+	ldconfig
+
+win32:
+	make TARGET=i686-w64-mingw32
+
+win32-install:	win32
+	cp -f libs/libtrp* $(LOCAL_WIN_32)/lib
+
+win64:
+	make TARGET=x86_64-w64-mingw32
+
+win64-install:	win64
+	cp -f libs/libtrp* $(LOCAL_WIN_64)/lib
 
 bootstrap:	install
 	( cd compiler && make bootstrap )
 	( cd compiler && make installcopy )
 
 dumpflags:
-	echo $(CC) > .mycc
-	echo $(CFLAGS) > .mycflags
-	echo $(LDFLAGS) > .myldflags
-	echo $(PREFIX)/bin > .installbin
+	echo -n $(CFLAGS) > .cflags
+	echo -n $(LDFLAGS) > .ldflags
+	echo -n $(PREFIX)/bin > .installbin
 
 rts:		dumpflags
 	mkdir -p libs
-	( cd trp && make )
-	( cd trpthread && make )
-	( cd trplicense && make )
-	( cd trpgcrypt && make )
-	( cd trpsuf && make )
-	( cd trpaud && make )
-	( cd trpvid && make )
-	( cd trpavi && make )
-	( cd trpid3tag && make )
-	( cd trpmagic && make )
-	( cd trpexif && make )
-	( cd trpchess && make )
-	( cd trpcurl && make )
-	( cd trpsqlite3 && make )
-	( cd trppix && make )
-	( cd trpgtk && make )
-	( cd trpiup && make )
-ifneq ($(UNAME), Darwin)
-	( cd trpavcodec && make )
-endif
-ifeq ($(UNAME), Linux)
-	( cd trpcgraph && make )
-	( cd trpsdl && make )
-	( cd trpquirc && make )
-	( cd trplept && make )
+	( cd trp && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpthread && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trplicense && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpgcrypt && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpsuf && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpaud && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpvid && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpavi && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpwn && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpchess && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpcurl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpsqlite3 && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trppix && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpiup && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpsdl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trplept && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpquirc && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpexif && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpavcodec && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpid3tag && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpvlfeat && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+ifeq ($(TARGET), Linux)
+	( cd trpmagic && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpgtk && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpcgraph && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpcv && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+#	( cd trpmgl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 endif
 
 clean:
-	rm -f *~ .mycc .mycflags .myldflags .installbin libs/*
+	rm -f *~ .cflags .ldflags .installbin
+	rm -rf libs
 	( cd compiler && make clean )
 	( cd examples && make clean )
 	( cd trp && make clean )
@@ -81,20 +111,24 @@ clean:
 	( cd trpaud && make clean )
 	( cd trpvid && make clean )
 	( cd trpavi && make clean )
-	( cd trpid3tag && make clean )
-	( cd trpmagic && make clean )
-	( cd trpexif && make clean )
-	( cd trpcgraph && make clean )
-	( cd trpsdl && make clean )
-	( cd trpquirc && make clean )
+	( cd trpwn && make clean )
 	( cd trpchess && make clean )
 	( cd trpcurl && make clean )
 	( cd trpsqlite3 && make clean )
 	( cd trppix && make clean )
-	( cd trpgtk && make clean )
 	( cd trpiup && make clean )
-	( cd trpavcodec && make clean )
+	( cd trpsdl && make clean )
 	( cd trplept && make clean )
+	( cd trpquirc && make clean )
+	( cd trpexif && make clean )
+	( cd trpavcodec && make clean )
+	( cd trpid3tag && make clean )
+	( cd trpvlfeat && make clean )
+	( cd trpmagic && make clean )
+	( cd trpgtk && make clean )
+	( cd trpcgraph && make clean )
+	( cd trpcv && make clean )
+	( cd trpmgl && make clean )
 
 cleanall:	clean
 	( cd compiler && make cleanall )

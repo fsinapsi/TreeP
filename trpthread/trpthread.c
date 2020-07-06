@@ -112,13 +112,8 @@ static uns8b trp_thread_print( trp_print_t *p, trp_thread_t *obj )
 {
     if ( trp_print_char_star( p, "#thread " ) )
         return 1;
-#ifdef __MINGW_H
-    if ( trp_print_obj( p, trp_sig64( (sig64b)((uns32b)( obj->th.p )) ) ) )
-        return 1;
-#else
     if ( trp_print_obj( p, trp_sig64( (sig64b)( obj->th ) ) ) )
         return 1;
-#endif
     if ( obj->stato == TRP_THREAD_STATE_STOPPED )
         if ( trp_print_char_star( p, " (stopped)" ) )
             return 1;
@@ -153,21 +148,12 @@ static trp_obj_t *trp_thread_create_internal()
     trp_thread_q_lock();
     (void)trp_queue_put( _trp_thread_q, (trp_obj_t *)th );
     trp_thread_q_unlock();
-#ifdef __MINGW_H
-    th->th.p = NULL;
-#endif
     return (trp_obj_t *)th;
 }
 
 static void trp_thread_setspecific( trp_thread_t *th )
 {
-#ifndef __MINGW_H
-    /*
-     sembra che pthread_self() in pthread-2.dll non restituisca lo stesso
-     valore restituito da pthread_create() ...
-     */
     th->th = pthread_self();
-#endif
     (void)pthread_setspecific( _trp_thread_key, (void *)th );
 }
 

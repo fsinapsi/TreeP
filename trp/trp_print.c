@@ -265,7 +265,7 @@ static uns8b trp_print_flush( trp_print_t *p )
         if ( p->flags & 1 ) {
             i = write( fileno( p->fp ), p->buf + off, p->cnt );
             if ( i == 0 ) {
-#ifdef __MINGW_H
+#ifdef MINGW
                 return 1;
 #else
                 struct pollfd ufds[ 1 ];
