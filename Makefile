@@ -60,7 +60,7 @@ win64-install:	win64
 
 bootstrap:	install
 	( cd compiler && make bootstrap )
-	( cd compiler && make installcopy )
+	( cd compiler && make install )
 
 dumpflags:
 	echo -n $(CFLAGS) > .cflags

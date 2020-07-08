@@ -22,5 +22,6 @@
 uns8b trp_sdl_init();
 void trp_sdl_quit();
 uns8b trp_sdl_playwav( trp_obj_t *path, trp_obj_t *volume );
+uns8b trp_sdl_playwav_memory( trp_obj_t *raw, trp_obj_t *volume );
 
 #endif /* !__trpsdl__h */
