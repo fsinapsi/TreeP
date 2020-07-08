@@ -147,49 +147,10 @@ typedef struct {
 #define EP      0x10
 #define CAPTURE 0x08
 
-#if 1 /* __WORDSIZE == 64 */
-
 #define PopCount(bb) (__builtin_popcountll(bb)) /* return the number of bits sets of a bitboard */
 #define RevBB(bb) (__builtin_bswap64(bb)) /* reverse a bitboard */
 #define MSB(bb) (__builtin_clzll(bb)^0x3f) /* return the index of the most significant bit of the bitboard, bb must always be !=0 */
 #define LSB(bb) (__builtin_ctzll(bb)) /* return the index of the least significant bit of the bitboard, bb must always be !=0 */
-
-#else
-
-static uns64b PopCount( uns64b bb )
-{
-    /*
-     FIXME
-     */
-    return 0;
-}
-
-static uns64b RevBB( uns64b bb )
-{
-    /*
-     FIXME
-     */
-    return 0;
-}
-
-static uns64b MSB( uns64b bb )
-{
-    /*
-     FIXME
-     */
-    return 0;
-}
-
-static uns64b LSB( uns64b bb )
-{
-    /*
-     FIXME
-     */
-    return 0;
-}
-
-#endif
-
 #define ExtractLSB(bb) ((bb)&(-(bb))) /* extract the least significant bit of the bitboard */
 #define ClearLSB(bb) ((bb)&((bb)-1)) /* reset the least significant bit of bb */
 

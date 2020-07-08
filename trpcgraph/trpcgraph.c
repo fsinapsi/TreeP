@@ -76,7 +76,7 @@ trp_obj_t *trp_ag_dot2pix( trp_obj_t *s )
     if ( i )
         return UNDEF;
     for ( j = w * h, c = (trp_pix_color_t *)data ; j ; j--, c++ )
-        c->alpha = ( ( c->red == 0xff ) && ( c->green == 0xff ) && ( c->blue == 0xff ) ) ? 0 : 0xff;
+        c->alpha = ( ( c->red & c->green & c->blue ) == 0xff ) ? 0 : 0xff;
     return trp_pix_create_image_from_data( 0, w, h, data );
 }
 
