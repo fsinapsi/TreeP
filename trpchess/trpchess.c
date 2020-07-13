@@ -2751,6 +2751,7 @@ static void trp_tmp_old_to_new( trp_chess_t *st, trp_chess_board_tt *pos )
 {
     uns8b n, piece, pieceside;
 
+    memset( pos, 0, sizeof( trp_chess_board_tt ) );
     pos->P0 = pos->P1 = pos->P2 = pos->PM = 0;
     for ( n = 0 ; n < 64 ; n++ ) {
         piece = st->board->board[ n ];
