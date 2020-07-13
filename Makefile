@@ -1,4 +1,5 @@
 
+LOCAL_LINUX = /usr/local
 LOCAL_WIN_32 = /home/frank/wd/programming/mingw-w64/32
 LOCAL_WIN_64 = /home/frank/wd/programming/mingw-w64/64
 
@@ -15,7 +16,7 @@ else
 TARGET = $(shell uname -s)
 CC = gcc
 AR = ar
-PREFIX = /usr/local
+PREFIX = $(LOCAL_LINUX)
 endif
 endif
 
@@ -70,29 +71,29 @@ dumpflags:
 rts:		dumpflags
 	mkdir -p libs
 	( cd trp && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trppix && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpthread && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trplicense && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpiup && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpsqlite3 && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trplept && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpgcrypt && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpsuf && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpaud && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpvid && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpavi && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-	( cd trpwn && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpchess && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpcurl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-	( cd trpsqlite3 && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-	( cd trppix && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-	( cd trpiup && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpsdl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-	( cd trplept && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpquirc && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpexif && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpavcodec && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpid3tag && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpvlfeat && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-ifeq ($(TARGET), Linux)
 	( cd trpmagic && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpgtk && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpwn && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+ifeq ($(TARGET), Linux)
 	( cd trpcgraph && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 #	( cd trpcv && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 #	( cd trpmgl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
@@ -104,21 +105,20 @@ clean:
 	( cd compiler && make clean )
 	( cd examples && make clean )
 	( cd trp && make clean )
+	( cd trppix && make clean )
 	( cd trpthread && make clean )
 	( cd trplicense && make clean )
+	( cd trpiup && make clean )
+	( cd trpsqlite3 && make clean )
+	( cd trplept && make clean )
 	( cd trpgcrypt && make clean )
 	( cd trpsuf && make clean )
 	( cd trpaud && make clean )
 	( cd trpvid && make clean )
 	( cd trpavi && make clean )
-	( cd trpwn && make clean )
 	( cd trpchess && make clean )
 	( cd trpcurl && make clean )
-	( cd trpsqlite3 && make clean )
-	( cd trppix && make clean )
-	( cd trpiup && make clean )
 	( cd trpsdl && make clean )
-	( cd trplept && make clean )
 	( cd trpquirc && make clean )
 	( cd trpexif && make clean )
 	( cd trpavcodec && make clean )
@@ -126,6 +126,7 @@ clean:
 	( cd trpvlfeat && make clean )
 	( cd trpmagic && make clean )
 	( cd trpgtk && make clean )
+	( cd trpwn && make clean )
 	( cd trpcgraph && make clean )
 	( cd trpcv && make clean )
 	( cd trpmgl && make clean )

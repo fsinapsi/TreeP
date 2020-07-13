@@ -16,16 +16,16 @@ trpc:		trpc.trp lex.tin expr.tin test.tin \
 	trpc trpc.trp
 
 clean:
-	rm -f *~ trpc.exe
+	rm -f *~ trpc.exe trpc.log
 
 cleanall:	clean
-	rm -f trpc trpc-compile trpc.c
+	rm -f trpc trpc-compile.sh trpc.c
 
 install:	all ../.installbin
 	cp -f trpc `cat ../.installbin`
 
-bootstrap:	trpc-compile trpc.c
-	sh trpc-compile
+bootstrap:	trpc-compile.sh trpc.c
+	sh trpc-compile.sh
 
 ../.installbin:
 	( cd .. && make dumpflags )

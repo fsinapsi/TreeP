@@ -464,12 +464,12 @@
                 "sysbits"       (exprseq-basic 0 0 "trp_sig64(8*sizeof(void *)" ')')
                 "csysbits"      (seq    (chiusa)
                                         (set _expr_const_enabled const-state)
-                                        (expr-constant (sysbits))
+                                        (expr-constant (if _win32 32 (if _win64 64 (sysbits))))
                                         (set _expr_const_enabled false) )
                 "uname"         (exprseq-basic 0 0 "trp_uname(" ')')
                 "cuname"        (seq    (chiusa)
                                         (set _expr_const_enabled const-state)
-                                        (expr-constant (uname))
+                                        (expr-constant (if (or _win32 _win64) "MINGW32_NT-5.1" (uname)))
                                         (set _expr_const_enabled false) )
 
                 "gc-version-major"
