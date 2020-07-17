@@ -93,11 +93,9 @@ rts:		dumpflags
 	( cd trpmagic && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpgtk && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpwn && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-ifeq ($(TARGET), Linux)
 	( cd trpcgraph && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 #	( cd trpcv && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 #	( cd trpmgl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-endif
 
 clean:
 	rm -f *~ .cflags .ldflags .installbin

@@ -3,7 +3,16 @@ myname=	cgraph
 mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o
 
-CFLAGS= `cat ../.cflags` `pkg-config --cflags libgvc`
+CFLAGS= `cat ../.cflags`
+ifeq ($(TARGET), Linux)
+CFLAGS+= `pkg-config --cflags libgvc`
+endif
+ifeq ($(TARGET), i686-w64-mingw32)
+CFLAGS+= `i686-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/32/lib/pkgconfig/libgvc.pc`
+endif
+ifeq ($(TARGET), x86_64-w64-mingw32)
+CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/64/lib/pkgconfig/libgvc.pc`
+endif
 LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)

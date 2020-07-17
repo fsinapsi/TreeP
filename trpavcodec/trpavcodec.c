@@ -36,7 +36,9 @@ typedef struct {
         } sws;
         struct {
             uns32b             vstream;
+            AVCodecContext    *avctx;
             AVFrame           *frame;
+            AVPacket          *packet;
             struct SwsContext *sws_ctx;
             uns64b             pts;
             uns8b              pts_shift;
@@ -54,7 +56,6 @@ static trp_obj_t *trp_av_height( trp_avcodec_t *obj );
 static trp_obj_t *trp_av_rational( struct AVRational *r );
 static struct SwsContext *trp_av_extract_sws_context( trp_avcodec_t *swsctx );
 static AVFormatContext *trp_av_extract_fmt_context( trp_avcodec_t *fmtctx );
-static trp_obj_t *trp_av_open_input_file_basic( trp_obj_t *path, int debug_mv );
 
 uns8b trp_av_init()
 {
@@ -106,9 +107,11 @@ static uns8b trp_av_close_basic( uns8b flags, trp_avcodec_t *obj )
             sws_freeContext( obj->sws_ctx );
             break;
         case 1:
-            av_free( obj->fmt.frame );
-            avcodec_close( obj->fmt_ctx->streams[ obj->fmt.vstream ]->codec );
             avformat_close_input( &obj->fmt_ctx );
+            avcodec_free_context( &obj->fmt.avctx );
+            av_frame_free( &obj->fmt.frame );
+            av_packet_free( &obj->fmt.packet );
+            sws_freeContext( obj->fmt.sws_ctx ); /* If swsContext is NULL, then does nothing. */
             break;
         }
         obj->sws_ctx = NULL;
@@ -128,7 +131,7 @@ static trp_obj_t *trp_av_width( trp_avcodec_t *obj )
     if ( obj->sws_ctx )
         switch ( obj->sottotipo ) {
         case 1:
-            res = trp_sig64( obj->fmt_ctx->streams[ obj->fmt.vstream ]->codec->width );
+            res = trp_sig64( obj->fmt_ctx->streams[ obj->fmt.vstream ]->codecpar->width );
             break;
         }
     return res;
@@ -141,7 +144,7 @@ static trp_obj_t *trp_av_height( trp_avcodec_t *obj )
     if ( obj->sws_ctx )
         switch ( obj->sottotipo ) {
         case 1:
-            res = trp_sig64( obj->fmt_ctx->streams[ obj->fmt.vstream ]->codec->height );
+            res = trp_sig64( obj->fmt_ctx->streams[ obj->fmt.vstream ]->codecpar->height );
             break;
         }
     return res;
@@ -214,7 +217,7 @@ trp_obj_t *trp_av_swscale_version()
 
 trp_obj_t *trp_av_sws_context( trp_obj_t *wi, trp_obj_t *hi, trp_obj_t *wo, trp_obj_t *ho, trp_obj_t *alg )
 {
-    trp_avcodec_t *obj = (trp_avcodec_t *)UNDEF;
+    trp_avcodec_t *obj;
     struct SwsContext *sws_ctx;
     uns32b wwi, hhi, wwo, hho, aalg;
 
@@ -226,23 +229,18 @@ trp_obj_t *trp_av_sws_context( trp_obj_t *wi, trp_obj_t *hi, trp_obj_t *wo, trp_
     if ( alg ) {
         if ( trp_cast_uns32b( alg, &aalg ) )
             return UNDEF;
-    } else {
+    } else
         aalg = (uns32b)SWS_BICUBIC;
-    }
-#if (LIBAVFORMAT_VERSION_MAJOR > 56)
-    if ( sws_ctx = sws_getContext( wwi, hhi, AV_PIX_FMT_BGR32, wwo, hho, AV_PIX_FMT_BGR32, aalg, NULL, NULL, NULL ) ) {
-#else
-    if ( sws_ctx = sws_getContext( wwi, hhi, PIX_FMT_RGBA, wwo, hho, PIX_FMT_RGBA, aalg, NULL, NULL, NULL ) ) {
-#endif
-        obj = trp_gc_malloc_atomic_finalize( sizeof( trp_avcodec_t ), trp_av_finalize );
-        obj->tipo = TRP_AVCODEC;
-        obj->sottotipo = 0;
-        obj->sws_ctx = sws_ctx;
-        obj->sws.wi = wwi;
-        obj->sws.hi = hhi;
-        obj->sws.wo = wwo;
-        obj->sws.ho = hho;
-    }
+    if ( ( sws_ctx = sws_getContext( wwi, hhi, AV_PIX_FMT_BGR32, wwo, hho, AV_PIX_FMT_BGR32, aalg, NULL, NULL, NULL ) ) == NULL )
+        return UNDEF;
+    obj = trp_gc_malloc_atomic_finalize( sizeof( trp_avcodec_t ), trp_av_finalize );
+    obj->tipo = TRP_AVCODEC;
+    obj->sottotipo = 0;
+    obj->sws_ctx = sws_ctx;
+    obj->sws.wi = wwi;
+    obj->sws.hi = hhi;
+    obj->sws.wo = wwo;
+    obj->sws.ho = hho;
     return (trp_obj_t *)obj;
 }
 
@@ -275,103 +273,91 @@ uns8b trp_av_sws_scale( trp_obj_t *swsctx, trp_obj_t *pi, trp_obj_t *po )
     strideo[ 1 ] = strideo[ 2 ] = strideo[ 3 ] = 0;
     stridei[ 0 ] = wi << 2;
     strideo[ 0 ] = wo << 2;
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
     sws_scale( sws_ctx, (const uint8_t* const *)mapi, stridei, 0, hi, mapo, strideo );
-#else
-    sws_scale( sws_ctx, mapi, stridei, 0, hi, mapo, strideo );
-#endif
     return 0;
 }
 
-static trp_obj_t *trp_av_open_input_file_basic( trp_obj_t *path, int debug_mv )
+trp_obj_t *trp_av_open_input_file( trp_obj_t *path, trp_obj_t *par )
 {
     trp_avcodec_t *obj;
-    uns8b *cpath = trp_csprint( path );
-    AVFormatContext *fmt_ctx = NULL;
-    AVCodecContext *avctx;
+    AVFormatContext *fmt_ctx;
+    uns8b *cpath;
     AVCodec *codec;
-    uns32b vstream;
+    AVCodecContext *avctx;
+    AVFrame *frame;
+    AVPacket *packet;
+    uns32b debug_mv, vstream;
 
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
+    if ( par ) {
+        if ( trp_cast_uns32b_range( par, &debug_mv, 0,
+                                    FF_DEBUG_VIS_MV_P_FOR |
+                                    FF_DEBUG_VIS_MV_B_FOR |
+                                    FF_DEBUG_VIS_MV_B_BACK ) )
+            return UNDEF;
+    } else
+        debug_mv = 0;
+    if ( ( fmt_ctx = avformat_alloc_context() ) == NULL )
+        return UNDEF;
+    cpath = trp_csprint( path );
     if ( avformat_open_input( &fmt_ctx, cpath, NULL, NULL ) ) {
         trp_csprint_free( cpath );
         return UNDEF;
     }
-#else
-    if ( av_open_input_file( &fmt_ctx, cpath, NULL, 0, NULL ) ) {
-        trp_csprint_free( cpath );
-        return UNDEF;
-    }
-#endif
     trp_csprint_free( cpath );
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
     if ( avformat_find_stream_info( fmt_ctx, NULL ) < 0 ) {
         avformat_close_input( &fmt_ctx );
         return UNDEF;
     }
-#else
-    if ( av_find_stream_info( fmt_ctx ) < 0 ) {
-        avformat_close_input( &fmt_ctx );
-        return UNDEF;
-    }
-#endif
-    for ( vstream = 0 ; vstream < fmt_ctx->nb_streams ; vstream++ ) {
+    for ( vstream = 0 ; ; vstream++ ) {
         if ( vstream == fmt_ctx->nb_streams ) {
             avformat_close_input( &fmt_ctx );
             return UNDEF;
         }
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
-        if ( fmt_ctx->streams[ vstream ]->codec->codec_type == AVMEDIA_TYPE_VIDEO )
+        if ( fmt_ctx->streams[ vstream ]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO )
             break;
-#else
-        if ( fmt_ctx->streams[ vstream ]->codec->codec_type == CODEC_TYPE_VIDEO )
-            break;
-#endif
     }
-    avctx = fmt_ctx->streams[ vstream ]->codec;
-    avctx->debug_mv = debug_mv;
-    if ( ( codec = avcodec_find_decoder( avctx->codec_id ) ) == NULL ) {
+    if ( ( codec = avcodec_find_decoder( fmt_ctx->streams[ vstream ]->codecpar->codec_id ) ) == NULL ) {
         avformat_close_input( &fmt_ctx );
         return UNDEF;
     }
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
+    if ( ( avctx = avcodec_alloc_context3( codec ) ) == NULL ) {
+        avformat_close_input( &fmt_ctx );
+        return UNDEF;
+    }
+    if ( avcodec_parameters_to_context( avctx, fmt_ctx->streams[ vstream ]->codecpar ) < 0 ) {
+        avformat_close_input( &fmt_ctx );
+        avcodec_free_context( &avctx );
+        return UNDEF;
+    }
+    avctx->debug_mv = (int)debug_mv;
     if ( avcodec_open2( avctx, codec, NULL ) < 0 ) {
         avformat_close_input( &fmt_ctx );
+        avcodec_free_context( &avctx );
         return UNDEF;
     }
-#else
-    if ( avcodec_open( avctx, codec ) < 0 ) {
+    if ( ( frame = av_frame_alloc() ) == NULL ) {
         avformat_close_input( &fmt_ctx );
+        avcodec_free_context( &avctx );
         return UNDEF;
     }
-#endif
+    if ( ( packet = av_packet_alloc() ) == NULL ) {
+        avformat_close_input( &fmt_ctx );
+        avcodec_free_context( &avctx );
+        av_frame_free( &frame );
+        return UNDEF;
+    }
     obj = trp_gc_malloc_atomic_finalize( sizeof( trp_avcodec_t ), trp_av_finalize );
     obj->tipo = TRP_AVCODEC;
     obj->sottotipo = 1;
     obj->fmt_ctx = fmt_ctx;
     obj->fmt.vstream = vstream;
-#if (LIBAVFORMAT_VERSION_MAJOR > 55)
-    obj->fmt.frame = av_frame_alloc();
-#else
-    obj->fmt.frame = avcodec_alloc_frame();
-#endif
+    obj->fmt.avctx = avctx;
+    obj->fmt.frame = frame;
+    obj->fmt.packet = packet;
     obj->fmt.sws_ctx = NULL;
     obj->fmt.pts = AV_NOPTS_VALUE;
     obj->fmt.pts_shift = 1;
     return (trp_obj_t *)obj;
-}
-
-trp_obj_t *trp_av_open_input_file( trp_obj_t *path, trp_obj_t *par )
-{
-    uns32b v = 0;
-
-    if ( par )
-        if ( trp_cast_uns32b_range( par, &v, 0,
-                                    FF_DEBUG_VIS_MV_P_FOR |
-                                    FF_DEBUG_VIS_MV_B_FOR |
-                                    FF_DEBUG_VIS_MV_B_BACK ) )
-            return UNDEF;
-    return trp_av_open_input_file_basic( path, v );
 }
 
 uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix )
@@ -379,65 +365,54 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix )
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
     AVCodecContext *avctx;
     AVFrame *frame;
+    AVPacket *packet;
     struct SwsContext *sws_ctx;
     uns8b *mapo[ 4 ];
     uns32b vstream;
-    int finished, strideo[ 4 ];
-    AVPacket packet;
+    int res, finished, strideo[ 4 ];
 
     if ( ( fmt_ctx == NULL ) || ( pix->tipo != TRP_PIX ) )
         return 1;
     if ( ((trp_pix_t *)pix)->map.p == NULL )
         return 1;
     vstream = ((trp_avcodec_t *)fmtctx)->fmt.vstream;
-    avctx = fmt_ctx->streams[ vstream ]->codec;
+    avctx = ((trp_avcodec_t *)fmtctx)->fmt.avctx;
     frame = ((trp_avcodec_t *)fmtctx)->fmt.frame;
-    for ( ; ; ) {
-        if ( av_read_frame( fmt_ctx, &packet ) < 0 )
+    packet = ((trp_avcodec_t *)fmtctx)->fmt.packet;
+    for ( finished = 0 ; ; ) {
+        if ( av_read_frame( fmt_ctx, packet ) < 0 )
             return 1;
-        if ( packet.stream_index == vstream ) {
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
-            avcodec_decode_video2( avctx, frame, &finished, &packet );
-#else
-            avcodec_decode_video( avctx, frame, &finished, packet.data, packet.size );
-#endif
-            if ( finished ) {
-                ((trp_avcodec_t *)fmtctx)->fmt.pts = packet.dts;
-                if ( packet.dts == 0 )
+        if ( packet->stream_index == vstream ) {
+            if ( avcodec_send_packet( avctx, packet ) < 0 ) {
+                av_packet_unref( packet );
+                return 1;
+            }
+            res = avcodec_receive_frame( avctx, frame );
+            if ( ( res != AVERROR(EAGAIN) ) && ( res != AVERROR_EOF ) ) {
+                if ( res < 0 ) {
+                    av_packet_unref( packet );
+                    return 1;
+                }
+                finished = 1;
+                ((trp_avcodec_t *)fmtctx)->fmt.pts = packet->dts;
+                if ( packet->dts == 0 )
                     ((trp_avcodec_t *)fmtctx)->fmt.pts_shift = 0;
-#if (LIBAVFORMAT_VERSION_MAJOR > 56)
-                av_packet_unref( &packet );
-#else
-                av_free_packet( &packet );
-#endif
-                break;
             }
         }
-#if (LIBAVFORMAT_VERSION_MAJOR > 56)
-        av_packet_unref( &packet );
-#else
-        av_free_packet( &packet );
-#endif
+        av_packet_unref( packet );
+        if ( finished )
+            break;
     }
-    sws_ctx = ((trp_avcodec_t *)fmtctx)->fmt.sws_ctx;
-    ((trp_avcodec_t *)fmtctx)->fmt.sws_ctx = sws_ctx =
+    sws_ctx = ((trp_avcodec_t *)fmtctx)->fmt.sws_ctx =
         sws_getCachedContext( ((trp_avcodec_t *)fmtctx)->fmt.sws_ctx,
                               avctx->width, avctx->height, avctx->pix_fmt,
-#if (LIBAVFORMAT_VERSION_MAJOR > 56)
                               ((trp_pix_t *)pix)->w, ((trp_pix_t *)pix)->h, AV_PIX_FMT_BGR32,
-#else
-                              ((trp_pix_t *)pix)->w, ((trp_pix_t *)pix)->h, PIX_FMT_RGBA,
-#endif
                               SWS_BICUBIC, NULL, NULL, NULL );
     mapo[ 0 ] = ((trp_pix_t *)pix)->map.p;
     mapo[ 1 ] = mapo[ 2 ] = mapo[ 3 ] = NULL;
     strideo[ 1 ] = strideo[ 2 ] = strideo[ 3 ] = 0;
     strideo[ 0 ] = ((trp_pix_t *)pix)->w << 2;
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
     sws_scale( sws_ctx, (const uint8_t* const *)( frame->data ), frame->linesize, 0, avctx->height, mapo, strideo );
-#else
-    sws_scale( sws_ctx, frame->data, frame->linesize, 0, avctx->height, mapo, strideo );
-#endif
     return 0;
 }
 
@@ -446,40 +421,42 @@ uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n )
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
     AVCodecContext *avctx;
     AVFrame *frame;
+    AVPacket *packet;
     uns32b nn, vstream;
-    int finished;
-    AVPacket packet;
+    int res, finished;
 
     if ( fmt_ctx == NULL )
         return 1;
-    if ( n == NULL )
-        nn = 1;
-    else if ( trp_cast_uns32b( n, &nn ) )
-        return 1;
-    vstream = ((trp_avcodec_t *)fmtctx)->fmt.vstream;
-    avctx = fmt_ctx->streams[ vstream ]->codec;
-    frame = ((trp_avcodec_t *)fmtctx)->fmt.frame;
-    while ( nn ) {
-        if ( av_read_frame( fmt_ctx, &packet ) < 0 )
+    if ( n ) {
+        if ( trp_cast_uns32b( n, &nn ) )
             return 1;
-        if ( packet.stream_index == vstream ) {
-#if (LIBAVFORMAT_VERSION_MAJOR > 52)
-            avcodec_decode_video2( avctx, frame, &finished, &packet );
-#else
-            avcodec_decode_video( avctx, frame, &finished, packet.data, packet.size );
-#endif
-            if ( finished ) {
-                ((trp_avcodec_t *)fmtctx)->fmt.pts = packet.dts;
-                if ( packet.dts == 0 )
-                    ((trp_avcodec_t *)fmtctx)->fmt.pts_shift = 0;
+    } else
+        nn = 1;
+    vstream = ((trp_avcodec_t *)fmtctx)->fmt.vstream;
+    avctx = ((trp_avcodec_t *)fmtctx)->fmt.avctx;
+    frame = ((trp_avcodec_t *)fmtctx)->fmt.frame;
+    packet = ((trp_avcodec_t *)fmtctx)->fmt.packet;
+    while ( nn ) {
+        if ( av_read_frame( fmt_ctx, packet ) < 0 )
+            return 1;
+        if ( packet->stream_index == vstream ) {
+            if ( avcodec_send_packet( avctx, packet ) < 0 ) {
+                av_packet_unref( packet );
+                return 1;
+            }
+            res = avcodec_receive_frame( avctx, frame );
+            if ( ( res != AVERROR(EAGAIN) ) && ( res != AVERROR_EOF ) ) {
+                if ( res < 0 ) {
+                    av_packet_unref( packet );
+                    return 1;
+                }
                 nn--;
+                ((trp_avcodec_t *)fmtctx)->fmt.pts = packet->dts;
+                if ( packet->dts == 0 )
+                    ((trp_avcodec_t *)fmtctx)->fmt.pts_shift = 0;
             }
         }
-#if (LIBAVFORMAT_VERSION_MAJOR > 56)
-        av_packet_unref( &packet );
-#else
-        av_free_packet( &packet );
-#endif
+        av_packet_unref( packet );
     }
     return 0;
 }
@@ -487,14 +464,15 @@ uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n )
 uns8b trp_av_seek_frame( trp_obj_t *fmtctx, trp_obj_t *ts )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    sig64b tts;
     uns32b vstream;
 
-    if ( ( fmt_ctx == NULL ) || ( ts->tipo != TRP_SIG64 ) )
+    if ( ( fmt_ctx == NULL ) || trp_cast_sig64b( ts, &tts ) )
         return 1;
     ((trp_avcodec_t *)fmtctx)->fmt.pts = AV_NOPTS_VALUE;
     vstream = ((trp_avcodec_t *)fmtctx)->fmt.vstream;
-    avcodec_flush_buffers( fmt_ctx->streams[ vstream ]->codec );
-    return ( av_seek_frame( fmt_ctx, vstream, ((trp_sig64_t *)ts)->val, 0 ) < 0 ) ? 1 : 0;
+    avcodec_flush_buffers( ((trp_avcodec_t *)fmtctx)->fmt.avctx );
+    return ( av_seek_frame( fmt_ctx, vstream, tts, 0 ) < 0 ) ? 1 : 0;
 }
 
 trp_obj_t *trp_av_time_base( trp_obj_t *fmtctx )
