@@ -445,7 +445,7 @@
                 (error "creation of icon failed") ))
 
 (defnet dump-required-dlls (path)
-        (deflocal ldd dllpath q a s l m)
+        (deflocal ldd dllpath q a notfound s l m)
 
         (if _win32
         then    (set ldd "i686-w64-mingw32-ldd")
@@ -454,6 +454,7 @@
                 (set dllpath "/home/frank/wd/programming/mingw-w64/64/bin") )
         (set q (queue))
         (set a (assoc))
+        (set notfound (assoc))
         (queue-put q path)
         (while (> (length q) 0) do
                 (set path (queue-get q))
@@ -461,19 +462,25 @@
                 (repeat (str-readline s l)
                         until (= l undef)
                         (ltrim l)
+                        (set l (utf8-tolower l))
                         (search-and-cut " => " l m)
                         (if (= <a m> undef)
                         then    (if (= l "not found")
                                 then    (set l (+ dllpath "/" m))
                                         (if (not (pathexists l))
-                                        then    (clr l) ))
+                                        then    (set <notfound m> true)
+                                                (clr l) ))
                                 (if (stringp l)
                                 then    (fprint _log "cp " (pathquote l) " ." nl)
                                         (set <a m> l)
                                         (queue-put q l) ))))
         (if (<> <a "libmagic-1.dll"> undef)
         then    (fprint _log "cp /home/frank/wd/programming/mingw-w64/magic.mgc ." nl) )
-        (fprint _log (if _win32 "i686-w64-mingw32-strip" "x86_64-w64-mingw32-strip") " -s *dll" nl) )
+        (fprint _log (if _win32 "i686-w64-mingw32-strip" "x86_64-w64-mingw32-strip") " -s *dll" nl)
+        (set notfound (assoc->array notfound))
+        (sort notfound (funptr lesscar))
+        (for m in notfound do
+                (fprint _log "# not found: " (car m) nl) ))
 
 (defnet analyze-calls (@unused)
         (deflocal q n i)
