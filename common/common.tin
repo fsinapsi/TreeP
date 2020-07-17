@@ -1053,7 +1053,7 @@
                 (seq    (search case "cpio archive" m)
                         (set @ext "cpio") )
                 (seq    (search case "current ar archive" m)
-                        (path-suggest-extension-permissive path [ "a" ] @ext) )
+                        (path-suggest-extension-permissive path [ "a" "lib" ] @ext) )
                 (seq    (search case "BitTorrent file" m)
                         (set @ext "torrent") )
                 (seq    (search case "Microsoft Reader eBook Data" m)
