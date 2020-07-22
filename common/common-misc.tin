@@ -1,0 +1,1344 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun linux () (search case "linux" (uname)))
+(defun ms-windows () (or (cygwin) (mingw)))
+(defun mac-osx () (darwin))
+(defun cygwin () (search case "cygwin" (uname)))
+(defun mingw () (search case "mingw" (uname)))
+(defun darwin () (search case "darwin" (uname)))
+(defun raspberry () (search case "linux arm" (uname)))
+
+(defun clinux () (search case "linux" (cuname)))
+(defun cms-windows () (or (ccygwin) (cmingw)))
+(defun cmac-osx () (cdarwin))
+(defun ccygwin () (search case "cygwin" (cuname)))
+(defun cmingw () (search case "mingw" (cuname)))
+(defun cdarwin () (search case "darwin" (cuname)))
+(defun craspberry () (search case "linux arm" (cuname)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun gcry-md5sum (obj) (gcry-md-hash (cmacro GCRY_MD_MD5) obj))
+(defun gcry-sha1sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA1) obj))
+(defun gcry-sha256sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA256) obj))
+(defun gcry-md5sum-fast (obj) (gcry-md-hash-fast (cmacro GCRY_MD_MD5) obj))
+(defun gcry-sha1sum-fast (obj) (gcry-md-hash-fast (cmacro GCRY_MD_SHA1) obj))
+(defun gcry-sha256sum-fast (obj) (gcry-md-hash-fast (cmacro GCRY_MD_SHA256) obj))
+(defun gcry-fmd5sum (path) (gcry-md-hash-file (cmacro GCRY_MD_MD5) path))
+(defun gcry-fsha1sum (path) (gcry-md-hash-file (cmacro GCRY_MD_SHA1) path))
+(defun gcry-fsha256sum (path) (gcry-md-hash-file (cmacro GCRY_MD_SHA256) path))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet invert-test (net param)
+        (deflocal i)
+
+        (alt    (seq    (call net param)
+                        (set i true) )
+                (set i false) )
+        (not i) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun cal->joule (x) (* x 4.184))
+(defun joule->cal (x) (/ x 4.184))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path->lines (path) net path->lines)
+(defnet path->lines (path @a) (path->lines-low path @a false))
+
+(defun path->lines-clean (path) net path->lines-clean)
+(defnet path->lines-clean (path @a) (path->lines-low path @a true))
+
+(defnet path->lines-low (path @a clean)
+        (deflocal f l)
+
+        (set f (fopenro path))
+        (<> f undef)
+        (set @a (array 0))
+        (repeat (set l (freadline f))
+                until (= l undef)
+                (if clean
+                then    (ltrim l ' ' '\t')
+                        (rtrim l ' ' '\t') )
+                (array-append @a l) )
+        (close f) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun array-copy (a) net array-copy)
+(defnet array-copy (a @a)
+        (deflocal n i)
+
+        (set n (length a))
+        (set @a (array n))
+        (for i in 0 .. (- n 1) do
+                (set <@a i> <a i>) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet paths-have-the-same-size (path1 path2)
+        (deflocal size)
+
+        (paths-have-the-same-size-low path1 path2 size) )
+
+(defnet paths-have-the-same-size-low (path1 path2 @size)
+        (set @size (fsize path1))
+        (integerp @size)
+        (>= @size 0)
+        (= @size (fsize path2)) )
+
+(defun paths-have-the-same-size (path1 path2) net paths-have-the-same-size-net)
+(defnet paths-have-the-same-size-net (path1 path2 @res)
+        (alt    (seq    (paths-have-the-same-size path1 path2)
+                        (set @res true) )
+                (set @res false) ))
+
+(defnet paths-have-the-same-content (path1 path2 @samesize @dbit @dbyt)
+        (deflocal rem f1 f2 raw1 raw2 c1 c2 i j k)
+
+        (alt    (seq    (paths-have-the-same-size-low path1 path2 rem)
+                        (set f1 (fopenro path1))
+                        (<> f1 undef)
+                        (set f2 (fopenro path2))
+                        (if (= f2 undef)
+                        then    (close f1)
+                                (fail) )
+                        (set raw1 (raw 65536))
+                        (set raw2 (raw 65536))
+                        (set @dbit 0)
+                        (set @dbyt 0)
+                        (opt*   (> rem 0)
+                                (set i (raw-read raw1 f1))
+                                (= i (raw-read raw2 f2))
+                                (dec rem i)
+                                (if (<> raw1 raw2)
+                                then    (for j in 1 .. i do
+                                                (set c1 <raw1 (for-pos)>)
+                                                (set c2 <raw2 (for-pos)>)
+                                                (if (<> c1 c2)
+                                                then    (inc @dbyt)
+                                                        (set c1 (length c1))
+                                                        (set c2 (length c2))
+                                                        (for k in 1 .. 8 do
+                                                                (if (<> (% c1 2) (% c2 2))
+                                                                then    (inc @dbit) )
+                                                                (set c1 (div c1 2))
+                                                                (set c2 (div c2 2)) )))))
+                        (close raw1 raw2 f1 f2)
+                        (set @samesize true) )
+                (seq    (set @samesize false)
+                        (clr @dbit @dbyt) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet path-content-is-valid (path)
+        (deflocal fail ext)
+
+        (set fail false)
+        (set ext (path-suggest-extension path))
+        (alt    (seq    (in ext [ "rar" "cbr" ])
+                        (alt    (path-content-is-valid-rar path)
+                                (set fail true) ))
+                (seq    (in ext [ "zip" "cbz" "epub" "odt" "docx" "apk" ])
+                        (alt    (path-content-is-valid-zip path)
+                                (set fail true) ))
+                (seq    (in ext [ "xz" ])
+                        (alt    (path-content-is-valid-xz path)
+                                (set fail true) ))
+                (seq    (in ext [ "flac" ])
+                        (alt    (path-content-is-valid-flac path)
+                                (set fail true) ))
+                (seq    (in ext [ "wv" ])
+                        (alt    (path-content-is-valid-wv path)
+                                (set fail true) ))
+                (seq    (in ext [ "avi" "mkv" "mp4" "flv" "ape" ])
+                        (alt    (path-content-is-valid-ffmpeg path)
+                                (set fail true) ))
+                (seq    (in ext [ "jpg" ])
+                        (alt    (path-content-is-valid-jpg path)
+                                (set fail true) ))
+                (seq    (in ext [ "png" ])
+                        (alt    (path-content-is-valid-png path)
+                                (set fail true) ))
+                (seq    (in ext [ "pdf" ])
+                        (alt    (path-content-is-valid-pdf path)
+                                (set fail true) ))
+                (set fail true) )
+        (not fail) )
+
+(defnet path-content-is-valid-rar (path)
+        (system "rar t " (pathquote path) " >/dev/null 2>/dev/null") )
+
+(defnet path-content-is-valid-zip (path)
+        (system "7z t " (pathquote path) " >/dev/null 2>/dev/null") )
+ 
+(defnet path-content-is-valid-xz (path)
+        (system "xz -t " (pathquote path) " >/dev/null 2>/dev/null") )
+
+(defnet path-content-is-valid-flac (path)
+        (system "flac -t " (pathquote path) " >/dev/null 2>/dev/null") )
+
+(defnet path-content-is-valid-wv (path)
+        (system "wvunpack " (pathquote path) " -o -" " >/dev/null 2>/dev/null") )
+
+(defnet path-content-is-valid-ffmpeg (path)
+        (deflocal valid tmp tmppath)
+
+        (set valid false)
+        (mktmpdir tmp)
+        (opt    (set tmppath (+ tmp "/a"))
+                (system "ffmpeg -v 24 -i " (pathquote path) " -f null - >/dev/null 2>" tmppath) ; 16=errori 24=errori+warnings
+                (= (fsize tmppath) 0)
+                (set valid true) )
+        (rmhier tmp)
+        (truep valid) )
+
+(defnet path-content-is-valid-jpg (path)
+        (system "djpeg " (pathquote path) " >/dev/null 2>/dev/null") )
+
+(defnet path-content-is-valid-png (path)
+        (system "png2pnm " (pathquote path) " >/dev/null 2>/dev/null") )
+
+(defnet path-content-is-valid-pdf (path)
+        (search "Status: Well-Formed and valid"
+                (system-stdout->str (homepathp (+ "jhove/jhove -m pdf-hul "
+                                                  (pathquote path) )))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-is-zip-type-low (path files) net path-is-zip-type-low)
+(defnet path-is-zip-type-low (path files @res)
+        (deflocal tmp p)
+        (mktmpdir tmp)
+        (alt    (seq    (pathexists path)
+                        (set path (realpath path))
+                        (system "cd " (pathquote tmp) " && unzip " (pathquote path) " >/dev/null 2>/dev/null")
+                        (for p in files do
+                                (pathexists (+ tmp "/" p)) )
+                        (set @res true) )
+                (set @res false) )
+        (rmhier tmp) )
+
+(defun path-is-docx (path)
+        (path-is-zip-type-low path
+                [ "[Content_Types].xml"
+                  "_rels/.rels"
+                  "word/document.xml" ] ))
+
+(defun path-is-xps (path)
+        (path-is-zip-type-low path
+                [ "[Content_Types].xml"
+                  "FixedDocSeq.fdseq"
+                  "_rels/.rels"
+                  "Documents/1" ] ))
+
+(defun path-is-odt (path)
+        (path-is-zip-type-low path
+                [ "content.xml"
+                  "mimetype"
+                  "settings.xml"
+                  "styles.xml"
+                  "META-INF/manifest.xml" ] ))
+
+(defun path-is-epub (path) net path-is-epub)
+(defnet path-is-epub (path @res)
+        (deflocal tmp p)
+        (mktmpdir tmp)
+        (alt    (seq    (pathexists path)
+                        (set path (realpath path))
+                        (system "cd " (pathquote tmp) " && unzip " (pathquote path) " >/dev/null 2>/dev/null")
+                        (pathexists (+ tmp "/META-INF/container.xml"))
+                        (set p (str-load (+ tmp "/mimetype")))
+                        (stringp p)
+                        (lmatch p "application/epub+zip")
+                        (set @res true) )
+                (set @res false) )
+        (rmhier tmp) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-suggest-extension (path) net path-suggest-extension)
+(defnet path-suggest-extension (path @ext)
+        (deflocal m)
+        (set m (magic-file path))
+        (stringp m)
+        (alt    (seq    (= "TreeP source code text" m)
+                        (alt    (path-suggest-extension-permissive path [ "tin" ] @ext)
+                                (set @ext "trp") ))
+                (seq    (search case "Perl script" m)
+                        (set @ext "pl") )
+                (seq    (search case "Web Open Font Format (Version 2)" m)
+                        (set @ext "woff2") )
+                (seq    (search case "Web Open Font Format" m)
+                        (set @ext "woff") )
+                (seq    (search case "Spline Font Database" m)
+                        (set @ext "sfd") )
+                (seq    (search case "Embedded OpenType (EOT)" m)
+                        (set @ext "eot") )
+                (seq    (search case "TrueType Font data" m)
+                        (set @ext "ttf") )
+                (seq    (search case "Netpbm image data" m)
+                        (alt    (seq    (search case "pixmap" m)
+                                        (set @ext "ppm") )
+                                (seq    (search case "greymap" m)
+                                        (set @ext "pgm") )
+                                (seq    (search case "bitmap" m)
+                                        (set @ext "pbm") )))
+                (seq    (search case "JPEG image data" m)
+                        (set @ext "jpg") )
+                (seq    (search case "DICOM medical imaging data" m)
+                        (set @ext "dic") )
+                (seq    (search case "JPEG 2000" m)
+                        (set @ext "jp2") )
+                (seq    (search case "Web/P image" m)
+                        (set @ext "webp") )
+                (seq    (search case "X pixmap image" m)
+                        (search case "ASCII text" m)
+                        (set @ext "xpm") )
+                (seq    (search case "PNG image" m)
+                        (set @ext "png") )
+                (seq    (search case "GIF image data" m)
+                        (set @ext "gif") )
+                (seq    (search case "TIFF image data" m)
+                        (set @ext "tif") )
+                (seq    (search case "PC bitmap" m)
+                        (search case "Windows " m)
+                        (set @ext "bmp") )
+                (seq    (search case "windows icon resource" m)
+                        (set @ext "ico") )
+                (seq    (search case "MPEG transport stream data" m)
+                        (set @ext "ts") )
+                (seq    (search case "MPEG sequence" m)
+                        (alt    (seq    (search case "program multiplex" m)
+                                        (search case ", v2," m)
+                                        (path-suggest-extension-permissive path [ "VOB" "sub" ] @ext) )
+                                (seq    (search case "Y'CbCr 4:2:0 video" m)
+                                        (alt    (seq    (search case ", v1," m)
+                                                        (set @ext "m1v") )
+                                                (seq    (search case ", v2," m)
+                                                        (set @ext "m2v") )))
+                                (set @ext "mpg") ))
+                (seq    (search case "Windows Television DVR Media" m)
+                        (set @ext "wtv") )
+                (seq    (search case "Apple QuickTime movie" m)
+                        (set @ext "mov") )
+                (seq    (search case "ISO Media" m)
+                        (alt    (path-suggest-extension-permissive path [ "mov" "3gp" "m4a" ] @ext)
+                                (set @ext "mp4") ))
+                (seq    (search case "RIFF (little-endian) data" m)
+                        (alt    (seq    (search "WAVE audio" m)
+                                        (set @ext "wav") )
+                                (seq    (search "AVI" m)
+                                        (set @ext "avi") )
+                                (seq    (search "wrapped MPEG" m)
+                                        (set @ext "mpg") )))
+                (seq    (search case "Microsoft ASF" m)
+                        (alt    (path-suggest-extension-permissive path [ "wma" ] @ext)
+                                (set @ext "wmv") ))
+                (seq    (search case "RealMedia file" m)
+                        (alt    (path-suggest-extension-permissive path [ "ra" ] @ext)
+                                (set @ext "rm") ))
+                (seq    (search case "Matroska data" m)
+                        (alt    (path-suggest-extension-permissive path [ "mka" "webm" ] @ext)
+                                (set @ext "mkv") ))
+                (seq    (search case "WebM" m)
+                        (set @ext "webm") )
+                (seq    (search case "Ogg data" m)
+                        (alt    (seq    (or (search case "Theora video" m)
+                                            (search case "Skeleton" m) )
+                                        (set @ext "ogv") )
+                                (seq    (search case "ogm video" m)
+                                        (set @ext "ogm") )
+                                (seq    (search case "audio" m)
+                                        (alt    (path-suggest-extension-permissive path [ "spx" ] @ext)
+                                                (set @ext "ogg") ))))
+                (seq    (search case "Macromedia Flash Video" m)
+                        (set @ext "flv") )
+                (seq    (search case "Macromedia Flash Data" m)
+                        (set @ext "swf") )
+                (seq    (search case "MPEG ADTS" m)
+                        (alt    (seq    (search case "AAC" m)
+                                        (set @ext "aac") )
+                                (seq    (search case " layer III" m)
+                                        (set @ext "mp3") )
+                                (seq    (search case " layer II" m)
+                                        (set @ext "mp2") )))
+                (seq    (search case "Audio file with ID3" m)
+                        (path-suggest-extension-permissive path [ "mp3" ] @ext) )
+                (seq    (search case "ATSC A/52" m)
+                        (set @ext "ac3") )
+                (seq    (search case "FLAC audio bitstream data" m)
+                        (set @ext "flac") )
+                (seq    (search case "Monkey's Audio compressed format" m)
+                        (set @ext "ape") )
+                (seq    (search case "WavPack Lossless Audio" m)
+                        (set @ext "wv") )
+                (seq    (search case "Java archive data" m)
+                        (set @ext "jar") )
+                (seq    (alt    (lmatch case m "tar archive")
+                                (search case " tar archive" m)
+                                (search case "\ntar archive" m) )
+                        (set @ext "tar") )
+                (seq    (search case "RAR archive data" m)
+                        (alt    (seq    (path-suggest-extension-permissive path [ "cbr" "cbz" ] @ext)
+                                        (if (= @ext "cbz")
+                                        then    (set @ext "cbr") ))
+                                (set @ext "rar") ))
+                (seq    (search case "7-zip archive data" m)
+                        (set @ext "7z") )
+                (seq    (alt    (search case "Zip archive data" m)
+                                (search case "Zip data" m) )
+                        (alt    (seq    (path-suggest-extension-permissive path [ "cbr" "cbz" "jar" "epub" "docx" "odt" "ods" "xps" "htmlz" "xlsx" "apk" ] @ext)
+                                        (if (= @ext "cbr")
+                                        then    (set @ext "cbz") ))
+                                (set @ext "zip") ))
+                (seq    (search case "gzip compressed data" m)
+                        (alt    (path-suggest-extension-permissive path [ "tgz" ] @ext)
+                                (set @ext "gz") ))
+                (seq    (search case "brotli compressed data" m)
+                        (set @ext "br") )
+                (seq    (search case "bzip2 compressed data" m)
+                        (set @ext "bz2") )
+                (seq    (search case "XZ compressed data" m)
+                        (set @ext "xz") )
+                (seq    (search case "zstandard compressed data" m)
+                        (set @ext "zst") )
+                (seq    (search case "lzip compressed data" m)
+                        (set @ext "lz") )
+                (seq    (search case "compress'd data 16 bits" m)
+                        (set @ext "Z") )
+                (seq    (search case "Debian binary package" m)
+                        (set @ext "deb") )
+                (seq    (search case "RPM " m)
+                        (search case " bin " m)
+                        (set @ext "rpm") )
+                (seq    (search case "cpio archive" m)
+                        (set @ext "cpio") )
+                (seq    (search case "current ar archive" m)
+                        (path-suggest-extension-permissive path [ "a" "lib" ] @ext) )
+                (seq    (search case "BitTorrent file" m)
+                        (set @ext "torrent") )
+                (seq    (search case "Microsoft Reader eBook Data" m)
+                        (set @ext "lit") )
+                (seq    (search case "EPUB document" m)
+                        (set @ext "epub") )
+                (seq    (search case "Mobipocket E-book" m)
+                        (alt    (path-suggest-extension-permissive path [ "azw" "azw3" "azw4" "mobi" "prc" ] @ext)
+                                (set @ext "mobi") ))
+                (seq    (search case "PostScript document text" m)
+                        (set @ext "ps") )
+                (seq    (search case "PDF document" m)
+                        (set @ext "pdf") )
+                (seq    (search "DjVu" m)
+                        (or     (search case "multiple page document" m)
+                                (search case "single page document" m) )
+                        (set @ext "djvu") )
+                (seq    (search case "MS Windows HtmlHelp Data" m)
+                        (set @ext "chm") )
+                (seq    (search case "TeX DVI file" m)
+                        (set @ext "dvi") )
+                (seq    (search case "OpenDocument Text" m)
+                        (set @ext "odt") )
+                (seq    (search case "OpenDocument Spreadsheet" m)
+                        (set @ext "ods") )
+                (seq    (search case "Rich Text Format data" m)
+                        (set @ext "rtf") )
+                (seq    (search case "CDFV2 Microsoft Word" m)
+                        (set @ext "doc") )
+                (seq    (alt    (search case "CDF V2 Document" m)
+                                (search case "Document File V2 Document" m) )
+                        (path-suggest-extension-permissive path [ "doc" "ppt" ] @ext) )
+                (seq    (alt    (search case "CDFV2 Microsoft Excel" m)
+                                (search case "Composite Document File V2 Document" m) )
+                        (path-suggest-extension-permissive path [ "xls" ] @ext) )
+                (seq    (search case "HTML" m)
+                        (search case "document" m)
+                        (search case "text" m)
+                        (path-suggest-extension-permissive path [ "htm" "html" "xls" ] @ext)
+                        (if (= @ext "htm")
+                        then    (set @ext "html") ))
+                (seq    (search case "XML" m)
+                        (search case "document" m)
+                        (search case "text" m)
+                        (alt    (path-suggest-extension-permissive path [ "svg" ] @ext)
+                                (set @ext "xml") ))
+                (seq    (search case "lyx " m)
+                        (search case "text" m)
+                        (set @ext "lyx") )
+                (seq    (search case "SQLite" m)
+                        (alt    (path-suggest-extension-permissive path [ "cfg" ] @ext)
+                                (set @ext "db") ))
+                (seq    (search case "ext2 filesystem data" m)
+                        (set @ext "ext2") )
+                (seq    (search case "ISO 9660 CD-ROM filesystem data" m)
+                        (set @ext "iso") )
+                (seq    (search case "UDF filesystem data" m)
+                        (set @ext "iso") )
+                (seq    (search case "PE32 executable" m)
+                        (search case "MS Windows" m)
+                        (alt    (seq    (search case "(dll)" m)
+                                        (set @ext "dll") )
+                                (set @ext "exe") ))
+                (seq    (search case " text" m)
+                        (alt    (seq    (= (path-extension path) "")
+                                        (set @ext "") )
+                                (path-suggest-extension-permissive path
+                                        [ "txt" "cue" "log" "srt" "bat" "avs" "mfl" "opf" "pgn" "fen" "c" "h" "cpp" "cc" "pas" "hs" "go" "clp" "l" "ss" "sh" ] @ext )))))
+
+(defnet path-suggest-extension-permissive (path ext-l @ext)
+        (deflocal found)
+        (set found false)
+        (for @ext in ext-l do
+                (set found (rmatch case path (+ "." @ext)))
+                until found )
+        (truep found) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-extension (path) net path-extension)
+(defnet path-extension (path @ext)
+        (deflocal i)
+        (set @ext "")
+        (opt    (search "." path i (maxint))
+                (> i 0)
+                (<> <path (- i 1)> '/')
+                (set @ext (sub (+ i 1) (maxint) path))
+                (not (search "/" @ext)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-change-extension (path new-ext) (path-change-extension-basic false path new-ext))
+(defun path-change-extension-overwrite (path new-ext) (path-change-extension-basic true path new-ext))
+(defun path-change-extension-basic (overwrite path new-ext) net path-change-extension-basic)
+(defnet path-change-extension-basic (overwrite path new-ext @path)
+        (deflocal ext)
+        (set @path path)
+        (set ext (path-extension @path))
+        (if (and (= new-ext ext) (not overwrite))
+        then    (set @path (+ @path "." ext))
+        else    (rmatch remove @path ext)
+                (set @path (+ @path (if (rmatch @path ".") "" ".") new-ext)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-truncate (path maxlen) net path-truncate)
+(defnet path-truncate (path maxlen @path)
+        (deflocal e)
+        (set @path path)
+        (set e (path-extension @path))
+        (rmatch remove @path e)
+        (opt    (rmatch remove @path ".")
+                (set e (+ "." e)) )
+        (if (>= (length e) maxlen)
+        then    (set @path path)
+                (set e "") )
+        (set @path (+ (sub 0 (- maxlen (length e)) @path) e)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun unhex-path (path) net unhex-path)
+(defnet unhex-path (path @path)
+        (deflocal i)
+
+        (alt    (seq    (search "%" path i)
+                        (set @path (+ (sub 0 i path)
+                                      (int->char (hex->int (sub (+ i 1) 2 path)))
+                                      (unhex-path (sub (+ i 3) (maxint) path)) )))
+                (set @path path) ))
+
+(defun adjust-path (path)
+        (if (cmingw)
+                (find-and-replace (unhex-path path) "\\" "/")
+                (unhex-path path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet match-case (s1 s2)
+        (lmatch case remove s1 s2)
+        (= s1 "") )
+
+(defun match-case (s1 s2) net match-case-low)
+(defnet match-case-low (s1 s2 @res)
+        (alt    (seq    (match-case s1 s2)
+                        (set @res true) )
+                (set @res false) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun csv-fields (s) net csv-fields)
+(defnet csv-fields (s @q)
+        (deflocal usetab i)
+
+        (stringp s)
+        (set @q (queue))
+        (set usetab false)
+        (opt*   (alt    (seq    (search "\t" s i)
+                                (queue-put @q (sub 0 i s))
+                                (set s (sub (+ i 1) (maxint) s))
+                                (set usetab true) )
+                        (seq    (not usetab)
+                                (lmatch remove s "\"")
+                                (search "\"" s i)
+                                (queue-put @q (sub 0 i s))
+                                (set s (sub (+ i 1) (maxint) s))
+                                (alt    (= s "")
+                                        (lmatch remove s ",") ))
+                        (seq    (not usetab)
+                                (search "," s i)
+                                (queue-put @q (sub 0 i s))
+                                (set s (sub (+ i 1) (maxint) s)) )
+                        (seq    (queue-put @q s)
+                                (fail) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun isbn-is-valid (s) net isbn-is-valid)
+(defnet isbn-is-valid (s @res)
+        (set @res true)
+        (alt    (isbn13-is-valid s)
+                (isbn10-is-valid s)
+                (set @res false) ))
+
+(defnet isbn13-is-valid (s)
+        (deflocal c p t)
+
+        (= (length s) 13)
+        (set p 1)
+        (set t 0)
+        (for c in s do
+                (in c '0' .. '9')
+                (inc t (* p (- (length c) (length '0'))))
+                (set p (- 4 p)) )
+        (= (% t 10) 0) )
+
+(defnet isbn10-is-valid (s)
+        (deflocal c p t)
+
+        (= (length s) 10)
+        (set p 10)
+        (set t 0)
+        (for c in (sub 0 9 s) do
+                (in c '0' .. '9')
+                (inc t (* p (- (length c) (length '0'))))
+                (dec p) )
+        (set c <s 9>)
+        (alt    (seq    (in c '0' .. '9')
+                        (inc t (- (length c) (length '0'))) )
+                (seq    (= c 'X')
+                        (inc t 10) ))
+        (= (% t 11) 0) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun int2roman (n) net int2roman)
+(defnet int2roman (n @s)
+        (set @s (tile (div n 1000) 'M'))
+        (set n (% n 1000))
+        (if (= n 999)
+        then    (inc @s "IM")
+                (set n 0) )
+        (if (= n 995)
+        then    (inc @s "VM")
+                (set n 0) )
+        (if (>= n 990)
+        then    (inc @s "XM")
+                (dec n 990) )
+        (if (in n 950 .. 959)
+        then    (inc @s "LM")
+                (dec n 950) )
+        (if (>= n 900)
+        then    (inc @s "CM")
+                (dec n 900) )
+        (if (>= n 500)
+        then    (inc @s "D")
+                (dec n 500) )
+        (if (= n 499)
+        then    (inc @s "ID")
+                (set n 0) )
+        (if (= n 495)
+        then    (inc @s "VD")
+                (set n 0) )
+        (if (>= n 490)
+        then    (inc @s "XD")
+                (dec n 490) )
+        (if (in n 450 .. 459)
+        then    (inc @s "LD")
+                (dec n 450) )
+        (if (>= n 400)
+        then    (inc @s "CD")
+                (dec n 400) )
+        (inc @s (tile (div n 100) 'C'))
+        (set n (% n 100))
+        (if (= n 99)
+        then    (inc @s "IC")
+                (set n 0) )
+        (if (= n 95)
+        then    (inc @s "VC")
+                (set n 0) )
+        (if (>= n 90)
+        then    (inc @s "XC")
+                (dec n 90) )
+        (if (>= n 50)
+        then    (inc @s "L")
+                (dec n 50) )
+        (if (= n 49)
+        then    (inc @s "IL")
+                (set n 0) )
+        (if (= n 45)
+        then    (inc @s "VL")
+                (set n 0) )
+        (if (>= n 40)
+        then    (inc @s "XL")
+                (dec n 40) )
+        (inc @s (tile (div n 10) 'X'))
+        (set n (% n 10))
+        (if (= n 9)
+        then    (inc @s "IX")
+                (set n 0) )
+        (if (= n 4)
+        then    (inc @s "IV")
+                (set n 0) )
+        (if (>= n 5)
+        then    (inc @s "V")
+                (dec n 5) )
+        (inc @s (tile n 'I')) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun odtpath->txt (path) net odtpath->txt)
+(defnet odtpath->txt (path @s)
+        (deflocal tmp s)
+
+        (mktmpdir tmp)
+        (alt    (odtpath->txt-low tmp path @s)
+                (seq    (rmhier tmp)
+                        (fail) ))
+        (rmhier tmp) )
+
+(defun odtraw->txt (odt) net odtraw->txt)
+(defnet odtraw->txt (odt @s)
+        (deflocal tmp path)
+
+        (mktmpdir tmp)
+        (alt    (seq    (set path (+ tmp "/0.odt"))
+                        (raw-save path odt)
+                        (odtpath->txt-low tmp path @s) )
+                (seq    (rmhier tmp)
+                        (fail) ))
+        (rmhier tmp) )
+
+(defnet odtpath->txt-low (tmp path @s)
+        (deflocal s i)
+
+        (set s (+ tmp "/0.txt"))
+        (if (path-is-odt path)
+        then    (system "trpodt2txt --encoding=UTF-8 --width=-1 --output="
+                        (pathquote s) " " (pathquote path)
+                        " >/dev/null 2>/dev/null" )
+        else    (truep (path-is-epub path))
+                (system "epub2txt -n " (pathquote path) " >" (pathquote s)
+                        " 2>/dev/null" ))
+        (set s (str-load s))
+        (stringp s)
+        (set @s "")
+        (repeat (str-readline s tmp)
+                until (= tmp undef)
+                (rtrim tmp)
+                ; questi brutti hack servono per ovviare alle lunghissime
+                ; linee tratteggiate generate da odt2txt in
+                ; corrispondenza dei paragrafi H1, H2...
+                (if (rmatch tmp "=")
+                then    (set i (rtrim tmp '='))
+                        (if (> (- (length tmp) (length i)) 8)
+                        then    (set tmp (+ i "========")) )
+                else    (if (rmatch tmp "-")
+                then    (set i (rtrim tmp '-'))
+                        (if (> (- (length tmp) (length i)) 8)
+                        then    (set tmp (+ i "--------")) )))
+                (alt    (<= (length tmp) 60)
+                        (seq    (search " " tmp i)
+                                (<= i 60) )
+                        (print "odt->txt warning: linea lunga senza spazi" nl
+                               tmp nl ))
+                (inc @s tmp "\n") )
+        (rtrim @s '\n') )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet odtpath->pixlist (path dstpath @cnt)
+        (deflocal tmp a)
+
+        (mktmpdir tmp)
+        (alt    (seq    (system "cd " tmp " && unzip " (pathquote path)
+                                " >/dev/null 2>/dev/null" )
+                        (set a (array 2))
+                        (set <a 0> dstpath)
+                        (set <a 1> @cnt)
+                        (filesystem-visit tmp (netptr odtpath->pixlist-cback) a)
+                        (set @cnt <a 1>)
+                        (rmhier tmp) )
+                (seq    (rmhier tmp)
+                        (fail) )))
+
+(defnet odtpath->pixlist-cback (path name a)
+        (deflocal m ext)
+
+        (set m (magic-file path))
+        (opt    (not (rmatch path "/Thumbnails/thumbnail.png"))
+                (alt    (seq    (search case "JPEG image data" m)
+                                (set ext "jpg") )
+                        (seq    (search case "PNG image data" m)
+                                (set ext "png") ))
+                (filecopy path (+ <a 0> "/" (int->str <a 1> 9 '0') "." ext))
+                (inc <a 1>) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet truep (cond) (= cond true))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun less0 (x y) (< <x 0> <y 0>))
+(defun less1 (x y) (< <x 1> <y 1>))
+(defun less2 (x y) (< <x 2> <y 2>))
+(defun less3 (x y) (< <x 3> <y 3>))
+(defun less4 (x y) (< <x 4> <y 4>))
+(defun less5 (x y) (< <x 5> <y 5>))
+(defun less6 (x y) (< <x 6> <y 6>))
+(defun less7 (x y) (< <x 7> <y 7>))
+(defun less8 (x y) (< <x 8> <y 8>))
+(defun less9 (x y) (< <x 9> <y 9>))
+(defun lesscar (x y) (< (car x) (car y)))
+(defun lesscdr (x y) (< (cdr x) (cdr y)))
+(defun greater-1 (x y) (> x y))
+(defun greater0 (x y) (> <x 0> <y 0>))
+(defun greater1 (x y) (> <x 1> <y 1>))
+(defun greater2 (x y) (> <x 2> <y 2>))
+(defun greater3 (x y) (> <x 3> <y 3>))
+(defun greater4 (x y) (> <x 4> <y 4>))
+(defun greater5 (x y) (> <x 5> <y 5>))
+(defun greater6 (x y) (> <x 6> <y 6>))
+(defun greater7 (x y) (> <x 7> <y 7>))
+(defun greater8 (x y) (> <x 8> <y 8>))
+(defun greater9 (x y) (> <x 9> <y 9>))
+(defun greatercar (x y) (> (car x) (car y)))
+(defun greatercdr (x y) (> (cdr x) (cdr y)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet box-size-fixed (w-old h-old w-fixed h-fixed @w-new @h-new)
+        (deflocal r)
+
+        (set r (min (/ w-fixed w-old) (/ h-fixed h-old)))
+        (set @w-new (rint (* r w-old)))
+        (set @h-new (rint (* r h-old))) )
+
+(defnet box-size-max (w-old h-old w-max h-max @w-new @h-new)
+        (deflocal r)
+
+        (set r (min 1 (/ w-max w-old) (/ h-max h-old)))
+        (set @w-new (rint (* r w-old)))
+        (set @h-new (rint (* r h-old))) )
+
+(defnet box-size-min (w-old h-old w-min h-min @w-new @h-new)
+        (deflocal r)
+
+        (set r (max 1 (min (/ w-min w-old) (/ h-min h-old))))
+        (set @w-new (rint (* r w-old)))
+        (set @h-new (rint (* r h-old))) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun queue->list (q) net queue->list)
+(defnet queue->list (q @l)
+        (deflocal i)
+
+        (queuep q)
+        (set @l nil)
+        (for i in 0 .. (- (length q) 1) rev do
+                (list-push @l <q i>) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun assoc->array (asc) net assoc->array)
+(defnet assoc->array (asc @arr)
+        (deflocal i)
+
+        (assocp asc)
+        (set @arr (array (length asc)))
+        (for i in asc do
+                (set <@arr (for-pos)> i) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun assoc-default (default-list) net assoc-default)
+(defnet assoc-default (default-list @a)
+        (deflocal i)
+
+        (set @a (assoc))
+        (for i in default-list do
+                (set <@a (car i)> (cdr i)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun assoc-choice (asc) net assoc-choice)
+(defnet assoc-choice (asc @elem)
+        (for @elem in asc do until true) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun words (s) net words)
+(defun words-exclude (s l) net words-exclude)
+
+(defnet words (s @a)
+        (words-exclude s nil @a) )
+
+(defnet words-exclude (s l @a)
+        (deflocal w)
+
+        (set @a (assoc))
+        (for w in l do
+                (set <@a w> 1) )
+        (words-add @a s)
+        (for w in l do
+                (assoc-clr @a w) ))
+
+(defnet words-add (a s)
+        (deflocal c i)
+
+        (set s (utf8-tolower s))
+        (for c in s do
+                (if (in c " \n\r\f\t.,;:?!/\\\"'<=>&()[]{}|")
+                then    (if (<> i undef)
+                        then    (words-put a (sub i (- (for-pos) i) s))
+                                (clr i) )
+                else    (if (= i undef)
+                        then    (set i (for-pos)) )))
+        (if (<> i undef)
+        then    (words-put a (sub i (maxint) s)) ))
+
+(defnet words-put (a s)
+        (if (and (>= (length s) 3)
+                 (= (str->num s) undef) )
+        then    (inc <a s>) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet list-push (@lst obj)
+        (set @lst (cons obj @lst)) )
+
+(defnet list-pop (@lst @obj)
+        (set @obj (car @lst))
+        (set @lst (cdr @lst)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet print-tab (nskip nlen s)
+        (deflocal t u i)
+
+        (repeat (set t (sub 0 nlen s))
+                (set u (sub (length t) (maxint) s))
+                (opt    (<> u "")
+                        (<> <u 0> ' ')
+                        (search " " t i (maxint))
+                        (set t (sub 0 i s))
+                        (set u (sub (+ i 1) (maxint) s)) )
+                (print t nl)
+                until (= u "")
+                (set s (ltrim u))
+                (print (tile nskip)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun system-stdout->str (cmdline) net system-stdout->str)
+(defnet system-stdout->str (cmdline @str)
+        (deflocal tmpdir tmp)
+
+        (clr @str)
+        (mktmpdir tmpdir)
+        (opt    (set tmp (+ tmpdir "/fifo"))
+                (mkfifo tmp)
+                (system cmdline " > " tmp " 2>/dev/null &")
+                (set @str (str-load tmp)) )
+        (rmhier tmpdir) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun ipv4-external-address () net ipv4-external-address)
+(defnet ipv4-external-address (@addr)
+        (deflocal tmpdir tmppath cmd cnt s l i)
+
+        (clr @addr)
+        (mktmpdir tmpdir)
+        (opt    (set tmppath (+ tmpdir "/a"))
+                (set cmd (+ "wget ipinfo.io/ip -O " tmppath))
+                (system cmd " >/dev/null 2>/dev/null &")
+                (set cnt 0)
+                (repeat (sleep 0.05)
+                        (set s (system-stdout->str "ps xa"))
+                        (clr i)
+                        (repeat (str-readline s l)
+                                until (= l undef)
+                                (if (search cmd l)
+                                then    (ltrim l)
+                                        (search " " l i)
+                                        (set i (str->num (sub 0 i l))) ))
+                        until (not (integerp i))
+                        (inc cnt)
+                        (if (= cnt 32) ; max 1.6 secondi
+                        then    (system "sudo kill -SIGKILL " i " >/dev/null 2>/dev/null")
+                                (fail) ))
+                (set @addr (str-load tmppath)) )
+        (rmhier tmpdir)
+        (stringp @addr)
+        (trim-trn @addr)
+        (set s @addr)
+        (search "." s i)
+        (integerp (str->num (sub 0 i s)))
+        (set s (sub (+ i 1) (maxint) s))
+        (search "." s i)
+        (integerp (str->num (sub 0 i s)))
+        (set s (sub (+ i 1) (maxint) s))
+        (search "." s i)
+        (integerp (str->num (sub 0 i s)))
+        (integerp (str->num (sub (+ i 1) (maxint) s))) )
+
+(defnet ipv4-connected-low (@res @addr)
+        (deflocal i)
+
+        (set @res false)
+        (opt    (set @addr (ipv4-external-address))
+                (stringp @addr)
+                (not (lmatch @addr "192.168.1."))
+                (not (rmatch @addr ".0.0"))
+                (set @res true) ))
+
+(defun ipv4-connected () net ipv4-connected-func)
+(defnet ipv4-connected-func (@res)
+        (deflocal addr)
+        (ipv4-connected-low @res addr) )
+
+(defnet ipv4-connected () (truep (ipv4-connected)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun djvu-jpeg-list (djvupath) net  djvu-jpeg-list)
+(defnet djvu-jpeg-list (djvupath @l)
+        (deflocal tmpdir tmp f l i)
+
+        (mktmpdir tmpdir)
+        (set tmp (+ tmpdir "/fifo"))
+        (mkfifo tmp)
+        (alt    (seq    (system "djvudump " (pathquote djvupath) " > " tmp " 2>/dev/null &")
+                        (set f (fopenro tmp))
+                        (<> f undef)
+                        (set @l (queue))
+                        (repeat (set l (freadline f))
+                                until (= l undef)
+                                (ltrim l ' ' '\t')
+                                (rtrim l ' ' '\t')
+                                (opt    (lmatch remove l "FORM:DJVU")
+                                        (search ".djvu}" l i (maxint))
+                                        (set l (sub 0 i l))
+                                        (rmatch case l ".jpg" ".jpeg")
+                                        (search "{" l i)
+                                        (queue-put @l (sub (+ i 1) (maxint) l)) ))
+                        (close f)
+                        (> (length @l) 0)
+                        (rmhier tmpdir) )
+                (seq    (rmhier tmpdir)
+                        (fail) )))
+
+(defnet djvu-jpeg-extract (djvupath @dest @tmpdir)
+        (deflocal l i pg)
+
+        (djvu-jpeg-list djvupath l)
+        (mktmpdir @tmpdir)
+        (alt    (seq    (set @dest (+ @tmpdir "/" (fullpath->name djvupath)))
+                        (opt (rmatch case remove @dest ".djvu"))
+                        (mkdir @dest)
+                        (set djvupath (pathquote djvupath))
+                        (set pg 1)
+                        (for i in l do
+                                (system "djvuextract -page=" pg " " djvupath " BGjp=" (pathquote (+ @dest "/" i))
+                                        " >/dev/null 2>/dev/null" )
+                                (inc pg) ))
+                (seq    (rmhier @tmpdir)
+                        (fail) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

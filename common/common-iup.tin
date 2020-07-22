@@ -1,0 +1,329 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-ok-cb (self)
+        (iup-set-int (iup-get-dialog self) "STATUS" 1)
+        (fail) )
+
+(defnet iup-cancel-cb (self)
+        (fail) )
+
+(defnet iup-success-cb (self)
+        (success) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-info (parent text) (iup-info-warning-error 0 parent text))
+(defnet iup-warning (parent text) (iup-info-warning-error 1 parent text))
+(defnet iup-error (parent text) (iup-info-warning-error 2 parent text))
+
+(defnet iup-info-warning-error (tipo parent text)
+        (deflocal img hbox bt-ok bt-ok-img dlg i)
+
+        (set i (iup-label))
+        (case tipo of
+                0       (set img (iup-image-rgba (pix-load-static "48x48/dialog-information-2.png")))
+                1       (set img (iup-image-rgba (pix-load-static "48x48/dialog-important-2.png")))
+                2       (set img (iup-image-rgba (pix-load-static "48x48/dialog-error-4.png"))) )
+        (iup-set-attribute-handle i "IMAGE" img)
+
+        (set text (iup-label (utf8-validate0 text)))
+
+        (set hbox (iup-hbox i text))
+        (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
+        (iup-set-int hbox "GAP" 14)
+
+        (set bt-ok (iup-button "Ok"))
+        (iup-set-callback bt-ok "ACTION" (netptr iup-cancel-cb))
+        (set bt-ok-img (iup-image-rgba (pix-load-static "16x16/dialog-apply.png")))
+        (iup-set-attribute-handle bt-ok "IMAGE" bt-ok-img)
+        (iup-set-str-attribute bt-ok "PADDING" "2x2")
+        (iup-set-int bt-ok "SPACING" 6)
+
+        (set i (iup-hbox (iup-fill) bt-ok (iup-fill)))
+
+        (set i (iup-vbox
+                        hbox
+                        i ))
+        (iup-set-str-attribute i "MARGIN" "4x4")
+        (iup-set-int i "GAP" 0)
+
+        (set dlg (iup-dialog i))
+        (if (<> parent undef)
+        then    (iup-set-attribute-handle dlg "PARENTDIALOG" (iup-get-dialog parent)) )
+        (iup-set-str-attribute dlg "TITLE" <[ "Info" "Avviso" "Errore" ] tipo>)
+        (iup-set-str-attribute dlg "DIALOGFRAME" "YES")
+        (iup-set-attribute-handle dlg "DEFAULTENTER" bt-ok)
+        (iup-set-attribute-handle dlg "DEFAULTESC" bt-ok)
+
+        (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (close dlg)
+        (close img bt-ok-img) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-confirm (parent text)
+        (deflocal img hbox bt-ok bt-ok-img bt-cancel bt-cancel-img dlg i)
+
+        (set i (iup-label))
+        (set img (iup-image-rgba (pix-load-static "48x48/dialog-question-2.png")))
+        (iup-set-attribute-handle i "IMAGE" img)
+
+        (set text (iup-label (utf8-validate0 text)))
+
+        (set hbox (iup-hbox i text))
+        (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
+        (iup-set-int hbox "GAP" 14)
+
+        (set bt-ok (iup-button "Conferma"))
+        (iup-set-callback bt-ok "ACTION" (netptr iup-ok-cb))
+        (set bt-ok-img (iup-image-rgba (pix-load-static "16x16/dialog-apply.png")))
+        (iup-set-attribute-handle bt-ok "IMAGE" bt-ok-img)
+        (iup-set-str-attribute bt-ok "PADDING" "2x2")
+        (iup-set-int bt-ok "SPACING" 6)
+
+        (set bt-cancel (iup-button "Annulla"))
+        (iup-set-callback bt-cancel "ACTION" (netptr iup-cancel-cb))
+        (set bt-cancel-img (iup-image-rgba (pix-load-static "16x16/dialog-cancel-3.png")))
+        (iup-set-attribute-handle bt-cancel "IMAGE" bt-cancel-img)
+        (iup-set-str-attribute bt-cancel "PADDING" "2x2")
+        (iup-set-int bt-cancel "SPACING" 6)
+
+        (set i (iup-hbox (iup-fill) bt-ok bt-cancel))
+
+        (set i (iup-vbox
+                        hbox
+                        i ))
+        (iup-set-str-attribute i "MARGIN" "4x4")
+        (iup-set-int i "GAP" 0)
+
+        (set dlg (iup-dialog i))
+        (if (<> parent undef)
+        then    (iup-set-attribute-handle dlg "PARENTDIALOG" (iup-get-dialog parent)) )
+        (iup-set-str-attribute dlg "TITLE" "Richiesta di conferma")
+        (iup-set-str-attribute dlg "DIALOGFRAME" "YES")
+        (iup-set-attribute-handle dlg "DEFAULTENTER" bt-cancel)
+        (iup-set-attribute-handle dlg "DEFAULTESC" bt-cancel)
+
+        (iup-set-int dlg "STATUS" 0)
+        (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (set i (iup-get-int dlg "STATUS"))
+        (close dlg)
+        (close img bt-ok-img bt-cancel-img)
+        (= i 1) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-edit (parent a)
+        (iup-edit-low parent a) )
+
+(defnet iup-edit-low (parent a)
+        (deflocal n i f)
+
+        (arrayp a)
+        (set n (length a))
+        (>= n 1)
+        (= n 1)
+        (set f <a 0>)
+        (= <f 1> "stringa")
+
+
+
+        (iup-info parent "da finire")
+        (fail) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-edit-string (parent title label @s)
+        (iup-edit-string-low parent title label false undef @s) )
+
+(defnet iup-edit-password (parent title label @s)
+        (iup-edit-string-low parent title label true undef @s) )
+
+(defnet iup-edit-string-hints (parent title label hints @s)
+        (iup-edit-string-low parent title label false hints @s) )
+
+(defnet iup-edit-string-low (parent title label password hints @s)
+        (deflocal text hbox bt-ok bt-ok-img bt-cancel bt-cancel-img dlg i)
+
+        (set i (length hints))
+        (if (and (integerp i) (> i 0))
+        then    (set text (iup-list))
+                (iup-set-str-attribute text "DROPDOWN" "YES")
+                (iup-set-str-attribute text "EDITBOX" "YES")
+                (for i in hints do
+                        (iup-set-str-attribute text (+ (for-pos) 1) (utf8-validate0 i)) )
+        else    (set text (iup-text))
+                (iup-set-str-attribute text "PASSWORD" (if password "YES" "NO")) )
+        (iup-set-int text "VISIBLECOLUMNS" 40)
+        (iup-set-str-attribute text "VALUE" (if (stringp @s) (utf8-validate0 @s) ""))
+
+        (set hbox (iup-hbox (iup-label (+ label ":")) text))
+        (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
+        (iup-set-int hbox "GAP" 6)
+
+        (set bt-ok (iup-button "Conferma"))
+        (iup-set-callback bt-ok "ACTION" (netptr iup-ok-cb))
+        (set bt-ok-img (iup-image-rgba (pix-load-static "16x16/dialog-apply.png")))
+        (iup-set-attribute-handle bt-ok "IMAGE" bt-ok-img)
+        (iup-set-str-attribute bt-ok "PADDING" "2x2")
+        (iup-set-int bt-ok "SPACING" 6)
+
+        (set bt-cancel (iup-button "Annulla"))
+        (iup-set-callback bt-cancel "ACTION" (netptr iup-cancel-cb))
+        (set bt-cancel-img (iup-image-rgba (pix-load-static "16x16/dialog-cancel-3.png")))
+        (iup-set-attribute-handle bt-cancel "IMAGE" bt-cancel-img)
+        (iup-set-str-attribute bt-cancel "PADDING" "2x2")
+        (iup-set-int bt-cancel "SPACING" 6)
+
+        (set i (iup-hbox (iup-fill) bt-ok bt-cancel))
+
+        (set i (iup-vbox
+                        hbox
+                        i ))
+        (iup-set-str-attribute i "MARGIN" "4x4")
+        (iup-set-int i "GAP" 0)
+
+        (set dlg (iup-dialog i))
+        (if (<> parent undef)
+        then    (iup-set-attribute-handle dlg "PARENTDIALOG" (iup-get-dialog parent)) )
+        (iup-set-str-attribute dlg "TITLE" title)
+        (iup-set-str-attribute dlg "DIALOGFRAME" "YES")
+        (iup-set-attribute-handle dlg "DEFAULTENTER" bt-ok)
+        (iup-set-attribute-handle dlg "DEFAULTESC" bt-cancel)
+
+        (iup-set-int dlg "STATUS" 0)
+        (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (set i (iup-get-int dlg "STATUS"))
+        (set @s (iup-get-str-attribute text "VALUE"))
+        (close dlg)
+        (close bt-ok-img bt-cancel-img)
+        (= i 1) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-choose-date (self date) net iup-choose-date)
+(defnet iup-choose-date (self date @date)
+        (deflocal dlg dat vbox hbox bt-ok bt-cancel bt-ok-img bt-cancel-img)
+
+        (if (= date undef) then (set date (now)))
+        (datep date)
+
+        (set dat (iup-calendar))
+        (iup-set-str-attribute dat "VALUE" (iup-choose-date-esrap date))
+
+        (set bt-ok (iup-button "Ok"))
+        (iup-set-callback bt-ok "ACTION" (netptr iup-ok-cb))
+        (set bt-ok-img (iup-image-rgba (pix-load-static "16x16/dialog-apply.png")))
+        (iup-set-attribute-handle bt-ok "IMAGE" bt-ok-img)
+        (iup-set-str-attribute bt-ok "PADDING" "2x2")
+        (iup-set-int bt-ok "SPACING" 6)
+
+        (set bt-cancel (iup-button "Annulla"))
+        (iup-set-callback bt-cancel "ACTION" (netptr iup-cancel-cb))
+        (set bt-cancel-img (iup-image-rgba (pix-load-static "16x16/dialog-cancel-3.png")))
+        (iup-set-attribute-handle bt-cancel "IMAGE" bt-cancel-img)
+        (iup-set-str-attribute bt-cancel "PADDING" "2x2")
+        (iup-set-int bt-cancel "SPACING" 6)
+
+        (set hbox (iup-hbox
+                (iup-fill)
+                bt-ok
+                bt-cancel ))
+
+        (set vbox (iup-vbox dat hbox))
+        (iup-set-str-attribute vbox "MARGIN" "6x6")
+        (iup-set-int vbox "GAP" 2)
+
+        (set dlg (iup-dialog vbox))
+        (iup-set-int dlg "STATUS" 0)
+        (iup-set-str-attribute dlg "TITLE" "Scegli la data")
+        (iup-set-str-attribute dlg "DIALOGFRAME" "YES")
+        (iup-set-attribute-handle dlg "DEFAULTENTER" bt-ok)
+        (iup-set-attribute-handle dlg "DEFAULTESC" bt-cancel)
+        (if (<> self undef)
+        then    (iup-set-attribute-handle dlg "PARENTDIALOG" (iup-get-dialog self)) )
+        (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (if (= (iup-get-int dlg "STATUS") 1)
+        then    (set @date (iup-choose-date-parse (iup-get-str-attribute dat "VALUE"))) )
+        (close dlg)
+        (close bt-ok-img bt-cancel-img) )
+
+(defun iup-choose-date-esrap (date) net iup-choose-date-esrap)
+(defnet iup-choose-date-esrap (date @s)
+        (deflocal mm gg)
+
+        (set mm (date-month date))
+        (set gg (date-day date))
+        (set @s (sprint (date-year date) "/"
+                        (if (integerp mm) mm 1) "/"
+                        (if (integerp gg) gg 1) )))
+
+(defun iup-choose-date-parse (s) net iup-choose-date-parse)
+(defnet iup-choose-date-parse (s @date)
+        (deflocal i aa)
+
+        (search "/" s i)
+        (set aa (str->num (sub 0 i s)))
+        (set s (sub (+ i 1) (maxint) s))
+        (search "/" s i)
+        (set @date (date aa (str->num (sub 0 i s)) (str->num (sub (+ i 1) (maxint) s))))
+        (datep @date) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

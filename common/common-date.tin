@@ -1,0 +1,177 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun date-trunc (date) (date-trunc0
+        (date-year date) (date-month date) (date-day date) ))
+(defun date-trunc0 (y m d)
+        (if (<> d undef)  (date y m d)
+        (if (<> m undef)  (date y m)
+                          (date y) )))
+(defun date-trunc-hhmmss (date) (date-trunc1
+        (date-year date) (date-month date) (date-day date)
+        (date-hours date) (date-minutes date) (date-seconds date) ))
+(defun date-trunc1 (y m d hh mm ss)
+        (if (<> ss undef) (date y m d hh mm ss)
+        (if (<> mm undef) (date y m d hh mm)
+        (if (<> hh undef) (date y m d hh)
+        (if (<> d  undef) (date y m d)
+        (if (<> m  undef) (date y m)
+                          (date y) ))))))
+
+(defun now-hhmmss () (date-trunc-hhmmss (now)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun date-last-of-year (d) (date (date-year d) 12 31))
+
+(defun date-last-of-month (d) net date-last-of-month)
+(defnet date-last-of-month (d @d)
+        (deflocal y m)
+
+        (set y (date-year d))
+        (set m (date-month d))
+        (if (< m 12)
+        then    (inc m)
+        else    (set m 1)
+                (inc y) )
+        (set @d (- (date y m 1) 86400)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun date->str (d)
+        (sprint (date-year d)
+                (date->str0 (date-month d))
+                (date->str0 (date-day d))
+                (date->str0 (date-hours d))
+                (date->str0 (date-minutes d))
+                (date->str0 (date-seconds d)) ))
+(defun date->str0 (v)
+        (if (= v undef) ""
+                (sprint (if (< v 10) '0' "") v) ))
+
+(defun str->date (s) net str->date)
+(defnet str->date (s @d)
+        (alt    (str->date1 s @d)
+                (str->date2 s @d) ))
+
+(defnet str->date1 (s @d)
+        (case (length s) of
+                4       (set @d (date (str->num s)))
+                6       (set @d (date (str->num (sub  0 4 s))
+                                      (str->num (sub  4 2 s)) ))
+                8       (set @d (date (str->num (sub  0 4 s))
+                                      (str->num (sub  4 2 s))
+                                      (str->num (sub  6 2 s)) ))
+                10      (set @d (date (str->num (sub  0 4 s))
+                                      (str->num (sub  4 2 s))
+                                      (str->num (sub  6 2 s))
+                                      (str->num (sub  8 2 s)) ))
+                12      (set @d (date (str->num (sub  0 4 s))
+                                      (str->num (sub  4 2 s))
+                                      (str->num (sub  6 2 s))
+                                      (str->num (sub  8 2 s))
+                                      (str->num (sub 10 2 s)) ))
+                14      (set @d (date (str->num (sub  0 4 s))
+                                      (str->num (sub  4 2 s))
+                                      (str->num (sub  6 2 s))
+                                      (str->num (sub  8 2 s))
+                                      (str->num (sub 10 2 s))
+                                      (str->num (sub 12 2 s)) )))
+        (datep @d) )
+
+(defnet str->date2 (s @d)
+        (deflocal gg mm aa i)
+
+        (ltrim s)
+        (search " " s i)
+        (set gg (str->num (sub 0 i s)))
+        (integerp gg)
+        (set s (sub (+ i 1) (maxint) s))
+        (ltrim s)
+        (alt    (lmatch setidx mm remove case s
+                        "gennaio" "febbraio" "marzo" "aprile" "maggio" "giugno"
+                        "luglio" "agosto" "settembre" "ottobre" "novembre" "dicembre" )
+                (lmatch setidx mm remove case s
+                        "gen" "feb" "mar" "apr" "mag" "giu"
+                        "lug" "ago" "set" "ott" "nov" "dic" ))
+        (inc mm)
+        (ltrim s)
+        (rtrim s)
+        (set aa (str->num s))
+        (integerp aa)
+        (set @d (date aa mm gg))
+        (datep @d) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun people-age-date (birthdate d)
+        (approx1 (/ (- d birthdate) 31557600)) )
+
+(defun people-age (birthdate)
+        (people-age-date birthdate (now)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun year-max-less-or-equal (date day month) net year-max-less-or-equal)
+(defnet year-max-less-or-equal (date day month @year)
+        (set @year (date-year date))
+        (if (or (< (date-month date) month)
+                (and (= (date-month date) month) (< (date-day date) day)) )
+        then    (dec @year) ))
+
+(defun year-min-greater (date day month) net year-min-greater)
+(defnet year-min-greater (date day month @year)
+        (set @year (date-year date))
+        (if (or (> (date-month date) month)
+                (and (= (date-month date) month) (>= (date-day date) day)) )
+        then    (inc @year) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

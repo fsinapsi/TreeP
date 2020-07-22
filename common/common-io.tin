@@ -1,0 +1,167 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet str-save (path s)
+        (deflocal f)
+
+        (set f (fcreate path))
+        (<> f undef)
+        (fprint f s)
+        (close f) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet raw-save (path raw)
+        (deflocal f i j)
+
+        (set f (fcreate path))
+        (<> f undef)
+        (set i (length raw))
+        (set j (raw-write raw f i))
+        (close f)
+        (= i j) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet filecopy (ipath opath)
+        (deflocal raw)
+
+        (set raw (raw 65536))
+        (alt    (filecopy-raw ipath opath raw)
+                (seq    (close raw)
+                        (fail) ))
+        (close raw)
+        (opt (utime opath (ftime ipath))) )
+
+(defnet filecopy-raw (ipath opath raw)
+        (deflocal fi fo)
+
+        (set fi (fopenro ipath))
+        (<> fi undef)
+        (set fo (fcreate opath))
+        (if (= fo undef)
+        then    (close fi)
+                (fail) )
+        (alt    (filecopy-basic fi fo (length fi) raw)
+                (seq    (close fi fo)
+                        (remove opath)
+                        (fail) ))
+        (close fi fo) )
+
+(defnet filecopy-basic (fi fo rem raw)
+        (deflocal i)
+
+        (while (> rem 0) do
+                (set i (raw-read raw fi rem))
+                (> i 0)
+                (= i (raw-write raw fo i))
+                (set rem (- rem i)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet mkmirror (srcdir dstdir date)
+        (deflocal raw)
+
+        (not (pathexists dstdir))
+        (set raw (raw 65536))
+        (alt    (mkmirror-rec srcdir dstdir date raw)
+                (seq    (close raw)
+                        (rmhier dstdir)
+                        (fail) ))
+        (close raw) )
+
+(defnet mkmirror-rec (srcdir dstdir date raw)
+        (deflocal p path newdst)
+
+        (mkdir dstdir)
+        (for p in (directory srcdir) do
+                (if (and (<> p ".") (<> p ".."))
+                then    (set path (+ srcdir "/" p))
+                        (set newdst (+ dstdir "/" p))
+                        (if (isdir path)
+                        then    (mkmirror-rec path newdst date raw)
+                        else    (if (isreg path)
+                                then    (filecopy-raw path newdst raw)
+                                        (utime newdst date) ))))
+        (utime dstdir date) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; cerca la prima istanza della stringa s (non vuota) nel file f
+
+(defnet filesearch (f s)
+        (deflocal actpos q t u c)
+
+        (stringp s)
+        (> (length s) 0)
+        (set s (explode s))
+        (set actpos (fpos f))
+        (set q (queue))
+        (set t s)
+        (repeat (if (= (length q) 0)
+                then    (set c (freadchar f))
+                        (if (not (charp c))
+                        then    (fsetpos actpos f)
+                                (fail) )
+                else    (set c (queue-get q)) )
+                (if (= c (car t))
+                then    (set t (cdr t))
+                else    (if (<> t s)
+                        then    (set u s)
+                                (repeat (queue-put q (car u))
+                                        (set u (cdr u))
+                                        until (= u t) )
+                                (queue-put q c)
+                                (skip (queue-get q))
+                                (set t s) ))
+                until (= t nil) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

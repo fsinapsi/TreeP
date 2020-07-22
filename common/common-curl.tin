@@ -1,0 +1,206 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun curl-default-useragent ()
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36" )
+        ;"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12" )
+
+(defun curl-create-default (useragent) net curl-create-default)
+(defnet curl-create-default (useragent @c)
+        (set @c (curl-easy-init))
+        (<> @c undef)
+        (curl-easy-setopt-ssl-verifypeer @c false)
+        ;(curl-easy-setopt-capath @c "cacert.pem")
+        (curl-easy-setopt-followlocation @c true)
+        (curl-easy-setopt-maxredirs @c 10)
+        (curl-easy-setopt-useragent @c (if (stringp useragent) useragent (curl-default-useragent))) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun download-as-string (url)
+        (download-as-string-low undef url) )
+
+(defun download-as-string-low (useragent url) net download-as-string-low)
+(defnet download-as-string-low (useragent url @str)
+        (deflocal c)
+
+        (curl-create-default useragent c)
+        (alt    (download-as-string-curl c url @str)
+                (seq    (close c)
+                        (fail) ))
+        (close c) )
+
+(defun download-as-raw (url)
+        (download-as-raw-low undef url) )
+
+(defun download-as-raw-low (useragent url) net download-as-raw-low)
+(defnet download-as-raw-low (useragent url @raw)
+        (deflocal c)
+
+        (curl-create-default useragent  c)
+        (alt    (download-as-raw-curl c url @raw)
+                (seq    (close c)
+                        (fail) ))
+        (close c) )
+
+(defnet download-as-string-curl (c url @str)
+        (download-as-stringraw-curl-basic c url @str true) )
+
+(defnet download-as-raw-curl (c url @raw)
+        (download-as-stringraw-curl-basic c url @raw false) )
+
+(defnet download-as-stringraw-curl-basic (c url @res string)
+        (deflocal a)
+
+        (set a (array default (if string "" (raw 0)) 1))
+        (curl-easy-setopt-errorbuffer c true)
+        (curl-easy-setopt-filetime c false)
+        (curl-easy-setopt-progressfunction c undef)
+        (curl-easy-setopt-url c url)
+        (curl-easy-setopt-writefunction c
+                (if string (netptr download-as-string-cback)
+                           (netptr download-as-raw-cback) )
+                a )
+        (alt    (curl-easy-perform c)
+                (seq    (fprint (stderr) "curl error: " (curl-easy-getinfo-errorbuffer c) nl)
+                        (fflush (stderr))
+                        (fail) ))
+        (set @res <a 0>) )
+
+(defnet download-as-string-cback (raw a)
+        (inc <a 0> (raw->str raw)) )
+
+(defnet download-as-raw-cback (raw a)
+        (deflocal oldraw)
+
+        (set oldraw <a 0>)
+        (inc <a 0> raw)
+        (close oldraw) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet download-as-file (url path)
+        (download-as-file-low undef url path) )
+
+(defnet download-as-file-low (useragent url path)
+        (deflocal c)
+
+        (curl-create-default useragent c)
+        (alt    (download-as-file-curl c url path)
+                (seq    (close c)
+                        (fail) ))
+        (close c) )
+
+(defnet download-as-file-curl (c url path)
+        (deflocal tmp-path f)
+
+        (set tmp-path (+ path ".part"))
+        (opt (remove tmp-path))
+        (set f (fcreate tmp-path))
+        (<> f undef)
+        (curl-easy-setopt-errorbuffer c true)
+        (curl-easy-setopt-filetime c true)
+        (curl-easy-setopt-progressfunction c
+                (netptr curl-progress)
+                (cons (+ " dloading " (str-ellipsize-start (fullpath->name path) 22) ": ") (now)) )
+        (curl-easy-setopt-url c url)
+        (curl-easy-setopt-writefunction c
+                (netptr download-as-file-cback) f )
+        (alt    (curl-easy-perform c)
+                (seq    (close f)
+                        (fprint (stderr) nl "curl error: "
+                                (curl-easy-getinfo-errorbuffer c) nl )
+                        (fflush (stderr))
+                        (fail) ))
+        (close f)
+        (opt (remove path))
+        (rename tmp-path path)
+        (opt (utime path (curl-easy-getinfo-filetime c)))
+        (fprint (stderr) nl) )
+
+(defnet download-as-file-cback (raw f)
+        (= (length raw) (raw-write raw f (length raw))) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet upload-curl (c url path)
+        (deflocal f i)
+
+        (set f (fopenro path))
+        (<> f undef)
+        (curl-easy-setopt-errorbuffer c true)
+        (curl-easy-setopt-progressfunction c
+                (netptr curl-progress)
+                (cons (+ " uloading " (str-ellipsize-start (fullpath->name path) 22) ": ") (now)) )
+        (curl-easy-setopt-url c url)
+        (curl-easy-setopt-readfunction c (length f) (netptr upload-cback) f)
+        (alt    (curl-easy-perform c)
+                (seq    (close f)
+                        (fprint (stderr) nl "curl error: "
+                                (curl-easy-getinfo-errorbuffer c) nl )
+                        (fail) ))
+        (close f)
+        (fprint (stderr) nl) )
+
+(defnet upload-cback (raw f)
+        (= (length raw) (raw-read raw f (length raw))) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet curl-progress (tot act data)
+        (fprint (stderr) (car data) act '/' tot " (" (rint (/ act tot 0.01)) "%) "
+                         (bitrate act (- (now) (cdr data))) " kb/s       \r" )
+        (fflush (stderr)) )
+
+(defun bitrate (bytes s)
+        (/ (rint (/ bytes s 100)) 10) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

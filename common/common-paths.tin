@@ -1,0 +1,315 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-separator (path)
+        (if (clinux) '/'
+        (if (cmingw) (if (search "/" path) '/' '\\')
+        '/' )))
+
+(defun realpathifexists (path) net realpathifexists)
+(defnet realpathifexists (path @path)
+        (set @path (realpath path))
+        (if (not (stringp @path))
+        then    (set @path path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet mkdirhier (path)
+        (deflocal s i)
+
+        (set s (path-separator path))
+        (rtrim path s)
+        (if (not (pathexists path))
+        then    (search (sprint s) path i (maxint))
+                (mkdirhier (sub 0 (+ i 1) path))
+                (mkdir path) ))
+
+(defnet rmhier (path)
+        (deflocal s p)
+
+        (set s (path-separator path))
+        (rtrim path s)
+        (<> path "")
+        (if (cmingw)
+        then    (not (rmatch path ":")) )
+        (if (pathexists path)
+        then    (set s (sprint s))
+                (if (isdir path)
+                then    (for p in (directory path) do
+                                (if (and (<> p ".") (<> p ".."))
+                                then    (rmhier (+ path s p)) )))
+                (remove path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun callpath () net callpath)
+(defnet callpath (@path)
+        (deflocal i)
+
+        (set @path (argv 0))
+        (alt    (seq    (search (sprint (path-separator @path)) @path i (maxint))
+                        (set @path (sub 0 i @path)) )
+                (set @path (cwd)) )
+        (set @path (realpathifexists @path))
+        (if (not (pathexists @path))
+        then    (set @path (cwd)) )
+        (set i (path-separator @path))
+        (if (not (rmatch @path i))
+        then    (inc @path i) ))
+
+(defun callpathp (p) (+ (callpath) p))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun homepath () net homepath)
+(defnet homepath (@path)
+        (deflocal i)
+
+        (if (clinux)
+        then    (set @path (getenv "HOME"))
+        else    (if (cmingw)
+                then    (set @path (+ (getenv "HOMEDRIVE") (getenv "HOMEPATH")))
+                        (if (not (pathexists @path))
+                        then    (set @path (getenv "USERPROFILE")) )
+                else    (set @path (getenv "HOME")) ))
+        (if (not (pathexists @path))
+        then    (set @path (callpath)) )
+        (set @path (realpathifexists @path))
+        (set i (path-separator @path))
+        (if (not (rmatch @path i))
+        then    (inc @path i) ))
+
+(defun homepathp (p) (+ (homepath) p))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun datapath () net datapath)
+(defnet datapath (@path)
+        (deflocal i)
+
+        (set @path (homepathp ".treep"))
+        (if (not (pathexists @path))
+        then    (mkdir @path) )
+        (set i (path-separator @path))
+        (if (not (rmatch @path i))
+        then    (inc @path i) ))
+
+(defun datapathp (p) (+ (datapath) p))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun tmppath () net tmppath)
+(defnet tmppath (@path)
+        (deflocal i)
+
+        (if (clinux)
+        then    (set @path "/tmp")
+        else    (if (cmingw)
+                then    (set @path (getenv "TEMP"))
+                else    (set @path "/tmp") ))
+        (if (not (pathexists @path))
+        then    (set @path (callpath)) )
+        (set @path (realpathifexists @path))
+        (set i (path-separator @path))
+        (if (not (rmatch @path i))
+        then    (inc @path i) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet mktmpdir (@path)
+        (deflocal prefix i)
+
+        (set prefix (+ (tmppath) (random-alphanumeric-string 4)))
+        (set i 0)
+        (repeat (set @path (+ prefix (int->str i 4 '0')))
+                (alt    (seq    (not (pathexists @path))
+                                (mkdir @path)
+                                (set i 0) )
+                        (inc i) )
+                until (= i 0) )
+        (set i (path-separator @path))
+        (if (not (rmatch @path i))
+        then    (inc @path i) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet filesystem-visit (path cback udata)
+        (filesystem-visit-limit path cback udata (maxint)) )
+
+(defnet filesystem-visit-limit (path cback udata max-level)
+        (pathexists path)
+        (truep (isdir path))
+        (filesystem-visit-low path cback udata (path-separator path) 0 max-level) )
+
+(defnet filesystem-visit-low (path cback udata s level max-level)
+        (deflocal c e p r d)
+
+        (set c (if (rmatch path s) "" s))
+        (set r (array 0))
+        (if (< level max-level)
+        then    (set d (array 0)) )
+        (for e in (directory path) do
+                (if (not (in e [ "." ".." ]))
+                then    (set p (+ path c e))
+                        (if (isreg p)
+                        then    (array-append r (cons p e))
+                        else    (if (and (isdir p) (< level max-level))
+                                then    (array-append d e) ))))
+        (sort r (funptr lesscdr))
+        (for e in r do
+                (call cback (car e) (cdr e) udata) )
+        (if (< level max-level)
+        then    (sort d)
+                (inc level)
+                (for e in d do
+                        (filesystem-visit-low (+ path c e) cback udata s level max-level) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;; restituisce, se lo trova, un path esistente che matcha a destra      ;;;;
+;;;; rpath                                                                ;;;;
+;;;; cercandolo in alcune directory `standard`                            ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun search-path-default (rpath) net search-path-default)
+(defnet search-path-default (rpath @path)
+        (deflocal a path i j p)
+
+        (set a (assoc))
+        (for path in (list (cwd)
+                           (datapath)
+                           (homepathp "wd/programming/treep/trp")
+                           (callpath) ) do
+                (repeat (alt    (seq    (rtrim path '/')
+                                        (search "/" path i (maxint)) )
+                                (clr i) )
+                        (if (pathexists path)
+                        then    (for j in [ "" "common/" "icons/" "sounds/" "common/icons/" "common/sounds/" ] do
+                                        (set p (+ path (if (rmatch path "/") "" "/") j rpath))
+                                        (if (= <a p> undef)
+                                        then    (if (pathexists p)
+                                                then    (set @path p)
+                                                else    (set <a p> true) ))))
+                        until (stringp @path)
+                        until (not (integerp i))
+                        (set path (sub 0 (+ i 1) path)) )
+                until (stringp @path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun search-path-first (path regex)
+        (search-path-first-limit path regex (maxint)) )
+
+(defun search-path-first-limit (path regex max-level) net search-path-first-limit)
+(defnet search-path-first-limit (path regex max-level @path)
+        (deflocal q)
+
+        (set q (search-path-limit-low path regex max-level true))
+        (queuep q)
+        (set @path (queue-get q)) )
+
+(defun search-path (path regex)
+        (search-path-limit-low path regex (maxint) false) )
+
+(defun search-path-limit (path regex max-level)
+        (search-path-limit-low path regex max-level false) )
+
+(defun search-path-limit-low (path regex max-level first) net search-path-limit-low)
+(defnet search-path-limit-low (path regex max-level first @q)
+        (deflocal re)
+
+        (set re (regcomp regex (cmacro REG_ICASE)))
+        (<> re undef)
+        (set @q (queue))
+        (opt (filesystem-visit-limit path (netptr search-path-limit-cback) (list @q re first) max-level))
+        (close re) )
+
+(defnet search-path-limit-cback (path name u)
+        (opt    (regexec <u 1> name)
+                (queue-put <u 0> path) )
+        (or (not <u 2>) (= (length <u 0>) 0)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

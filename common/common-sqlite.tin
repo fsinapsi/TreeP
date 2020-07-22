@@ -1,0 +1,137 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun sqlite3-structure (db count)
+        (ag-dot2pix (sqlite3-structure-dot db count)) )
+
+(defun sqlite3-structure-dot (db count) net sqlite3-structure-dot)
+(defnet sqlite3-structure-dot (db count @s)
+        (deflocal asc q l s i j table field command)
+
+        (set @s "")
+        (set asc (assoc))
+        (set q (queue))
+        (for l in (sqlite3-exec db "SELECT * FROM sqlite_master WHERE type='table'") do
+                (set s l)
+                (list-pop s i)
+                (= i "table")
+                (list-pop s table)
+                (list-pop s i)
+                (= table i)
+                (list-pop s i)
+                (list-pop s command)
+                (rmatch remove command ")")
+                (lmatch case remove command "CREATE TABLE ")
+                (lmatch remove command (+ "\"" table "\"") table)
+                (lmatch remove command "(")
+                (inc command ",")
+                (set <asc table> (assoc))
+                (set <asc table "fields"> (queue))
+                (set <asc table "fieldattr"> (assoc))
+                (set <asc table "cp"> (length q))
+                (queue-put q table)
+                (opt*   (search "," command i)
+                        (set s (sub 0 i command))
+                        (set command (sub (+ i 1) (maxint) command))
+                        (alt    (seq    (search " " s i)
+                                        (set field (sub 0 i s))
+                                        (set s (sub (+ i 1) (maxint) s)) )
+                                (seq    (set field s)
+                                        (set s "") ))
+                        (queue-put <asc table "fields"> field)
+                        (set <asc table "fieldattr" field> (array default false 5))
+                        (opt*   (alt    (lmatch case remove s "integer")
+                                        (seq    (lmatch case remove s "char")
+                                                (set <asc table "fieldattr" field 0> true) )
+                                        (seq    (lmatch case remove s "primary key")
+                                                (set <asc table "fieldattr" field 1> true)
+                                                (set <asc table "fieldattr" field 3> true)
+                                               (set <asc table "fieldattr" field 4> true) )
+                                        (seq    (lmatch case remove s "unique")
+                                                (set <asc table "fieldattr" field 2> true)
+                                                (set <asc table "fieldattr" field 3> true) )
+                                        (seq    (lmatch case remove s "not null")
+                                                (set <asc table "fieldattr" field 4> true) ))
+                                (ltrim s) )
+                        (if (<> s "")
+                        then    (print "errore: non capisco la sintassi del comando (table)" nl)
+                                (fail) )))
+        (for l in (sqlite3-exec db "SELECT * FROM sqlite_master WHERE type='index'") do
+                (set s l)
+                (list-pop s i)
+                (= i "index")
+                (list-pop s i)
+                (list-pop s table)
+                (list-pop s i)
+                (list-pop s command)
+                (if (stringp command)
+                then    (alt    (seq    (lmatch case remove command "CREATE INDEX ")
+                                        (lmatch remove command table)
+                                        (lmatch remove command "_")
+                                        (search " " command i)
+                                        (set field (sub 0 i command))
+                                        (set command (sub (+ i 1) (maxint) command))
+                                        (lmatch remove command "ON ")
+                                        (lmatch remove command table)
+                                        (lmatch remove command "(")
+                                        (lmatch remove command field)
+                                        (= command ")")
+                                        (set <asc table "fieldattr" field 3> true) )
+                                (seq    (print "errore: non capisco la sintassi del comando (index)" nl)
+                                        (fail) ))))
+        (inc @s "digraph g {" nl
+                "layout=neato;" nl
+                "overlap=false;" nl
+                "splines=true;" nl
+                "graph [" nl "ranksep=1.5;rankdir=\"TB\"" nl
+                "];" nl )
+        (set s (queue))
+        (for table in q do
+                (inc @s "node" <asc table "cp"> " [shape=record,label=\"{" table)
+                (if count
+                then    (inc @s " (" (str->num <(sqlite3-exec db "SELECT count(*) FROM " table) 0 0>) ")") )
+                (inc @s "|{{")
+                (for field in <asc table "fields"> do
+                        (if (lmatch field "cp_")
+                        then    (set j (sub 3 (maxint) field))
+                                (opt    (search "_" j i (maxint))
+                                        (integerp (str->num (sub (+ i 1) (maxint) j)))
+                                        (set j (sub 0 i j)) )
+                                (queue-put s (+ "node" <asc table "cp"> ":f" (for-pos) " -> node" <asc j "cp">))
+                                (set j (+ "^(" (sub 3 (maxint) field) ")"))
+                        else    (set j field) )
+                        (inc @s (if (> (for-pos) 0) "|" "") (if (<> j field) (+ "<f" (for-pos) ">") "") j) )
+                (inc @s "}|{")
+                (for field in <asc table "fields"> do
+                        (set i (if <asc table "fieldattr" field 0> "c" "i"))
+                        (if <asc table "fieldattr" field 1>
+                        then    (inc i "p") )
+                        (if <asc table "fieldattr" field 2>
+                        then    (inc i "u") )
+                        (if <asc table "fieldattr" field 3>
+                        then    (inc i "x") )
+                        (if (not <asc table "fieldattr" field 4>)
+                        then    (inc i "n") )
+                        (inc @s (if (> (for-pos) 0) "|" "") i) )
+                (inc @s "}}}\"];" nl) )
+        (for i in s do
+                (inc @s i nl) )
+        (inc @s "}" nl) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

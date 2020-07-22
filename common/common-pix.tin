@@ -1,0 +1,175 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun colorp (c) (integerp (pix-color-red c)))
+
+(defun black ()      (pix-color 0x00 0x00 0x00))
+(defun white ()      (pix-color 0xff 0xff 0xff))
+(defun red ()        (pix-color 0xff 0x00 0x00))
+(defun green ()      (pix-color 0x00 0xff 0x00))
+(defun blue ()       (pix-color 0x00 0x00 0xff))
+(defun darkgreen ()  (pix-color 0x1a 0x83 0x2b))
+(defun purple ()     (pix-color 0xff 0x00 0xff))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-add-margins (pix n color) net pix-add-margins)
+(defnet pix-add-margins (pix n color @pix)
+        (deflocal w h)
+
+        (set w (+ (width pix) n n))
+        (set h (+ (height pix) n n))
+        (set @pix (pix-create w h))
+        (if (<> color undef)
+        then    (pix-draw-box @pix 0 0 w h color) )
+        (pix-draw-pix @pix n n pix) )
+
+(defun pix-clone (pix) (pix-add-margins pix 0 undef))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-scale-treep (pix w h) (pix-scale pix w h))
+
+(defun pix-sws-scale (pix w h alg) net pix-sws-scale)
+(defnet pix-sws-scale (pix w h alg @res)
+        (deflocal ctx)
+        (set w (rint w))
+        (set h (rint h))
+        (set ctx (av-sws-context (width pix) (height pix) w h alg))
+        (<> ctx undef)
+        (set @res (pix-create w h))
+        (alt    (av-sws-scale ctx pix @res)
+                (seq    (close ctx @res)
+                        (fail) ))
+        (close ctx) )
+
+(defun pix-sws-scale-fast-bilinear (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_FAST_BILINEAR)) )
+
+(defun pix-sws-scale-bilinear (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_BILINEAR)) )
+
+(defun pix-sws-scale-bicubic (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_BICUBIC)) )
+
+(defun pix-sws-scale-x (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_X)) )
+
+(defun pix-sws-scale-point (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_POINT)) )
+
+(defun pix-sws-scale-area (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_AREA)) )
+
+(defun pix-sws-scale-bicublin (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_BICUBLIN)) )
+
+(defun pix-sws-scale-gauss (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_GAUSS)) )
+
+(defun pix-sws-scale-sinc (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_SINC)) )
+
+(defun pix-sws-scale-lanczos (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_LANCZOS)) )
+
+(defun pix-sws-scale-spline (pix w h)
+        (pix-sws-scale pix w h (cmacro SWS_SPLINE)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-cv-scale (pix w h flags) net pix-cv-scale)
+(defnet pix-cv-scale (pix w h flags @res)
+        (set w (rint w))
+        (set h (rint h))
+        (set @res (pix-create w h))
+        (alt    (cv-pix-warp-affine pix @res
+                        (cv-get-affine-transform 0 0 0 0
+                                (- (width pix) 1) 0 (- w 1) 0
+                                0 (- (height pix) 1) 0 (- h 1) ) flags )
+                (seq    (close @res)
+                        (fail) )))
+
+(defun pix-cv-scale-nearest-neighbour (pix w h)
+        (pix-cv-scale pix w h (cmacro CV_INTER_NN)) )
+
+(defun pix-cv-scale-bilinear (pix w h)
+        (pix-cv-scale pix w h (cmacro CV_INTER_LINEAR)) )
+
+(defun pix-cv-scale-bicubic (pix w h)
+        (pix-cv-scale pix w h (cmacro CV_INTER_CUBIC)) )
+
+(defun pix-cv-scale-area (pix w h)
+        (pix-cv-scale pix w h (cmacro CV_INTER_AREA)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-binarize-wolf (@pix)
+        (pix-binarize-wolf-low @pix 0.6) )
+
+(defnet pix-binarize-wolf-low (@pix k)
+        (deflocal tmpdir tmp1 tmp2 pix)
+
+        (pixp @pix)
+        (mktmpdir tmpdir)
+        (set tmp1 (+ tmpdir "/1.ppm"))
+        (set tmp2 (+ tmpdir "/2.pgm"))
+        (alt    (seq    (pix-save-pnm-noalpha @pix tmp1)
+                        (system "binarizewolfjolion -k " k " " tmp1 " " tmp2 " >/dev/null 2>/dev/null")
+                        (set pix (pix-load tmp2))
+                        (pixp pix)
+                        (close @pix)
+                        (set @pix pix)
+                        (rmhier tmpdir) )
+                (seq    (rmhier tmpdir)
+                        (fail) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

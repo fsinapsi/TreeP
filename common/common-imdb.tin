@@ -1,0 +1,577 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defglobal _imdb)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun imdb-path () (homepathp ".treep/imdb.old"))
+(defun imdb-db-path () (+ (imdb-path) "/imdb.db"))
+
+(defun imdb () net imdb-db)
+(defnet imdb-db (@db)
+        (if (= _imdb undef)
+        then    (alt    (seq    (pathexists (imdb-db-path))
+                                (set _imdb (sqlite3-open (imdb-db-path)))
+                                (<> _imdb undef) )
+                        (seq    (fprint (stderr) "apertura imdb fallita" nl)
+                                (exit -1) )))
+        (set @db _imdb) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun title->id (title)
+        (str->num <(sqlite3-exec (imdb)
+                "SELECT id FROM movies WHERE title='"
+                (sqlite3-escape-strings title) "'" ) 0 0>))
+
+(defun id->title (movie-id)
+        <(sqlite3-exec (imdb)
+                "SELECT title FROM movies WHERE id=" movie-id ) 0 0> )
+
+(defun name->id (name)
+        (str->num <(sqlite3-exec (imdb)
+                "SELECT id FROM people WHERE name='"
+                (sqlite3-escape-strings name) "'" ) 0 0>))
+
+(defun id->name (people-id)
+        <(sqlite3-exec (imdb)
+                "SELECT name FROM people WHERE id=" people-id) 0 0> )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun words->movies (words max) net words->movies)
+(defnet words->movies (words max @l)
+        (words->movies-basic false words max @l) )
+
+(defun exact-words->movies (words max) net exact-words->movies)
+(defnet exact-words->movies (words max @l)
+        (words->movies-basic true words max @l) )
+
+(defnet words->movies-basic (exact words max @l)
+        (deflocal query i w)
+
+        (if (= (length words) 0)
+        then    (set @l nil)
+        else    (set query "")
+                (for i in words do
+                        (set w (utf8-tolower (if (assocp words) (car i) i)))
+                        (set query (+ "SELECT movie_id FROM movies_index"
+                                      " WHERE word" (if exact "" ">") "='"
+                                      (sqlite3-escape-strings w) "'"
+                                      (if exact "" (+ " AND word<'"
+                                      (sqlite3-escape-strings (str-succ w))
+                                      "'" ))
+                                      (if (= query "") "" " INTERSECT ")
+                                      query )))
+                (if (<> max undef)
+                then    (set query (+ query " LIMIT " max)) )
+                (set @l (sqlite3-exec (imdb) query)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun title-report (movie-id) net title-report)
+(defnet title-report (movie-id @s)
+        (deflocal t i)
+
+        (set @s "")
+        (set t <(sqlite3-exec (imdb) "SELECT title,year,rank,votes,distribution FROM movies WHERE id=" movie-id) 0>)
+        (if (<> t undef)
+        then    (set @s (+ @s
+               "Titolo" nl
+               "------" nl
+               nl
+               <t 0> " - " <t 1> nl )))
+
+        (for i in (sqlite3-exec (imdb) "SELECT title,note FROM aka_titles WHERE movie_id=" movie-id) do
+                (set @s (+ @s
+                "    " <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl )))
+
+        (if (<> <t 2> undef)
+        then    (set @s (+ @s
+               nl
+               "Ratings" nl
+               "-------" nl
+               nl
+               "Rank = " <t 2> ", voti = " <t 3> " (" <t 4> ")" nl )))
+
+        (set i (sqlite3-exec (imdb) "SELECT country FROM countries WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Paese" nl
+               "-----" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT language,note FROM language WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Lingua" nl
+               "------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM color_info WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Colore" nl
+               "------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM sound_mix WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Suono" nl
+               "-----" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM locations WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Locations" nl
+               "---------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT type,info,note FROM technical WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Dati tecnici" nl
+               "------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> " = " <i 1> (if (= <i 2> undef) "" (+ " (" <i 2> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT running_time,country,note FROM running_times WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Durata" nl
+               "------" nl
+               nl ))
+               (for i in i do (set @s (+ @s
+               <i 0> " min" (if (= <i 1> undef) "" (+ " (" <i 1> ")")) (if (= <i 2> undef) "" (+ " (" <i 2> ")")) nl )) ))
+
+        (set i (sqlite3-exec (imdb) "SELECT genre FROM genres WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Genere" nl
+               "------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT tagline FROM taglines WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Taglines" nl
+               "--------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT keyword FROM keywords WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Parole chiave" nl
+               "-------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name FROM people,directors WHERE movie_id=" movie-id " AND id=people_id"))
+        ;(set i (sqlite3-exec (imdb) "SELECT name,note FROM people,directors WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Regista" nl
+               "-------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,writers WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Soggetto/Sceneggiatura" nl
+               "----------------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT type,info FROM literature WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Literature" nl
+               "----------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> " = " <i 1> nl ))))
+
+        (set i (+ (sqlite3-exec (imdb) "SELECT name,character_name,note FROM people,cast WHERE movie_id=" movie-id " AND id=people_id AND billing_position IS NOT NULL ORDER BY billing_position")
+                  (sqlite3-exec (imdb) "SELECT name,character_name,note FROM people,cast WHERE movie_id=" movie-id " AND id=people_id AND billing_position IS NULL") ))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Cast" nl
+               "----" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0>
+               (if (= <i 1> undef) "" (+ " [" <i 1> "]"))
+               (if (= <i 2> undef) "" (+ " (" <i 2> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,author FROM plot WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Trama" nl
+               "-----" nl ))
+                (for i in i do (set @s (+ @s
+               nl
+               <i 0> nl
+               (if (= <i 1> undef) "" (+ "[by " <i 1> "]" nl)) ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,composers WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Musiche" nl
+               "-------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,editors WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Montaggio" nl
+               "---------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,costume_designers WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Costumi" nl
+               "-------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,producers WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Produttori" nl
+               "----------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,production_designers WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Production designers" nl
+               "--------------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,cinematographers WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Cinematographers" nl
+               "----------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT name,note FROM people,miscellaneous WHERE movie_id=" movie-id " AND id=people_id"))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Altre persone" nl
+               "-------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM special_effects_companies WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Effetti speciali" nl
+               "----------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM production_companies WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Case di produzione" nl
+               "------------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM distributors WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Distribuzione" nl
+               "-------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM miscellaneous_companies WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Misc companies" nl
+               "--------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info,note FROM certificates WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Certificates" nl
+               "------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> (if (= <i 1> undef) "" (+ " (" <i 1> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info FROM mpaa_ratings_reasons WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "MPAA ratings reasons" nl
+               "--------------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT place,date,note FROM release_dates WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Date di uscita" nl
+               "--------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               (if (= <i 0> undef) "" (+ <i 0> ": ")) (str->date <i 1>) (if (= <i 2> undef) "" (+ " (" <i 2> ")")) nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info FROM trivia WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Curiosita'" nl
+               "----------" nl ))
+                (for i in i do (set @s (+ @s
+               nl
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info FROM crazy_credits WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Crazy Credits" nl
+               "-------------" nl ))
+                (for i in i do (set @s (+ @s
+               nl
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT goof_type,info FROM goofs WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Errori" nl
+               "------" nl ))
+                (for i in i do (set @s (+ @s
+               nl
+               "* errore di tipo " <i 0> nl
+               <i 1> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT info FROM alternate_versions WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Versioni alternative" nl
+               "--------------------" nl ))
+                (for i in i do (set @s (+ @s
+               nl
+               <i 0> nl ))))
+
+        (set i (sqlite3-exec (imdb) "SELECT type,info FROM business WHERE movie_id=" movie-id))
+        (if (<> i nil)
+        then    (set @s (+ @s
+               nl
+               "Business" nl
+               "--------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               <i 0> " = " <i 1> nl ))))
+
+        (set i (+ (sqlite3-exec (imdb) "SELECT title,link_type,'' FROM movies,movie_links WHERE movie_id1=" movie-id " AND id=movie_id2")
+                  (sqlite3-exec (imdb) "SELECT title,link_type,'^-1' FROM movies,movie_links WHERE movie_id2=" movie-id " AND id=movie_id1") ))
+        (if (<> i nil)
+        then    (set @s (+ @s nl
+               "Collegamenti" nl
+               "------------" nl
+               nl ))
+                (for i in i do (set @s (+ @s
+               "(" <i 1> ")" <i 2> " " <i 0> nl ))))
+
+        (skip) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun imdbtitle->code (title) net imdbtitle->code)
+(defnet imdbtitle->code (title @code)
+        (deflocal imdb-code done year s q i)
+
+        (set imdb-code (title->id title))
+        (<> imdb-code undef)
+        (set q (queue))
+        (imdbtitle->code-split-and-store title year q)
+        (find-and-replace title " " "%20")
+        (set s (download-as-string (+ "http://www.imdb.com/search/title?release_date="
+                year "," year "&title=" title )))
+        (for i in (sqlite3-exec (imdb)
+                "SELECT title FROM aka_titles"
+                " WHERE movie_id=" imdb-code ) do
+                (set title <i 0>)
+                (opt (imdbtitle->code-split-and-store title year q)) )
+        (set done false)
+        (for title in q do
+                (opt    (search (+ "/\" title=\"" title " (") s i)
+                        (set s (sub 0 i s))
+                        (set done true) )
+                until done )
+        (= done true)
+        (search "<a href=\"/title/tt" s i (maxint))
+        (set @code (str->num (sub (+ i 18) (maxint) s)))
+        (<> @code undef) )
+
+(defnet imdbtitle->code-split-and-store (@title @year q)
+        (deflocal i title)
+
+        (opt    (rmatch remove @title "(V)" "(TV)")
+                (rtrim @title) )
+        (rmatch remove @title ")")
+        (rtrim @title 'I' '/')
+        (search " (" @title i (maxint))
+        (set @year (str->num (sub (+ i 2) (maxint) @title)))
+        (<> @year undef)
+        (set @title (sub 0 i @title))
+        (opt    (lmatch remove @title "\"")
+                (rmatch remove @title "\"") )
+        ; attenzione: da qui in poi @title non va modificato
+        (set title @title)
+        (find-and-replace title "&" "&#x26;")
+        (find-and-replace title "'" "&#x27;")
+        (find-and-replace title (iso->utf8 "Å") "&#xC5;")
+        (find-and-replace title (iso->utf8 "à") "&#xE0;")
+        (find-and-replace title (iso->utf8 "â") "&#xE2;")
+        (find-and-replace title (iso->utf8 "å") "&#xE5;")
+        (find-and-replace title (iso->utf8 "É") "&#xC9;")
+        (find-and-replace title (iso->utf8 "è") "&#xE8;")
+        (find-and-replace title (iso->utf8 "é") "&#xE9;")
+        (find-and-replace title (iso->utf8 "ë") "&#xEB;")
+        (find-and-replace title (iso->utf8 "ì") "&#xEC;")
+        (find-and-replace title (iso->utf8 "í") "&#xED;")
+        (find-and-replace title (iso->utf8 "Ò") "&#xD2;")
+        (find-and-replace title (iso->utf8 "ò") "&#xF2;")
+        (find-and-replace title (iso->utf8 "ó") "&#xF3;")
+        (find-and-replace title (iso->utf8 "ô") "&#xF4;")
+        (find-and-replace title (iso->utf8 "ù") "&#xF9;")
+        (find-and-replace title (iso->utf8 "ü") "&#xFC;")
+        (find-and-replace title (iso->utf8 "ñ") "&#xF1;")
+        (queue-put q title) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

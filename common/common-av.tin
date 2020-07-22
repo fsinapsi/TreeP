@@ -8,20 +8,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(include "common-paths.tin")
-(include "common-math.tin")
-(include "common-date.tin")
-(include "common-graphs.tin")
-(include "common-pix.tin")
-(include "common-strings.tin")
-(include "common-curl.tin")
-(include "common-sqlite.tin")
-(include "common-io.tin")
-(include "common-av.tin")
-(include "common-iup.tin")
-(include "common-gtk.tin")
-(include "common-imdb.tin")
-(include "common-misc.tin")
+(defnet av-seek (av framecnt)
+        (deflocal n done pos i)
+
+        (set n (av-index-entries av))
+        (integerp n)
+        (< framecnt n)
+        (for i in 1 .. n do
+                (if (av-index-keyframe av (for-pos))
+                then    (if (<= (for-pos) framecnt)
+                        then    (set pos (for-pos)) )
+                        (set done (>= (for-pos) framecnt)) )
+                until done )
+        (integerp pos)
+        (av-seek-frame av pos)
+        (av-skip-frame av (- framecnt pos)) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
