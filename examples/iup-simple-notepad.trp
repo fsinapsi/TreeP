@@ -30,21 +30,19 @@
 
         (= button (cmacro IUP_BUTTON1))
         (= pressed 1)
-        ; (iup-set-callback l "BUTTON_CB")
         (set u (iup-get-attribute l "ANIMATION_HANDLE"))
-        ; (= (iup-get-child-count u) 30)
+        (= (iup-get-child-count u) 30)
         (for i in 1 .. 30 do
                 (close <u 0>) )
+        (close u)
         (set i (iup-get-parent l))
-        (close u (iup-get-brother l))
-        ; (iup-detach l)
-        (close l)
+        (iup-detach l)
+   ;     (close l)
         (set l (iup-label))
         (iup-set-attribute-handle l "IMAGE"
                 (iup-image-rgba (pix-load-static "pics/splat2.png")) )
-        (iup-append i l)
-        (iup-map l)
-        (set l (iup-fill))
+        (iup-set-str-attribute l "ALIGNMENT" "ACENTER:ACENTER")
+        (iup-set-str-attribute l "EXPAND" "VERTICAL")
         (iup-append i l)
         (iup-map l)
         (iup-refresh i) )
@@ -376,7 +374,8 @@
                 (cmacro K_cS)   (item-saveas-cb self)
                 (cmacro K_cF)   (item-find-cb self)
                 (cmacro K_cG)   (item-goto-cb self)
-                (cmacro K_cQ)   (fail) ))
+                (cmacro K_cQ)   (iup-exit-loop)
+                default         (fail) ))
 
 (defnet caret-label-cb (self lin col)
         (iup-set-str-attribute (iup-get-dialog-child self "STATUSBAR")
@@ -403,6 +402,7 @@
 
         (set text (iup-text))
         (iup-set-str-attribute text "MULTILINE" "YES")
+        (iup-set-str-attribute text "READONLY" "NO")
         (iup-set-str-attribute text "EXPAND" "YES")
         (iup-set-str-attribute text "WORDWRAP" "YES")
         (iup-set-str-attribute text "FORMATTING" "YES")
@@ -418,14 +418,14 @@
 
         (set item-open (iup-item "&Apri...\tCtrl+O"))
         (set btn-open (iup-button))
-        (iup-set-str-attribute btn-open "IMAGE" "IUP_FileOpen")
+        (iup-set-attribute-handle btn-open "IMAGE" (iup-image-rgba (pix-load-static "22x22/document-open-5.png")))
         (iup-set-str-attribute btn-open "FLAT" "YES")
         (iup-set-str-attribute btn-open "TIP" "Apri (Ctrl+O)")
         (iup-set-str-attribute btn-open "CANFOCUS" "NO")
 
         (set item-saveas (iup-item "&Salva come...\tCtrl+S"))
         (set btn-save (iup-button))
-        (iup-set-str-attribute btn-save "IMAGE" "IUP_FileSave")
+        (iup-set-attribute-handle btn-save "IMAGE" (iup-image-rgba (pix-load-static "22x22/document-save-5.png")))
         (iup-set-str-attribute btn-save "FLAT" "YES")
         (iup-set-str-attribute btn-save "TIP" "Salva (Ctrl+S)")
         (iup-set-str-attribute btn-save "CANFOCUS" "NO")
@@ -434,7 +434,7 @@
 
         (set item-find (iup-item "&Trova...\tCtrl+F"))
         (set btn-find (iup-button))
-        (iup-set-str-attribute btn-find "IMAGE" "IUP_EditFind")
+        (iup-set-attribute-handle btn-find "IMAGE" (iup-image-rgba (pix-load-static "22x22/configure-2.png")))
         (iup-set-str-attribute btn-find "FLAT" "YES")
         (iup-set-str-attribute btn-find "TIP" "Cerca (Ctrl+F)")
         (iup-set-str-attribute btn-find "CANFOCUS" "NO")
@@ -514,10 +514,12 @@
         (set i (iup-animated-label i))
         (iup-set-int i "FRAMETIME" 110)
         (iup-set-int i "START" 0)
+        (iup-set-str-attribute i "ALIGNMENT" "ACENTER:ACENTER")
+        (iup-set-str-attribute i "EXPAND" "VERTICAL")
 
         (set dlg (iup-dialog (iup-vbox
                 toolbar-hb
-                (iup-hbox (iup-vbox (iup-fill) i (iup-fill)) text)
+                (iup-hbox (iup-vbox i) text)
                 lbl-statusbar )))
 
         (iup-set-callback i "BUTTON_CB" (netptr bug-cb))
@@ -567,7 +569,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun initial-text () "")
-;(defun initial-text- () (str-load-static "cecioni-monastra"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

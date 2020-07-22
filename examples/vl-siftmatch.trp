@@ -10,7 +10,11 @@
 (defnet vl-siftmatch ()
         (deflocal pix pix1 pix2 filt1 filt2 m sh i)
 
-        (print "VLFeat version " (vl-version) nl)
+        (print "VLFeat configuration: " (vl-configuration)
+               "SIMD enabled: " (vl-get-simd-enabled) nl
+               "SSE2: " (vl-cpu-has-sse2) nl
+               "SSE3: " (vl-cpu-has-sse3) nl
+               "AVX: " (vl-cpu-has-avx) nl )
 
         (if (<> (argc) 3)
         then    (usage) )

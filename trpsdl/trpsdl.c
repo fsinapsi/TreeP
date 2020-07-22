@@ -77,7 +77,9 @@ static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns
     if ( strncmp( h->chunk_id, "fmt ", 4 ) )
         return 1;
     memset( wav_spec, 0, sizeof( SDL_AudioSpec ) );
-    wav_spec->format = ( h->bits_per_sample | 0x8000 );
+    wav_spec->format = h->bits_per_sample;
+    if ( h->bits_per_sample > 8 )
+        wav_spec->format |= SDL_AUDIO_MASK_SIGNED;
     wav_spec->freq = h->sample_rate;
     wav_spec->channels = h->num_channels;
     wav_spec->samples = 4096;

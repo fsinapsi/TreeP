@@ -1079,31 +1079,32 @@ uns8b trp_pix_draw_text( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *
 
 void trp_compiler_exit();
 
-static uns8b *_constc[1280]={
-  "\015\006\000\000\000\144\141\162\167\151\156",
-  "\015\001\000\000\000\057",
+static uns8b *_constc[1284]={
   "\015\001\000\000\000\056",
+  "\015\002\000\000\000\056\056",
+  "\015\004\000\000\000\110\117\115\105",
+  "\015\006\000\000\000\056\164\162\145\145\160",
+  "\015\004\000\000\000\057\164\155\160",
+  "\005\004\000\000\000\000\000\000\000",
   "\015\030\000\000\000\167\144\057\160\162\157\147\162\141\155" \
   "\155\151\156\147\057\164\162\145\145\160\057\164\162\160",
-  "\015\006\000\000\000\056\164\162\145\145\160",
-  "\170\332\343\344\145\000\002\116\136\166\040\251\237\234\237" \
-  "\233\233\237\307\311\313\006\342\144\046\347\347\025\163\362" \
-  "\362\042\044\040\102\014\214\000\326\343\012\172",
-  "\015\001\000\000\000\012",
-  "\015\001\000\000\000\015",
-  "\011\002\056\011\002\053\011\002\055\011\002\137\011\002\075" \
-  "\011\002\057\000\001",
+  "\015\001\000\000\000\057",
+  "\170\332\343\344\145\000\002\116\136\166\040\231\234\237\233" \
+  "\233\237\247\317\311\313\006\344\144\046\347\347\025\353\103" \
+  "\044\212\363\113\363\122\100\034\136\204\052\230\074\037\102" \
+  "\010\252\214\201\021\000\257\355\023\011",
   "\005\064\000\000\000\000\000\000\000",
   "\005\032\000\000\000\000\000\000\000",
   "\007\000\001\000\000\000\001\001\000\000\000\004",
-  "\015\002\000\000\000\056\056",
-  "\005\004\000\000\000\000\000\000\000",
-  "\015\005\000\000\000\057\164\155\160\057",
+  "\011\002\056\011\002\053\011\002\055\011\002\137\011\002\075" \
+  "\011\002\057\000\001",
+  "\015\001\000\000\000\012",
+  "\015\001\000\000\000\015",
+  "\015\006\000\000\000\144\141\162\167\151\156",
   "\015\005\000\000\000\057\146\151\146\157",
   "\015\003\000\000\000\040\076\040",
   "\015\016\000\000\000\040\062\076\057\144\145\166\057\156\165" \
   "\154\154\040\046",
-  "\015\004\000\000\000\110\117\115\105",
   "\015\006\000\000\000\156\165\155\145\162\157",
   "\005\060\000\000\000\000\000\000\000",
   "\005\020\000\000\000\000\000\000\000",
@@ -1538,20 +1539,23 @@ static uns8b *_constc[1280]={
   "\015\007\000\000\000\164\162\160\137\143\166\137",
   "\015\002\000\000\000\143\166",
   "\015\003\000\000\000\166\154\055",
-  "\170\332\225\322\355\016\202\040\024\200\141\254\130\321\162" \
-  "\325\372\270\013\056\312\351\021\316\124\160\302\264\272\372" \
-  "\334\112\302\115\226\362\107\176\274\017\162\234\214\305\133" \
-  "\102\110\013\215\101\255\030\045\337\365\333\221\210\261\170" \
-  "\327\077\015\346\226\053\350\030\245\056\242\176\164\033\042" \
-  "\001\226\353\324\046\055\160\124\031\074\030\215\234\210\174" \
-  "\161\366\205\372\020\023\254\247\316\317\261\061\166\221\350" \
-  "\060\263\062\050\356\023\102\002\012\031\176\311\151\064\104" \
-  "\011\055\224\341\031\056\243\270\200\147\255\121\331\160\177" \
-  "\365\373\032\222\202\133\331\200\221\363\000\144\002\026\001" \
-  "\245\233\352\037\070\372\240\112\204\302\174\336\341\135\377" \
-  "\063\350\216\033\174\101\020\034\174\040\114\377\141\126\056" \
-  "\134\371\341\176\010\253\304\246\375\145\327\056\333\270\214" \
-  "\104\157\363\316\155\326",
+  "\170\332\225\322\335\116\303\040\024\300\161\072\155\024\135" \
+  "\343\214\037\157\301\215\076\021\226\123\070\131\013\015\207" \
+  "\265\352\323\313\242\103\226\014\355\172\103\057\176\377\123" \
+  "\150\340\274\271\142\214\115\340\011\235\345\065\373\171\176" \
+  "\337\130\305\171\323\304\265\165\266\103\275\363\062\374\045" \
+  "\067\161\325\020\004\341\240\004\130\371\326\203\052\342\365" \
+  "\176\354\270\023\106\222\040\202\227\245\360\265\010\157\063" \
+  "\050\247\367\242\273\216\053\141\027\204\205\231\327\165\102" \
+  "\165\216\236\016\150\177\040\327\006\071\201\100\253\040\216" \
+  "\255\122\121\345\305\175\136\330\357\204\212\372\324\374\016" \
+  "\075\205\263\212\031\125\060\305\342\371\104\141\000\265\051" \
+  "\177\144\163\164\210\036\046\350\313\147\170\070\302\133\370" \
+  "\030\035\332\120\366\217\271\037\101\156\105\060\036\310\054" \
+  "\013\100\151\070\053\260\316\017\377\005\167\171\060\110\155" \
+  "\261\133\066\174\216\227\301\315\361\252\177\102\061\130\347" \
+  "\201\246\370\143\126\011\256\162\170\163\200\203\014\155\334" \
+  "\354\105\142\227\211\261\352\013\052\302\207\260",
   "\015\007\000\000\000\164\162\160\137\166\154\137",
   "\015\006\000\000\000\166\154\146\145\141\164",
   "\015\004\000\000\000\155\147\154\055",
@@ -3001,15 +3005,15 @@ static uns8b *_constc[1280]={
   "\015\003\000\000\000\060\056\060",
   "\015\016\000\000\000\143\157\155\160\151\154\145\040\164\151" \
   "\155\145\072\040",
-  "\003\344\007\007\015\022\055\000\007\000\002\000\000\000\236" \
-  "\221\003\000\000\000\007\241\040\340\343\377\377",
+  "\003\344\007\007\026\020\033\041\007\000\003\000\000\000\001" \
+  "\007\043\003\000\000\000\003\320\220\340\343\377\377",
   "\015\014\000\000\000\143\157\155\160\151\154\145\144\040\157" \
   "\156\040",
   "\015\113\000\000\000\114\151\156\165\170\040\170\070\066\137" \
-  "\066\064\040\065\056\067\056\067\055\141\162\143\150\061\055" \
+  "\066\064\040\065\056\067\056\071\055\141\162\143\150\061\055" \
   "\061\040\050\043\061\040\123\115\120\040\120\122\105\105\115" \
-  "\120\124\040\127\145\144\054\040\060\061\040\112\165\154\040" \
-  "\062\060\062\060\040\061\064\072\065\063\072\061\066\040\053" \
+  "\120\124\040\124\150\165\054\040\061\066\040\112\165\154\040" \
+  "\062\060\062\060\040\061\071\072\063\064\072\064\071\040\053" \
   "\060\060\060\060\051",
   "\015\002\000\000\000\040\050",
   "\015\005\000\000\000\055\142\151\164\051",
@@ -3208,8 +3212,9 @@ static uns8b *_constc[1280]={
   "\015\011\000\000\000\040\055\154\164\162\160\141\166\151",
   "\015\025\000\000\000\040\055\154\164\162\160\151\144\063\164" \
   "\141\147\040\055\154\151\144\063\164\141\147",
-  "\015\023\000\000\000\040\055\154\164\162\160\155\141\147\151" \
-  "\143\040\055\154\155\141\147\151\143",
+  "\015\010\000\000\000\154\151\142\155\141\147\151\143",
+  "\015\013\000\000\000\040\055\154\164\162\160\155\141\147\151" \
+  "\143",
   "\015\007\000\000\000\154\151\142\145\170\151\146",
   "\015\012\000\000\000\040\055\154\164\162\160\145\170\151\146",
   "\015\026\000\000\000\040\055\154\164\162\160\161\165\151\162" \
@@ -3299,17 +3304,27 @@ static uns8b *_constc[1280]={
   "\153\057\167\144\057\160\162\157\147\162\141\155\155\151\156" \
   "\147\057\155\151\156\147\167\055\167\066\064\057\066\064\057" \
   "\142\151\156",
-  "\015\004\000\000\000\040\075\076\040",
-  "\015\011\000\000\000\156\157\164\040\146\157\165\156\144",
-  "\015\003\000\000\000\143\160\040",
-  "\015\002\000\000\000\040\056",
-  "\015\016\000\000\000\154\151\142\155\141\147\151\143\055\061" \
-  "\056\144\154\154",
   "\015\063\000\000\000\143\160\040\057\150\157\155\145\057\146" \
   "\162\141\156\153\057\167\144\057\160\162\157\147\162\141\155" \
   "\155\151\156\147\057\155\151\156\147\167\055\167\066\064\057" \
   "\155\141\147\151\143\056\155\147\143\040\056",
+  "\015\061\000\000\000\143\160\040\057\150\157\155\145\057\146" \
+  "\162\141\156\153\057\167\144\057\160\162\157\147\162\141\155" \
+  "\155\151\156\147\057\155\151\156\147\167\055\167\066\064\057" \
+  "\143\157\156\146\151\147\066\040\056",
+  "\170\332\343\344\025\143\140\140\310\311\114\112\057\053\310" \
+  "\051\115\317\314\213\117\316\057\112\325\065\323\113\311\311" \
+  "\341\344\225\101\223\113\311\057\211\317\111\254\314\057\055" \
+  "\201\251\220\103\123\221\227\232\130\222\217\246\106\034\115" \
+  "\115\101\142\136\172\076\104\222\201\021\000\070\022\051\023",
+  "\015\004\000\000\000\040\075\076\040",
+  "\015\011\000\000\000\156\157\164\040\146\157\165\156\144",
   "\015\010\000\000\000\040\055\163\040\052\144\154\154",
+  "\015\007\000\000\000\154\145\163\163\143\141\162",
+  "\015\015\000\000\000\043\040\156\157\164\040\146\157\165\156" \
+  "\144\072\040",
+  "\015\003\000\000\000\143\160\040",
+  "\015\002\000\000\000\040\056",
   "\015\025\000\000\000\167\141\162\156\151\156\147\072\040\165" \
   "\156\165\163\145\144\040\156\145\164\040\140",
   "\015\032\000\000\000\167\141\162\156\151\156\147\072\040\165" \
@@ -4973,56 +4988,59 @@ static uns8b *_constc[1280]={
   "\372\110\132\320\274\233\262\271\001\331\034\250\111\124\305" \
   "\146\235\243\240\317\076\330\135\370\164\174\227\100\057\370" \
   "\067\365\153\077\223",
-  "\170\332\245\226\135\157\332\060\024\206\173\273\110\373\017" \
-  "\147\352\015\105\014\030\323\244\252\235\046\061\124\132\244" \
-  "\216\242\020\124\161\025\231\344\044\366\232\330\221\355\220" \
-  "\262\137\277\223\100\325\146\343\103\320\136\365\034\373\175" \
-  "\174\076\025\076\176\373\160\166\326\151\072\100\177\236\106" \
-  "\234\200\233\113\360\104\212\060\315\263\114\151\133\035\015" \
-  "\124\266\322\042\346\026\032\203\013\350\165\273\227\237\173" \
-  "\335\136\027\206\232\311\047\230\012\311\062\043\234\065\205" \
-  "\013\003\231\126\261\146\051\320\277\021\121\301\250\310\026" \
-  "\114\343\025\254\124\016\001\223\240\061\024\306\152\261\310" \
-  "\055\202\260\300\144\330\121\032\122\025\212\150\125\201\310" \
-  "\231\313\020\065\130\216\140\121\247\006\124\124\031\267\343" \
-  "\031\334\242\104\315\022\230\344\213\104\004\160\057\002\224" \
-  "\006\201\321\333\245\307\160\014\141\261\006\225\222\141\031" \
-  "\305\164\023\005\014\025\221\231\025\112\266\000\005\235\153" \
-  "\130\242\066\144\303\327\227\107\066\304\026\050\135\121\032" \
-  "\314\226\301\153\120\131\051\274\240\210\127\220\060\373\252" \
-  "\155\157\057\300\153\236\041\010\131\261\271\312\050\045\116" \
-  "\104\112\262\020\111\002\013\204\334\140\224\047\255\212\101" \
-  "\267\341\161\344\335\075\314\074\350\217\347\360\330\167\335" \
-  "\376\330\233\137\323\155\313\025\235\342\022\327\054\221\146" \
-  "\211\040\064\045\106\315\260\053\212\277\102\374\272\161\007" \
-  "\167\244\351\377\034\335\217\274\071\245\001\303\221\067\276" \
-  "\231\116\141\370\340\102\037\046\175\327\033\015\146\367\175" \
-  "\027\046\063\167\362\060\275\151\003\114\261\014\014\053\302" \
-  "\236\062\107\125\253\250\222\041\132\046\022\263\111\175\116" \
-  "\315\065\024\136\022\002\147\113\244\046\007\050\226\024\034" \
-  "\203\200\046\350\160\377\052\012\113\224\214\253\104\351\366" \
-  "\153\055\051\272\121\004\122\331\026\030\212\362\073\267\066" \
-  "\273\352\164\212\242\150\307\062\157\053\035\167\222\065\305" \
-  "\164\176\264\235\146\307\161\316\105\104\023\024\201\357\133" \
-  "\235\055\223\010\231\365\175\356\234\223\117\110\374\327\355" \
-  "\344\322\134\056\200\174\376\062\361\205\024\266\161\161\355" \
-  "\224\246\132\374\366\055\064\067\047\233\166\157\077\064\042" \
-  "\262\276\304\242\001\157\316\212\326\133\213\327\054\025\130" \
-  "\052\225\251\371\022\352\156\122\167\051\077\245\341\241\047" \
-  "\153\101\126\257\031\264\176\206\354\311\267\134\243\341\265" \
-  "\227\243\032\144\111\005\337\211\300\060\306\167\042\244\322" \
-  "\351\073\021\051\213\245\210\116\125\027\102\206\252\040\373" \
-  "\017\236\202\240\111\013\320\030\077\022\332\130\177\335\231" \
-  "\075\234\114\074\357\347\110\174\336\216\331\056\243\145\302" \
-  "\300\376\177\163\307\224\305\370\002\247\141\015\361\371\050" \
-  "\241\334\314\335\051\257\125\345\071\105\130\210\320\362\123" \
-  "\204\034\313\217\317\161\011\256\227\350\070\315\023\256\062" \
-  "\045\244\075\116\266\163\371\016\350\166\156\334\301\336\355" \
-  "\130\263\003\272\155\273\165\100\262\163\241\016\350\142\143" \
-  "\366\054\116\325\232\355\073\220\062\033\160\332\004\023\350" \
-  "\303\233\267\043\200\212\121\127\177\251\311\243\136\315\014" \
-  "\322\254\146\123\151\113\272\163\216\222\176\215\100\247\011" \
-  "\237\352\237\012\240\217\313\137\251\001\072\067",
+  "\170\332\245\226\315\156\332\100\020\307\163\255\245\276\303" \
+  "\124\271\020\104\161\112\056\121\122\125\242\050\044\110\051" \
+  "\101\174\050\342\144\055\366\330\273\215\275\153\355\256\061" \
+  "\364\165\373\042\035\033\252\304\255\001\101\162\312\314\316" \
+  "\377\267\063\073\063\062\037\177\177\070\073\163\233\016\320" \
+  "\337\124\043\216\140\234\111\230\212\004\141\222\245\251\322" \
+  "\266\074\352\251\164\255\105\304\055\064\172\027\320\271\274" \
+  "\274\376\334\271\354\134\102\137\063\371\002\023\041\131\152" \
+  "\204\263\241\160\141\040\325\052\322\054\001\372\067\044\052" \
+  "\030\025\332\234\151\274\201\265\312\300\147\022\064\006\302" \
+  "\130\055\026\231\105\020\026\230\014\134\245\041\121\201\010" \
+  "\327\045\210\234\231\014\120\203\345\010\026\165\142\100\205" \
+  "\245\161\077\234\301\075\112\324\054\206\121\266\210\205\017" \
+  "\217\302\107\151\020\030\335\135\170\014\307\000\026\033\120" \
+  "\041\351\027\131\114\266\131\100\137\021\231\131\241\144\013" \
+  "\120\320\271\206\045\152\103\066\134\375\275\144\113\154\201" \
+  "\322\045\245\301\154\221\274\006\225\026\302\013\312\170\015" \
+  "\061\263\257\332\166\375\003\274\326\031\200\220\045\233\253" \
+  "\224\112\342\104\244\042\163\021\307\260\100\310\014\206\131" \
+  "\334\052\031\024\015\317\203\351\303\323\154\012\335\341\034" \
+  "\236\273\343\161\167\070\235\337\122\264\345\212\116\161\211" \
+  "\033\226\110\322\130\020\232\012\243\146\330\065\345\137\042" \
+  "\176\334\215\173\017\244\351\176\037\074\016\246\163\052\003" \
+  "\372\203\351\360\156\062\201\376\323\030\272\060\352\216\247" \
+  "\203\336\354\261\073\206\321\154\074\172\232\334\265\001\046" \
+  "\130\044\206\045\141\317\063\207\145\253\350\045\003\264\114" \
+  "\304\146\133\372\234\232\153\050\275\070\000\316\226\110\115" \
+  "\366\121\054\051\071\006\076\115\320\341\376\225\024\026\053" \
+  "\031\225\205\122\364\353\133\122\166\203\020\244\262\055\060" \
+  "\224\345\127\156\155\172\343\272\171\236\267\043\231\265\225" \
+  "\216\334\170\103\061\356\267\266\323\164\035\347\134\204\064" \
+  "\101\041\170\236\325\351\062\016\221\131\317\343\316\071\371" \
+  "\204\304\177\335\116\046\315\365\002\310\347\055\143\117\110" \
+  "\141\033\027\267\116\141\252\305\117\317\102\163\173\262\155" \
+  "\167\375\241\257\144\050\242\114\227\323\125\037\022\241\365" \
+  "\214\110\002\017\045\133\304\030\354\000\245\231\307\231\361" \
+  "\214\301\316\301\210\253\375\021\154\271\252\017\060\042\264" \
+  "\236\304\274\001\157\316\362\326\133\213\127\054\345\133\152" \
+  "\254\251\370\142\232\305\270\352\122\136\102\243\116\127\126" \
+  "\236\264\274\315\120\365\051\262\027\317\162\215\206\127\156" \
+  "\016\053\220\045\215\307\116\004\006\021\276\023\041\225\116" \
+  "\336\211\110\130\044\105\170\252\072\027\062\120\071\331\277" \
+  "\360\024\004\355\205\217\306\170\241\320\306\172\233\316\354" \
+  "\341\244\142\265\237\043\161\125\217\251\227\321\352\243\157" \
+  "\377\217\334\061\145\305\324\157\340\264\132\001\256\216\022" \
+  "\312\355\334\235\162\133\371\074\247\010\163\021\130\176\212" \
+  "\220\143\361\251\074\256\300\315\022\035\247\171\301\165\252" \
+  "\204\264\307\311\166\056\337\001\335\316\215\073\330\273\035" \
+  "\153\166\100\127\267\133\007\044\073\027\352\200\056\062\146" \
+  "\317\342\224\255\251\337\201\204\131\237\323\046\030\137\037" \
+  "\336\274\035\011\224\214\252\372\113\105\036\166\052\246\237" \
+  "\244\025\233\236\266\240\073\347\050\351\267\023\270\115\370" \
+  "\124\375\260\001\175\012\377\000\053\345\172\340",
   "\170\332\255\225\135\157\332\060\024\206\173\071\105\332\177" \
   "\070\123\157\050\142\120\165\067\125\073\115\142\250\164\110" \
   "\035\105\001\124\161\025\071\311\111\342\326\261\075\333\201" \
@@ -5437,26 +5455,26 @@ static uns8b *_constc[1280]={
   "\015\002\000\000\000\052\057"
 };
 
-static trp_raw_t _constr[1280]={
+static trp_raw_t _constr[1284]={
+  {TRP_RAW,1,13,0,6,6,NULL},
+  {TRP_RAW,1,13,0,7,7,NULL},
+  {TRP_RAW,1,13,0,9,9,NULL},
   {TRP_RAW,1,13,0,11,11,NULL},
-  {TRP_RAW,1,13,0,6,6,NULL},
-  {TRP_RAW,1,13,0,6,6,NULL},
+  {TRP_RAW,1,13,0,9,9,NULL},
+  {TRP_RAW,1,5,0,9,9,NULL},
   {TRP_RAW,1,13,0,29,29,NULL},
-  {TRP_RAW,1,13,0,11,11,NULL},
-  {TRP_RAW,2,9,9,42,52,NULL},
   {TRP_RAW,1,13,0,6,6,NULL},
-  {TRP_RAW,1,13,0,6,6,NULL},
-  {TRP_RAW,1,9,0,20,20,NULL},
+  {TRP_RAW,2,9,9,55,85,NULL},
   {TRP_RAW,1,5,0,9,9,NULL},
   {TRP_RAW,1,5,0,9,9,NULL},
   {TRP_RAW,1,7,0,12,12,NULL},
-  {TRP_RAW,1,13,0,7,7,NULL},
-  {TRP_RAW,1,5,0,9,9,NULL},
-  {TRP_RAW,1,13,0,10,10,NULL},
+  {TRP_RAW,1,9,0,20,20,NULL},
+  {TRP_RAW,1,13,0,6,6,NULL},
+  {TRP_RAW,1,13,0,6,6,NULL},
+  {TRP_RAW,1,13,0,11,11,NULL},
   {TRP_RAW,1,13,0,10,10,NULL},
   {TRP_RAW,1,13,0,8,8,NULL},
   {TRP_RAW,1,13,0,19,19,NULL},
-  {TRP_RAW,1,13,0,9,9,NULL},
   {TRP_RAW,1,13,0,11,11,NULL},
   {TRP_RAW,1,5,0,9,9,NULL},
   {TRP_RAW,1,5,0,9,9,NULL},
@@ -5602,7 +5620,7 @@ static trp_raw_t _constr[1280]={
   {TRP_RAW,1,13,0,12,12,NULL},
   {TRP_RAW,1,13,0,7,7,NULL},
   {TRP_RAW,1,13,0,8,8,NULL},
-  {TRP_RAW,2,9,9,201,735,NULL},
+  {TRP_RAW,2,9,9,252,944,NULL},
   {TRP_RAW,1,13,0,12,12,NULL},
   {TRP_RAW,1,13,0,11,11,NULL},
   {TRP_RAW,1,13,0,9,9,NULL},
@@ -6403,7 +6421,7 @@ static trp_raw_t _constr[1280]={
   {TRP_RAW,1,13,0,15,15,NULL},
   {TRP_RAW,1,13,0,8,8,NULL},
   {TRP_RAW,1,13,0,19,19,NULL},
-  {TRP_RAW,1,3,0,27,27,NULL},
+  {TRP_RAW,1,3,0,28,28,NULL},
   {TRP_RAW,1,13,0,17,17,NULL},
   {TRP_RAW,1,13,0,80,80,NULL},
   {TRP_RAW,1,13,0,7,7,NULL},
@@ -6512,7 +6530,8 @@ static trp_raw_t _constr[1280]={
   {TRP_RAW,1,13,0,14,14,NULL},
   {TRP_RAW,1,13,0,14,14,NULL},
   {TRP_RAW,1,13,0,26,26,NULL},
-  {TRP_RAW,1,13,0,24,24,NULL},
+  {TRP_RAW,1,13,0,13,13,NULL},
+  {TRP_RAW,1,13,0,16,16,NULL},
   {TRP_RAW,1,13,0,12,12,NULL},
   {TRP_RAW,1,13,0,15,15,NULL},
   {TRP_RAW,1,13,0,27,27,NULL},
@@ -6559,13 +6578,16 @@ static trp_raw_t _constr[1280]={
   {TRP_RAW,1,13,0,48,48,NULL},
   {TRP_RAW,1,13,0,27,27,NULL},
   {TRP_RAW,1,13,0,48,48,NULL},
+  {TRP_RAW,1,13,0,56,56,NULL},
+  {TRP_RAW,1,13,0,54,54,NULL},
+  {TRP_RAW,2,9,9,75,129,NULL},
   {TRP_RAW,1,13,0,9,9,NULL},
   {TRP_RAW,1,13,0,14,14,NULL},
+  {TRP_RAW,1,13,0,13,13,NULL},
+  {TRP_RAW,1,13,0,12,12,NULL},
+  {TRP_RAW,1,13,0,18,18,NULL},
   {TRP_RAW,1,13,0,8,8,NULL},
   {TRP_RAW,1,13,0,7,7,NULL},
-  {TRP_RAW,1,13,0,19,19,NULL},
-  {TRP_RAW,1,13,0,56,56,NULL},
-  {TRP_RAW,1,13,0,13,13,NULL},
   {TRP_RAW,1,13,0,26,26,NULL},
   {TRP_RAW,1,13,0,31,31,NULL},
   {TRP_RAW,1,13,0,29,29,NULL},
@@ -6633,7 +6655,7 @@ static trp_raw_t _constr[1280]={
   {TRP_RAW,2,13,9,514,878,NULL},
   {TRP_RAW,2,13,9,721,1786,NULL},
   {TRP_RAW,2,13,9,710,1695,NULL},
-  {TRP_RAW,2,13,9,747,2362,NULL},
+  {TRP_RAW,2,13,9,792,2536,NULL},
   {TRP_RAW,2,13,9,722,2301,NULL},
   {TRP_RAW,2,13,9,842,2166,NULL},
   {TRP_RAW,2,13,9,520,875,NULL},
@@ -6722,229 +6744,245 @@ static trp_raw_t _constr[1280]={
 
 static trp_obj_t *_glb[43];
 
-static uns8b net_8(trp_obj_t **);
-static uns8b net_34(trp_obj_t *);
-static uns8b net_22(trp_obj_t *);
-static uns8b net_133(trp_obj_t *);
-static uns8b net_150(trp_obj_t *,trp_obj_t **);
-static uns8b net_142();
-static uns8b net_136();
-static uns8b net_152(trp_obj_t **);
-static uns8b net_154();
-static uns8b net_159();
+static trp_obj_t *_funptr[1];
+
+static uns8b net_28(trp_obj_t *);
+static uns8b net_44(trp_obj_t *);
 static uns8b net_161();
+static uns8b net_4(trp_obj_t **);
+static uns8b net_2(trp_obj_t **);
+static uns8b net_13(trp_obj_t *,trp_obj_t **);
+static uns8b net_158(trp_obj_t **);
+static uns8b net_147();
+static uns8b net_141();
+static uns8b net_155(trp_obj_t *,trp_obj_t **);
 static uns8b net_160();
 static uns8b net_165();
-static uns8b net_162(trp_obj_t *);
-static uns8b net_155();
-static uns8b net_163();
-static uns8b net_164(trp_obj_t *);
-static uns8b net_151(trp_obj_t *);
-static uns8b net_39(trp_obj_t *);
-static uns8b net_30(trp_obj_t *);
-static uns8b net_66(trp_obj_t *);
-static uns8b net_48();
-static uns8b net_73(trp_obj_t *,trp_obj_t *);
-static uns8b net_28(trp_obj_t *);
-static uns8b net_69();
-static uns8b net_42(trp_obj_t *);
-static uns8b net_47(trp_obj_t *);
-static uns8b net_51();
-static uns8b net_56(trp_obj_t *);
-static uns8b net_26(trp_obj_t *);
-static uns8b net_57(trp_obj_t *);
-static uns8b net_25(trp_obj_t *);
-static uns8b net_33(trp_obj_t *);
-static uns8b net_43(trp_obj_t *);
-static uns8b net_75(trp_obj_t *);
-static uns8b net_60(trp_obj_t *,trp_obj_t *);
-static uns8b net_59();
-static uns8b net_71();
-static uns8b net_54();
-static uns8b net_31(trp_obj_t *);
-static uns8b net_21(trp_obj_t *);
-static uns8b net_50();
-static uns8b net_62(trp_obj_t *);
-static uns8b net_63(trp_obj_t *);
-static uns8b net_45(trp_obj_t *);
-static uns8b net_32(trp_obj_t *);
-static uns8b net_24(trp_obj_t *);
-static uns8b net_46(trp_obj_t *);
-static uns8b net_65(trp_obj_t *,trp_obj_t *);
-static uns8b net_35(trp_obj_t *,trp_obj_t *);
-static uns8b net_70();
-static uns8b net_55();
-static uns8b net_78();
-static uns8b net_77();
-static uns8b net_79();
-static uns8b net_36(trp_obj_t *);
-static uns8b net_38(trp_obj_t *);
-static uns8b net_37(trp_obj_t *);
-static uns8b net_23(trp_obj_t *);
-static uns8b net_40(trp_obj_t *);
-static uns8b net_74(trp_obj_t *,trp_obj_t *);
-static uns8b net_68(trp_obj_t *);
-static uns8b net_64(trp_obj_t *);
-static uns8b net_67(trp_obj_t *);
-static uns8b net_72(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static uns8b net_76();
-static uns8b net_27(trp_obj_t *);
-static uns8b net_2(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t **);
-static uns8b net_41(trp_obj_t *);
-static uns8b net_58();
-static uns8b net_29(trp_obj_t *);
-static uns8b net_61(trp_obj_t *,trp_obj_t *);
-static uns8b net_44(trp_obj_t *);
-static uns8b net_53(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t **);
-static uns8b net_52(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static uns8b net_49(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static uns8b net_106(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static uns8b net_141(trp_obj_t **,trp_obj_t **);
-static uns8b net_5(trp_obj_t *,trp_obj_t **);
-static uns8b net_144(trp_obj_t *);
-static uns8b net_145(trp_obj_t *);
-static uns8b net_147();
-static uns8b net_146();
-static uns8b net_157();
-static uns8b net_135();
-static uns8b net_80(trp_obj_t *);
-static uns8b net_3(trp_obj_t **,trp_obj_t **);
-static uns8b net_4(trp_obj_t *,trp_obj_t **);
-static uns8b net_138();
-static uns8b net_16();
-static uns8b net_15();
-static uns8b net_10();
-static uns8b net_17();
-static uns8b net_148(trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **);
-static uns8b net_137(trp_obj_t *);
-static uns8b net_156();
-static uns8b net_1(trp_obj_t *,trp_obj_t **,trp_obj_t **);
-static uns8b net_139(trp_obj_t *,trp_obj_t *);
-static uns8b net_167(trp_obj_t *);
-static uns8b net_143(trp_obj_t *,trp_obj_t *,trp_obj_t **);
+static uns8b net_167();
 static uns8b net_166();
-static uns8b net_7(trp_obj_t *);
-static uns8b net_18();
-static uns8b net_0(trp_obj_t *,trp_obj_t **);
-static uns8b net_19();
-static uns8b net_20();
-static uns8b net_90(trp_obj_t *);
-static uns8b net_92(trp_obj_t *);
-static uns8b net_107();
-static uns8b net_9(trp_obj_t *,trp_obj_t **);
-static uns8b net_134();
-static uns8b net_115();
-static uns8b net_128();
-static uns8b net_94(trp_obj_t *);
-static uns8b net_98(trp_obj_t *);
-static uns8b net_121();
-static uns8b net_125();
-static uns8b net_99(trp_obj_t *);
-static uns8b net_96(trp_obj_t *);
-static uns8b net_111();
-static uns8b net_109(trp_obj_t *);
-static uns8b net_124();
-static uns8b net_89(trp_obj_t *);
-static uns8b net_110();
+static uns8b net_171();
+static uns8b net_168(trp_obj_t *);
+static uns8b net_169();
+static uns8b net_170(trp_obj_t *);
+static uns8b net_71(trp_obj_t *);
+static uns8b net_157(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static uns8b net_156(trp_obj_t *);
+static uns8b net_53();
+static uns8b net_138(trp_obj_t *);
+static uns8b net_78(trp_obj_t *,trp_obj_t *);
+static uns8b net_35(trp_obj_t *);
+static uns8b net_33(trp_obj_t *);
+static uns8b net_74();
+static uns8b net_47(trp_obj_t *);
+static uns8b net_52(trp_obj_t *);
+static uns8b net_56();
+static uns8b net_61(trp_obj_t *);
+static uns8b net_31(trp_obj_t *);
+static uns8b net_62(trp_obj_t *);
+static uns8b net_27(trp_obj_t *);
+static uns8b net_30(trp_obj_t *);
+static uns8b net_38(trp_obj_t *);
+static uns8b net_48(trp_obj_t *);
+static uns8b net_80(trp_obj_t *);
+static uns8b net_65(trp_obj_t *,trp_obj_t *);
+static uns8b net_64();
+static uns8b net_76();
+static uns8b net_59();
+static uns8b net_36(trp_obj_t *);
+static uns8b net_26(trp_obj_t *);
+static uns8b net_55();
+static uns8b net_67(trp_obj_t *);
+static uns8b net_68(trp_obj_t *);
+static uns8b net_40(trp_obj_t *,trp_obj_t *);
+static uns8b net_60();
+static uns8b net_37(trp_obj_t *);
+static uns8b net_29(trp_obj_t *);
+static uns8b net_51(trp_obj_t *);
+static uns8b net_50(trp_obj_t *);
+static uns8b net_70(trp_obj_t *,trp_obj_t *);
+static uns8b net_75();
+static uns8b net_83();
+static uns8b net_82();
+static uns8b net_84();
+static uns8b net_45(trp_obj_t *);
+static uns8b net_39(trp_obj_t *);
+static uns8b net_41(trp_obj_t *);
+static uns8b net_43(trp_obj_t *);
+static uns8b net_42(trp_obj_t *);
+static uns8b net_79(trp_obj_t *,trp_obj_t *);
+static uns8b net_73(trp_obj_t *);
+static uns8b net_69(trp_obj_t *);
+static uns8b net_72(trp_obj_t *);
+static uns8b net_77(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static uns8b net_81();
+static uns8b net_32(trp_obj_t *);
 static uns8b net_95(trp_obj_t *);
-static uns8b net_100(trp_obj_t *);
-static uns8b net_81(trp_obj_t *);
-static uns8b net_119();
-static uns8b net_120();
-static uns8b net_113(trp_obj_t *,trp_obj_t *);
-static uns8b net_103(trp_obj_t *);
-static uns8b net_130();
-static uns8b net_102(trp_obj_t *);
-static uns8b net_117(trp_obj_t *);
-static uns8b net_129(trp_obj_t *);
-static uns8b net_131();
-static uns8b net_114();
-static uns8b net_104(trp_obj_t *);
-static uns8b net_122();
-static uns8b net_108(trp_obj_t *);
-static uns8b net_126();
-static uns8b net_127(trp_obj_t *);
-static uns8b net_112();
-static uns8b net_116();
-static uns8b net_101(trp_obj_t *);
-static uns8b net_84(trp_obj_t *);
-static uns8b net_82(trp_obj_t *);
-static uns8b net_97(trp_obj_t *);
-static uns8b net_91(trp_obj_t *);
-static uns8b net_88(trp_obj_t *,trp_obj_t *);
-static uns8b net_87(trp_obj_t *);
-static uns8b net_83(trp_obj_t *);
-static uns8b net_85(trp_obj_t *,trp_obj_t *);
-static uns8b net_86(trp_obj_t *);
-static uns8b net_93(trp_obj_t *);
-static uns8b net_118(trp_obj_t *);
-static uns8b net_6(trp_obj_t *);
-static uns8b net_11(trp_obj_t *,trp_obj_t *);
-static uns8b net_105();
-static uns8b net_123();
-static uns8b net_13(trp_obj_t *);
-static uns8b net_14();
-static uns8b net_12();
-static uns8b net_149();
+static uns8b net_0(trp_obj_t *,trp_obj_t **);
+static uns8b net_3(trp_obj_t **);
+static uns8b net_46(trp_obj_t *);
+static uns8b net_63();
+static uns8b net_34(trp_obj_t *);
+static uns8b net_66(trp_obj_t *,trp_obj_t *);
+static uns8b net_49(trp_obj_t *);
+static uns8b net_58(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t **);
+static uns8b net_57(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static uns8b net_54(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static uns8b net_11(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t **);
+static uns8b net_111(trp_obj_t *,trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static uns8b net_146(trp_obj_t **,trp_obj_t **);
+static uns8b net_149(trp_obj_t *);
+static uns8b net_150(trp_obj_t *);
+static uns8b net_9(trp_obj_t *,trp_obj_t **);
+static uns8b net_21();
 static uns8b net_140();
-static uns8b net_132();
-static uns8b net_158();
-static uns8b net_153(trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static trp_obj_t *fun_3(trp_obj_t *);
-static trp_obj_t *fun_4(trp_obj_t *);
-static trp_obj_t *fun_32();
-static trp_obj_t *fun_26();
-static trp_obj_t *fun_24();
-static trp_obj_t *fun_15();
-static trp_obj_t *fun_35();
-static trp_obj_t *fun_40();
-static trp_obj_t *fun_43();
-static trp_obj_t *fun_42();
-static trp_obj_t *fun_0();
-static trp_obj_t *fun_36();
-static trp_obj_t *fun_29();
-static trp_obj_t *fun_17(trp_obj_t *);
-static trp_obj_t *fun_2(trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static trp_obj_t *fun_10(trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static trp_obj_t *fun_18();
+static uns8b net_151();
+static uns8b net_163();
+static uns8b net_152();
+static uns8b net_15();
+static uns8b net_6(trp_obj_t **);
+static uns8b net_20();
+static uns8b net_142(trp_obj_t *);
+static uns8b net_22();
+static uns8b net_143();
+static uns8b net_148(trp_obj_t *,trp_obj_t *,trp_obj_t **);
+static uns8b net_162();
+static uns8b net_153(trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **,trp_obj_t **);
+static uns8b net_8(trp_obj_t *,trp_obj_t **);
+static uns8b net_172();
+static uns8b net_173(trp_obj_t *);
+static uns8b net_144(trp_obj_t *,trp_obj_t *);
+static uns8b net_12(trp_obj_t **,trp_obj_t **);
+static uns8b net_7(trp_obj_t *,trp_obj_t **);
+static uns8b net_1(trp_obj_t *);
+static uns8b net_10(trp_obj_t *,trp_obj_t **,trp_obj_t **);
+static uns8b net_25();
+static uns8b net_23();
+static uns8b net_24();
+static uns8b net_97(trp_obj_t *);
+static uns8b net_112();
+static uns8b net_14(trp_obj_t *,trp_obj_t **);
+static uns8b net_139();
+static uns8b net_120();
+static uns8b net_133();
+static uns8b net_99(trp_obj_t *);
+static uns8b net_103(trp_obj_t *);
+static uns8b net_126();
+static uns8b net_130();
+static uns8b net_87(trp_obj_t *);
+static uns8b net_105(trp_obj_t *);
+static uns8b net_85(trp_obj_t *);
+static uns8b net_104(trp_obj_t *);
+static uns8b net_101(trp_obj_t *);
+static uns8b net_116();
+static uns8b net_114(trp_obj_t *);
+static uns8b net_129();
+static uns8b net_94(trp_obj_t *);
+static uns8b net_86(trp_obj_t *);
+static uns8b net_124();
+static uns8b net_125();
+static uns8b net_118(trp_obj_t *,trp_obj_t *);
+static uns8b net_108(trp_obj_t *);
+static uns8b net_109(trp_obj_t *);
+static uns8b net_100(trp_obj_t *);
+static uns8b net_135();
+static uns8b net_107(trp_obj_t *);
+static uns8b net_122(trp_obj_t *);
+static uns8b net_134(trp_obj_t *);
+static uns8b net_136();
+static uns8b net_119();
+static uns8b net_127();
+static uns8b net_113(trp_obj_t *);
+static uns8b net_131();
+static uns8b net_132(trp_obj_t *);
+static uns8b net_102(trp_obj_t *);
+static uns8b net_117();
+static uns8b net_121();
+static uns8b net_115();
+static uns8b net_96(trp_obj_t *);
+static uns8b net_5(trp_obj_t **);
+static uns8b net_89(trp_obj_t *);
+static uns8b net_93(trp_obj_t *,trp_obj_t *);
+static uns8b net_92(trp_obj_t *);
+static uns8b net_88(trp_obj_t *);
+static uns8b net_98(trp_obj_t *);
+static uns8b net_90(trp_obj_t *,trp_obj_t *);
+static uns8b net_91(trp_obj_t *);
+static uns8b net_123(trp_obj_t *);
+static uns8b net_128();
+static uns8b net_106(trp_obj_t *);
+static uns8b net_110();
+static uns8b net_19();
+static uns8b net_16(trp_obj_t *,trp_obj_t *);
+static uns8b net_18(trp_obj_t *);
+static uns8b net_17();
+static uns8b net_137();
+static uns8b net_154();
+static uns8b net_164();
+static uns8b net_145();
+static uns8b net_159(trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_13(trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_4();
+static trp_obj_t *fun_1();
+static trp_obj_t *fun_19(trp_obj_t *);
 static trp_obj_t *fun_22();
-static trp_obj_t *fun_13(trp_obj_t *);
-static trp_obj_t *fun_27();
-static trp_obj_t *fun_21();
-static trp_obj_t *fun_19();
-static trp_obj_t *fun_11(trp_obj_t *,trp_obj_t *,trp_obj_t *);
-static trp_obj_t *fun_16();
-static trp_obj_t *fun_39();
-static trp_obj_t *fun_28();
-static trp_obj_t *fun_38();
-static trp_obj_t *fun_6(trp_obj_t *);
-static trp_obj_t *fun_30();
-static trp_obj_t *fun_45(trp_obj_t *);
+static trp_obj_t *fun_42();
 static trp_obj_t *fun_31();
-static trp_obj_t *fun_44(trp_obj_t *,trp_obj_t *);
-static trp_obj_t *fun_46(trp_obj_t *);
-static trp_obj_t *fun_7();
-static trp_obj_t *fun_9(trp_obj_t *);
-static trp_obj_t *fun_5();
-static trp_obj_t *fun_12(trp_obj_t *);
-static trp_obj_t *fun_1(trp_obj_t *);
-static trp_obj_t *fun_8(trp_obj_t *,trp_obj_t *);
-static trp_obj_t *fun_41();
-static trp_obj_t *fun_23();
 static trp_obj_t *fun_33();
-static trp_obj_t *fun_14(trp_obj_t *);
-static trp_obj_t *fun_20();
-static trp_obj_t *fun_37();
+static trp_obj_t *fun_39();
+static trp_obj_t *fun_47();
+static trp_obj_t *fun_50();
+static trp_obj_t *fun_49();
+static trp_obj_t *fun_17();
+static trp_obj_t *fun_43();
+static trp_obj_t *fun_24(trp_obj_t *);
+static trp_obj_t *fun_2();
+static trp_obj_t *fun_15(trp_obj_t *);
+static trp_obj_t *fun_16(trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_36();
 static trp_obj_t *fun_25();
+static trp_obj_t *fun_29();
 static trp_obj_t *fun_34();
+static trp_obj_t *fun_3(trp_obj_t *);
+static trp_obj_t *fun_12(trp_obj_t *,trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_7();
+static trp_obj_t *fun_14(trp_obj_t *);
+static trp_obj_t *fun_18(trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_23();
+static trp_obj_t *fun_26();
+static trp_obj_t *fun_46();
+static trp_obj_t *fun_35();
+static trp_obj_t *fun_28();
+static trp_obj_t *fun_45();
+static trp_obj_t *fun_51(trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_52(trp_obj_t *);
+static trp_obj_t *fun_38();
+static trp_obj_t *fun_53(trp_obj_t *);
+static trp_obj_t *fun_11(trp_obj_t *);
+static trp_obj_t *fun_37();
+static trp_obj_t *fun_9();
+static trp_obj_t *fun_20(trp_obj_t *);
+static trp_obj_t *fun_0(trp_obj_t *);
+static trp_obj_t *fun_8(trp_obj_t *);
+static trp_obj_t *fun_10(trp_obj_t *,trp_obj_t *);
+static trp_obj_t *fun_40();
+static trp_obj_t *fun_6(trp_obj_t *);
+static trp_obj_t *fun_48();
+static trp_obj_t *fun_30();
+static trp_obj_t *fun_32();
+static trp_obj_t *fun_5();
+static trp_obj_t *fun_27();
+static trp_obj_t *fun_21(trp_obj_t *);
+static trp_obj_t *fun_41();
+static trp_obj_t *fun_44();
 
 int main(int argc,char *argv[])
 {
   trp_init(argc,argv);
   if(trp_pix_init())exit(-1);
-  trp_const_init(1280,_constr,_constc,58517);
+  trp_const_init(1284,_constr,_constc,58775);
   trp_glb_init(43,_glb);
-  (void)net_149();
+  _funptr[0]=trp_funptr(fun_18,2,trp_const(1128));
+  (void)net_154();
   trp_exit(NULL);
   return 0;
 }
@@ -6954,12 +6992,7 @@ void trp_compiler_exit()
   trp_pix_quit();
 }
 
-static trp_obj_t *fun_0()
-{
-  return trp_cord_search_func(1,trp_const(0),trp_uname());
-}
-
-static trp_obj_t *fun_1(trp_obj_t *i0)
+static trp_obj_t *fun_0(trp_obj_t *i0)
 {
   trp_obj_t *r=UNDEF;
   return net_0(i0,&r)?UNDEF:r;
@@ -6967,55 +7000,341 @@ static trp_obj_t *fun_1(trp_obj_t *i0)
 
 static uns8b net_0(trp_obj_t *i0,trp_obj_t **i1)
 {
-  trp_obj_t *j0=UNDEF;
-  trp_obj_t *j1=UNDEF;
-  trp_obj_t *j2=UNDEF;
-  trp_obj_t *j3=UNDEF;
-  trp_obj_t *t0=UNDEF;
-  trp_obj_t *t1=UNDEF;
-  if(trp_not(trp_stringp(i0))==TRP_FALSE)goto l1;
-  i0=trp_sprint(i0,NULL);
-l1:
-  if(trp_notequal(i0,EMPTYCORD)!=TRP_TRUE)goto l0;
-  if(trp_cord_lmatch_func(0,i0,trp_const(1),trp_const(2),NULL)==TRP_FALSE)goto l2;
+  *i1=trp_realpath(i0);
+  if(trp_not(trp_stringp(*i1))==TRP_FALSE)goto l1;
   *i1=i0;
-  j0=trp_pathexists(*i1);
-  goto l3;
-l2:
-  j1=trp_assoc();
-  if(trp_for_init(&t0,&(j2),trp_list(trp_cwd(),fun_13(trp_const(3)),fun_13(trp_const(4)),NULL),NULL,UNO,0))goto l5;
-l4:
-  if(trp_not(trp_cord_rmatch_func(0,j2,trp_const(1),NULL))==TRP_FALSE)goto l6;
-  j2=trp_cat(j2,trp_const(1),NULL);
-l6:
-l7:
-  if(trp_cord_search_test(0,trp_const(1),j2,&(j3),TRP_MAXINT))goto l0;
-  j2=trp_sub(ZERO,j3,j2);
-  if(trp_for_init(&t1,&(j3),trp_const(5),NULL,UNO,0))goto l10;
-l9:
-  *i1=trp_cat(j2,j3,trp_const(1),i0,NULL);
-  if(trp_equal(trp_nth(*i1,j1),UNDEF)==TRP_FALSE)goto l11;
-  if(trp_array_set_multi(j1,*i1,TRP_TRUE,NULL))goto l0;
-  j0=trp_pathexists(*i1);
-l11:
-  if(j0!=TRP_FALSE){trp_for_break(&t1);goto l10;}
-  if(trp_for_next(&t1))goto l9;
-l10:
-  if(j0!=TRP_FALSE)goto l8;
-  if(trp_equal(j2,EMPTYCORD)!=TRP_FALSE)goto l8;
-  goto l7;
-l8:
-  if(j0!=TRP_FALSE){trp_for_break(&t0);goto l5;}
-  if(trp_for_next(&t0))goto l4;
-l5:
-l3:
-  if(net_6(j0))goto l0;
+l1:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_1(trp_obj_t *i0,trp_obj_t **i1,trp_obj_t **i2)
+static uns8b net_1(trp_obj_t *i0)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_obj_t *j1=UNDEF;
+  trp_obj_t *t0=UNDEF;
+  j0=trp_char(47);
+  if(trp_cord_rtrim_test(&(i0),j0,NULL))goto l0;
+  if(trp_notequal(i0,EMPTYCORD)!=TRP_TRUE)goto l0;
+  if(trp_pathexists(i0)==TRP_FALSE)goto l1;
+  j0=trp_sprint(j0,NULL);
+  if(trp_isdir(i0)==TRP_FALSE)goto l2;
+  if(trp_for_init(&t0,&(j1),trp_directory(i0),NULL,UNO,0))goto l4;
+l3:
+  if(trp_and(trp_notequal(j1,trp_const(0)),trp_notequal(j1,trp_const(1)),NULL)==TRP_FALSE)goto l5;
+  if(net_1(trp_cat(i0,j0,j1,NULL)))goto l0;
+l5:
+  if(trp_for_next(&t0))goto l3;
+l4:
+l2:
+  if(trp_remove(i0))goto l0;
+l1:
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_1()
+{
+  trp_obj_t *r=UNDEF;
+  return net_2(&r)?UNDEF:r;
+}
+
+static uns8b net_2(trp_obj_t **i0)
+{
+  trp_obj_t *j0=UNDEF;
+  *i0=trp_argv(ZERO);
+  trp_push_env(*i0,j0,NULL);
+  if(trp_cord_search_test(0,trp_sprint(trp_char(47),NULL),*i0,&(j0),TRP_MAXINT))goto l2;
+  *i0=trp_sub(ZERO,j0,*i0);
+  trp_pop_env_void(2);
+  goto l1;
+l2:
+  trp_pop_env(&j0,i0,NULL);
+  trp_push_env(*i0,j0,NULL);
+  *i0=trp_cwd();
+  trp_pop_env_void(2);
+  goto l1;
+l3:
+  trp_pop_env(&j0,i0,NULL);
+  goto l0;
+l1:
+  *i0=fun_0(*i0);
+  if(trp_not(trp_pathexists(*i0))==TRP_FALSE)goto l4;
+  *i0=trp_cwd();
+l4:
+  j0=trp_char(47);
+  if(trp_not(trp_cord_rmatch_func(0,*i0,j0,NULL))==TRP_FALSE)goto l5;
+  *i0=trp_cat(*i0,j0,NULL);
+l5:
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_2()
+{
+  trp_obj_t *r=UNDEF;
+  return net_3(&r)?UNDEF:r;
+}
+
+static uns8b net_3(trp_obj_t **i0)
+{
+  trp_obj_t *j0=UNDEF;
+  *i0=trp_getenv(trp_const(2));
+  if(trp_not(trp_pathexists(*i0))==TRP_FALSE)goto l1;
+  *i0=fun_1();
+l1:
+  *i0=fun_0(*i0);
+  j0=trp_char(47);
+  if(trp_not(trp_cord_rmatch_func(0,*i0,j0,NULL))==TRP_FALSE)goto l2;
+  *i0=trp_cat(*i0,j0,NULL);
+l2:
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_3(trp_obj_t *i0)
+{
+  return trp_cat(fun_2(),i0,NULL);
+}
+
+static trp_obj_t *fun_4()
+{
+  trp_obj_t *r=UNDEF;
+  return net_4(&r)?UNDEF:r;
+}
+
+static uns8b net_4(trp_obj_t **i0)
+{
+  trp_obj_t *j0=UNDEF;
+  *i0=fun_3(trp_const(3));
+  if(trp_not(trp_pathexists(*i0))==TRP_FALSE)goto l1;
+  if(trp_mkdir(*i0))goto l0;
+l1:
+  j0=trp_char(47);
+  if(trp_not(trp_cord_rmatch_func(0,*i0,j0,NULL))==TRP_FALSE)goto l2;
+  *i0=trp_cat(*i0,j0,NULL);
+l2:
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_5()
+{
+  trp_obj_t *r=UNDEF;
+  return net_5(&r)?UNDEF:r;
+}
+
+static uns8b net_5(trp_obj_t **i0)
+{
+  trp_obj_t *j0=UNDEF;
+  *i0=trp_const(4);
+  if(trp_not(trp_pathexists(*i0))==TRP_FALSE)goto l1;
+  *i0=fun_1();
+l1:
+  *i0=fun_0(*i0);
+  j0=trp_char(47);
+  if(trp_not(trp_cord_rmatch_func(0,*i0,j0,NULL))==TRP_FALSE)goto l2;
+  *i0=trp_cat(*i0,j0,NULL);
+l2:
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_6(trp_obj_t **i0)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_obj_t *j1=UNDEF;
+  j0=trp_cat(fun_5(),fun_11(trp_const(5)),NULL);
+  j1=ZERO;
+l1:
+  *i0=trp_cat(j0,fun_12(j1,trp_const(5),trp_char(48)),NULL);
+  trp_push_env(*i0,j0,j1,NULL);
+  if((trp_pathexists(*i0))==TRP_TRUE)goto l4;
+  if(trp_mkdir(*i0))goto l4;
+  j1=ZERO;
+  trp_pop_env_void(3);
+  goto l3;
+l4:
+  trp_pop_env(&j1,&j0,i0,NULL);
+  trp_push_env(*i0,j0,j1,NULL);
+  j1=trp_cat(j1,UNO,NULL);
+  trp_pop_env_void(3);
+  goto l3;
+l5:
+  trp_pop_env(&j1,&j0,i0,NULL);
+  goto l0;
+l3:
+  if(trp_equal(j1,ZERO)!=TRP_FALSE)goto l2;
+  goto l1;
+l2:
+  j1=trp_char(47);
+  if(trp_not(trp_cord_rmatch_func(0,*i0,j1,NULL))==TRP_FALSE)goto l6;
+  *i0=trp_cat(*i0,j1,NULL);
+l6:
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_6(trp_obj_t *i0)
+{
+  trp_obj_t *r=UNDEF;
+  return net_7(i0,&r)?UNDEF:r;
+}
+
+static uns8b net_7(trp_obj_t *i0,trp_obj_t **i1)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_obj_t *j1=UNDEF;
+  trp_obj_t *j2=UNDEF;
+  trp_obj_t *j3=UNDEF;
+  trp_obj_t *j4=UNDEF;
+  trp_obj_t *t0=UNDEF;
+  trp_obj_t *t1=UNDEF;
+  j0=trp_assoc();
+  if(trp_for_init(&t0,&(j1),trp_list(trp_cwd(),fun_4(),fun_3(trp_const(6)),fun_1(),NULL),NULL,UNO,0))goto l2;
+l1:
+l3:
+  trp_push_env(i0,*i1,j0,j1,j2,j3,j4,NULL);
+  if(trp_cord_rtrim_test(&(j1),trp_char(47),NULL))goto l6;
+  if(trp_cord_search_test(0,trp_const(7),j1,&(j2),TRP_MAXINT))goto l6;
+  trp_pop_env_void(7);
+  goto l5;
+l6:
+  trp_pop_env(&j4,&j3,&j2,&j1,&j0,i1,&i0,NULL);
+  trp_push_env(i0,*i1,j0,j1,j2,j3,j4,NULL);
+  j2=UNDEF;
+  trp_pop_env_void(7);
+  goto l5;
+l7:
+  trp_pop_env(&j4,&j3,&j2,&j1,&j0,i1,&i0,NULL);
+  goto l0;
+l5:
+  if(trp_pathexists(j1)==TRP_FALSE)goto l8;
+  if(trp_for_init(&t1,&(j3),trp_const(8),NULL,UNO,0))goto l10;
+l9:
+  j4=trp_cat(j1,(trp_cord_rmatch_func(0,j1,trp_const(7),NULL)==TRP_TRUE)?(EMPTYCORD):(trp_const(7)),j3,i0,NULL);
+  if(trp_equal(trp_nth(j4,j0),UNDEF)==TRP_FALSE)goto l11;
+  if(trp_pathexists(j4)==TRP_FALSE)goto l12;
+  *i1=j4;
+  goto l13;
+l12:
+  if(trp_array_set_multi(j0,j4,TRP_TRUE,NULL))goto l0;
+l13:
+l11:
+  if(trp_for_next(&t1))goto l9;
+l10:
+l8:
+  if(trp_stringp(*i1)!=TRP_FALSE)goto l4;
+  if(trp_not(trp_integerp(j2))!=TRP_FALSE)goto l4;
+  j1=trp_sub(ZERO,trp_cat(j2,UNO,NULL),j1);
+  goto l3;
+l4:
+  if(trp_stringp(*i1)!=TRP_FALSE){trp_for_break(&t0);goto l2;}
+  if(trp_for_next(&t0))goto l1;
+l2:
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_7()
+{
+  return fun_8(trp_math_random(trp_const(9)));
+}
+
+static trp_obj_t *fun_8(trp_obj_t *i0)
+{
+  return (trp_less(i0,trp_const(10))==TRP_TRUE)?(trp_cat(trp_char(65),i0,NULL)):(trp_cat(trp_char(71),i0,NULL));
+}
+
+static trp_obj_t *fun_9()
+{
+  return trp_cat(trp_char(48),trp_math_random(DIECI),NULL);
+}
+
+static trp_obj_t *fun_10(trp_obj_t *i0,trp_obj_t *i1)
+{
+  return (trp_equal(i0,ZERO)==TRP_TRUE)?(EMPTYCORD):(trp_cat(fun_10(trp_math_minus(i0,UNO,NULL),i1),(trp_less(trp_math_random(trp_math_den(i1)),trp_math_num(i1))==TRP_TRUE)?(fun_9()):(fun_7()),NULL));
+}
+
+static trp_obj_t *fun_11(trp_obj_t *i0)
+{
+  return fun_10(i0,trp_const(11));
+}
+
+static trp_obj_t *fun_12(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
+{
+  return fun_13(trp_sprint(i0,NULL),i1,i2);
+}
+
+static trp_obj_t *fun_13(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
+{
+  return (trp_greater_or_equal(trp_length(i0),i1)==TRP_TRUE)?(i0):(trp_cat(trp_cord_tile(trp_math_minus(i1,trp_length(i0),NULL),i2,NULL),i0,NULL));
+}
+
+static trp_obj_t *fun_14(trp_obj_t *i0)
+{
+  trp_obj_t *r=UNDEF;
+  return net_8(i0,&r)?UNDEF:r;
+}
+
+static uns8b net_8(trp_obj_t *i0,trp_obj_t **i1)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_obj_t *j1=UNDEF;
+  trp_obj_t *t0=UNDEF;
+  j0=trp_queue();
+  if(trp_for_init(&t0,&(j1),i0,NULL,UNO,0))goto l2;
+l1:
+  if(trp_not(trp_or(trp_in_func(j1,trp_char(97),trp_char(122)),trp_in_func(j1,trp_char(65),trp_char(90)),trp_in_func(j1,trp_char(48),trp_char(57)),trp_in_func(j1,trp_const(12),NULL),NULL))==TRP_FALSE)goto l3;
+  if(trp_queue_put(j0,trp_char(92)))goto l0;
+l3:
+  if(trp_queue_put(j0,j1))goto l0;
+  if(trp_for_next(&t0))goto l1;
+l2:
+  *i1=trp_sprint_list(j0,NULL);
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_15(trp_obj_t *i0)
+{
+  trp_obj_t *r=UNDEF;
+  return net_9(i0,&r)?UNDEF:r;
+}
+
+static uns8b net_9(trp_obj_t *i0,trp_obj_t **i1)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_push_env(i0,*i1,j0,NULL);
+  if(trp_cord_search_test(0,trp_const(7),i0,&(j0),TRP_MAXINT))goto l2;
+  *i1=trp_sub(trp_cat(j0,UNO,NULL),TRP_MAXINT,i0);
+  trp_pop_env_void(3);
+  goto l1;
+l2:
+  trp_pop_env(&j0,i1,&i0,NULL);
+  trp_push_env(i0,*i1,j0,NULL);
+  *i1=i0;
+  trp_pop_env_void(3);
+  goto l1;
+l3:
+  trp_pop_env(&j0,i1,&i0,NULL);
+  goto l0;
+l1:
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_10(trp_obj_t *i0,trp_obj_t **i1,trp_obj_t **i2)
 {
   trp_obj_t *j0=UNDEF;
   if(trp_cord_search_test(0,i0,*i1,&(j0),NULL))goto l0;
@@ -7026,13 +7345,13 @@ l0:
   return 1;
 }
 
-static trp_obj_t *fun_2(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
+static trp_obj_t *fun_16(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
 {
   trp_obj_t *r=UNDEF;
-  return net_2(i0,i1,i2,&r)?UNDEF:r;
+  return net_11(i0,i1,i2,&r)?UNDEF:r;
 }
 
-static uns8b net_2(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t **i3)
+static uns8b net_11(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t **i3)
 {
   trp_obj_t *j0=UNDEF;
   *i3=EMPTYCORD;
@@ -7051,16 +7370,16 @@ l0:
   return 1;
 }
 
-static uns8b net_3(trp_obj_t **i0,trp_obj_t **i1)
+static uns8b net_12(trp_obj_t **i0,trp_obj_t **i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_push_env(*i0,*i1,j0,NULL);
-  if(trp_cord_search_test(0,trp_const(6),*i0,&(j0),NULL))goto l2;
+  if(trp_cord_search_test(0,trp_const(13),*i0,&(j0),NULL))goto l2;
   *i1=trp_sub(ZERO,j0,*i0);
-  if((trp_cord_search_func(0,trp_const(7),*i1))==TRP_TRUE)goto l2;
+  if((trp_cord_search_func(0,trp_const(14),*i1))==TRP_TRUE)goto l2;
   *i0=trp_sub(trp_cat(j0,UNO,NULL),TRP_MAXINT,*i0);
   trp_push_env(*i0,*i1,j0,NULL);
-  if(trp_cord_match_test(4,NULL,NULL,&(*i0),trp_const(7),NULL))goto l4;
+  if(trp_cord_match_test(4,NULL,NULL,&(*i0),trp_const(14),NULL))goto l4;
   trp_pop_env_void(3);
   goto l3;
 l4:
@@ -7071,11 +7390,11 @@ l3:
 l2:
   trp_pop_env(&j0,i1,i0,NULL);
   trp_push_env(*i0,*i1,j0,NULL);
-  if(trp_cord_search_test(0,trp_const(7),*i0,&(j0),NULL))goto l5;
+  if(trp_cord_search_test(0,trp_const(14),*i0,&(j0),NULL))goto l5;
   *i1=trp_sub(ZERO,j0,*i0);
   *i0=trp_sub(trp_cat(j0,UNO,NULL),TRP_MAXINT,*i0);
   trp_push_env(*i0,*i1,j0,NULL);
-  if(trp_cord_match_test(4,NULL,NULL,&(*i0),trp_const(6),NULL))goto l7;
+  if(trp_cord_match_test(4,NULL,NULL,&(*i0),trp_const(13),NULL))goto l7;
   trp_pop_env_void(3);
   goto l6;
 l7:
@@ -7104,193 +7423,67 @@ l0:
   return 1;
 }
 
-static trp_obj_t *fun_3(trp_obj_t *i0)
+static trp_obj_t *fun_17()
 {
-  trp_obj_t *r=UNDEF;
-  return net_4(i0,&r)?UNDEF:r;
+  return trp_cord_search_func(1,trp_const(15),trp_uname());
 }
 
-static uns8b net_4(trp_obj_t *i0,trp_obj_t **i1)
+static trp_obj_t *fun_18(trp_obj_t *i0,trp_obj_t *i1)
+{
+  return trp_less(trp_car(i0),trp_car(i1));
+}
+
+static trp_obj_t *fun_19(trp_obj_t *i0)
+{
+  trp_obj_t *r=UNDEF;
+  return net_13(i0,&r)?UNDEF:r;
+}
+
+static uns8b net_13(trp_obj_t *i0,trp_obj_t **i1)
 {
   trp_obj_t *j0=UNDEF;
-  trp_obj_t *j1=UNDEF;
   trp_obj_t *t0=UNDEF;
-  j0=trp_queue();
-  if(trp_for_init(&t0,&(j1),i0,NULL,UNO,0))goto l2;
+  if(((i0)->tipo)!=TRP_ASSOC)goto l0;
+  *i1=trp_array_multi(UNDEF,trp_length(i0),NULL);
+  if(trp_for_init(&t0,&(j0),i0,NULL,UNO,0))goto l2;
 l1:
-  if(trp_not(trp_or(trp_in_func(j1,trp_char(97),trp_char(122)),trp_in_func(j1,trp_char(65),trp_char(90)),trp_in_func(j1,trp_char(48),trp_char(57)),trp_in_func(j1,trp_const(8),NULL),NULL))==TRP_FALSE)goto l3;
-  if(trp_queue_put(j0,trp_char(92)))goto l0;
-l3:
-  if(trp_queue_put(j0,j1))goto l0;
+  if(trp_array_set_multi(*i1,trp_for_pos(t0),j0,NULL))goto l0;
   if(trp_for_next(&t0))goto l1;
 l2:
-  *i1=trp_sprint_list(j0,NULL);
   return 0;
 l0:
   return 1;
 }
 
-static trp_obj_t *fun_4(trp_obj_t *i0)
+static trp_obj_t *fun_20(trp_obj_t *i0)
 {
   trp_obj_t *r=UNDEF;
-  return net_5(i0,&r)?UNDEF:r;
+  return net_14(i0,&r)?UNDEF:r;
 }
 
-static uns8b net_5(trp_obj_t *i0,trp_obj_t **i1)
-{
-  trp_obj_t *j0=UNDEF;
-  trp_push_env(i0,*i1,j0,NULL);
-  if(trp_cord_search_test(0,trp_const(1),i0,&(j0),TRP_MAXINT))goto l2;
-  *i1=trp_sub(trp_cat(j0,UNO,NULL),TRP_MAXINT,i0);
-  trp_pop_env_void(3);
-  goto l1;
-l2:
-  trp_pop_env(&j0,i1,&i0,NULL);
-  trp_push_env(i0,*i1,j0,NULL);
-  *i1=i0;
-  trp_pop_env_void(3);
-  goto l1;
-l3:
-  trp_pop_env(&j0,i1,&i0,NULL);
-  goto l0;
-l1:
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_6(trp_obj_t *i0)
-{
-  if(trp_equal(i0,TRP_TRUE)!=TRP_TRUE)goto l0;
-  return 0;
-l0:
-  return 1;
-}
-
-static trp_obj_t *fun_5()
-{
-  return fun_6(trp_math_random(trp_const(9)));
-}
-
-static trp_obj_t *fun_6(trp_obj_t *i0)
-{
-  return (trp_less(i0,trp_const(10))==TRP_TRUE)?(trp_cat(trp_char(65),i0,NULL)):(trp_cat(trp_char(71),i0,NULL));
-}
-
-static trp_obj_t *fun_7()
-{
-  return trp_cat(trp_char(48),trp_math_random(DIECI),NULL);
-}
-
-static trp_obj_t *fun_8(trp_obj_t *i0,trp_obj_t *i1)
-{
-  return (trp_equal(i0,ZERO)==TRP_TRUE)?(EMPTYCORD):(trp_cat(fun_8(trp_math_minus(i0,UNO,NULL),i1),(trp_less(trp_math_random(trp_math_den(i1)),trp_math_num(i1))==TRP_TRUE)?(fun_7()):(fun_5()),NULL));
-}
-
-static trp_obj_t *fun_9(trp_obj_t *i0)
-{
-  return fun_8(i0,trp_const(11));
-}
-
-static uns8b net_7(trp_obj_t *i0)
-{
-  trp_obj_t *j0=UNDEF;
-  trp_obj_t *t0=UNDEF;
-  if(trp_cord_rtrim_test(&(i0),trp_char(47),NULL))goto l0;
-  if(trp_notequal(i0,EMPTYCORD)!=TRP_TRUE)goto l0;
-  if(trp_pathexists(i0)==TRP_FALSE)goto l1;
-  if(trp_isdir(i0)==TRP_FALSE)goto l2;
-  if(trp_for_init(&t0,&(j0),trp_directory(i0),NULL,UNO,0))goto l4;
-l3:
-  if(trp_and(trp_notequal(j0,trp_const(2)),trp_notequal(j0,trp_const(12)),NULL)==TRP_FALSE)goto l5;
-  if(net_7(trp_cat(i0,trp_const(1),j0,NULL)))goto l0;
-l5:
-  if(trp_for_next(&t0))goto l3;
-l4:
-l2:
-  if(trp_remove(i0))goto l0;
-l1:
-  return 0;
-l0:
-  return 1;
-}
-
-static trp_obj_t *fun_10(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
-{
-  return fun_11(trp_sprint(i0,NULL),i1,i2);
-}
-
-static trp_obj_t *fun_11(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
-{
-  return (trp_greater_or_equal(trp_length(i0),i1)==TRP_TRUE)?(i0):(trp_cat(trp_cord_tile(trp_math_minus(i1,trp_length(i0),NULL),i2,NULL),i0,NULL));
-}
-
-static uns8b net_8(trp_obj_t **i0)
-{
-  trp_obj_t *j0=UNDEF;
-  trp_obj_t *j1=UNDEF;
-  j0=trp_cat(trp_const(14),fun_9(trp_const(13)),NULL);
-  j1=ZERO;
-l1:
-  *i0=trp_cat(j0,fun_10(j1,trp_const(13),trp_char(48)),NULL);
-  trp_push_env(*i0,j0,j1,NULL);
-  if((trp_pathexists(*i0))==TRP_TRUE)goto l4;
-  if(trp_mkdir(*i0))goto l4;
-  j1=ZERO;
-  trp_pop_env_void(3);
-  goto l3;
-l4:
-  trp_pop_env(&j1,&j0,i0,NULL);
-  trp_push_env(*i0,j0,j1,NULL);
-  j1=trp_cat(j1,UNO,NULL);
-  trp_pop_env_void(3);
-  goto l3;
-l5:
-  trp_pop_env(&j1,&j0,i0,NULL);
-  goto l0;
-l3:
-  if(trp_equal(j1,ZERO)!=TRP_FALSE)goto l2;
-  goto l1;
-l2:
-  return 0;
-l0:
-  return 1;
-}
-
-static trp_obj_t *fun_12(trp_obj_t *i0)
-{
-  trp_obj_t *r=UNDEF;
-  return net_9(i0,&r)?UNDEF:r;
-}
-
-static uns8b net_9(trp_obj_t *i0,trp_obj_t **i1)
+static uns8b net_14(trp_obj_t *i0,trp_obj_t **i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   *i1=UNDEF;
-  if(net_8(&(j0)))goto l0;
+  if(net_6(&(j0)))goto l0;
   trp_push_env(i0,*i1,j0,j1,NULL);
-  j1=trp_cat(j0,trp_const(15),NULL);
+  j1=trp_cat(j0,trp_const(16),NULL);
   if(trp_mkfifo(j1))goto l2;
-  if(trp_system(i0,trp_const(16),j1,trp_const(17),NULL)!=ZERO)goto l2;
+  if(trp_system(i0,trp_const(17),j1,trp_const(18),NULL)!=ZERO)goto l2;
   *i1=trp_cord_load(j1);
   trp_pop_env_void(4);
   goto l1;
 l2:
   trp_pop_env(&j1,&j0,i1,&i0,NULL);
 l1:
-  if(net_7(j0))goto l0;
+  if(net_1(j0))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static trp_obj_t *fun_13(trp_obj_t *i0)
-{
-  return trp_cat(trp_cord_rtrim(trp_getenv(trp_const(18)),trp_char(47),NULL),trp_const(1),trp_cord_ltrim(i0,trp_char(47),NULL),NULL);
-}
-
-static uns8b net_10()
+static uns8b net_15()
 {
 l1:
   _glb[2]=trp_stack_pop(_glb[3]);
@@ -7308,7 +7501,7 @@ l0:
   return 1;
 }
 
-static uns8b net_11(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_16(trp_obj_t *i0,trp_obj_t *i1)
 {
   if(trp_stack_push(_glb[4],i1))goto l0;
   if(trp_stack_push(_glb[4],i0))goto l0;
@@ -7317,42 +7510,42 @@ l0:
   return 1;
 }
 
-static uns8b net_12()
+static uns8b net_17()
 {
-  if(net_11(_glb[0],_glb[1]))goto l0;
+  if(net_16(_glb[0],_glb[1]))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_13(trp_obj_t *i0)
+static uns8b net_18(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   _glb[1]=ZERO;
 l1:
   if(trp_equal(_glb[2],UNDEF)!=TRP_FALSE)goto l2;
-  j0=fun_14(i0);
+  j0=fun_21(i0);
   if(trp_equal(j0,UNDEF)!=TRP_FALSE)goto l2;
   _glb[1]=trp_cat(trp_math_times(_glb[1],i0,NULL),j0,NULL);
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   goto l1;
 l2:
   if(trp_and(trp_equal(i0,DIECI),trp_equal(_glb[2],trp_char(46)),NULL)==TRP_FALSE)goto l3;
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],UNDEF)==TRP_FALSE)goto l4;
-  if(net_135())goto l0;
+  if(net_140())goto l0;
 l4:
-  j0=fun_14(DIECI);
+  j0=fun_21(DIECI);
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l5;
-  if(net_135())goto l0;
+  if(net_140())goto l0;
 l5:
   i0=UNO;
 l6:
   _glb[1]=trp_cat(trp_math_times(_glb[1],DIECI,NULL),j0,NULL);
   i0=trp_math_times(i0,DIECI,NULL);
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],UNDEF)!=TRP_FALSE)goto l7;
-  j0=fun_14(DIECI);
+  j0=fun_21(DIECI);
   if(trp_equal(j0,UNDEF)!=TRP_FALSE)goto l7;
   goto l6;
 l7:
@@ -7365,12 +7558,12 @@ l0:
   return 1;
 }
 
-static trp_obj_t *fun_14(trp_obj_t *i0)
+static trp_obj_t *fun_21(trp_obj_t *i0)
 {
   return (trp_in_func(_glb[2],trp_char(48),trp_char(57))==TRP_TRUE)?(trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL)):((trp_and(trp_equal(i0,trp_const(21)),trp_in_func(_glb[2],trp_char(97),trp_char(102)),NULL)==TRP_TRUE)?(trp_cat(DIECI,trp_math_minus(trp_length(_glb[2]),trp_const(22),NULL),NULL)):((trp_and(trp_equal(i0,trp_const(21)),trp_in_func(_glb[2],trp_char(65),trp_char(70)),NULL)==TRP_TRUE)?(trp_cat(DIECI,trp_math_minus(trp_length(_glb[2]),trp_const(23),NULL),NULL)):(UNDEF)));
 }
 
-static uns8b net_14()
+static uns8b net_19()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -7378,13 +7571,13 @@ static uns8b net_14()
   _glb[1]=trp_queue();
 l1:
 l3:
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],trp_char(34))!=TRP_FALSE)goto l4;
   if(trp_in_func(_glb[2],trp_const(24),NULL)==TRP_FALSE)goto l5;
-  if(net_135())goto l0;
+  if(net_140())goto l0;
 l5:
   if(trp_equal(_glb[2],trp_char(92))==TRP_FALSE)goto l6;
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   t0=_glb[2];
   if(trp_equal(trp_char(92),t0)==TRP_FALSE)goto l9;
   goto l7;
@@ -7414,23 +7607,23 @@ l14:
 l15:
   if(trp_in_func(_glb[2],trp_char(48),trp_char(51))==TRP_FALSE)goto l16;
   j1=trp_math_times(trp_const(25),trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL),NULL);
-  if(net_10())goto l8;
+  if(net_15())goto l8;
   if(trp_in_func(_glb[2],trp_char(48),trp_char(55))==TRP_FALSE)goto l17;
   j1=trp_cat(j1,trp_math_times(trp_const(26),trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL),NULL),NULL);
-  if(net_10())goto l8;
+  if(net_15())goto l8;
   if(trp_in_func(_glb[2],trp_char(48),trp_char(55))==TRP_FALSE)goto l18;
   _glb[2]=trp_int2char(trp_cat(j1,trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL),NULL));
   goto l19;
 l18:
-  if(net_135())goto l8;
+  if(net_140())goto l8;
 l19:
   goto l20;
 l17:
-  if(net_135())goto l8;
+  if(net_140())goto l8;
 l20:
   goto l21;
 l16:
-  if(net_135())goto l8;
+  if(net_140())goto l8;
 l21:
   goto l7;
 l8:
@@ -7443,14 +7636,14 @@ l6:
   goto l3;
 l4:
 l22:
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_and(trp_notequal(_glb[2],trp_char(32)),trp_notequal(_glb[2],trp_char(9)),trp_notequal(_glb[2],trp_char(11)),NULL)!=TRP_FALSE)goto l23;
   goto l22;
 l23:
   if(trp_notequal(_glb[2],trp_char(92))!=TRP_FALSE)goto l2;
   j0=TRP_FALSE;
 l24:
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],UNDEF)!=TRP_FALSE)goto l25;
   if(trp_not(trp_or(j0,trp_in_func(_glb[2],trp_const(27),NULL),NULL))!=TRP_FALSE)goto l25;
   if(trp_equal(_glb[2],trp_char(59))==TRP_FALSE)goto l26;
@@ -7464,7 +7657,7 @@ l27:
   goto l24;
 l25:
   if(trp_notequal(_glb[2],trp_char(34))==TRP_FALSE)goto l29;
-  if(net_135())goto l0;
+  if(net_140())goto l0;
 l29:
   goto l1;
 l2:
@@ -7476,28 +7669,28 @@ l0:
   return 1;
 }
 
-static uns8b net_15()
+static uns8b net_20()
 {
   if(trp_greater(trp_length(_glb[4]),ZERO)==TRP_FALSE)goto l1;
   _glb[0]=trp_stack_pop(_glb[4]);
   _glb[1]=trp_stack_pop(_glb[4]);
   goto l2;
 l1:
-  if(net_16())goto l0;
+  if(net_21())goto l0;
 l2:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_16()
+static uns8b net_21()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
   trp_obj_t *t1=UNDEF;
   j0=TRP_FALSE;
 l1:
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],UNDEF)!=TRP_FALSE)goto l2;
   if(trp_not(trp_or(j0,trp_in_func(_glb[2],trp_const(27),NULL),NULL))!=TRP_FALSE)goto l2;
   if(trp_equal(_glb[2],trp_char(59))==TRP_FALSE)goto l3;
@@ -7549,7 +7742,7 @@ l15:
   goto l6;
 l16:
   if(trp_equal(trp_char(45),t0)==TRP_FALSE)goto l17;
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   if(trp_equal(_glb[2],trp_char(62))==TRP_FALSE)goto l18;
   _glb[0]=trp_const(39);
   goto l19;
@@ -7582,7 +7775,7 @@ l22:
 l23:
   if(trp_equal(trp_char(62),t0)==TRP_FALSE)goto l24;
   _glb[0]=trp_const(44);
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   if(trp_equal(_glb[2],trp_char(61))==TRP_FALSE)goto l25;
   _glb[1]=trp_const(46);
   goto l26;
@@ -7594,7 +7787,7 @@ l26:
 l24:
   if(trp_equal(trp_char(60),t0)==TRP_FALSE)goto l27;
   _glb[0]=trp_const(44);
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   t1=_glb[2];
   if(trp_equal(trp_char(61),t1)==TRP_FALSE)goto l30;
   _glb[1]=trp_const(48);
@@ -7615,13 +7808,13 @@ l28:
   goto l6;
 l27:
   if(trp_equal(trp_char(39),t0)==TRP_FALSE)goto l32;
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   if(trp_or(trp_equal(_glb[2],UNDEF),trp_equal(_glb[2],trp_char(39)),NULL)==TRP_FALSE)goto l33;
-  if(net_135())goto l7;
+  if(net_140())goto l7;
   goto l34;
 l33:
   if(trp_equal(_glb[2],trp_char(92))==TRP_FALSE)goto l35;
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   t1=_glb[2];
   if(trp_equal(trp_char(110),t1)==TRP_FALSE)goto l38;
   _glb[1]=trp_char(10);
@@ -7653,23 +7846,23 @@ l43:
 l44:
   if(trp_in_func(_glb[2],trp_char(48),trp_char(51))==TRP_FALSE)goto l45;
   _glb[1]=trp_math_times(trp_const(25),trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL),NULL);
-  if(net_10())goto l37;
+  if(net_15())goto l37;
   if(trp_in_func(_glb[2],trp_char(48),trp_char(55))==TRP_FALSE)goto l46;
   _glb[1]=trp_cat(_glb[1],trp_math_times(trp_const(26),trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL),NULL),NULL);
-  if(net_10())goto l37;
+  if(net_15())goto l37;
   if(trp_in_func(_glb[2],trp_char(48),trp_char(55))==TRP_FALSE)goto l47;
   _glb[1]=trp_int2char(trp_cat(_glb[1],trp_math_minus(trp_length(_glb[2]),trp_const(20),NULL),NULL));
   goto l48;
 l47:
-  if(net_135())goto l37;
+  if(net_140())goto l37;
 l48:
   goto l49;
 l46:
-  if(net_135())goto l37;
+  if(net_140())goto l37;
 l49:
   goto l50;
 l45:
-  if(net_135())goto l37;
+  if(net_140())goto l37;
 l50:
   goto l36;
 l37:
@@ -7681,22 +7874,22 @@ l36:
 l35:
   _glb[1]=_glb[2];
 l51:
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   if(trp_equal(_glb[2],trp_char(39))==TRP_FALSE)goto l52;
   _glb[0]=trp_const(51);
   goto l53;
 l52:
-  if(net_135())goto l7;
+  if(net_140())goto l7;
 l53:
 l34:
   goto l6;
 l32:
   if(trp_equal(trp_char(34),t0)==TRP_FALSE)goto l54;
-  if(net_14())goto l7;
+  if(net_19())goto l7;
   goto l6;
 l54:
   if(trp_equal(trp_char(46),t0)==TRP_FALSE)goto l55;
-  if(net_10())goto l7;
+  if(net_15())goto l7;
   if(trp_equal(_glb[2],trp_char(46))==TRP_FALSE)goto l56;
   _glb[0]=trp_const(52);
   goto l57;
@@ -7706,7 +7899,7 @@ l56:
 l57:
   goto l6;
 l55:
-  if(net_17())goto l7;
+  if(net_22())goto l7;
   goto l6;
 l7:
   t0=UNDEF;
@@ -7718,25 +7911,25 @@ l0:
   return 1;
 }
 
-static uns8b net_17()
+static uns8b net_22()
 {
   if(trp_in_func(_glb[2],trp_char(48),trp_char(57))==TRP_FALSE)goto l1;
   _glb[1]=_glb[2];
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],trp_char(120))==TRP_FALSE)goto l2;
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_equal(_glb[2],UNDEF)==TRP_FALSE)goto l3;
-  if(net_135())goto l0;
+  if(net_140())goto l0;
 l3:
-  if(trp_equal(fun_14(trp_const(21)),UNDEF)==TRP_FALSE)goto l4;
-  if(net_135())goto l0;
+  if(trp_equal(fun_21(trp_const(21)),UNDEF)==TRP_FALSE)goto l4;
+  if(net_140())goto l0;
 l4:
-  if(net_13(trp_const(21)))goto l0;
+  if(net_18(trp_const(21)))goto l0;
   goto l5;
 l2:
   if(trp_stack_push(_glb[3],_glb[2]))goto l0;
   _glb[2]=_glb[1];
-  if(net_13(DIECI))goto l0;
+  if(net_18(DIECI))goto l0;
 l5:
   goto l6;
 l1:
@@ -7744,7 +7937,7 @@ l1:
   _glb[1]=trp_queue();
 l8:
   if(trp_queue_put(_glb[1],_glb[2]))goto l0;
-  if(net_10())goto l0;
+  if(net_15())goto l0;
   if(trp_or(trp_equal(_glb[2],UNDEF),trp_not(trp_or(trp_in_func(_glb[2],trp_char(65),trp_char(90)),trp_in_func(_glb[2],trp_char(97),trp_char(122)),trp_in_func(_glb[2],trp_char(48),trp_char(57)),trp_in_func(_glb[2],trp_const(55),NULL),NULL)),NULL)!=TRP_FALSE)goto l9;
   goto l8;
 l9:
@@ -7761,7 +7954,7 @@ l11:
   trp_pop_env(NULL);
   goto l12;
 l7:
-  if(net_135())goto l0;
+  if(net_140())goto l0;
 l12:
 l6:
   return 0;
@@ -7769,12 +7962,12 @@ l0:
   return 1;
 }
 
-static uns8b net_18()
+static uns8b net_23()
 {
   trp_obj_t *j0=UNDEF;
   j0=UNO;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],UNDEF)!=TRP_TRUE)goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l3;
   j0=trp_cat(j0,trp_const(58),NULL);
@@ -7790,39 +7983,39 @@ l0:
   return 1;
 }
 
-static uns8b net_19()
+static uns8b net_24()
 {
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(30))!=TRP_FALSE)goto l2;
-  if(net_18())goto l0;
+  if(net_23())goto l0;
   goto l1;
 l2:
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_20()
+static uns8b net_25()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],UNDEF)!=TRP_TRUE)goto l0;
   if(trp_or(trp_notequal(_glb[0],trp_const(37)),trp_notequal(_glb[1],trp_const(40)),NULL)!=TRP_FALSE)goto l2;
   goto l1;
 l2:
   if(trp_equal(_glb[0],trp_const(30))==TRP_FALSE)goto l3;
-  if(net_18())goto l0;
+  if(net_23())goto l0;
   goto l4;
 l3:
   j1=(trp_equal(_glb[0],trp_const(32))==TRP_TRUE)?(UNO):((trp_and(trp_equal(_glb[0],trp_const(44)),trp_equal(_glb[1],trp_const(50)),NULL)==TRP_TRUE)?(trp_const(59)):(ZERO));
   if(trp_greater(j1,ZERO)==TRP_FALSE)goto l5;
   j0=UNO;
 l6:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],UNDEF)!=TRP_TRUE)goto l0;
   if(trp_or(trp_and(trp_equal(j1,UNO),trp_equal(_glb[0],trp_const(33)),NULL),trp_and(trp_equal(j1,trp_const(59)),trp_equal(_glb[0],trp_const(44)),trp_equal(_glb[1],trp_const(47)),NULL),NULL)==TRP_FALSE)goto l8;
   j0=trp_cat(j0,trp_const(58),NULL);
@@ -7840,7 +8033,7 @@ l0:
   return 1;
 }
 
-static uns8b net_21(trp_obj_t *i0)
+static uns8b net_26(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -7851,14 +8044,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(62),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(65)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(62),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(65)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_22(trp_obj_t *i0)
+static uns8b net_27(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -7869,14 +8062,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(68),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(69)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(68),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(69)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_23(trp_obj_t *i0)
+static uns8b net_28(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -7887,14 +8080,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(72),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(73)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(72),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(73)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_24(trp_obj_t *i0)
+static uns8b net_29(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -7905,14 +8098,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(76),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(77)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(76),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(77)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_25(trp_obj_t *i0)
+static uns8b net_30(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -7923,14 +8116,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(80),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(81)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(80),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(81)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_26(trp_obj_t *i0)
+static uns8b net_31(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8004,14 +8197,14 @@ l11:
   if(trp_for_next(&t0))goto l11;
 l12:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(100),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(101)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(100),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(101)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_27(trp_obj_t *i0)
+static uns8b net_32(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8022,14 +8215,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(104),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(105)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(104),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(105)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_28(trp_obj_t *i0)
+static uns8b net_33(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8040,14 +8233,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(108),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(109)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(108),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(109)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_29(trp_obj_t *i0)
+static uns8b net_34(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8058,14 +8251,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(112),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(113)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(112),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(113)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_30(trp_obj_t *i0)
+static uns8b net_35(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8076,14 +8269,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(116),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(117)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(116),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(117)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_31(trp_obj_t *i0)
+static uns8b net_36(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8094,14 +8287,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(120),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(121)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(120),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(121)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_32(trp_obj_t *i0)
+static uns8b net_37(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8112,14 +8305,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(124),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(125)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(124),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(125)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_33(trp_obj_t *i0)
+static uns8b net_38(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8130,14 +8323,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(127),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(128)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(127),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(128)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_34(trp_obj_t *i0)
+static uns8b net_39(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8148,40 +8341,40 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(131),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(132)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(131),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(132)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_35(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_40(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *t0=UNDEF;
   if(trp_cord_match_test(4,NULL,NULL,&(i1),trp_const(133),NULL))goto l0;
   t0=i1;
   if(trp_equal(trp_const(134),t0)==TRP_FALSE)goto l3;
-  if(net_37(i0))goto l2;
+  if(net_42(i0))goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(135),t0)==TRP_FALSE)goto l4;
-  if(net_38(i0))goto l2;
+  if(net_43(i0))goto l2;
   goto l1;
 l4:
-  if(net_36(i1))goto l2;
+  if(net_41(i1))goto l2;
   goto l1;
 l2:
   t0=UNDEF;
   goto l0;
 l1:
   t0=UNDEF;
-  if(net_144(trp_const(136)))goto l0;
+  if(net_149(trp_const(136)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_36(trp_obj_t *i0)
+static uns8b net_41(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8191,40 +8384,40 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(138),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(138),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_37(trp_obj_t *i0)
+static uns8b net_42(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   _glb[6]=TRP_TRUE;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l1;
-  if(net_133(trp_const(139)))goto l0;
+  if(net_138(trp_const(139)))goto l0;
 l1:
-  j0=trp_pix_load(fun_1(_glb[8]));
+  j0=trp_pix_load(fun_6(_glb[8]));
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l2;
-  if(net_133(trp_cat(trp_const(140),_glb[8],NULL)))goto l0;
+  if(net_138(trp_cat(trp_const(140),_glb[8],NULL)))goto l0;
 l2:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   _glb[6]=i0;
-  if(net_56(j0))goto l0;
+  if(net_61(j0))goto l0;
   _glb[6]=TRP_FALSE;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_38(trp_obj_t *i0)
+static uns8b net_43(trp_obj_t *i0)
 {
   _glb[6]=_glb[11];
-  if(net_52(trp_const(141),trp_const(13),trp_const(142),trp_const(64)))goto l0;
+  if(net_57(trp_const(141),trp_const(5),trp_const(142),trp_const(64)))goto l0;
   if(_glb[7]==TRP_FALSE)goto l1;
   _glb[6]=i0;
-  if(net_57((trp_equal(trp_length(_glb[8]),trp_const(141))==TRP_TRUE)?(trp_pix_color(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),NULL)):(trp_pix_color(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8])))))goto l0;
+  if(net_62((trp_equal(trp_length(_glb[8]),trp_const(141))==TRP_TRUE)?(trp_pix_color(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),NULL)):(trp_pix_color(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8])))))goto l0;
 l1:
   _glb[6]=TRP_FALSE;
   return 0;
@@ -8232,7 +8425,7 @@ l0:
   return 1;
 }
 
-static uns8b net_39(trp_obj_t *i0)
+static uns8b net_44(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8243,14 +8436,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(145),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(146)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(145),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(146)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_40(trp_obj_t *i0)
+static uns8b net_45(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8261,14 +8454,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(149),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(150)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(149),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(150)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_41(trp_obj_t *i0)
+static uns8b net_46(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8279,14 +8472,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(153),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(154)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(153),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(154)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_42(trp_obj_t *i0)
+static uns8b net_47(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8297,14 +8490,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(157),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(158)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(157),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(158)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_43(trp_obj_t *i0)
+static uns8b net_48(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8315,14 +8508,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(161),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(162)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(161),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(162)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_44(trp_obj_t *i0)
+static uns8b net_49(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8333,14 +8526,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(165),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(166)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(165),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(166)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_45(trp_obj_t *i0)
+static uns8b net_50(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8351,14 +8544,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(169),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(170)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(169),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(170)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_46(trp_obj_t *i0)
+static uns8b net_51(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8369,14 +8562,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(173),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(174)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(173),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(174)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_47(trp_obj_t *i0)
+static uns8b net_52(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8387,19 +8580,19 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_52(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(177),fun_17(i0),trp_const(63),NULL),trp_const(64)))goto l0;
-  if(net_144(trp_const(178)))goto l0;
+  if(net_57(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(177),fun_24(i0),trp_const(63),NULL),trp_const(64)))goto l0;
+  if(net_149(trp_const(178)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_48()
+static uns8b net_53()
 {
   _glb[6]=TRP_FALSE;
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(net_56())goto l0;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],_glb[5],NULL))goto l0;
 l1:
   return 0;
@@ -8407,12 +8600,12 @@ l0:
   return 1;
 }
 
-static uns8b net_49(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
+static uns8b net_54(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
 {
   _glb[6]=TRP_FALSE;
   _glb[5]=EMPTYCORD;
-  if(net_52(i0,i1,i2,i3))goto l0;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(net_57(i0,i1,i2,i3))goto l0;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],_glb[5],NULL))goto l0;
 l1:
   return 0;
@@ -8420,12 +8613,12 @@ l0:
   return 1;
 }
 
-static uns8b net_50()
+static uns8b net_55()
 {
   _glb[6]=TRP_FALSE;
   _glb[5]=EMPTYCORD;
-  if(net_54())goto l0;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(net_59())goto l0;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],_glb[5],NULL))goto l0;
 l1:
   return 0;
@@ -8433,59 +8626,59 @@ l0:
   return 1;
 }
 
-static uns8b net_51()
+static uns8b net_56()
 {
   trp_obj_t *t0=UNDEF;
   _glb[7]=TRP_FALSE;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   t0=_glb[0];
   if(trp_equal(trp_const(56),t0)==TRP_FALSE)goto l3;
-  if(net_54())goto l2;
+  if(net_59())goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(51),t0)==TRP_FALSE)goto l4;
-  if(net_56(_glb[1]))goto l2;
+  if(net_61(_glb[1]))goto l2;
   goto l1;
 l4:
   if(trp_equal(trp_const(29),t0)==TRP_FALSE)goto l5;
-  if(net_56(_glb[1]))goto l2;
+  if(net_61(_glb[1]))goto l2;
   goto l1;
 l5:
   if(trp_equal(trp_const(19),t0)==TRP_FALSE)goto l6;
-  if(net_56(_glb[1]))goto l2;
+  if(net_61(_glb[1]))goto l2;
   goto l1;
 l6:
   if(trp_equal(trp_const(36),t0)==TRP_FALSE)goto l7;
-  if(net_55())goto l2;
+  if(net_60())goto l2;
   goto l1;
 l7:
   if(trp_equal(trp_const(30),t0)==TRP_FALSE)goto l8;
-  if(net_59())goto l2;
+  if(net_64())goto l2;
   goto l1;
 l8:
   if(trp_equal(trp_const(32),t0)==TRP_FALSE)goto l9;
-  if(net_76())goto l2;
+  if(net_81())goto l2;
   goto l1;
 l9:
   if(trp_equal(trp_const(44),t0)==TRP_FALSE)goto l10;
   if(trp_equal(_glb[1],trp_const(50))==TRP_FALSE)goto l11;
-  if(net_77())goto l2;
+  if(net_82())goto l2;
   goto l12;
 l11:
-  if(net_134())goto l2;
+  if(net_139())goto l2;
 l12:
   goto l1;
 l10:
   if(trp_equal(trp_const(37),t0)==TRP_FALSE)goto l13;
   if(trp_equal(_glb[1],trp_const(40))==TRP_FALSE)goto l14;
-  if(net_78())goto l2;
+  if(net_83())goto l2;
   goto l15;
 l14:
-  if(net_134())goto l2;
+  if(net_139())goto l2;
 l15:
   goto l1;
 l13:
-  if(net_134())goto l2;
+  if(net_139())goto l2;
   goto l1;
 l2:
   t0=UNDEF;
@@ -8497,16 +8690,16 @@ l0:
   return 1;
 }
 
-static uns8b net_52(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
+static uns8b net_57(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
 {
   trp_obj_t *j0=UNDEF;
-  if(net_53(i0,i1,i2,i3,&(j0)))goto l0;
+  if(net_58(i0,i1,i2,i3,&(j0)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_53(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3,trp_obj_t **i4)
+static uns8b net_58(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3,trp_obj_t **i4)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -8518,23 +8711,23 @@ static uns8b net_53(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3,trp_
   j1=trp_queue();
   goto l2;
 l1:
-  if(trp_and(fun_16(),trp_notequal(i2,UNDEF),NULL)==TRP_FALSE)goto l3;
+  if(trp_and(fun_23(),trp_notequal(i2,UNDEF),NULL)==TRP_FALSE)goto l3;
   _glb[5]=trp_cat(_glb[5],i2,NULL);
 l3:
 l2:
   *i4=ZERO;
 l4:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l5;
   if(trp_notequal(*i4,i1)!=TRP_TRUE)goto l0;
   if(trp_greater(*i4,ZERO)==TRP_FALSE)goto l6;
-  if(net_58())goto l0;
+  if(net_63())goto l0;
 l6:
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   if(_glb[6]==TRP_FALSE)goto l7;
   j2=_glb[5];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(_glb[7]==TRP_FALSE)goto l8;
   if(trp_queue_put(j1,_glb[8]))goto l0;
   _glb[5]=j2;
@@ -8544,27 +8737,27 @@ l8:
   j3=_glb[5];
   _glb[5]=j2;
   j2=j3;
-  if(trp_and(fun_16(),trp_notequal(i2,UNDEF),NULL)==TRP_FALSE)goto l10;
+  if(trp_and(fun_23(),trp_notequal(i2,UNDEF),NULL)==TRP_FALSE)goto l10;
   _glb[5]=trp_cat(_glb[5],i2,NULL);
 l10:
   if(trp_for_init(&t0,&(j3),j1,NULL,UNO,0))goto l12;
 l11:
   if(trp_greater(trp_for_pos(t0),ZERO)==TRP_FALSE)goto l13;
-  if(net_58())goto l0;
+  if(net_63())goto l0;
 l13:
-  if(net_56(j3))goto l0;
+  if(net_61(j3))goto l0;
   if(trp_for_next(&t0))goto l11;
 l12:
   if(trp_greater(*i4,ZERO)==TRP_FALSE)goto l14;
-  if(net_58())goto l0;
+  if(net_63())goto l0;
 l14:
-  if(fun_16()==TRP_FALSE)goto l15;
+  if(fun_23()==TRP_FALSE)goto l15;
   _glb[5]=trp_cat(_glb[5],j2,NULL);
 l15:
 l9:
   goto l16;
 l7:
-  if(net_51())goto l0;
+  if(net_56())goto l0;
 l16:
   *i4=trp_cat(*i4,UNO,NULL);
   goto l4;
@@ -8575,7 +8768,7 @@ l5:
   _glb[7]=TRP_TRUE;
   goto l18;
 l17:
-  if(fun_16()==TRP_FALSE)goto l19;
+  if(fun_23()==TRP_FALSE)goto l19;
   if(trp_or(trp_equal(i1,UNDEF),trp_and(trp_equal(*i4,i0),trp_equal(i1,trp_cat(i0,UNO,NULL)),NULL),NULL)==TRP_FALSE)goto l20;
   _glb[5]=trp_cat(_glb[5],(trp_greater(*i4,ZERO)==TRP_TRUE)?(trp_const(179)):(EMPTYCORD),trp_const(180),NULL);
 l20:
@@ -8591,7 +8784,7 @@ l0:
   return 1;
 }
 
-static uns8b net_54()
+static uns8b net_59()
 {
   trp_obj_t *j0=UNDEF;
   trp_push_env(j0,NULL);
@@ -8632,7 +8825,7 @@ l8:
   trp_pop_env(&j0,NULL);
   goto l2;
 l3:
-  if(net_56(j0))goto l2;
+  if(net_61(j0))goto l2;
   trp_pop_env_void(1);
   goto l1;
 l2:
@@ -8655,7 +8848,7 @@ l12:
   trp_push_env(j0,NULL);
   j0=trp_nth(_glb[1],_glb[25]);
   if(trp_notequal(j0,UNDEF)!=TRP_TRUE)goto l13;
-  if(fun_16()==TRP_FALSE)goto l14;
+  if(fun_23()==TRP_FALSE)goto l14;
   j0=trp_sprint(trp_const(187),j0,trp_char(93),NULL);
   goto l15;
 l14:
@@ -8667,7 +8860,7 @@ l13:
   trp_pop_env(&j0,NULL);
   goto l9;
 l10:
-  if(fun_16()==TRP_FALSE)goto l16;
+  if(fun_23()==TRP_FALSE)goto l16;
   _glb[5]=trp_cat(_glb[5],j0,NULL);
 l16:
   trp_pop_env_void(1);
@@ -8683,7 +8876,7 @@ l9:
 l17:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_133(trp_cat(_glb[1],trp_const(190),NULL)))goto l18;
+  if(net_138(trp_cat(_glb[1],trp_const(190),NULL)))goto l18;
   trp_pop_env_void(1);
   goto l1;
 l18:
@@ -8695,22 +8888,22 @@ l0:
   return 1;
 }
 
-static uns8b net_55()
+static uns8b net_60()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   _glb[6]=TRP_TRUE;
   j0=_glb[5];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l1;
-  if(net_133(trp_const(191)))goto l0;
+  if(net_138(trp_const(191)))goto l0;
 l1:
   _glb[6]=TRP_FALSE;
-  if(net_139(_glb[22],_glb[8]))goto l0;
+  if(net_144(_glb[22],_glb[8]))goto l0;
   if(trp_in_test(_glb[8],_glb[22],NULL,&(j1),NULL))goto l0;
-  if(net_56(_glb[8]))goto l0;
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(net_61(_glb[8]))goto l0;
+  if(fun_23()==TRP_FALSE)goto l2;
   _glb[5]=trp_cat(j0,trp_const(192),j1,trp_const(193),NULL);
 l2:
   _glb[7]=TRP_FALSE;
@@ -8719,7 +8912,7 @@ l0:
   return 1;
 }
 
-static uns8b net_56(trp_obj_t *i0)
+static uns8b net_61(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -8729,7 +8922,7 @@ static uns8b net_56(trp_obj_t *i0)
   goto l2;
 l1:
   _glb[7]=TRP_FALSE;
-  if(trp_not(fun_16())==TRP_FALSE)goto l3;
+  if(trp_not(fun_23())==TRP_FALSE)goto l3;
   if(trp_not(trp_or(trp_charp(i0),trp_in_func(i0,trp_const(194),NULL),NULL))==TRP_FALSE)goto l4;
   if(trp_in_func(i0,_glb[21],NULL)==TRP_FALSE)goto l5;
   if(trp_or(trp_rawp(i0),trp_pixp(i0),NULL)==TRP_FALSE)goto l6;
@@ -8810,20 +9003,20 @@ l0:
   return 1;
 }
 
-static uns8b net_57(trp_obj_t *i0)
+static uns8b net_62(trp_obj_t *i0)
 {
-  if(trp_and(trp_equal(i0,UNDEF),trp_not(fun_16()),NULL)==TRP_FALSE)goto l1;
+  if(trp_and(trp_equal(i0,UNDEF),trp_not(fun_23()),NULL)==TRP_FALSE)goto l1;
   if(trp_print(trp_const(208),trp_char(10),trp_const(209),trp_nth(ZERO,_glb[18]),trp_char(10),trp_const(210),trp_file_pos_line(_glb[16]),trp_char(10),NULL))goto l0;
 l1:
-  if(net_56(i0))goto l0;
+  if(net_61(i0))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_58()
+static uns8b net_63()
 {
-  if(trp_and(trp_not(_glb[6]),fun_16(),NULL)==TRP_FALSE)goto l1;
+  if(trp_and(trp_not(_glb[6]),fun_23(),NULL)==TRP_FALSE)goto l1;
   _glb[5]=trp_cat(_glb[5],trp_const(179),NULL);
 l1:
   return 0;
@@ -8831,22 +9024,22 @@ l0:
   return 1;
 }
 
-static uns8b net_59()
+static uns8b net_64()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
   trp_obj_t *t1=UNDEF;
   j0=_glb[6];
   _glb[6]=TRP_FALSE;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   t0=_glb[0];
   if(trp_equal(trp_const(37),t0)==TRP_FALSE)goto l3;
   t1=_glb[1];
   if(trp_equal(trp_const(43),t1)==TRP_FALSE)goto l6;
-  if(net_72(j0,trp_const(59),trp_const(59),trp_const(211)))goto l5;
+  if(net_77(j0,trp_const(59),trp_const(59),trp_const(211)))goto l5;
   goto l4;
 l6:
-  if(net_73(j0,_glb[1]))goto l5;
+  if(net_78(j0,_glb[1]))goto l5;
   goto l4;
 l5:
   t1=UNDEF;
@@ -8856,162 +9049,162 @@ l4:
   goto l1;
 l3:
   if(trp_equal(trp_const(44),t0)==TRP_FALSE)goto l7;
-  if(net_74(j0,_glb[1]))goto l2;
+  if(net_79(j0,_glb[1]))goto l2;
   goto l1;
 l7:
   if(trp_equal(trp_const(56),t0)==TRP_FALSE)goto l8;
   trp_push_env(j0,NULL);
-  if(net_60(j0,_glb[1]))goto l10;
+  if(net_65(j0,_glb[1]))goto l10;
   trp_pop_env_void(1);
   goto l9;
 l10:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_21(_glb[1]))goto l11;
+  if(net_26(_glb[1]))goto l11;
   trp_pop_env_void(1);
   goto l9;
 l11:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_22(_glb[1]))goto l12;
+  if(net_27(_glb[1]))goto l12;
   trp_pop_env_void(1);
   goto l9;
 l12:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_23(_glb[1]))goto l13;
+  if(net_28(_glb[1]))goto l13;
   trp_pop_env_void(1);
   goto l9;
 l13:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_24(_glb[1]))goto l14;
+  if(net_29(_glb[1]))goto l14;
   trp_pop_env_void(1);
   goto l9;
 l14:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_25(_glb[1]))goto l15;
+  if(net_30(_glb[1]))goto l15;
   trp_pop_env_void(1);
   goto l9;
 l15:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_26(_glb[1]))goto l16;
+  if(net_31(_glb[1]))goto l16;
   trp_pop_env_void(1);
   goto l9;
 l16:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_27(_glb[1]))goto l17;
+  if(net_32(_glb[1]))goto l17;
   trp_pop_env_void(1);
   goto l9;
 l17:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_28(_glb[1]))goto l18;
+  if(net_33(_glb[1]))goto l18;
   trp_pop_env_void(1);
   goto l9;
 l18:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_29(_glb[1]))goto l19;
+  if(net_34(_glb[1]))goto l19;
   trp_pop_env_void(1);
   goto l9;
 l19:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_30(_glb[1]))goto l20;
+  if(net_35(_glb[1]))goto l20;
   trp_pop_env_void(1);
   goto l9;
 l20:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_31(_glb[1]))goto l21;
+  if(net_36(_glb[1]))goto l21;
   trp_pop_env_void(1);
   goto l9;
 l21:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_32(_glb[1]))goto l22;
+  if(net_37(_glb[1]))goto l22;
   trp_pop_env_void(1);
   goto l9;
 l22:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_33(_glb[1]))goto l23;
+  if(net_38(_glb[1]))goto l23;
   trp_pop_env_void(1);
   goto l9;
 l23:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_34(_glb[1]))goto l24;
+  if(net_39(_glb[1]))goto l24;
   trp_pop_env_void(1);
   goto l9;
 l24:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_35(j0,_glb[1]))goto l25;
+  if(net_40(j0,_glb[1]))goto l25;
   trp_pop_env_void(1);
   goto l9;
 l25:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_39(_glb[1]))goto l26;
+  if(net_44(_glb[1]))goto l26;
   trp_pop_env_void(1);
   goto l9;
 l26:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_40(_glb[1]))goto l27;
+  if(net_45(_glb[1]))goto l27;
   trp_pop_env_void(1);
   goto l9;
 l27:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_41(_glb[1]))goto l28;
+  if(net_46(_glb[1]))goto l28;
   trp_pop_env_void(1);
   goto l9;
 l28:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_42(_glb[1]))goto l29;
+  if(net_47(_glb[1]))goto l29;
   trp_pop_env_void(1);
   goto l9;
 l29:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_43(_glb[1]))goto l30;
+  if(net_48(_glb[1]))goto l30;
   trp_pop_env_void(1);
   goto l9;
 l30:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_44(_glb[1]))goto l31;
+  if(net_49(_glb[1]))goto l31;
   trp_pop_env_void(1);
   goto l9;
 l31:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_45(_glb[1]))goto l32;
+  if(net_50(_glb[1]))goto l32;
   trp_pop_env_void(1);
   goto l9;
 l32:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_46(_glb[1]))goto l33;
+  if(net_51(_glb[1]))goto l33;
   trp_pop_env_void(1);
   goto l9;
 l33:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_47(_glb[1]))goto l34;
+  if(net_52(_glb[1]))goto l34;
   trp_pop_env_void(1);
   goto l9;
 l34:
   trp_pop_env(&j0,NULL);
   trp_push_env(j0,NULL);
-  if(net_61(j0,_glb[1]))goto l35;
+  if(net_66(j0,_glb[1]))goto l35;
   trp_pop_env_void(1);
   goto l9;
 l35:
@@ -9020,7 +9213,7 @@ l35:
 l9:
   goto l1;
 l8:
-  if(net_134())goto l2;
+  if(net_139())goto l2;
   goto l1;
 l2:
   t0=UNDEF;
@@ -9033,1055 +9226,1055 @@ l0:
   return 1;
 }
 
-static uns8b net_60(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_65(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *t0=UNDEF;
   t0=i1;
   if(trp_equal(trp_const(212),t0)==TRP_FALSE)goto l3;
-  if(net_52(UNO,UNDEF,trp_const(213),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(213),trp_char(41)))goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(214),t0)==TRP_FALSE)goto l4;
-  if(net_52(ZERO,ZERO,trp_const(215),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(215),trp_char(41)))goto l2;
   goto l1;
 l4:
   if(trp_equal(trp_const(216),t0)==TRP_FALSE)goto l5;
-  if(net_52(ZERO,ZERO,trp_const(217),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(217),trp_char(41)))goto l2;
   goto l1;
 l5:
   if(trp_equal(trp_const(218),t0)==TRP_FALSE)goto l6;
-  if(net_52(ZERO,ZERO,trp_const(219),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(219),trp_char(41)))goto l2;
   goto l1;
 l6:
   if(trp_equal(trp_const(220),t0)==TRP_FALSE)goto l7;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56(fun_20()))goto l2;
+  if(net_61(fun_27()))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l7:
   if(trp_equal(trp_const(221),t0)==TRP_FALSE)goto l8;
-  if(net_136())goto l2;
-  if(fun_20()==TRP_FALSE)goto l9;
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(net_141())goto l2;
+  if(fun_27()==TRP_FALSE)goto l9;
+  if(fun_23()==TRP_FALSE)goto l10;
   _glb[5]=trp_cat(_glb[5],trp_const(222),NULL);
 l10:
   goto l11;
 l9:
   _glb[6]=i0;
-  if(net_56(UNO))goto l2;
+  if(net_61(UNO))goto l2;
   _glb[6]=TRP_FALSE;
 l11:
   goto l1;
 l8:
   if(trp_equal(trp_const(223),t0)==TRP_FALSE)goto l12;
-  if(net_136())goto l2;
-  if(fun_20()==TRP_FALSE)goto l13;
-  if(fun_16()==TRP_FALSE)goto l14;
+  if(net_141())goto l2;
+  if(fun_27()==TRP_FALSE)goto l13;
+  if(fun_23()==TRP_FALSE)goto l14;
   _glb[5]=trp_cat(_glb[5],trp_const(224),NULL);
 l14:
   goto l15;
 l13:
   _glb[6]=i0;
-  if(net_56(UNO))goto l2;
+  if(net_61(UNO))goto l2;
   _glb[6]=TRP_FALSE;
 l15:
   goto l1;
 l12:
   if(trp_equal(trp_const(225),t0)==TRP_FALSE)goto l16;
-  if(net_52(ZERO,ZERO,trp_const(226),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(226),trp_char(41)))goto l2;
   goto l1;
 l16:
   if(trp_equal(trp_const(227),t0)==TRP_FALSE)goto l17;
-  if(net_52(UNO,UNO,trp_const(228),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(228),trp_char(41)))goto l2;
   goto l1;
 l17:
   if(trp_equal(trp_const(50),t0)==TRP_FALSE)goto l18;
-  if(net_52(UNO,UNDEF,trp_const(229),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(229),trp_char(41)))goto l2;
   goto l1;
 l18:
   if(trp_equal(trp_const(230),t0)==TRP_FALSE)goto l19;
-  if(net_52(UNO,UNDEF,trp_const(231),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(231),trp_char(41)))goto l2;
   goto l1;
 l19:
   if(trp_equal(trp_const(232),t0)==TRP_FALSE)goto l20;
-  if(net_15())goto l2;
+  if(net_20())goto l2;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l21;
-  if(net_133(trp_const(233)))goto l2;
+  if(net_138(trp_const(233)))goto l2;
 l21:
-  if(fun_16()==TRP_FALSE)goto l22;
+  if(fun_23()==TRP_FALSE)goto l22;
   _glb[5]=trp_cat(_glb[5],trp_const(234),_glb[1],trp_const(64),NULL);
 l22:
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   goto l1;
 l20:
   if(trp_equal(trp_const(235),t0)==TRP_FALSE)goto l23;
-  if(net_79())goto l2;
+  if(net_84())goto l2;
   goto l1;
 l23:
   if(trp_equal(trp_const(236),t0)==TRP_FALSE)goto l24;
-  if(net_72(i0,UNO,UNDEF,trp_const(236)))goto l2;
+  if(net_77(i0,UNO,UNDEF,trp_const(236)))goto l2;
   goto l1;
 l24:
   if(trp_equal(trp_const(237),t0)==TRP_FALSE)goto l25;
-  if(net_72(i0,UNO,UNDEF,trp_const(237)))goto l2;
+  if(net_77(i0,UNO,UNDEF,trp_const(237)))goto l2;
   goto l1;
 l25:
   if(trp_equal(trp_const(238),t0)==TRP_FALSE)goto l26;
-  if(net_72(i0,UNO,UNO,trp_const(238)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(238)))goto l2;
   goto l1;
 l26:
   if(trp_equal(trp_const(239),t0)==TRP_FALSE)goto l27;
-  if(net_72(i0,UNO,UNO,trp_const(239)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(239)))goto l2;
   goto l1;
 l27:
   if(trp_equal(trp_const(240),t0)==TRP_FALSE)goto l28;
-  if(net_52(ZERO,ZERO,trp_const(241),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(241),trp_char(41)))goto l2;
   goto l1;
 l28:
   if(trp_equal(trp_const(242),t0)==TRP_FALSE)goto l29;
-  if(net_52(UNO,UNO,trp_const(243),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(243),trp_char(41)))goto l2;
   goto l1;
 l29:
   if(trp_equal(trp_const(244),t0)==TRP_FALSE)goto l30;
-  if(net_72(i0,UNO,UNO,trp_const(244)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(244)))goto l2;
   goto l1;
 l30:
   if(trp_equal(trp_const(245),t0)==TRP_FALSE)goto l31;
-  if(net_52(UNO,UNO,trp_const(246),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(246),trp_char(41)))goto l2;
   goto l1;
 l31:
   if(trp_equal(trp_const(247),t0)==TRP_FALSE)goto l32;
-  if(net_52(UNO,UNO,trp_const(248),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(248),trp_char(41)))goto l2;
   goto l1;
 l32:
   if(trp_equal(trp_const(249),t0)==TRP_FALSE)goto l33;
-  if(net_52(UNO,UNO,trp_const(250),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(250),trp_char(41)))goto l2;
   goto l1;
 l33:
   if(trp_equal(trp_const(251),t0)==TRP_FALSE)goto l34;
-  if(net_52(UNO,UNO,trp_const(252),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(252),trp_char(41)))goto l2;
   goto l1;
 l34:
   if(trp_equal(trp_const(253),t0)==TRP_FALSE)goto l35;
-  if(net_52(UNO,UNO,trp_const(254),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(254),trp_char(41)))goto l2;
   goto l1;
 l35:
   if(trp_equal(trp_const(255),t0)==TRP_FALSE)goto l36;
-  if(net_52(UNO,UNO,trp_const(256),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(256),trp_char(41)))goto l2;
   goto l1;
 l36:
   if(trp_equal(trp_const(257),t0)==TRP_FALSE)goto l37;
-  if(net_52(UNO,UNO,trp_const(258),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(258),trp_char(41)))goto l2;
   goto l1;
 l37:
   if(trp_equal(trp_const(259),t0)==TRP_FALSE)goto l38;
-  if(net_52(UNO,UNO,trp_const(260),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(260),trp_char(41)))goto l2;
   goto l1;
 l38:
   if(trp_equal(trp_const(261),t0)==TRP_FALSE)goto l39;
-  if(net_52(UNO,UNO,trp_const(262),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(262),trp_char(41)))goto l2;
   goto l1;
 l39:
   if(trp_equal(trp_const(263),t0)==TRP_FALSE)goto l40;
-  if(net_52(UNO,UNO,trp_const(264),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(264),trp_char(41)))goto l2;
   goto l1;
 l40:
   if(trp_equal(trp_const(265),t0)==TRP_FALSE)goto l41;
-  if(net_52(UNO,UNO,trp_const(266),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(266),trp_char(41)))goto l2;
   goto l1;
 l41:
   if(trp_equal(trp_const(267),t0)==TRP_FALSE)goto l42;
-  if(net_52(UNO,UNO,trp_const(268),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(268),trp_char(41)))goto l2;
   goto l1;
 l42:
   if(trp_equal(trp_const(269),t0)==TRP_FALSE)goto l43;
-  if(net_52(UNO,UNO,trp_const(270),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(270),trp_char(41)))goto l2;
   goto l1;
 l43:
   if(trp_equal(trp_const(271),t0)==TRP_FALSE)goto l44;
-  if(net_52(UNO,UNO,trp_const(272),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(272),trp_char(41)))goto l2;
   goto l1;
 l44:
   if(trp_equal(trp_const(273),t0)==TRP_FALSE)goto l45;
-  if(net_52(UNO,UNO,trp_const(274),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(274),trp_char(41)))goto l2;
   goto l1;
 l45:
   if(trp_equal(trp_const(275),t0)==TRP_FALSE)goto l46;
-  if(net_52(UNO,UNO,trp_const(276),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(276),trp_char(41)))goto l2;
   goto l1;
 l46:
   if(trp_equal(trp_const(277),t0)==TRP_FALSE)goto l47;
-  if(net_52(UNO,UNO,trp_const(278),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(278),trp_char(41)))goto l2;
   goto l1;
 l47:
   if(trp_equal(trp_const(279),t0)==TRP_FALSE)goto l48;
-  if(net_52(UNO,UNO,trp_const(280),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(280),trp_char(41)))goto l2;
   goto l1;
 l48:
   if(trp_equal(trp_const(281),t0)==TRP_FALSE)goto l49;
-  if(net_52(trp_const(59),trp_const(59),trp_const(282),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(282),trp_char(41)))goto l2;
   goto l1;
 l49:
   if(trp_equal(trp_const(283),t0)==TRP_FALSE)goto l50;
-  if(net_72(i0,UNO,UNO,trp_const(283)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(283)))goto l2;
   goto l1;
 l50:
   if(trp_equal(trp_const(284),t0)==TRP_FALSE)goto l51;
-  if(net_72(i0,UNO,UNO,trp_const(284)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(284)))goto l2;
   goto l1;
 l51:
   if(trp_equal(trp_const(285),t0)==TRP_FALSE)goto l52;
-  if(net_72(i0,UNO,UNO,trp_const(285)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(285)))goto l2;
   goto l1;
 l52:
   if(trp_equal(trp_const(286),t0)==TRP_FALSE)goto l53;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(286)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(286)))goto l2;
   goto l1;
 l53:
   if(trp_equal(trp_const(287),t0)==TRP_FALSE)goto l54;
-  if(net_72(i0,trp_const(141),trp_const(141),trp_const(287)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(141),trp_const(287)))goto l2;
   goto l1;
 l54:
   if(trp_equal(trp_const(288),t0)==TRP_FALSE)goto l55;
-  if(net_62(i0))goto l2;
+  if(net_67(i0))goto l2;
   goto l1;
 l55:
   if(trp_equal(trp_const(289),t0)==TRP_FALSE)goto l56;
   if(trp_equal(_glb[42],UNDEF)==TRP_FALSE)goto l57;
-  if(net_133(trp_const(290)))goto l2;
+  if(net_138(trp_const(290)))goto l2;
   goto l58;
 l57:
-  if(net_136())goto l2;
-  if(fun_16()==TRP_FALSE)goto l59;
+  if(net_141())goto l2;
+  if(fun_23()==TRP_FALSE)goto l59;
   _glb[5]=trp_cat(_glb[5],trp_const(291),_glb[42],trp_char(41),NULL);
 l59:
 l58:
   goto l1;
 l56:
   if(trp_equal(trp_const(292),t0)==TRP_FALSE)goto l60;
-  if(net_136())goto l2;
-  if(fun_16()==TRP_FALSE)goto l61;
+  if(net_141())goto l2;
+  if(fun_23()==TRP_FALSE)goto l61;
   _glb[5]=trp_cat(_glb[5],(trp_equal(trp_length(_glb[22]),ZERO)==TRP_TRUE)?(trp_const(202)):(trp_const(293)),NULL);
 l61:
   goto l1;
 l60:
   if(trp_equal(trp_const(294),t0)==TRP_FALSE)goto l62;
-  if(net_75(i0))goto l2;
+  if(net_80(i0))goto l2;
   goto l1;
 l62:
   if(trp_equal(trp_const(295),t0)==TRP_FALSE)goto l63;
-  if(net_52(ZERO,ZERO,trp_const(296),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(296),trp_char(41)))goto l2;
   goto l1;
 l63:
   if(trp_equal(trp_const(297),t0)==TRP_FALSE)goto l64;
-  if(net_52(ZERO,UNO,trp_const(298),trp_char(41)))goto l2;
+  if(net_57(ZERO,UNO,trp_const(298),trp_char(41)))goto l2;
   goto l1;
 l64:
   if(trp_equal(trp_const(299),t0)==TRP_FALSE)goto l65;
-  if(net_52(trp_const(59),trp_const(59),trp_const(300),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(300),trp_char(41)))goto l2;
   goto l1;
 l65:
   if(trp_equal(trp_const(301),t0)==TRP_FALSE)goto l66;
-  if(net_52(UNO,UNO,trp_const(300),trp_const(302)))goto l2;
+  if(net_57(UNO,UNO,trp_const(300),trp_const(302)))goto l2;
   goto l1;
 l66:
   if(trp_equal(trp_const(303),t0)==TRP_FALSE)goto l67;
-  if(net_52(UNO,UNO,trp_const(300),trp_const(304)))goto l2;
+  if(net_57(UNO,UNO,trp_const(300),trp_const(304)))goto l2;
   goto l1;
 l67:
   if(trp_equal(trp_const(305),t0)==TRP_FALSE)goto l68;
-  if(net_52(UNO,UNO,trp_const(306),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(306),trp_char(41)))goto l2;
   goto l1;
 l68:
   if(trp_equal(trp_const(307),t0)==TRP_FALSE)goto l69;
-  if(net_52(UNO,UNO,trp_const(308),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(308),trp_char(41)))goto l2;
   goto l1;
 l69:
   if(trp_equal(trp_const(309),t0)==TRP_FALSE)goto l70;
-  if(net_52(UNO,UNO,trp_const(310),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(310),trp_char(41)))goto l2;
   goto l1;
 l70:
   if(trp_equal(trp_const(311),t0)==TRP_FALSE)goto l71;
-  if(net_52(UNO,UNO,trp_const(312),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(312),trp_char(41)))goto l2;
   goto l1;
 l71:
   if(trp_equal(trp_const(313),t0)==TRP_FALSE)goto l72;
-  if(net_52(UNO,UNO,trp_const(314),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(314),trp_char(41)))goto l2;
   goto l1;
 l72:
   if(trp_equal(trp_const(315),t0)==TRP_FALSE)goto l73;
-  if(net_52(UNO,UNO,trp_const(316),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(316),trp_char(41)))goto l2;
   goto l1;
 l73:
   if(trp_equal(trp_const(317),t0)==TRP_FALSE)goto l74;
-  if(net_52(UNO,UNO,trp_const(318),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(318),trp_char(41)))goto l2;
   goto l1;
 l74:
   if(trp_equal(trp_const(319),t0)==TRP_FALSE)goto l75;
-  if(net_52(UNO,UNO,trp_const(320),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(320),trp_char(41)))goto l2;
   goto l1;
 l75:
   if(trp_equal(trp_const(321),t0)==TRP_FALSE)goto l76;
-  if(net_52(UNO,UNO,trp_const(322),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(322),trp_char(41)))goto l2;
   goto l1;
 l76:
   if(trp_equal(trp_const(323),t0)==TRP_FALSE)goto l77;
-  if(net_52(UNO,UNO,trp_const(324),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(324),trp_char(41)))goto l2;
   goto l1;
 l77:
   if(trp_equal(trp_const(325),t0)==TRP_FALSE)goto l78;
-  if(net_52(UNO,UNO,trp_const(326),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(326),trp_char(41)))goto l2;
   goto l1;
 l78:
   if(trp_equal(trp_const(327),t0)==TRP_FALSE)goto l79;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56(trp_nth(trp_const(327),_glb[9])))goto l2;
+  if(net_61(trp_nth(trp_const(327),_glb[9])))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l79:
   if(trp_equal(trp_const(328),t0)==TRP_FALSE)goto l80;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56(_glb[10]))goto l2;
+  if(net_61(_glb[10]))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l80:
   if(trp_equal(trp_const(329),t0)==TRP_FALSE)goto l81;
-  if(net_52(ZERO,ZERO,trp_const(330),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(330),trp_char(41)))goto l2;
   goto l1;
 l81:
   if(trp_equal(trp_const(331),t0)==TRP_FALSE)goto l82;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56((_glb[14]==TRP_TRUE)?(trp_const(332)):((_glb[15]==TRP_TRUE)?(trp_const(25)):(trp_sig64(8*sizeof(void *))))))goto l2;
+  if(net_61((_glb[14]==TRP_TRUE)?(trp_const(332)):((_glb[15]==TRP_TRUE)?(trp_const(25)):(trp_sig64(8*sizeof(void *))))))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l82:
   if(trp_equal(trp_const(333),t0)==TRP_FALSE)goto l83;
-  if(net_52(ZERO,ZERO,trp_const(334),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(334),trp_char(41)))goto l2;
   goto l1;
 l83:
   if(trp_equal(trp_const(335),t0)==TRP_FALSE)goto l84;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56((trp_or(_glb[14],_glb[15],NULL)==TRP_TRUE)?(trp_const(336)):(trp_uname())))goto l2;
+  if(net_61((trp_or(_glb[14],_glb[15],NULL)==TRP_TRUE)?(trp_const(336)):(trp_uname())))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l84:
   if(trp_equal(trp_const(337),t0)==TRP_FALSE)goto l85;
-  if(net_52(ZERO,ZERO,trp_const(338),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(338),trp_char(41)))goto l2;
   goto l1;
 l85:
   if(trp_equal(trp_const(339),t0)==TRP_FALSE)goto l86;
-  if(net_52(ZERO,ZERO,trp_const(340),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(340),trp_char(41)))goto l2;
   goto l1;
 l86:
   if(trp_equal(trp_const(341),t0)==TRP_FALSE)goto l87;
-  if(net_52(UNO,UNO,trp_const(342),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(342),trp_char(41)))goto l2;
   goto l1;
 l87:
   if(trp_equal(trp_const(343),t0)==TRP_FALSE)goto l88;
-  if(net_52(ZERO,ZERO,trp_const(344),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(344),trp_char(41)))goto l2;
   goto l1;
 l88:
   if(trp_equal(trp_const(345),t0)==TRP_FALSE)goto l89;
-  if(net_52(UNO,UNO,trp_const(346),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(346),trp_char(41)))goto l2;
   goto l1;
 l89:
   if(trp_equal(trp_const(347),t0)==TRP_FALSE)goto l90;
-  if(net_52(UNO,UNO,trp_const(348),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(348),trp_char(41)))goto l2;
   goto l1;
 l90:
   if(trp_equal(trp_const(349),t0)==TRP_FALSE)goto l91;
-  if(net_52(UNO,UNO,trp_const(350),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(350),trp_char(41)))goto l2;
   goto l1;
 l91:
   if(trp_equal(trp_const(351),t0)==TRP_FALSE)goto l92;
-  if(net_52(UNO,UNO,trp_const(352),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(352),trp_char(41)))goto l2;
   goto l1;
 l92:
   if(trp_equal(trp_const(353),t0)==TRP_FALSE)goto l93;
-  if(net_52(UNO,UNO,trp_const(354),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(354),trp_char(41)))goto l2;
   goto l1;
 l93:
   if(trp_equal(trp_const(355),t0)==TRP_FALSE)goto l94;
-  if(net_52(UNO,UNO,trp_const(356),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(356),trp_char(41)))goto l2;
   goto l1;
 l94:
   if(trp_equal(trp_const(357),t0)==TRP_FALSE)goto l95;
-  if(net_52(UNO,UNO,trp_const(358),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(358),trp_char(41)))goto l2;
   goto l1;
 l95:
   if(trp_equal(trp_const(359),t0)==TRP_FALSE)goto l96;
-  if(net_52(UNO,UNO,trp_const(360),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(360),trp_char(41)))goto l2;
   goto l1;
 l96:
   if(trp_equal(trp_const(361),t0)==TRP_FALSE)goto l97;
-  if(net_52(UNO,UNO,trp_const(362),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(362),trp_char(41)))goto l2;
   goto l1;
 l97:
   if(trp_equal(trp_const(363),t0)==TRP_FALSE)goto l98;
-  if(net_72(i0,UNO,UNO,trp_const(363)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(363)))goto l2;
   goto l1;
 l98:
   if(trp_equal(trp_const(364),t0)==TRP_FALSE)goto l99;
-  if(net_72(i0,UNO,UNO,trp_const(363)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(363)))goto l2;
   goto l1;
 l99:
   if(trp_equal(trp_const(365),t0)==TRP_FALSE)goto l100;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(365)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(365)))goto l2;
   goto l1;
 l100:
   if(trp_equal(trp_const(366),t0)==TRP_FALSE)goto l101;
-  if(net_72(i0,UNO,UNO,trp_const(366)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(366)))goto l2;
   goto l1;
 l101:
   if(trp_equal(trp_const(367),t0)==TRP_FALSE)goto l102;
-  if(net_72(i0,UNO,UNO,trp_const(367)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(367)))goto l2;
   goto l1;
 l102:
   if(trp_equal(trp_const(368),t0)==TRP_FALSE)goto l103;
-  if(net_72(i0,ZERO,UNDEF,trp_const(368)))goto l2;
+  if(net_77(i0,ZERO,UNDEF,trp_const(368)))goto l2;
   goto l1;
 l103:
   if(trp_equal(trp_const(369),t0)==TRP_FALSE)goto l104;
-  if(net_63(i0))goto l2;
+  if(net_68(i0))goto l2;
   goto l1;
 l104:
   if(trp_equal(trp_const(370),t0)==TRP_FALSE)goto l105;
-  if(net_72(i0,UNO,UNO,trp_const(371)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(371)))goto l2;
   goto l1;
 l105:
   if(trp_equal(trp_const(372),t0)==TRP_FALSE)goto l106;
-  if(net_72(i0,UNO,UNO,trp_const(373)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(373)))goto l2;
   goto l1;
 l106:
   if(trp_equal(trp_const(374),t0)==TRP_FALSE)goto l107;
-  if(net_72(i0,UNO,UNO,trp_const(375)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(375)))goto l2;
   goto l1;
 l107:
   if(trp_equal(trp_const(376),t0)==TRP_FALSE)goto l108;
-  if(net_72(i0,UNO,UNO,trp_const(377)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(377)))goto l2;
   goto l1;
 l108:
   if(trp_equal(trp_const(378),t0)==TRP_FALSE)goto l109;
-  if(net_72(i0,UNO,UNO,trp_const(379)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(379)))goto l2;
   goto l1;
 l109:
   if(trp_equal(trp_const(380),t0)==TRP_FALSE)goto l110;
-  if(net_72(i0,UNO,UNO,trp_const(381)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(381)))goto l2;
   goto l1;
 l110:
   if(trp_equal(trp_const(382),t0)==TRP_FALSE)goto l111;
-  if(net_72(i0,UNO,UNO,trp_const(383)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(383)))goto l2;
   goto l1;
 l111:
   if(trp_equal(trp_const(384),t0)==TRP_FALSE)goto l112;
-  if(net_64(i0))goto l2;
+  if(net_69(i0))goto l2;
   goto l1;
 l112:
   if(trp_equal(trp_const(385),t0)==TRP_FALSE)goto l113;
-  if(net_65(i0,trp_char(108)))goto l2;
+  if(net_70(i0,trp_char(108)))goto l2;
   goto l1;
 l113:
   if(trp_equal(trp_const(386),t0)==TRP_FALSE)goto l114;
-  if(net_65(i0,trp_char(114)))goto l2;
+  if(net_70(i0,trp_char(114)))goto l2;
   goto l1;
 l114:
   if(trp_equal(trp_const(387),t0)==TRP_FALSE)goto l115;
-  if(net_52(UNO,UNDEF,trp_const(388),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(388),trp_char(41)))goto l2;
   goto l1;
 l115:
   if(trp_equal(trp_const(389),t0)==TRP_FALSE)goto l116;
-  if(net_52(UNO,UNDEF,trp_const(390),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(390),trp_char(41)))goto l2;
   goto l1;
 l116:
   if(trp_equal(trp_const(391),t0)==TRP_FALSE)goto l117;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(392)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(392)))goto l2;
   goto l1;
 l117:
   if(trp_equal(trp_const(393),t0)==TRP_FALSE)goto l118;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(394)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(394)))goto l2;
   goto l1;
 l118:
   if(trp_equal(trp_const(395),t0)==TRP_FALSE)goto l119;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(396)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(396)))goto l2;
   goto l1;
 l119:
   if(trp_equal(trp_const(397),t0)==TRP_FALSE)goto l120;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(398)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(398)))goto l2;
   goto l1;
 l120:
   if(trp_equal(trp_const(399),t0)==TRP_FALSE)goto l121;
-  if(net_52(UNO,UNDEF,trp_const(400),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(400),trp_char(41)))goto l2;
   goto l1;
 l121:
   if(trp_equal(trp_const(401),t0)==TRP_FALSE)goto l122;
-  if(net_52(UNO,UNDEF,trp_const(402),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(402),trp_char(41)))goto l2;
   goto l1;
 l122:
   if(trp_equal(trp_const(403),t0)==TRP_FALSE)goto l123;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(404)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(404)))goto l2;
   goto l1;
 l123:
   if(trp_equal(trp_const(405),t0)==TRP_FALSE)goto l124;
-  if(net_52(UNO,UNDEF,trp_const(406),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(406),trp_char(41)))goto l2;
   goto l1;
 l124:
   if(trp_equal(trp_const(407),t0)==TRP_FALSE)goto l125;
-  if(net_52(UNO,UNDEF,trp_const(408),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(408),trp_char(41)))goto l2;
   goto l1;
 l125:
   if(trp_equal(trp_const(409),t0)==TRP_FALSE)goto l126;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(410)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(410)))goto l2;
   goto l1;
 l126:
   if(trp_equal(trp_const(411),t0)==TRP_FALSE)goto l127;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(412)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(412)))goto l2;
   goto l1;
 l127:
   if(trp_equal(trp_const(413),t0)==TRP_FALSE)goto l128;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(414)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(414)))goto l2;
   goto l1;
 l128:
   if(trp_equal(trp_const(415),t0)==TRP_FALSE)goto l129;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(416)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(416)))goto l2;
   goto l1;
 l129:
   if(trp_equal(trp_const(417),t0)==TRP_FALSE)goto l130;
-  if(net_72(i0,UNO,UNO,trp_const(418)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(418)))goto l2;
   goto l1;
 l130:
   if(trp_equal(trp_const(419),t0)==TRP_FALSE)goto l131;
-  if(net_72(i0,UNO,UNO,trp_const(420)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(420)))goto l2;
   goto l1;
 l131:
   if(trp_equal(trp_const(421),t0)==TRP_FALSE)goto l132;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(422)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(422)))goto l2;
   goto l1;
 l132:
   if(trp_equal(trp_const(423),t0)==TRP_FALSE)goto l133;
-  if(net_72(i0,trp_const(13),trp_const(424),trp_const(425)))goto l2;
+  if(net_77(i0,trp_const(5),trp_const(424),trp_const(425)))goto l2;
   goto l1;
 l133:
   if(trp_equal(trp_const(426),t0)==TRP_FALSE)goto l134;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(427)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(427)))goto l2;
   goto l1;
 l134:
   if(trp_equal(trp_const(428),t0)==TRP_FALSE)goto l135;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(429)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(429)))goto l2;
   goto l1;
 l135:
   if(trp_equal(trp_const(430),t0)==TRP_FALSE)goto l136;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(431)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(431)))goto l2;
   goto l1;
 l136:
   if(trp_equal(trp_const(432),t0)==TRP_FALSE)goto l137;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(433)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(433)))goto l2;
   goto l1;
 l137:
   if(trp_equal(trp_const(434),t0)==TRP_FALSE)goto l138;
-  if(net_72(i0,trp_const(13),trp_const(424),trp_const(435)))goto l2;
+  if(net_77(i0,trp_const(5),trp_const(424),trp_const(435)))goto l2;
   goto l1;
 l138:
   if(trp_equal(trp_const(436),t0)==TRP_FALSE)goto l139;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(437)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(437)))goto l2;
   goto l1;
 l139:
   if(trp_equal(trp_const(438),t0)==TRP_FALSE)goto l140;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(439)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(439)))goto l2;
   goto l1;
 l140:
   if(trp_equal(trp_const(440),t0)==TRP_FALSE)goto l141;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(441)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(441)))goto l2;
   goto l1;
 l141:
   if(trp_equal(trp_const(442),t0)==TRP_FALSE)goto l142;
-  if(net_72(i0,trp_const(13),trp_const(424),trp_const(443)))goto l2;
+  if(net_77(i0,trp_const(5),trp_const(424),trp_const(443)))goto l2;
   goto l1;
 l142:
   if(trp_equal(trp_const(444),t0)==TRP_FALSE)goto l143;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(445)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(445)))goto l2;
   goto l1;
 l143:
   if(trp_equal(trp_const(446),t0)==TRP_FALSE)goto l144;
-  if(net_72(i0,trp_const(141),trp_const(13),trp_const(447)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(5),trp_const(447)))goto l2;
   goto l1;
 l144:
   if(trp_equal(trp_const(448),t0)==TRP_FALSE)goto l145;
-  if(net_52(UNO,UNO,trp_const(449),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(449),trp_char(41)))goto l2;
   goto l1;
 l145:
   if(trp_equal(trp_const(450),t0)==TRP_FALSE)goto l146;
-  if(net_52(UNO,UNO,trp_const(451),trp_const(452)))goto l2;
+  if(net_57(UNO,UNO,trp_const(451),trp_const(452)))goto l2;
   goto l1;
 l146:
   if(trp_equal(trp_const(453),t0)==TRP_FALSE)goto l147;
-  if(net_52(ZERO,UNDEF,trp_const(454),trp_char(41)))goto l2;
+  if(net_57(ZERO,UNDEF,trp_const(454),trp_char(41)))goto l2;
   goto l1;
 l147:
   if(trp_equal(trp_const(455),t0)==TRP_FALSE)goto l148;
-  if(net_52(UNO,trp_const(59),trp_const(451),trp_char(41)))goto l2;
+  if(net_57(UNO,trp_const(59),trp_const(451),trp_char(41)))goto l2;
   goto l1;
 l148:
   if(trp_equal(trp_const(456),t0)==TRP_FALSE)goto l149;
-  if(net_52(ZERO,ZERO,trp_const(457),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(457),trp_char(41)))goto l2;
   goto l1;
 l149:
   if(trp_equal(trp_const(458),t0)==TRP_FALSE)goto l150;
-  if(net_52(ZERO,ZERO,trp_const(459),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(459),trp_char(41)))goto l2;
   goto l1;
 l150:
   if(trp_equal(trp_const(460),t0)==TRP_FALSE)goto l151;
-  if(net_52(ZERO,ZERO,trp_const(461),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(461),trp_char(41)))goto l2;
   goto l1;
 l151:
   if(trp_equal(trp_const(462),t0)==TRP_FALSE)goto l152;
-  if(net_52(UNO,UNO,trp_const(463),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(463),trp_char(41)))goto l2;
   goto l1;
 l152:
   if(trp_equal(trp_const(464),t0)==TRP_FALSE)goto l153;
-  if(net_52(UNO,UNO,trp_const(465),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(465),trp_char(41)))goto l2;
   goto l1;
 l153:
   if(trp_equal(trp_const(466),t0)==TRP_FALSE)goto l154;
-  if(net_52(UNO,UNO,trp_const(467),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(467),trp_char(41)))goto l2;
   goto l1;
 l154:
   if(trp_equal(trp_const(468),t0)==TRP_FALSE)goto l155;
-  if(net_52(trp_const(59),trp_const(59),trp_const(469),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(469),trp_char(41)))goto l2;
   goto l1;
 l155:
   if(trp_equal(trp_const(470),t0)==TRP_FALSE)goto l156;
-  if(net_52(UNO,UNDEF,trp_const(471),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(471),trp_char(41)))goto l2;
   goto l1;
 l156:
   if(trp_equal(trp_const(472),t0)==TRP_FALSE)goto l157;
-  if(net_52(UNO,UNDEF,trp_const(473),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(473),trp_char(41)))goto l2;
   goto l1;
 l157:
   if(trp_equal(trp_const(474),t0)==TRP_FALSE)goto l158;
-  if(net_52(UNO,UNO,trp_const(475),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(475),trp_char(41)))goto l2;
   goto l1;
 l158:
   if(trp_equal(trp_const(476),t0)==TRP_FALSE)goto l159;
-  if(net_52(UNO,UNO,trp_const(477),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(477),trp_char(41)))goto l2;
   goto l1;
 l159:
   if(trp_equal(trp_const(478),t0)==TRP_FALSE)goto l160;
-  if(net_52(trp_const(59),trp_const(59),trp_const(479),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(479),trp_char(41)))goto l2;
   goto l1;
 l160:
   if(trp_equal(trp_const(480),t0)==TRP_FALSE)goto l161;
-  if(net_52(trp_const(59),trp_const(59),trp_const(481),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(481),trp_char(41)))goto l2;
   goto l1;
 l161:
   if(trp_equal(trp_const(482),t0)==TRP_FALSE)goto l162;
-  if(net_52(trp_const(59),trp_const(59),trp_const(483),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(483),trp_char(41)))goto l2;
   goto l1;
 l162:
   if(trp_equal(trp_const(484),t0)==TRP_FALSE)goto l163;
-  if(net_52(trp_const(59),trp_const(59),trp_const(485),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(485),trp_char(41)))goto l2;
   goto l1;
 l163:
   if(trp_equal(trp_const(486),t0)==TRP_FALSE)goto l164;
-  if(net_52(trp_const(59),trp_const(59),trp_const(487),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(487),trp_char(41)))goto l2;
   goto l1;
 l164:
   if(trp_equal(trp_const(488),t0)==TRP_FALSE)goto l165;
-  if(net_52(trp_const(59),trp_const(59),trp_const(489),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(489),trp_char(41)))goto l2;
   goto l1;
 l165:
   if(trp_equal(trp_const(490),t0)==TRP_FALSE)goto l166;
-  if(net_52(trp_const(59),trp_const(59),trp_const(491),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(59),trp_const(491),trp_char(41)))goto l2;
   goto l1;
 l166:
   if(trp_equal(trp_const(492),t0)==TRP_FALSE)goto l167;
-  if(net_52(UNO,UNO,trp_const(493),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(493),trp_char(41)))goto l2;
   goto l1;
 l167:
   if(trp_equal(trp_const(494),t0)==TRP_FALSE)goto l168;
-  if(net_52(UNO,UNO,trp_const(495),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(495),trp_char(41)))goto l2;
   goto l1;
 l168:
   if(trp_equal(trp_const(496),t0)==TRP_FALSE)goto l169;
-  if(net_52(UNO,UNO,trp_const(497),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(497),trp_char(41)))goto l2;
   goto l1;
 l169:
   if(trp_equal(trp_const(498),t0)==TRP_FALSE)goto l170;
-  if(net_52(UNO,UNO,trp_const(499),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(499),trp_char(41)))goto l2;
   goto l1;
 l170:
   if(trp_equal(trp_const(500),t0)==TRP_FALSE)goto l171;
-  if(net_52(UNO,UNO,trp_const(501),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(501),trp_char(41)))goto l2;
   goto l1;
 l171:
   if(trp_equal(trp_const(502),t0)==TRP_FALSE)goto l172;
-  if(net_52(ZERO,ZERO,trp_const(503),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(503),trp_char(41)))goto l2;
   goto l1;
 l172:
   if(trp_equal(trp_const(504),t0)==TRP_FALSE)goto l173;
-  if(net_52(ZERO,ZERO,trp_const(505),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(505),trp_char(41)))goto l2;
   goto l1;
 l173:
   if(trp_equal(trp_const(506),t0)==TRP_FALSE)goto l174;
-  if(net_52(ZERO,ZERO,trp_const(507),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(507),trp_char(41)))goto l2;
   goto l1;
 l174:
   if(trp_equal(trp_const(508),t0)==TRP_FALSE)goto l175;
-  if(net_52(ZERO,ZERO,trp_const(509),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(509),trp_char(41)))goto l2;
   goto l1;
 l175:
   if(trp_equal(trp_const(510),t0)==TRP_FALSE)goto l176;
-  if(net_52(ZERO,ZERO,trp_const(511),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(511),trp_char(41)))goto l2;
   goto l1;
 l176:
   if(trp_equal(trp_const(512),t0)==TRP_FALSE)goto l177;
-  if(net_52(UNO,UNO,trp_const(513),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(513),trp_char(41)))goto l2;
   goto l1;
 l177:
   if(trp_equal(trp_const(514),t0)==TRP_FALSE)goto l178;
-  if(net_52(ZERO,ZERO,trp_const(515),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(515),trp_char(41)))goto l2;
   goto l1;
 l178:
   if(trp_equal(trp_const(516),t0)==TRP_FALSE)goto l179;
-  if(net_52(trp_const(59),trp_const(141),trp_const(517),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(141),trp_const(517),trp_char(41)))goto l2;
   goto l1;
 l179:
   if(trp_equal(trp_const(518),t0)==TRP_FALSE)goto l180;
-  if(net_52(UNO,trp_const(59),trp_const(519),trp_char(41)))goto l2;
+  if(net_57(UNO,trp_const(59),trp_const(519),trp_char(41)))goto l2;
   goto l1;
 l180:
   if(trp_equal(trp_const(520),t0)==TRP_FALSE)goto l181;
-  if(net_52(trp_const(59),trp_const(141),trp_const(521),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(141),trp_const(521),trp_char(41)))goto l2;
   goto l1;
 l181:
   if(trp_equal(trp_const(522),t0)==TRP_FALSE)goto l182;
-  if(net_52(UNO,UNO,trp_const(523),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(523),trp_char(41)))goto l2;
   goto l1;
 l182:
   if(trp_equal(trp_const(524),t0)==TRP_FALSE)goto l183;
-  if(net_67(i0))goto l2;
+  if(net_72(i0))goto l2;
   goto l1;
 l183:
   if(trp_equal(trp_const(525),t0)==TRP_FALSE)goto l184;
-  if(net_72(i0,UNO,trp_const(59),trp_const(525)))goto l2;
+  if(net_77(i0,UNO,trp_const(59),trp_const(525)))goto l2;
   goto l1;
 l184:
   if(trp_equal(trp_const(526),t0)==TRP_FALSE)goto l185;
-  if(net_72(i0,UNO,UNO,trp_const(526)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(526)))goto l2;
   goto l1;
 l185:
   if(trp_equal(trp_const(527),t0)==TRP_FALSE)goto l186;
-  if(net_66(i0))goto l2;
+  if(net_71(i0))goto l2;
   goto l1;
 l186:
   if(trp_equal(trp_const(528),t0)==TRP_FALSE)goto l187;
-  if(net_52(ZERO,ZERO,trp_const(529),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(529),trp_char(41)))goto l2;
   goto l1;
 l187:
   if(trp_equal(trp_const(530),t0)==TRP_FALSE)goto l188;
-  if(net_52(UNO,UNO,trp_const(531),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(531),trp_char(41)))goto l2;
   goto l1;
 l188:
   if(trp_equal(trp_const(532),t0)==TRP_FALSE)goto l189;
-  if(net_52(ZERO,ZERO,trp_const(533),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(533),trp_char(41)))goto l2;
   goto l1;
 l189:
   if(trp_equal(trp_const(534),t0)==TRP_FALSE)goto l190;
-  if(net_52(UNO,UNO,trp_const(535),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(535),trp_char(41)))goto l2;
   goto l1;
 l190:
   if(trp_equal(trp_const(536),t0)==TRP_FALSE)goto l191;
-  if(net_72(i0,UNO,UNDEF,trp_const(536)))goto l2;
+  if(net_77(i0,UNO,UNDEF,trp_const(536)))goto l2;
   goto l1;
 l191:
   if(trp_equal(trp_const(537),t0)==TRP_FALSE)goto l192;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(538)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(538)))goto l2;
   goto l1;
 l192:
   if(trp_equal(trp_const(539),t0)==TRP_FALSE)goto l193;
-  if(net_52(UNO,UNO,trp_const(540),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(540),trp_char(41)))goto l2;
   goto l1;
 l193:
   if(trp_equal(trp_const(541),t0)==TRP_FALSE)goto l194;
-  if(net_52(trp_const(141),trp_const(141),trp_const(542),trp_char(41)))goto l2;
+  if(net_57(trp_const(141),trp_const(141),trp_const(542),trp_char(41)))goto l2;
   goto l1;
 l194:
   if(trp_equal(trp_const(543),t0)==TRP_FALSE)goto l195;
-  if(net_52(ZERO,ZERO,trp_const(544),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(544),trp_char(41)))goto l2;
   goto l1;
 l195:
   if(trp_equal(trp_const(545),t0)==TRP_FALSE)goto l196;
-  if(net_69())goto l2;
+  if(net_74())goto l2;
   goto l1;
 l196:
   if(trp_equal(trp_const(546),t0)==TRP_FALSE)goto l197;
-  if(net_52(UNO,UNO,trp_const(547),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(547),trp_char(41)))goto l2;
   goto l1;
 l197:
   if(trp_equal(trp_const(548),t0)==TRP_FALSE)goto l198;
-  if(net_52(UNO,UNO,trp_const(549),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(549),trp_char(41)))goto l2;
   goto l1;
 l198:
   if(trp_equal(trp_const(550),t0)==TRP_FALSE)goto l199;
-  if(net_52(ZERO,UNO,trp_const(551),trp_char(41)))goto l2;
+  if(net_57(ZERO,UNO,trp_const(551),trp_char(41)))goto l2;
   goto l1;
 l199:
   if(trp_equal(trp_const(552),t0)==TRP_FALSE)goto l200;
-  if(net_52(UNO,UNO,trp_const(553),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(553),trp_char(41)))goto l2;
   goto l1;
 l200:
   if(trp_equal(trp_const(554),t0)==TRP_FALSE)goto l201;
-  if(net_52(UNO,UNO,trp_const(555),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(555),trp_char(41)))goto l2;
   goto l1;
 l201:
   if(trp_equal(trp_const(556),t0)==TRP_FALSE)goto l202;
-  if(net_52(UNO,UNO,trp_const(557),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(557),trp_char(41)))goto l2;
   goto l1;
 l202:
   if(trp_equal(trp_const(558),t0)==TRP_FALSE)goto l203;
-  if(net_52(trp_const(59),trp_const(141),trp_const(559),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(141),trp_const(559),trp_char(41)))goto l2;
   goto l1;
 l203:
   if(trp_equal(trp_const(560),t0)==TRP_FALSE)goto l204;
-  if(net_52(UNO,UNO,trp_const(561),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(561),trp_char(41)))goto l2;
   goto l1;
 l204:
   if(trp_equal(trp_const(562),t0)==TRP_FALSE)goto l205;
-  if(net_70())goto l2;
+  if(net_75())goto l2;
   goto l1;
 l205:
   if(trp_equal(trp_const(563),t0)==TRP_FALSE)goto l206;
-  if(net_71())goto l2;
+  if(net_76())goto l2;
   goto l1;
 l206:
   if(trp_equal(trp_const(564),t0)==TRP_FALSE)goto l207;
-  if(net_52(UNO,UNO,trp_const(565),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(565),trp_char(41)))goto l2;
   goto l1;
 l207:
   if(trp_equal(trp_const(566),t0)==TRP_FALSE)goto l208;
-  if(net_52(UNO,UNO,trp_const(567),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(567),trp_char(41)))goto l2;
   goto l1;
 l208:
   if(trp_equal(trp_const(568),t0)==TRP_FALSE)goto l209;
-  if(net_52(UNO,UNO,trp_const(569),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(569),trp_char(41)))goto l2;
   goto l1;
 l209:
   if(trp_equal(trp_const(570),t0)==TRP_FALSE)goto l210;
-  if(net_52(UNO,UNO,trp_const(571),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(571),trp_char(41)))goto l2;
   goto l1;
 l210:
   if(trp_equal(trp_const(572),t0)==TRP_FALSE)goto l211;
-  if(net_52(UNO,UNO,trp_const(573),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(573),trp_char(41)))goto l2;
   goto l1;
 l211:
   if(trp_equal(trp_const(574),t0)==TRP_FALSE)goto l212;
-  if(net_52(trp_const(59),trp_const(141),trp_const(575),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(141),trp_const(575),trp_char(41)))goto l2;
   goto l1;
 l212:
   if(trp_equal(trp_const(576),t0)==TRP_FALSE)goto l213;
-  if(net_52(trp_const(59),trp_const(141),trp_const(577),trp_char(41)))goto l2;
+  if(net_57(trp_const(59),trp_const(141),trp_const(577),trp_char(41)))goto l2;
   goto l1;
 l213:
   if(trp_equal(trp_const(578),t0)==TRP_FALSE)goto l214;
-  if(net_72(i0,UNO,trp_const(59),trp_const(579)))goto l2;
+  if(net_77(i0,UNO,trp_const(59),trp_const(579)))goto l2;
   goto l1;
 l214:
   if(trp_equal(trp_const(580),t0)==TRP_FALSE)goto l215;
-  if(net_52(UNO,UNO,trp_const(581),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(581),trp_char(41)))goto l2;
   goto l1;
 l215:
   if(trp_equal(trp_const(582),t0)==TRP_FALSE)goto l216;
-  if(net_68(i0))goto l2;
+  if(net_73(i0))goto l2;
   goto l1;
 l216:
   if(trp_equal(trp_const(583),t0)==TRP_FALSE)goto l217;
-  if(net_52(UNO,UNDEF,trp_const(584),trp_char(41)))goto l2;
+  if(net_57(UNO,UNDEF,trp_const(584),trp_char(41)))goto l2;
   goto l1;
 l217:
   if(trp_equal(trp_const(585),t0)==TRP_FALSE)goto l218;
-  if(net_52(ZERO,UNO,trp_const(586),trp_char(41)))goto l2;
+  if(net_57(ZERO,UNO,trp_const(586),trp_char(41)))goto l2;
   goto l1;
 l218:
   if(trp_equal(trp_const(587),t0)==TRP_FALSE)goto l219;
-  if(net_52(UNO,UNO,trp_const(588),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(588),trp_char(41)))goto l2;
   goto l1;
 l219:
   if(trp_equal(trp_const(589),t0)==TRP_FALSE)goto l220;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56(TRP_MAXINT))goto l2;
+  if(net_61(TRP_MAXINT))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l220:
   if(trp_equal(trp_const(590),t0)==TRP_FALSE)goto l221;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   _glb[6]=i0;
-  if(net_56(TRP_MININT))goto l2;
+  if(net_61(TRP_MININT))goto l2;
   _glb[6]=TRP_FALSE;
   goto l1;
 l221:
   if(trp_equal(trp_const(591),t0)==TRP_FALSE)goto l222;
-  if(net_52(ZERO,ZERO,trp_const(592),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(592),trp_char(41)))goto l2;
   goto l1;
 l222:
   if(trp_equal(trp_const(593),t0)==TRP_FALSE)goto l223;
-  if(net_52(ZERO,ZERO,trp_const(594),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(594),trp_char(41)))goto l2;
   goto l1;
 l223:
   if(trp_equal(trp_const(595),t0)==TRP_FALSE)goto l224;
-  if(net_52(ZERO,ZERO,trp_const(596),trp_char(41)))goto l2;
+  if(net_57(ZERO,ZERO,trp_const(596),trp_char(41)))goto l2;
   goto l1;
 l224:
   if(trp_equal(trp_const(597),t0)==TRP_FALSE)goto l225;
-  if(net_72(i0,UNO,UNO,trp_const(598)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(598)))goto l2;
   goto l1;
 l225:
   if(trp_equal(trp_const(599),t0)==TRP_FALSE)goto l226;
-  if(net_72(i0,UNO,UNO,trp_const(600)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(600)))goto l2;
   goto l1;
 l226:
   if(trp_equal(trp_const(601),t0)==TRP_FALSE)goto l227;
-  if(net_72(i0,UNO,UNO,trp_const(602)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(602)))goto l2;
   goto l1;
 l227:
   if(trp_equal(trp_const(603),t0)==TRP_FALSE)goto l228;
-  if(net_72(i0,UNO,UNO,trp_const(604)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(604)))goto l2;
   goto l1;
 l228:
   if(trp_equal(trp_const(605),t0)==TRP_FALSE)goto l229;
-  if(net_72(i0,UNO,UNO,trp_const(606)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(606)))goto l2;
   goto l1;
 l229:
   if(trp_equal(trp_const(607),t0)==TRP_FALSE)goto l230;
-  if(net_72(i0,UNO,UNO,trp_const(283)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(283)))goto l2;
   goto l1;
 l230:
   if(trp_equal(trp_const(608),t0)==TRP_FALSE)goto l231;
-  if(net_72(i0,UNO,UNO,trp_const(609)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(609)))goto l2;
   goto l1;
 l231:
   if(trp_equal(trp_const(610),t0)==TRP_FALSE)goto l232;
-  if(net_72(i0,UNO,UNO,trp_const(611)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(611)))goto l2;
   goto l1;
 l232:
   if(trp_equal(trp_const(612),t0)==TRP_FALSE)goto l233;
-  if(net_72(i0,UNO,UNO,trp_const(613)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(613)))goto l2;
   goto l1;
 l233:
   if(trp_equal(trp_const(614),t0)==TRP_FALSE)goto l234;
-  if(net_72(i0,UNO,UNDEF,trp_const(615)))goto l2;
+  if(net_77(i0,UNO,UNDEF,trp_const(615)))goto l2;
   goto l1;
 l234:
   if(trp_equal(trp_const(616),t0)==TRP_FALSE)goto l235;
-  if(net_72(i0,UNO,UNDEF,trp_const(617)))goto l2;
+  if(net_77(i0,UNO,UNDEF,trp_const(617)))goto l2;
   goto l1;
 l235:
   if(trp_equal(trp_const(618),t0)==TRP_FALSE)goto l236;
-  if(net_72(i0,UNO,UNO,trp_const(619)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(619)))goto l2;
   goto l1;
 l236:
   if(trp_equal(trp_const(620),t0)==TRP_FALSE)goto l237;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(621)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(621)))goto l2;
   goto l1;
 l237:
   if(trp_equal(trp_const(622),t0)==TRP_FALSE)goto l238;
-  if(net_72(i0,UNO,UNO,trp_const(623)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(623)))goto l2;
   goto l1;
 l238:
   if(trp_equal(trp_const(624),t0)==TRP_FALSE)goto l239;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(625)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(625)))goto l2;
   goto l1;
 l239:
   if(trp_equal(trp_const(626),t0)==TRP_FALSE)goto l240;
-  if(net_72(i0,UNO,UNO,trp_const(627)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(627)))goto l2;
   goto l1;
 l240:
   if(trp_equal(trp_const(628),t0)==TRP_FALSE)goto l241;
-  if(net_72(i0,UNO,UNO,trp_const(629)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(629)))goto l2;
   goto l1;
 l241:
   if(trp_equal(trp_const(630),t0)==TRP_FALSE)goto l242;
-  if(net_72(i0,UNO,trp_const(59),trp_const(631)))goto l2;
+  if(net_77(i0,UNO,trp_const(59),trp_const(631)))goto l2;
   goto l1;
 l242:
   if(trp_equal(trp_const(632),t0)==TRP_FALSE)goto l243;
-  if(net_72(i0,UNO,UNO,trp_const(633)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(633)))goto l2;
   goto l1;
 l243:
   if(trp_equal(trp_const(634),t0)==TRP_FALSE)goto l244;
-  if(net_72(i0,UNO,UNO,trp_const(635)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(635)))goto l2;
   goto l1;
 l244:
   if(trp_equal(trp_const(636),t0)==TRP_FALSE)goto l245;
-  if(net_72(i0,UNO,UNO,trp_const(637)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(637)))goto l2;
   goto l1;
 l245:
   if(trp_equal(trp_const(638),t0)==TRP_FALSE)goto l246;
-  if(net_72(i0,UNO,UNO,trp_const(639)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(639)))goto l2;
   goto l1;
 l246:
   if(trp_equal(trp_const(640),t0)==TRP_FALSE)goto l247;
-  if(net_52(UNO,UNO,trp_const(641),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(641),trp_char(41)))goto l2;
   goto l1;
 l247:
   if(trp_equal(trp_const(642),t0)==TRP_FALSE)goto l248;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(643)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(643)))goto l2;
   goto l1;
 l248:
   if(trp_equal(trp_const(644),t0)==TRP_FALSE)goto l249;
-  if(net_72(i0,UNO,UNO,trp_const(645)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(645)))goto l2;
   goto l1;
 l249:
   if(trp_equal(trp_const(646),t0)==TRP_FALSE)goto l250;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(647)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(647)))goto l2;
   goto l1;
 l250:
   if(trp_equal(trp_const(648),t0)==TRP_FALSE)goto l251;
-  if(net_72(i0,trp_const(141),trp_const(141),trp_const(649)))goto l2;
+  if(net_77(i0,trp_const(141),trp_const(141),trp_const(649)))goto l2;
   goto l1;
 l251:
   if(trp_equal(trp_const(650),t0)==TRP_FALSE)goto l252;
-  if(net_72(i0,UNO,UNO,trp_const(651)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(651)))goto l2;
   goto l1;
 l252:
   if(trp_equal(trp_const(652),t0)==TRP_FALSE)goto l253;
-  if(net_72(i0,UNO,UNO,trp_const(653)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(653)))goto l2;
   goto l1;
 l253:
   if(trp_equal(trp_const(654),t0)==TRP_FALSE)goto l254;
-  if(net_72(i0,trp_const(59),trp_const(59),trp_const(655)))goto l2;
+  if(net_77(i0,trp_const(59),trp_const(59),trp_const(655)))goto l2;
   goto l1;
 l254:
   if(trp_equal(trp_const(656),t0)==TRP_FALSE)goto l255;
-  if(net_72(i0,UNO,UNO,trp_const(657)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(657)))goto l2;
   goto l1;
 l255:
   if(trp_equal(trp_const(658),t0)==TRP_FALSE)goto l256;
-  if(net_72(i0,UNO,UNO,trp_const(659)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(659)))goto l2;
   goto l1;
 l256:
   if(trp_equal(trp_const(660),t0)==TRP_FALSE)goto l257;
-  if(net_72(i0,UNO,UNO,trp_const(661)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(661)))goto l2;
   goto l1;
 l257:
   if(trp_equal(trp_const(662),t0)==TRP_FALSE)goto l258;
-  if(net_72(i0,UNO,UNO,trp_const(663)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(663)))goto l2;
   goto l1;
 l258:
   if(trp_equal(trp_const(664),t0)==TRP_FALSE)goto l259;
-  if(net_72(i0,UNO,UNO,trp_const(665)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(665)))goto l2;
   goto l1;
 l259:
   if(trp_equal(trp_const(666),t0)==TRP_FALSE)goto l260;
-  if(net_72(i0,UNO,UNO,trp_const(667)))goto l2;
+  if(net_77(i0,UNO,UNO,trp_const(667)))goto l2;
   goto l1;
 l260:
   if(trp_equal(trp_const(668),t0)==TRP_FALSE)goto l261;
-  if(net_52(UNO,UNO,trp_const(669),trp_char(41)))goto l2;
+  if(net_57(UNO,UNO,trp_const(669),trp_char(41)))goto l2;
   goto l1;
 l261:
   goto l2;
@@ -10096,26 +10289,26 @@ l0:
   return 1;
 }
 
-static uns8b net_61(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_66(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   j0=trp_nth(i1,_glb[33]);
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l1;
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(fun_23()==TRP_FALSE)goto l2;
   j1=trp_nth(i1,_glb[31]);
   if(trp_equal(j1,UNDEF)==TRP_FALSE)goto l3;
-  if(net_133(trp_cat(i1,trp_const(670),NULL)))goto l0;
+  if(net_138(trp_cat(i1,trp_const(670),NULL)))goto l0;
 l3:
   j0=trp_length(trp_cdr(j1));
   trp_push_env(i0,i1,j0,j1,NULL);
-  if(net_52(j0,j0,trp_cat(trp_const(671),trp_car(j1),trp_const(63),NULL),trp_char(41)))goto l5;
+  if(net_57(j0,j0,trp_cat(trp_const(671),trp_car(j1),trp_const(63),NULL),trp_char(41)))goto l5;
   trp_pop_env_void(4);
   goto l4;
 l5:
   trp_pop_env(&j1,&j0,&i1,&i0,NULL);
   trp_push_env(i0,i1,j0,j1,NULL);
-  if(net_133(trp_cat(trp_const(672),i1,trp_const(673),NULL)))goto l6;
+  if(net_138(trp_cat(trp_const(672),i1,trp_const(673),NULL)))goto l6;
   trp_pop_env_void(4);
   goto l4;
 l6:
@@ -10124,14 +10317,14 @@ l6:
 l4:
   goto l7;
 l2:
-  if(net_52(ZERO,UNDEF,UNDEF,UNDEF))goto l0;
+  if(net_57(ZERO,UNDEF,UNDEF,UNDEF))goto l0;
   if(trp_assoc_inc(_glb[37],trp_cat(trp_const(671),i1,NULL),NULL))goto l0;
 l7:
   goto l8;
 l1:
-  if(net_18())goto l0;
+  if(net_23())goto l0;
   _glb[6]=i0;
-  if(net_56((trp_equal(j0,_glb[33])==TRP_TRUE)?(UNDEF):(j0)))goto l0;
+  if(net_61((trp_equal(j0,_glb[33])==TRP_TRUE)?(UNDEF):(j0)))goto l0;
   _glb[6]=TRP_FALSE;
 l8:
   return 0;
@@ -10139,155 +10332,30 @@ l0:
   return 1;
 }
 
-static uns8b net_62(trp_obj_t *i0)
+static uns8b net_67(trp_obj_t *i0)
 {
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   _glb[5]=trp_cat(_glb[5],trp_const(674),NULL);
 l1:
-  if(net_51())goto l0;
-  if(net_58())goto l0;
-  if(net_51())goto l0;
-  if(net_58())goto l0;
-  if(net_15())goto l0;
+  if(net_56())goto l0;
+  if(net_63())goto l0;
+  if(net_56())goto l0;
+  if(net_63())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(52))==TRP_FALSE)goto l2;
-  if(net_51())goto l0;
-  if(net_136())goto l0;
+  if(net_56())goto l0;
+  if(net_141())goto l0;
   goto l3;
 l2:
   if(trp_equal(_glb[0],trp_const(31))!=TRP_TRUE)goto l0;
-  if(fun_16()==TRP_FALSE)goto l4;
+  if(fun_23()==TRP_FALSE)goto l4;
   _glb[5]=trp_cat(_glb[5],trp_const(180),NULL);
 l4:
 l3:
-  if(fun_16()==TRP_FALSE)goto l5;
+  if(fun_23()==TRP_FALSE)goto l5;
   _glb[5]=trp_cat(_glb[5],trp_const(64),NULL);
 l5:
   _glb[7]=TRP_FALSE;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_63(trp_obj_t *i0)
-{
-  trp_obj_t *j0=UNDEF;
-  j0=_glb[5];
-  _glb[5]=EMPTYCORD;
-  _glb[6]=_glb[11];
-  if(net_51())goto l0;
-  if(_glb[7]==TRP_FALSE)goto l1;
-  if(trp_not(trp_booleanp(_glb[8]))==TRP_FALSE)goto l2;
-  if(net_133(trp_const(675)))goto l0;
-l2:
-  _glb[5]=j0;
-  _glb[6]=i0;
-  if(_glb[8]==TRP_FALSE)goto l3;
-  if(net_51())goto l0;
-  if(net_20())goto l0;
-  goto l4;
-l3:
-  if(net_20())goto l0;
-  if(net_51())goto l0;
-  _glb[6]=TRP_FALSE;
-l4:
-  goto l5;
-l1:
-  _glb[6]=TRP_FALSE;
-  _glb[5]=trp_cat(j0,trp_const(63),_glb[5],trp_const(676),NULL);
-  if(net_51())goto l0;
-  if(fun_16()==TRP_FALSE)goto l6;
-  _glb[5]=trp_cat(_glb[5],trp_const(677),NULL);
-l6:
-  if(net_51())goto l0;
-  if(fun_16()==TRP_FALSE)goto l7;
-  _glb[5]=trp_cat(_glb[5],trp_const(64),NULL);
-l7:
-  _glb[7]=TRP_FALSE;
-l5:
-  if(net_136())goto l0;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_64(trp_obj_t *i0)
-{
-  trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(678)),NULL)==TRP_FALSE)goto l1;
-  j0=UNO;
-  goto l2;
-l1:
-  j0=ZERO;
-  if(net_12())goto l0;
-l2:
-  _glb[6]=_glb[11];
-  if(net_52(trp_const(59),trp_const(59),trp_sprint(trp_const(679),j0,trp_char(44),NULL),trp_char(41)))goto l0;
-  if(_glb[7]==TRP_FALSE)goto l3;
-  _glb[6]=i0;
-  if(net_57((trp_equal(j0,UNO)==TRP_TRUE)?(trp_cord_search_func(1,trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]))):(trp_cord_search_func(0,trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8])))))goto l0;
-l3:
-  _glb[6]=TRP_FALSE;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_65(trp_obj_t *i0,trp_obj_t *i1)
-{
-  trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(678)),NULL)==TRP_FALSE)goto l1;
-  j0=UNO;
-  goto l2;
-l1:
-  j0=ZERO;
-  if(net_12())goto l0;
-l2:
-  if(net_52(trp_const(59),UNDEF,trp_sprint(trp_const(680),i1,trp_const(681),j0,trp_char(44),NULL),trp_char(41)))goto l0;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_66(trp_obj_t *i0)
-{
-  if(fun_16()==TRP_FALSE)goto l1;
-  _glb[5]=trp_cat(_glb[5],trp_const(682),NULL);
-l1:
-  if(net_15())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(683)),NULL)==TRP_FALSE)goto l2;
-  if(net_51())goto l0;
-  goto l3;
-l2:
-  if(net_12())goto l0;
-  if(fun_16()==TRP_FALSE)goto l4;
-  _glb[5]=trp_cat(_glb[5],trp_const(196),NULL);
-l4:
-l3:
-  if(net_52(UNO,UNDEF,trp_const(179),trp_char(41)))goto l0;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_67(trp_obj_t *i0)
-{
-  trp_obj_t *j0=UNDEF;
-  trp_obj_t *j1=UNDEF;
-  _glb[6]=TRP_TRUE;
-  if(net_51())goto l0;
-  if(trp_not(_glb[7])==TRP_FALSE)goto l1;
-  if(net_133(trp_const(684)))goto l0;
-l1:
-  j0=trp_cord_load(fun_1(_glb[8]));
-  if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l2;
-  if(net_133(trp_cat(trp_const(685),_glb[8],NULL)))goto l0;
-l2:
-  if(net_136())goto l0;
-  _glb[6]=i0;
-  if(net_56(j0))goto l0;
-  _glb[6]=TRP_FALSE;
   return 0;
 l0:
   return 1;
@@ -10296,42 +10364,167 @@ l0:
 static uns8b net_68(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
-  trp_obj_t *j1=UNDEF;
-  _glb[6]=TRP_TRUE;
-  if(net_51())goto l0;
-  if(trp_not(_glb[7])==TRP_FALSE)goto l1;
-  if(net_133(trp_const(686)))goto l0;
-l1:
-  j0=trp_raw_load(fun_1(_glb[8]));
-  if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l2;
-  if(net_133(trp_cat(trp_const(687),_glb[8],NULL)))goto l0;
+  j0=_glb[5];
+  _glb[5]=EMPTYCORD;
+  _glb[6]=_glb[11];
+  if(net_56())goto l0;
+  if(_glb[7]==TRP_FALSE)goto l1;
+  if(trp_not(trp_booleanp(_glb[8]))==TRP_FALSE)goto l2;
+  if(net_138(trp_const(675)))goto l0;
 l2:
-  if(net_136())goto l0;
+  _glb[5]=j0;
   _glb[6]=i0;
-  if(net_56(j0))goto l0;
+  if(_glb[8]==TRP_FALSE)goto l3;
+  if(net_56())goto l0;
+  if(net_25())goto l0;
+  goto l4;
+l3:
+  if(net_25())goto l0;
+  if(net_56())goto l0;
+  _glb[6]=TRP_FALSE;
+l4:
+  goto l5;
+l1:
+  _glb[6]=TRP_FALSE;
+  _glb[5]=trp_cat(j0,trp_const(63),_glb[5],trp_const(676),NULL);
+  if(net_56())goto l0;
+  if(fun_23()==TRP_FALSE)goto l6;
+  _glb[5]=trp_cat(_glb[5],trp_const(677),NULL);
+l6:
+  if(net_56())goto l0;
+  if(fun_23()==TRP_FALSE)goto l7;
+  _glb[5]=trp_cat(_glb[5],trp_const(64),NULL);
+l7:
+  _glb[7]=TRP_FALSE;
+l5:
+  if(net_141())goto l0;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_69(trp_obj_t *i0)
+{
+  trp_obj_t *j0=UNDEF;
+  if(net_20())goto l0;
+  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(678)),NULL)==TRP_FALSE)goto l1;
+  j0=UNO;
+  goto l2;
+l1:
+  j0=ZERO;
+  if(net_17())goto l0;
+l2:
+  _glb[6]=_glb[11];
+  if(net_57(trp_const(59),trp_const(59),trp_sprint(trp_const(679),j0,trp_char(44),NULL),trp_char(41)))goto l0;
+  if(_glb[7]==TRP_FALSE)goto l3;
+  _glb[6]=i0;
+  if(net_62((trp_equal(j0,UNO)==TRP_TRUE)?(trp_cord_search_func(1,trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]))):(trp_cord_search_func(0,trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8])))))goto l0;
+l3:
   _glb[6]=TRP_FALSE;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_69()
+static uns8b net_70(trp_obj_t *i0,trp_obj_t *i1)
+{
+  trp_obj_t *j0=UNDEF;
+  if(net_20())goto l0;
+  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(678)),NULL)==TRP_FALSE)goto l1;
+  j0=UNO;
+  goto l2;
+l1:
+  j0=ZERO;
+  if(net_17())goto l0;
+l2:
+  if(net_57(trp_const(59),UNDEF,trp_sprint(trp_const(680),i1,trp_const(681),j0,trp_char(44),NULL),trp_char(41)))goto l0;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_71(trp_obj_t *i0)
+{
+  if(fun_23()==TRP_FALSE)goto l1;
+  _glb[5]=trp_cat(_glb[5],trp_const(682),NULL);
+l1:
+  if(net_20())goto l0;
+  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(683)),NULL)==TRP_FALSE)goto l2;
+  if(net_56())goto l0;
+  goto l3;
+l2:
+  if(net_17())goto l0;
+  if(fun_23()==TRP_FALSE)goto l4;
+  _glb[5]=trp_cat(_glb[5],trp_const(196),NULL);
+l4:
+l3:
+  if(net_57(UNO,UNDEF,trp_const(179),trp_char(41)))goto l0;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_72(trp_obj_t *i0)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_obj_t *j1=UNDEF;
+  _glb[6]=TRP_TRUE;
+  if(net_56())goto l0;
+  if(trp_not(_glb[7])==TRP_FALSE)goto l1;
+  if(net_138(trp_const(684)))goto l0;
+l1:
+  j0=trp_cord_load(fun_6(_glb[8]));
+  if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l2;
+  if(net_138(trp_cat(trp_const(685),_glb[8],NULL)))goto l0;
+l2:
+  if(net_141())goto l0;
+  _glb[6]=i0;
+  if(net_61(j0))goto l0;
+  _glb[6]=TRP_FALSE;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_73(trp_obj_t *i0)
+{
+  trp_obj_t *j0=UNDEF;
+  trp_obj_t *j1=UNDEF;
+  _glb[6]=TRP_TRUE;
+  if(net_56())goto l0;
+  if(trp_not(_glb[7])==TRP_FALSE)goto l1;
+  if(net_138(trp_const(686)))goto l0;
+l1:
+  j0=trp_raw_load(fun_6(_glb[8]));
+  if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l2;
+  if(net_138(trp_cat(trp_const(687),_glb[8],NULL)))goto l0;
+l2:
+  if(net_141())goto l0;
+  _glb[6]=i0;
+  if(net_61(j0))goto l0;
+  _glb[6]=TRP_FALSE;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_74()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   j0=_glb[5];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   j1=_glb[5];
 l1:
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(net_56())goto l0;
+  if(fun_23()==TRP_FALSE)goto l3;
   j1=trp_cat(trp_const(688),j1,trp_char(44),_glb[5],trp_char(41),NULL);
 l3:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   goto l1;
 l2:
   _glb[5]=trp_cat(j0,j1,NULL);
@@ -10341,62 +10534,62 @@ l0:
   return 1;
 }
 
-static uns8b net_70()
+static uns8b net_75()
 {
   trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l1;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l1:
   j0=trp_nth(_glb[1],_glb[28]);
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(fun_23()==TRP_FALSE)goto l2;
   _glb[5]=trp_cat(_glb[5],trp_const(690),j0,trp_char(93),NULL);
   goto l3;
 l2:
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l4;
   if(trp_array_set_multi(_glb[28],_glb[1],trp_length(_glb[28]),NULL))goto l0;
-  if(net_139(_glb[21],_glb[1]))goto l0;
+  if(net_144(_glb[21],_glb[1]))goto l0;
 l4:
   if(trp_assoc_inc(_glb[37],trp_cat(trp_const(691),_glb[1],NULL),NULL))goto l0;
 l3:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_71()
+static uns8b net_76()
 {
   trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l1;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l1:
   j0=trp_nth(_glb[1],_glb[29]);
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(fun_23()==TRP_FALSE)goto l2;
   _glb[5]=trp_cat(_glb[5],trp_const(692),j0,trp_char(93),NULL);
   goto l3;
 l2:
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l4;
   if(trp_array_set_multi(_glb[29],_glb[1],trp_length(_glb[29]),NULL))goto l0;
-  if(net_139(_glb[21],_glb[1]))goto l0;
+  if(net_144(_glb[21],_glb[1]))goto l0;
 l4:
   if(trp_assoc_inc(_glb[37],trp_cat(trp_const(671),_glb[1],NULL),NULL))goto l0;
 l3:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_72(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
+static uns8b net_77(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   trp_obj_t *t0=UNDEF;
   trp_obj_t *t1=UNDEF;
   _glb[6]=_glb[11];
-  if(net_52(i1,i2,trp_cat(trp_const(693),i3,trp_const(63),NULL),trp_char(41)))goto l0;
+  if(net_57(i1,i2,trp_cat(trp_const(693),i3,trp_const(63),NULL),trp_char(41)))goto l0;
   if(_glb[7]==TRP_FALSE)goto l1;
   _glb[6]=i0;
   t0=i3;
@@ -10405,7 +10598,7 @@ static uns8b net_72(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
   if(trp_for_init(&t1,&(j1),_glb[8],NULL,UNO,0))goto l6;
 l5:
   if(trp_not(trp_booleanp(j1))==TRP_FALSE)goto l7;
-  if(net_133(trp_const(694)))goto l3;
+  if(net_138(trp_const(694)))goto l3;
 l7:
   j0=trp_or(j0,j1,NULL);
   if(trp_for_next(&t1))goto l5;
@@ -10417,7 +10610,7 @@ l4:
   if(trp_for_init(&t1,&(j1),_glb[8],NULL,UNO,0))goto l10;
 l9:
   if(trp_not(trp_booleanp(j1))==TRP_FALSE)goto l11;
-  if(net_133(trp_const(695)))goto l3;
+  if(net_138(trp_const(695)))goto l3;
 l11:
   j0=trp_and(j0,j1,NULL);
   if(trp_for_next(&t1))goto l9;
@@ -10427,7 +10620,7 @@ l8:
   if(trp_equal(trp_const(238),t0)==TRP_FALSE)goto l12;
   j0=trp_queue_get(_glb[8]);
   if(trp_not(trp_booleanp(j0))==TRP_FALSE)goto l13;
-  if(net_133(trp_const(696)))goto l3;
+  if(net_138(trp_const(696)))goto l3;
 l13:
   j0=trp_not(j0);
   goto l2;
@@ -10542,11 +10735,11 @@ l41:
   goto l2;
 l39:
   if(trp_equal(trp_const(425),t0)==TRP_FALSE)goto l42;
-  if(trp_equal(trp_length(_glb[8]),trp_const(13))==TRP_FALSE)goto l43;
+  if(trp_equal(trp_length(_glb[8]),trp_const(5))==TRP_FALSE)goto l43;
   j0=trp_cord_alignment_score_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),NULL);
   goto l44;
 l43:
-  j0=trp_cord_alignment_score_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),trp_nth(trp_const(13),_glb[8]));
+  j0=trp_cord_alignment_score_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),trp_nth(trp_const(5),_glb[8]));
 l44:
   goto l2;
 l42:
@@ -10572,11 +10765,11 @@ l50:
   goto l2;
 l48:
   if(trp_equal(trp_const(435),t0)==TRP_FALSE)goto l51;
-  if(trp_equal(trp_length(_glb[8]),trp_const(13))==TRP_FALSE)goto l52;
+  if(trp_equal(trp_length(_glb[8]),trp_const(5))==TRP_FALSE)goto l52;
   j0=trp_cord_global_alignment_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),NULL);
   goto l53;
 l52:
-  j0=trp_cord_global_alignment_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),trp_nth(trp_const(13),_glb[8]));
+  j0=trp_cord_global_alignment_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),trp_nth(trp_const(5),_glb[8]));
 l53:
   goto l2;
 l51:
@@ -10608,11 +10801,11 @@ l62:
   goto l2;
 l60:
   if(trp_equal(trp_const(443),t0)==TRP_FALSE)goto l63;
-  if(trp_equal(trp_length(_glb[8]),trp_const(13))==TRP_FALSE)goto l64;
+  if(trp_equal(trp_length(_glb[8]),trp_const(5))==TRP_FALSE)goto l64;
   j0=trp_cord_local_alignment_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),NULL);
   goto l65;
 l64:
-  j0=trp_cord_local_alignment_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),trp_nth(trp_const(13),_glb[8]));
+  j0=trp_cord_local_alignment_affine(trp_nth(ZERO,_glb[8]),trp_nth(UNO,_glb[8]),trp_nth(trp_const(59),_glb[8]),trp_nth(trp_const(141),_glb[8]),trp_nth(trp_const(5),_glb[8]));
 l65:
   goto l2;
 l63:
@@ -10851,7 +11044,7 @@ l3:
   goto l0;
 l2:
   t0=UNDEF;
-  if(net_57(j0))goto l0;
+  if(net_62(j0))goto l0;
 l1:
   _glb[6]=TRP_FALSE;
   return 0;
@@ -10859,14 +11052,14 @@ l0:
   return 1;
 }
 
-static uns8b net_73(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_78(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   trp_obj_t *t0=UNDEF;
   trp_obj_t *t1=UNDEF;
   _glb[6]=_glb[11];
-  if(net_52(UNO,UNDEF,(trp_equal(i1,trp_const(38))==TRP_TRUE)?(trp_const(697)):(trp_cat(trp_const(698),i1,trp_const(63),NULL)),trp_char(41)))goto l0;
+  if(net_57(UNO,UNDEF,(trp_equal(i1,trp_const(38))==TRP_TRUE)?(trp_const(697)):(trp_cat(trp_const(698),i1,trp_const(63),NULL)),trp_char(41)))goto l0;
   if(_glb[7]==TRP_FALSE)goto l1;
   _glb[6]=i0;
   j1=trp_queue_get(_glb[8]);
@@ -10897,7 +11090,7 @@ l4:
   t1=UNDEF;
   if(trp_for_next(&t0))goto l2;
 l3:
-  if(net_57(j1))goto l0;
+  if(net_62(j1))goto l0;
 l1:
   _glb[6]=TRP_FALSE;
   return 0;
@@ -10905,7 +11098,7 @@ l0:
   return 1;
 }
 
-static uns8b net_74(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_79(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -10943,7 +11136,7 @@ l2:
 l1:
   t0=UNDEF;
   _glb[6]=_glb[11];
-  if(net_52(trp_const(59),trp_const(59),trp_cat(trp_const(693),j0,trp_const(63),NULL),trp_char(41)))goto l0;
+  if(net_57(trp_const(59),trp_const(59),trp_cat(trp_const(693),j0,trp_const(63),NULL),trp_char(41)))goto l0;
   if(_glb[7]==TRP_FALSE)goto l9;
   _glb[6]=i0;
   j1=trp_queue_get(_glb[8]);
@@ -10979,7 +11172,7 @@ l11:
   goto l0;
 l10:
   t0=UNDEF;
-  if(net_57(j0))goto l0;
+  if(net_62(j0))goto l0;
 l9:
   _glb[6]=TRP_FALSE;
   return 0;
@@ -10987,21 +11180,21 @@ l0:
   return 1;
 }
 
-static uns8b net_75(trp_obj_t *i0)
+static uns8b net_80(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   _glb[6]=_glb[11];
-  if(net_53(UNO,UNDEF,trp_const(705),UNDEF,&(j0)))goto l0;
+  if(net_58(UNO,UNDEF,trp_const(705),UNDEF,&(j0)))goto l0;
   if(trp_greater(j0,trp_const(26))==TRP_FALSE)goto l1;
-  if(net_133(trp_const(706)))goto l0;
+  if(net_138(trp_const(706)))goto l0;
 l1:
   if(_glb[7]==TRP_FALSE)goto l2;
   _glb[6]=i0;
-  if(net_57(trp_date(trp_nth(ZERO,_glb[8]),(trp_less(j0,trp_const(59))==TRP_TRUE)?(ZERO):(trp_nth(UNO,_glb[8])),(trp_less(j0,trp_const(141))==TRP_TRUE)?(ZERO):(trp_nth(trp_const(59),_glb[8])),(trp_less(j0,trp_const(13))==TRP_TRUE)?(trp_const(707)):(trp_nth(trp_const(141),_glb[8])),(trp_less(j0,trp_const(424))==TRP_TRUE)?(trp_const(708)):(trp_nth(trp_const(13),_glb[8])),(trp_less(j0,trp_const(709))==TRP_TRUE)?(trp_const(708)):(trp_nth(trp_const(424),_glb[8])),(trp_less(j0,trp_const(710))==TRP_TRUE)?(ZERO):(trp_nth(trp_const(709),_glb[8])),(trp_less(j0,trp_const(26))==TRP_TRUE)?(ZERO):(trp_nth(trp_const(710),_glb[8])))))goto l0;
+  if(net_62(trp_date(trp_nth(ZERO,_glb[8]),(trp_less(j0,trp_const(59))==TRP_TRUE)?(ZERO):(trp_nth(UNO,_glb[8])),(trp_less(j0,trp_const(141))==TRP_TRUE)?(ZERO):(trp_nth(trp_const(59),_glb[8])),(trp_less(j0,trp_const(5))==TRP_TRUE)?(trp_const(707)):(trp_nth(trp_const(141),_glb[8])),(trp_less(j0,trp_const(424))==TRP_TRUE)?(trp_const(708)):(trp_nth(trp_const(5),_glb[8])),(trp_less(j0,trp_const(709))==TRP_TRUE)?(trp_const(708)):(trp_nth(trp_const(424),_glb[8])),(trp_less(j0,trp_const(710))==TRP_TRUE)?(ZERO):(trp_nth(trp_const(709),_glb[8])),(trp_less(j0,trp_const(26))==TRP_TRUE)?(ZERO):(trp_nth(trp_const(710),_glb[8])))))goto l0;
   goto l3;
 l2:
-  if(fun_16()==TRP_FALSE)goto l4;
+  if(fun_23()==TRP_FALSE)goto l4;
   if(trp_cord_match_test(5,NULL,NULL,&(_glb[5]),trp_const(711),NULL))goto l0;
   if(trp_less(j0,trp_const(59))==TRP_FALSE)goto l5;
   _glb[5]=trp_cat(_glb[5],trp_const(712),NULL);
@@ -11009,7 +11202,7 @@ l5:
   if(trp_less(j0,trp_const(141))==TRP_FALSE)goto l6;
   _glb[5]=trp_cat(_glb[5],trp_const(712),NULL);
 l6:
-  if(trp_less(j0,trp_const(13))==TRP_FALSE)goto l7;
+  if(trp_less(j0,trp_const(5))==TRP_FALSE)goto l7;
   if(trp_in_test(trp_const(707),_glb[21],NULL,&(j1),NULL))goto l0;
   _glb[5]=trp_cat(_glb[5],trp_const(713),j1,trp_const(64),NULL);
 l7:
@@ -11031,9 +11224,9 @@ l11:
   goto l12;
 l4:
   if(trp_less(j0,trp_const(709))==TRP_FALSE)goto l13;
-  if(net_139(_glb[21],trp_const(708)))goto l0;
-  if(trp_less(j0,trp_const(13))==TRP_FALSE)goto l14;
-  if(net_139(_glb[21],trp_const(707)))goto l0;
+  if(net_144(_glb[21],trp_const(708)))goto l0;
+  if(trp_less(j0,trp_const(5))==TRP_FALSE)goto l14;
+  if(net_144(_glb[21],trp_const(707)))goto l0;
 l14:
 l13:
 l12:
@@ -11044,7 +11237,7 @@ l0:
   return 1;
 }
 
-static uns8b net_76()
+static uns8b net_81()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -11055,14 +11248,14 @@ static uns8b net_76()
   _glb[6]=TRP_TRUE;
   j1=trp_queue();
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(33))!=TRP_FALSE)goto l2;
   if(trp_and(trp_equal(_glb[0],trp_const(53)),trp_greater(trp_length(j1),ZERO),NULL)!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
-  if(net_51())goto l0;
+  if(net_17())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l3;
-  if(fun_16()==TRP_FALSE)goto l4;
-  if(net_133(trp_const(714)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l4;
+  if(net_138(trp_const(714)))goto l0;
   goto l5;
 l4:
   _glb[8]=UNDEF;
@@ -11072,17 +11265,17 @@ l3:
   goto l1;
 l2:
   if(trp_equal(_glb[0],trp_const(53))==TRP_FALSE)goto l6;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l7;
-  if(fun_16()==TRP_FALSE)goto l8;
-  if(net_133(trp_const(714)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l8;
+  if(net_138(trp_const(714)))goto l0;
   goto l9;
 l8:
   _glb[8]=UNDEF;
 l9:
 l7:
   j2=_glb[8];
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(33))!=TRP_TRUE)goto l0;
   goto l10;
 l6:
@@ -11094,13 +11287,13 @@ l11:
   if(trp_for_next(&t0))goto l11;
 l12:
   _glb[6]=j0;
-  if(net_56(j2))goto l0;
+  if(net_61(j2))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_77()
+static uns8b net_82()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -11111,11 +11304,11 @@ static uns8b net_77()
   _glb[6]=TRP_FALSE;
   j3=trp_stack();
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(44)),trp_equal(_glb[1],trp_const(47)),NULL)!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_equal(j2,UNDEF)==TRP_FALSE)goto l3;
   j2=_glb[5];
   goto l4;
@@ -11125,7 +11318,7 @@ l4:
   goto l1;
 l2:
   if(trp_equal(trp_length(j3),ZERO)==TRP_FALSE)goto l5;
-  if(net_133(trp_const(715)))goto l0;
+  if(net_138(trp_const(715)))goto l0;
 l5:
   j2=trp_cat(j2,trp_cord_tile(trp_length(j3),trp_char(41),NULL),NULL);
   _glb[5]=j1;
@@ -11141,7 +11334,7 @@ l0:
   return 1;
 }
 
-static uns8b net_78()
+static uns8b net_83()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -11149,11 +11342,11 @@ static uns8b net_78()
   _glb[6]=_glb[11];
   j1=_glb[5];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(_glb[7]==TRP_FALSE)goto l1;
   _glb[5]=j1;
   _glb[6]=j0;
-  if(net_56(trp_math_minus(ZERO,_glb[8],NULL)))goto l0;
+  if(net_61(trp_math_minus(ZERO,_glb[8],NULL)))goto l0;
   goto l2;
 l1:
   _glb[5]=trp_cat(j1,trp_const(717),_glb[5],trp_const(452),NULL);
@@ -11164,20 +11357,20 @@ l0:
   return 1;
 }
 
-static uns8b net_79()
+static uns8b net_84()
 {
   trp_obj_t *j0=UNDEF;
   j0=_glb[11];
   _glb[11]=TRP_FALSE;
-  if(net_51())goto l0;
-  if(net_136())goto l0;
+  if(net_56())goto l0;
+  if(net_141())goto l0;
   _glb[11]=j0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_80(trp_obj_t *i0)
+static uns8b net_85(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11188,14 +11381,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_49(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(719),fun_17(i0),trp_const(63),NULL),trp_const(720)))goto l0;
-  if(net_144(trp_const(65)))goto l0;
+  if(net_54(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(719),fun_24(i0),trp_const(63),NULL),trp_const(720)))goto l0;
+  if(net_149(trp_const(65)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_81(trp_obj_t *i0)
+static uns8b net_86(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11206,14 +11399,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(722),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(69)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(722),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(69)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_82(trp_obj_t *i0)
+static uns8b net_87(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   j0=TRP_FALSE;
@@ -11227,13 +11420,13 @@ l2:
 l1:
   if(j0==TRP_FALSE)goto l3;
   trp_push_env(i0,j0,NULL);
-  if(net_83(i0))goto l5;
+  if(net_88(i0))goto l5;
   trp_pop_env_void(2);
   goto l4;
 l5:
   trp_pop_env(&j0,&i0,NULL);
   trp_push_env(i0,j0,NULL);
-  if(net_84(i0))goto l6;
+  if(net_89(i0))goto l6;
   trp_pop_env_void(2);
   goto l4;
 l6:
@@ -11242,28 +11435,28 @@ l6:
 l4:
   goto l7;
 l3:
-  if(net_84(i0))goto l0;
+  if(net_89(i0))goto l0;
 l7:
-  if(net_144(trp_const(73)))goto l0;
+  if(net_149(trp_const(73)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_83(trp_obj_t *i0)
+static uns8b net_88(trp_obj_t *i0)
 {
   trp_obj_t *t0=UNDEF;
   t0=i0;
   if(trp_equal(trp_const(724),t0)==TRP_FALSE)goto l3;
-  if(net_106(UNO,UNO,trp_const(725),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(725),trp_const(723)))goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(678),t0)==TRP_FALSE)goto l4;
-  if(net_87(TRP_FALSE))goto l2;
+  if(net_92(TRP_FALSE))goto l2;
   goto l1;
 l4:
   if(trp_equal(trp_const(726),t0)==TRP_FALSE)goto l5;
-  if(net_87(TRP_TRUE))goto l2;
+  if(net_92(TRP_TRUE))goto l2;
   goto l1;
 l5:
   goto l2;
@@ -11278,28 +11471,28 @@ l0:
   return 1;
 }
 
-static uns8b net_84(trp_obj_t *i0)
+static uns8b net_89(trp_obj_t *i0)
 {
   trp_obj_t *t0=UNDEF;
   t0=i0;
   if(trp_equal(trp_const(727),t0)==TRP_FALSE)goto l3;
-  if(net_85(ZERO,TRP_FALSE))goto l2;
+  if(net_90(ZERO,TRP_FALSE))goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(728),t0)==TRP_FALSE)goto l4;
-  if(net_85(UNO,TRP_FALSE))goto l2;
+  if(net_90(UNO,TRP_FALSE))goto l2;
   goto l1;
 l4:
   if(trp_equal(trp_const(729),t0)==TRP_FALSE)goto l5;
-  if(net_85(ZERO,TRP_TRUE))goto l2;
+  if(net_90(ZERO,TRP_TRUE))goto l2;
   goto l1;
 l5:
   if(trp_equal(trp_const(730),t0)==TRP_FALSE)goto l6;
-  if(net_86(ZERO))goto l2;
+  if(net_91(ZERO))goto l2;
   goto l1;
 l6:
   if(trp_equal(trp_const(731),t0)==TRP_FALSE)goto l7;
-  if(net_86(UNO))goto l2;
+  if(net_91(UNO))goto l2;
   goto l1;
 l7:
   goto l2;
@@ -11314,108 +11507,108 @@ l0:
   return 1;
 }
 
-static uns8b net_85(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_90(trp_obj_t *i0,trp_obj_t *i1)
 {
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(732),i0,trp_const(179),NULL))goto l0;
 l1:
   if(i1==TRP_FALSE)goto l2;
-  if(net_48())goto l0;
+  if(net_53())goto l0;
   goto l3;
 l2:
-  if(fun_16()==TRP_FALSE)goto l4;
+  if(fun_23()==TRP_FALSE)goto l4;
   if(trp_fprint(_glb[12],trp_const(202),NULL))goto l0;
 l4:
 l3:
-  if(net_140())goto l0;
-  if(net_48())goto l0;
-  if(net_137(trp_const(733)))goto l0;
-  if(net_106(UNO,UNO,trp_const(179),trp_const(723)))goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
+  if(net_142(trp_const(733)))goto l0;
+  if(net_111(UNO,UNO,trp_const(179),trp_const(723)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_86(trp_obj_t *i0)
+static uns8b net_91(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(734),i0,trp_const(735),NULL))goto l0;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l2;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l2:
-  if(net_138())goto l0;
-  if(net_50())goto l0;
-  if(net_137(trp_const(736)))goto l0;
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(net_143())goto l0;
+  if(net_55())goto l0;
+  if(net_142(trp_const(736)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(737),NULL))goto l0;
 l3:
   j0=TRP_FALSE;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_not(trp_in_func(_glb[1],trp_const(738),NULL)),NULL)==TRP_FALSE)goto l4;
   i0=_glb[1];
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   j0=trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(288)),NULL);
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[0]=trp_const(56);
   _glb[1]=i0;
 l4:
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   if(j0==TRP_FALSE)goto l5;
-  if(fun_16()==TRP_FALSE)goto l6;
+  if(fun_23()==TRP_FALSE)goto l6;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l6:
-  if(net_15())goto l0;
-  if(net_50())goto l0;
-  if(net_137(trp_const(288)))goto l0;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
+  if(net_55())goto l0;
+  if(net_142(trp_const(288)))goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(34))==TRP_FALSE)goto l7;
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(740),NULL))goto l0;
 l8:
   i0=ZERO;
 l9:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(35))!=TRP_FALSE)goto l10;
   i0=trp_cat(i0,UNO,NULL);
-  if(net_12())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
+  if(net_17())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
   goto l9;
 l10:
   if(trp_less(i0,trp_const(59))==TRP_FALSE)goto l11;
-  if(net_133(trp_const(741)))goto l0;
+  if(net_138(trp_const(741)))goto l0;
 l11:
-  if(net_136())goto l0;
-  if(fun_16()==TRP_FALSE)goto l12;
+  if(net_141())goto l0;
+  if(fun_23()==TRP_FALSE)goto l12;
   if(trp_fprint(_glb[12],trp_const(742),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l12:
   goto l13;
 l7:
-  if(net_12())goto l0;
-  if(net_106(UNO,UNO,trp_const(737),trp_const(723)))goto l0;
+  if(net_17())goto l0;
+  if(net_111(UNO,UNO,trp_const(737),trp_const(723)))goto l0;
 l13:
   goto l14;
 l5:
-  if(net_106(UNO,UNO,trp_const(743),trp_const(723)))goto l0;
+  if(net_111(UNO,UNO,trp_const(743),trp_const(723)))goto l0;
 l14:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_87(trp_obj_t *i0)
+static uns8b net_92(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   trp_obj_t *j2=UNDEF;
-  if(fun_16()==TRP_FALSE)goto l1;
-  if(net_141(&(j0),&(j1)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l1;
+  if(net_146(&(j0),&(j1)))goto l0;
   j2=TRP_TRUE;
   trp_push_env(i0,j0,j1,j2,NULL);
-  if(net_88(i0,j1))goto l3;
+  if(net_93(i0,j1))goto l3;
   j2=TRP_FALSE;
   trp_pop_env_void(4);
   goto l2;
@@ -11427,14 +11620,14 @@ l2:
   if((j2)==TRP_TRUE)goto l0;
   goto l4;
 l1:
-  if(net_88(i0,UNDEF))goto l0;
+  if(net_93(i0,UNDEF))goto l0;
 l4:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_88(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_93(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -11446,7 +11639,7 @@ static uns8b net_88(trp_obj_t *i0,trp_obj_t *i1)
   j0=_glb[39];
   _glb[39]=trp_cat(_glb[39],UNO,NULL);
   _glb[38]=trp_max(_glb[38],_glb[39],NULL);
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   j3=_glb[40];
   if(i0==TRP_FALSE)goto l2;
@@ -11457,137 +11650,137 @@ l1:
   j2=ZERO;
 l3:
   j2=trp_cat(j2,UNO,NULL);
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(746)),NULL)==TRP_FALSE)goto l5;
-  if(net_48())goto l0;
-  if(net_15())goto l0;
+  if(net_53())goto l0;
+  if(net_20())goto l0;
   goto l6;
 l5:
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_fprint(_glb[12],trp_const(202),NULL))goto l0;
 l7:
 l6:
-  if(net_140())goto l0;
+  if(net_145())goto l0;
   j4=TRP_TRUE;
   if(trp_equal(_glb[0],trp_const(30))==TRP_FALSE)goto l8;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(730)),NULL)==TRP_FALSE)goto l9;
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(fun_23()==TRP_FALSE)goto l10;
   if(trp_fprint(_glb[12],trp_const(198),NULL))goto l0;
 l10:
   j4=TRP_FALSE;
 l9:
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[0]=trp_const(30);
 l8:
   if(j4==TRP_FALSE)goto l11;
   if(trp_equal(_glb[0],trp_const(39))==TRP_FALSE)goto l12;
-  if(fun_16()==TRP_FALSE)goto l13;
+  if(fun_23()==TRP_FALSE)goto l13;
   if(trp_fprint(_glb[12],trp_const(198),NULL))goto l0;
 l13:
   goto l14;
 l12:
-  if(net_12())goto l0;
-  if(net_48())goto l0;
-  if(net_15())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
+  if(net_20())goto l0;
 l14:
 l11:
-  if(net_140())goto l0;
+  if(net_145())goto l0;
   if(trp_equal(_glb[0],trp_const(39))==TRP_FALSE)goto l15;
-  if(fun_16()==TRP_FALSE)goto l16;
+  if(fun_23()==TRP_FALSE)goto l16;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l16:
   goto l17;
 l15:
   if(trp_equal(_glb[0],trp_const(30))!=TRP_TRUE)goto l0;
-  if(net_137(trp_const(730)))goto l0;
-  if(fun_16()==TRP_FALSE)goto l18;
+  if(net_142(trp_const(730)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l18;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l18:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l19;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l19:
-  if(net_138())goto l0;
-  if(net_50())goto l0;
-  if(net_137(trp_const(736)))goto l0;
-  if(fun_16()==TRP_FALSE)goto l20;
+  if(net_143())goto l0;
+  if(net_55())goto l0;
+  if(net_142(trp_const(736)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l20;
   if(trp_fprint(_glb[12],trp_const(737),NULL))goto l0;
 l20:
   j1=TRP_FALSE;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_not(trp_in_func(_glb[1],trp_const(738),NULL)),NULL)==TRP_FALSE)goto l21;
   j4=_glb[1];
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   j1=trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(288)),NULL);
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[0]=trp_const(56);
   _glb[1]=j4;
 l21:
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   if(j1==TRP_FALSE)goto l22;
-  if(fun_16()==TRP_FALSE)goto l23;
+  if(fun_23()==TRP_FALSE)goto l23;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l23:
-  if(net_15())goto l0;
-  if(net_50())goto l0;
-  if(net_137(trp_const(288)))goto l0;
-  if(net_15())goto l0;
-  if(fun_16()==TRP_FALSE)goto l24;
+  if(net_20())goto l0;
+  if(net_55())goto l0;
+  if(net_142(trp_const(288)))goto l0;
+  if(net_20())goto l0;
+  if(fun_23()==TRP_FALSE)goto l24;
   if(trp_fprint(_glb[12],trp_const(737),NULL))goto l0;
 l24:
   if(trp_equal(_glb[0],trp_const(34))==TRP_FALSE)goto l25;
-  if(fun_16()==TRP_FALSE)goto l26;
+  if(fun_23()==TRP_FALSE)goto l26;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l26:
   j4=ZERO;
 l27:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(35))!=TRP_FALSE)goto l28;
   j4=trp_cat(j4,UNO,NULL);
-  if(net_12())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
+  if(net_17())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
   goto l27;
 l28:
   if(trp_less(j4,trp_const(59))==TRP_FALSE)goto l29;
-  if(net_133(trp_const(741)))goto l0;
+  if(net_138(trp_const(741)))goto l0;
 l29:
-  if(fun_16()==TRP_FALSE)goto l30;
+  if(fun_23()==TRP_FALSE)goto l30;
   if(trp_fprint(_glb[12],trp_const(711),NULL))goto l0;
 l30:
   goto l31;
 l25:
-  if(net_12())goto l0;
-  if(net_48())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
 l31:
   goto l32;
 l22:
-  if(fun_16()==TRP_FALSE)goto l33;
+  if(fun_23()==TRP_FALSE)goto l33;
   if(trp_fprint(_glb[12],trp_const(743),NULL))goto l0;
 l33:
-  if(net_48())goto l0;
+  if(net_53())goto l0;
 l32:
-  if(net_136())goto l0;
-  if(net_15())goto l0;
+  if(net_141())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(39))!=TRP_TRUE)goto l0;
 l17:
-  if(net_140())goto l0;
+  if(net_145())goto l0;
   j4=_glb[12];
   _glb[12]=i1;
-  if(fun_16()==TRP_FALSE)goto l34;
+  if(fun_23()==TRP_FALSE)goto l34;
   if(trp_fprint(_glb[12],trp_char(64),trp_char(10),NULL))goto l0;
 l34:
-  if(net_105())goto l0;
+  if(net_110())goto l0;
   _glb[12]=j4;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l4;
   if(trp_equal(_glb[0],trp_const(32))!=TRP_TRUE)goto l0;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(33))!=TRP_TRUE)goto l0;
   goto l3;
 l4:
-  if(fun_16()==TRP_FALSE)goto l35;
+  if(fun_23()==TRP_FALSE)goto l35;
   if(trp_fprint(_glb[12],trp_const(747),trp_char(10),NULL))goto l0;
   j5=ZERO;
   if(trp_file_set_pos(ZERO,i1))goto l0;
@@ -11623,7 +11816,7 @@ l0:
   return 1;
 }
 
-static uns8b net_89(trp_obj_t *i0)
+static uns8b net_94(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11634,14 +11827,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(753),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(81)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(753),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(81)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_90(trp_obj_t *i0)
+static uns8b net_95(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11652,14 +11845,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(755),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(101)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(755),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(101)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_91(trp_obj_t *i0)
+static uns8b net_96(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11670,14 +11863,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(757),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(105)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(757),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(105)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_92(trp_obj_t *i0)
+static uns8b net_97(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11688,14 +11881,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(759),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(109)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(759),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(109)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_93(trp_obj_t *i0)
+static uns8b net_98(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11706,14 +11899,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(761),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(113)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(761),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(113)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_94(trp_obj_t *i0)
+static uns8b net_99(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11727,14 +11920,14 @@ l2:
   if(trp_equal(i0,trp_const(763))==TRP_FALSE)goto l3;
   i0=trp_const(764);
 l3:
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(765),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(117)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(765),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(117)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_95(trp_obj_t *i0)
+static uns8b net_100(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11748,14 +11941,14 @@ l2:
   if(trp_in_func(i0,trp_const(767),NULL)==TRP_FALSE)goto l3;
   i0=trp_cat(i0,trp_const(768),NULL);
 l3:
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(769),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(136)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(769),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(136)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_96(trp_obj_t *i0)
+static uns8b net_101(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11766,26 +11959,26 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(772),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(146)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(772),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(146)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_97(trp_obj_t *i0)
+static uns8b net_102(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
   if(trp_cord_match_test(4,NULL,NULL,&(i0),trp_const(147),NULL))goto l0;
   if(trp_equal(i0,trp_const(773))==TRP_FALSE)goto l1;
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(fun_23()==TRP_FALSE)goto l2;
   if(trp_fprint(_glb[12],trp_const(774),NULL))goto l0;
 l2:
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
-  if(net_106(UNO,UNDEF,trp_const(775),trp_const(723)))goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
+  if(net_111(UNO,UNDEF,trp_const(775),trp_const(723)))goto l0;
   goto l3;
 l1:
   if(trp_for_init(&t0,&(j0),trp_const(776),NULL,UNO,0))goto l5;
@@ -11794,15 +11987,15 @@ l4:
   if(trp_for_next(&t0))goto l4;
 l5:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(777),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(777),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
 l3:
-  if(net_144(trp_const(150)))goto l0;
+  if(net_149(trp_const(150)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_98(trp_obj_t *i0)
+static uns8b net_103(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11813,14 +12006,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(779),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(158)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(779),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(158)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_99(trp_obj_t *i0)
+static uns8b net_104(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11831,14 +12024,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(781),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(162)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(781),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(162)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_100(trp_obj_t *i0)
+static uns8b net_105(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11849,14 +12042,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(783),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(125)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(783),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(125)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_101(trp_obj_t *i0)
+static uns8b net_106(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11867,14 +12060,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(785),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(166)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(785),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(166)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_102(trp_obj_t *i0)
+static uns8b net_107(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11885,14 +12078,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(787),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(170)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(787),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(170)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_103(trp_obj_t *i0)
+static uns8b net_108(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11903,14 +12096,14 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(789),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(174)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(789),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(174)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_104(trp_obj_t *i0)
+static uns8b net_109(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -11921,20 +12114,20 @@ l1:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_equal(trp_nth(ZERO,j0),i0)!=TRP_TRUE)goto l0;
-  if(net_106(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(792),fun_17(i0),trp_const(63),NULL),trp_const(723)))goto l0;
-  if(net_144(trp_const(793)))goto l0;
+  if(net_111(trp_nth(UNO,j0),trp_nth(trp_const(59),j0),trp_cat(trp_const(792),fun_24(i0),trp_const(63),NULL),trp_const(723)))goto l0;
+  if(net_149(trp_const(793)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_105()
+static uns8b net_110()
 {
 l1:
-  if(net_15())goto l0;
-  if(net_12())goto l0;
+  if(net_20())goto l0;
+  if(net_17())goto l0;
   if(trp_notequal(_glb[0],trp_const(30))!=TRP_FALSE)goto l2;
-  if(net_107())goto l0;
+  if(net_112())goto l0;
   goto l1;
 l2:
   return 0;
@@ -11942,10 +12135,10 @@ l0:
   return 1;
 }
 
-static uns8b net_106(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
+static uns8b net_111(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3)
 {
-  if(net_49(i0,i1,i2,i3))goto l0;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(net_54(i0,i1,i2,i3))goto l0;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(794),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l1:
   return 0;
@@ -11953,145 +12146,145 @@ l0:
   return 1;
 }
 
-static uns8b net_107()
+static uns8b net_112()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   trp_obj_t *t0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(30))!=TRP_TRUE)goto l0;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   t0=_glb[0];
   if(trp_equal(trp_const(44),t0)==TRP_FALSE)goto l3;
-  if(net_108(_glb[1]))goto l2;
+  if(net_113(_glb[1]))goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(56),t0)==TRP_FALSE)goto l4;
   j0=_glb[1];
   j1=TRP_TRUE;
   trp_push_env(j0,j1,NULL);
-  if(net_80(j0))goto l6;
+  if(net_85(j0))goto l6;
   trp_pop_env_void(2);
   goto l5;
 l6:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_81(j0))goto l7;
+  if(net_86(j0))goto l7;
   trp_pop_env_void(2);
   goto l5;
 l7:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_82(j0))goto l8;
+  if(net_87(j0))goto l8;
   trp_pop_env_void(2);
   goto l5;
 l8:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_89(j0))goto l9;
+  if(net_94(j0))goto l9;
   trp_pop_env_void(2);
   goto l5;
 l9:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_90(j0))goto l10;
+  if(net_95(j0))goto l10;
   trp_pop_env_void(2);
   goto l5;
 l10:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_91(j0))goto l11;
+  if(net_96(j0))goto l11;
   trp_pop_env_void(2);
   goto l5;
 l11:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_92(j0))goto l12;
+  if(net_97(j0))goto l12;
   trp_pop_env_void(2);
   goto l5;
 l12:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_93(j0))goto l13;
+  if(net_98(j0))goto l13;
   trp_pop_env_void(2);
   goto l5;
 l13:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_94(j0))goto l14;
+  if(net_99(j0))goto l14;
   trp_pop_env_void(2);
   goto l5;
 l14:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_95(j0))goto l15;
+  if(net_100(j0))goto l15;
   trp_pop_env_void(2);
   goto l5;
 l15:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_96(j0))goto l16;
+  if(net_101(j0))goto l16;
   trp_pop_env_void(2);
   goto l5;
 l16:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_97(j0))goto l17;
+  if(net_102(j0))goto l17;
   trp_pop_env_void(2);
   goto l5;
 l17:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_98(j0))goto l18;
+  if(net_103(j0))goto l18;
   trp_pop_env_void(2);
   goto l5;
 l18:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_99(j0))goto l19;
+  if(net_104(j0))goto l19;
   trp_pop_env_void(2);
   goto l5;
 l19:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_100(j0))goto l20;
+  if(net_105(j0))goto l20;
   trp_pop_env_void(2);
   goto l5;
 l20:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_101(j0))goto l21;
+  if(net_106(j0))goto l21;
   trp_pop_env_void(2);
   goto l5;
 l21:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_102(j0))goto l22;
+  if(net_107(j0))goto l22;
   trp_pop_env_void(2);
   goto l5;
 l22:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_103(j0))goto l23;
+  if(net_108(j0))goto l23;
   trp_pop_env_void(2);
   goto l5;
 l23:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_104(j0))goto l24;
+  if(net_109(j0))goto l24;
   trp_pop_env_void(2);
   goto l5;
 l24:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_109(j0))goto l25;
+  if(net_114(j0))goto l25;
   trp_pop_env_void(2);
   goto l5;
 l25:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_11(trp_const(29),j0))goto l26;
-  if(net_125())goto l26;
+  if(net_16(trp_const(29),j0))goto l26;
+  if(net_130())goto l26;
   j1=TRP_FALSE;
   trp_pop_env_void(2);
   goto l5;
@@ -12101,7 +12294,7 @@ l26:
 l5:
   goto l1;
 l4:
-  if(net_134())goto l2;
+  if(net_139())goto l2;
   goto l1;
 l2:
   t0=UNDEF;
@@ -12113,7 +12306,7 @@ l0:
   return 1;
 }
 
-static uns8b net_108(trp_obj_t *i0)
+static uns8b net_113(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -12122,13 +12315,13 @@ static uns8b net_108(trp_obj_t *i0)
   trp_obj_t *t0=UNDEF;
   _glb[6]=_glb[11];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   j0=_glb[5];
   j1=_glb[7];
   j2=_glb[8];
   _glb[6]=trp_and(j1,_glb[11],NULL);
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(_glb[7]==TRP_FALSE)goto l1;
   t0=i0;
   if(trp_equal(trp_const(45),t0)==TRP_FALSE)goto l4;
@@ -12162,10 +12355,10 @@ l3:
 l2:
   t0=UNDEF;
   if(trp_not(trp_booleanp(i0))==TRP_FALSE)goto l10;
-  if(net_133(trp_const(795)))goto l0;
+  if(net_138(trp_const(795)))goto l0;
 l10:
   if(trp_not(i0)==TRP_FALSE)goto l11;
-  if(fun_16()==TRP_FALSE)goto l12;
+  if(fun_23()==TRP_FALSE)goto l12;
   if(trp_fprint(_glb[12],trp_const(748),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l12:
 l11:
@@ -12206,399 +12399,399 @@ l14:
   if(j1==TRP_FALSE)goto l22;
   _glb[6]=TRP_FALSE;
   _glb[5]=EMPTYCORD;
-  if(net_56(j2))goto l0;
+  if(net_61(j2))goto l0;
   j0=_glb[5];
 l22:
-  if(fun_16()==TRP_FALSE)goto l23;
+  if(fun_23()==TRP_FALSE)goto l23;
   if(trp_fprint(_glb[12],trp_const(796),i0,trp_char(40),j0,trp_char(44),j3,trp_const(797),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l23:
 l13:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_109(trp_obj_t *i0)
+static uns8b net_114(trp_obj_t *i0)
 {
   trp_obj_t *t0=UNDEF;
   t0=i0;
   if(trp_equal(trp_const(798),t0)==TRP_FALSE)goto l3;
-  if(net_49(ZERO,UNO,trp_const(799),trp_const(720)))goto l2;
+  if(net_54(ZERO,UNO,trp_const(799),trp_const(720)))goto l2;
   goto l1;
 l3:
   if(trp_equal(trp_const(800),t0)==TRP_FALSE)goto l4;
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   goto l1;
 l4:
   if(trp_equal(trp_const(801),t0)==TRP_FALSE)goto l5;
-  if(net_136())goto l2;
-  if(fun_16()==TRP_FALSE)goto l6;
+  if(net_141())goto l2;
+  if(fun_23()==TRP_FALSE)goto l6;
   if(trp_fprint(_glb[12],trp_const(748),_glb[41],trp_char(59),trp_char(10),NULL))goto l2;
 l6:
   goto l1;
 l5:
   if(trp_equal(trp_const(802),t0)==TRP_FALSE)goto l7;
-  if(net_110())goto l2;
+  if(net_115())goto l2;
   goto l1;
 l7:
   if(trp_equal(trp_const(803),t0)==TRP_FALSE)goto l8;
-  if(net_111())goto l2;
+  if(net_116())goto l2;
   goto l1;
 l8:
   if(trp_equal(trp_const(804),t0)==TRP_FALSE)goto l9;
-  if(net_112())goto l2;
+  if(net_117())goto l2;
   goto l1;
 l9:
   if(trp_equal(trp_const(805),t0)==TRP_FALSE)goto l10;
-  if(net_113(trp_const(805),trp_const(38)))goto l2;
+  if(net_118(trp_const(805),trp_const(38)))goto l2;
   goto l1;
 l10:
   if(trp_equal(trp_const(806),t0)==TRP_FALSE)goto l11;
-  if(net_113(trp_const(806),trp_const(807)))goto l2;
+  if(net_118(trp_const(806),trp_const(807)))goto l2;
   goto l1;
 l11:
   if(trp_equal(trp_const(236),t0)==TRP_FALSE)goto l12;
-  if(net_114())goto l2;
+  if(net_119())goto l2;
   goto l1;
 l12:
   if(trp_equal(trp_const(237),t0)==TRP_FALSE)goto l13;
-  if(net_115())goto l2;
+  if(net_120())goto l2;
   goto l1;
 l13:
   if(trp_equal(trp_const(238),t0)==TRP_FALSE)goto l14;
   _glb[6]=_glb[11];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l2;
+  if(net_56())goto l2;
   if(_glb[7]==TRP_FALSE)goto l15;
   if(trp_not(trp_booleanp(_glb[8]))==TRP_FALSE)goto l16;
-  if(net_133(trp_const(696)))goto l2;
+  if(net_138(trp_const(696)))goto l2;
 l16:
   if(_glb[8]==TRP_FALSE)goto l17;
-  if(fun_16()==TRP_FALSE)goto l18;
+  if(fun_23()==TRP_FALSE)goto l18;
   if(trp_fprint(_glb[12],trp_const(748),_glb[41],trp_char(59),trp_char(10),NULL))goto l2;
 l18:
 l17:
   goto l19;
 l15:
-  if(fun_16()==TRP_FALSE)goto l20;
+  if(fun_23()==TRP_FALSE)goto l20;
   if(trp_fprint(_glb[12],trp_const(808),_glb[5],trp_const(809),_glb[41],trp_char(59),trp_char(10),NULL))goto l2;
 l20:
 l19:
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   goto l1;
 l14:
   if(trp_equal(trp_const(245),t0)==TRP_FALSE)goto l21;
-  if(net_106(UNO,UNO,trp_const(810),trp_const(811)))goto l2;
+  if(net_111(UNO,UNO,trp_const(810),trp_const(811)))goto l2;
   goto l1;
 l21:
   if(trp_equal(trp_const(247),t0)==TRP_FALSE)goto l22;
-  if(net_106(UNO,UNO,trp_const(812),trp_const(811)))goto l2;
+  if(net_111(UNO,UNO,trp_const(812),trp_const(811)))goto l2;
   goto l1;
 l22:
   if(trp_equal(trp_const(249),t0)==TRP_FALSE)goto l23;
-  if(net_106(UNO,UNO,trp_const(813),trp_const(811)))goto l2;
+  if(net_111(UNO,UNO,trp_const(813),trp_const(811)))goto l2;
   goto l1;
 l23:
   if(trp_equal(trp_const(251),t0)==TRP_FALSE)goto l24;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(815)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(815)))goto l2;
   goto l1;
 l24:
   if(trp_equal(trp_const(253),t0)==TRP_FALSE)goto l25;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(816)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(816)))goto l2;
   goto l1;
 l25:
   if(trp_equal(trp_const(255),t0)==TRP_FALSE)goto l26;
-  if(net_106(UNO,UNO,trp_const(817),trp_const(811)))goto l2;
+  if(net_111(UNO,UNO,trp_const(817),trp_const(811)))goto l2;
   goto l1;
 l26:
   if(trp_equal(trp_const(257),t0)==TRP_FALSE)goto l27;
-  if(net_106(UNO,UNO,trp_const(818),trp_const(811)))goto l2;
+  if(net_111(UNO,UNO,trp_const(818),trp_const(811)))goto l2;
   goto l1;
 l27:
   if(trp_equal(trp_const(259),t0)==TRP_FALSE)goto l28;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(819)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(819)))goto l2;
   goto l1;
 l28:
   if(trp_equal(trp_const(261),t0)==TRP_FALSE)goto l29;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(820)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(820)))goto l2;
   goto l1;
 l29:
   if(trp_equal(trp_const(263),t0)==TRP_FALSE)goto l30;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(821)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(821)))goto l2;
   goto l1;
 l30:
   if(trp_equal(trp_const(265),t0)==TRP_FALSE)goto l31;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(822)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(822)))goto l2;
   goto l1;
 l31:
   if(trp_equal(trp_const(267),t0)==TRP_FALSE)goto l32;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(823)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(823)))goto l2;
   goto l1;
 l32:
   if(trp_equal(trp_const(269),t0)==TRP_FALSE)goto l33;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(824)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(824)))goto l2;
   goto l1;
 l33:
   if(trp_equal(trp_const(271),t0)==TRP_FALSE)goto l34;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(825)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(825)))goto l2;
   goto l1;
 l34:
   if(trp_equal(trp_const(273),t0)==TRP_FALSE)goto l35;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(826)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(826)))goto l2;
   goto l1;
 l35:
   if(trp_equal(trp_const(275),t0)==TRP_FALSE)goto l36;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(827)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(827)))goto l2;
   goto l1;
 l36:
   if(trp_equal(trp_const(277),t0)==TRP_FALSE)goto l37;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(828)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(828)))goto l2;
   goto l1;
 l37:
   if(trp_equal(trp_const(279),t0)==TRP_FALSE)goto l38;
-  if(net_106(UNO,UNO,trp_const(814),trp_const(829)))goto l2;
+  if(net_111(UNO,UNO,trp_const(814),trp_const(829)))goto l2;
   goto l1;
 l38:
   if(trp_equal(trp_const(830),t0)==TRP_FALSE)goto l39;
-  if(net_49(ZERO,ZERO,trp_const(831),trp_const(720)))goto l2;
+  if(net_54(ZERO,ZERO,trp_const(831),trp_const(720)))goto l2;
   goto l1;
 l39:
   if(trp_equal(trp_const(832),t0)==TRP_FALSE)goto l40;
-  if(net_49(ZERO,ZERO,trp_const(833),trp_const(720)))goto l2;
+  if(net_54(ZERO,ZERO,trp_const(833),trp_const(720)))goto l2;
   goto l1;
 l40:
   if(trp_equal(trp_const(834),t0)==TRP_FALSE)goto l41;
-  if(net_106(UNO,UNDEF,trp_const(835),trp_const(723)))goto l2;
+  if(net_111(UNO,UNDEF,trp_const(835),trp_const(723)))goto l2;
   goto l1;
 l41:
   if(trp_equal(trp_const(212),t0)==TRP_FALSE)goto l42;
-  if(net_125())goto l2;
+  if(net_130())goto l2;
   goto l1;
 l42:
   if(trp_equal(trp_const(836),t0)==TRP_FALSE)goto l43;
-  if(net_106(UNO,UNDEF,trp_const(837),trp_const(723)))goto l2;
+  if(net_111(UNO,UNDEF,trp_const(837),trp_const(723)))goto l2;
   goto l1;
 l43:
   if(trp_equal(trp_const(838),t0)==TRP_FALSE)goto l44;
-  if(net_106(trp_const(59),UNDEF,trp_const(839),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),UNDEF,trp_const(839),trp_const(723)))goto l2;
   goto l1;
 l44:
   if(trp_equal(trp_const(840),t0)==TRP_FALSE)goto l45;
-  if(net_106(trp_const(59),trp_const(59),trp_const(841),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(841),trp_const(723)))goto l2;
   goto l1;
 l45:
   if(trp_equal(trp_const(842),t0)==TRP_FALSE)goto l46;
-  if(net_106(UNO,UNO,trp_const(843),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(843),trp_const(723)))goto l2;
   goto l1;
 l46:
   if(trp_equal(trp_const(844),t0)==TRP_FALSE)goto l47;
-  if(net_106(UNO,UNO,trp_const(845),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(845),trp_const(723)))goto l2;
   goto l1;
 l47:
   if(trp_equal(trp_const(846),t0)==TRP_FALSE)goto l48;
-  if(net_106(UNO,UNO,trp_const(847),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(847),trp_const(723)))goto l2;
   goto l1;
 l48:
   if(trp_equal(trp_const(848),t0)==TRP_FALSE)goto l49;
-  if(net_106(UNO,UNO,trp_const(849),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(849),trp_const(723)))goto l2;
   goto l1;
 l49:
   if(trp_equal(trp_const(850),t0)==TRP_FALSE)goto l50;
-  if(net_106(trp_const(59),trp_const(59),trp_const(851),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(851),trp_const(723)))goto l2;
   goto l1;
 l50:
   if(trp_equal(trp_const(583),t0)==TRP_FALSE)goto l51;
-  if(net_106(UNO,UNDEF,trp_const(852),trp_const(853)))goto l2;
+  if(net_111(UNO,UNDEF,trp_const(852),trp_const(853)))goto l2;
   goto l1;
 l51:
   if(trp_equal(trp_const(854),t0)==TRP_FALSE)goto l52;
-  if(net_106(UNO,UNO,trp_const(855),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(855),trp_const(723)))goto l2;
   goto l1;
 l52:
   if(trp_equal(trp_const(496),t0)==TRP_FALSE)goto l53;
-  if(net_106(UNO,UNO,trp_const(856),trp_const(811)))goto l2;
+  if(net_111(UNO,UNO,trp_const(856),trp_const(811)))goto l2;
   goto l1;
 l53:
   if(trp_equal(trp_const(857),t0)==TRP_FALSE)goto l54;
-  if(net_106(trp_const(59),trp_const(141),trp_const(858),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(141),trp_const(858),trp_const(723)))goto l2;
   goto l1;
 l54:
   if(trp_equal(trp_const(859),t0)==TRP_FALSE)goto l55;
-  if(net_106(trp_const(59),trp_const(59),trp_const(860),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(860),trp_const(723)))goto l2;
   goto l1;
 l55:
   if(trp_equal(trp_const(861),t0)==TRP_FALSE)goto l56;
-  if(net_106(UNO,UNO,trp_const(862),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(862),trp_const(723)))goto l2;
   goto l1;
 l56:
   if(trp_equal(trp_const(288),t0)==TRP_FALSE)goto l57;
-  if(net_119())goto l2;
+  if(net_124())goto l2;
   goto l1;
 l57:
   if(trp_equal(trp_const(369),t0)==TRP_FALSE)goto l58;
-  if(net_120())goto l2;
+  if(net_125())goto l2;
   goto l1;
 l58:
   if(trp_equal(trp_const(678),t0)==TRP_FALSE)goto l59;
-  if(net_121())goto l2;
+  if(net_126())goto l2;
   goto l1;
 l59:
   if(trp_equal(trp_const(863),t0)==TRP_FALSE)goto l60;
-  if(net_122())goto l2;
+  if(net_127())goto l2;
   goto l1;
 l60:
   if(trp_equal(trp_const(864),t0)==TRP_FALSE)goto l61;
-  if(net_123())goto l2;
+  if(net_128())goto l2;
   goto l1;
 l61:
   if(trp_equal(trp_const(865),t0)==TRP_FALSE)goto l62;
-  if(net_124())goto l2;
+  if(net_129())goto l2;
   goto l1;
 l62:
   if(trp_equal(trp_const(866),t0)==TRP_FALSE)goto l63;
-  if(net_105())goto l2;
-  if(net_136())goto l2;
+  if(net_110())goto l2;
+  if(net_141())goto l2;
   goto l1;
 l63:
   if(trp_equal(trp_const(867),t0)==TRP_FALSE)goto l64;
-  if(net_128())goto l2;
+  if(net_133())goto l2;
   goto l1;
 l64:
   if(trp_equal(trp_const(868),t0)==TRP_FALSE)goto l65;
-  if(net_130())goto l2;
+  if(net_135())goto l2;
   goto l1;
 l65:
   if(trp_equal(trp_const(869),t0)==TRP_FALSE)goto l66;
-  if(net_131())goto l2;
+  if(net_136())goto l2;
   goto l1;
 l66:
   if(trp_equal(trp_const(870),t0)==TRP_FALSE)goto l67;
-  if(net_106(trp_const(59),trp_const(59),trp_const(871),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(871),trp_const(723)))goto l2;
   goto l1;
 l67:
   if(trp_equal(trp_const(384),t0)==TRP_FALSE)goto l68;
-  if(net_116())goto l2;
+  if(net_121())goto l2;
   goto l1;
 l68:
   if(trp_equal(trp_const(385),t0)==TRP_FALSE)goto l69;
-  if(net_117(ZERO))goto l2;
+  if(net_122(ZERO))goto l2;
   goto l1;
 l69:
   if(trp_equal(trp_const(386),t0)==TRP_FALSE)goto l70;
-  if(net_117(UNO))goto l2;
+  if(net_122(UNO))goto l2;
   goto l1;
 l70:
   if(trp_equal(trp_const(387),t0)==TRP_FALSE)goto l71;
-  if(net_118(trp_char(108)))goto l2;
+  if(net_123(trp_char(108)))goto l2;
   goto l1;
 l71:
   if(trp_equal(trp_const(389),t0)==TRP_FALSE)goto l72;
-  if(net_118(trp_char(114)))goto l2;
+  if(net_123(trp_char(114)))goto l2;
   goto l1;
 l72:
   if(trp_equal(trp_const(872),t0)==TRP_FALSE)goto l73;
-  if(net_106(UNO,UNO,trp_const(873),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(873),trp_const(723)))goto l2;
   goto l1;
 l73:
   if(trp_equal(trp_const(874),t0)==TRP_FALSE)goto l74;
-  if(net_106(UNO,UNO,trp_const(875),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(875),trp_const(723)))goto l2;
   goto l1;
 l74:
   if(trp_equal(trp_const(876),t0)==TRP_FALSE)goto l75;
-  if(net_106(UNO,UNO,trp_const(877),trp_const(723)))goto l2;
+  if(net_111(UNO,UNO,trp_const(877),trp_const(723)))goto l2;
   goto l1;
 l75:
   if(trp_equal(trp_const(878),t0)==TRP_FALSE)goto l76;
   _glb[6]=TRP_TRUE;
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l2;
+  if(net_56())goto l2;
   if(trp_or(trp_not(_glb[7]),trp_not(trp_rationalp(_glb[8])),NULL)==TRP_FALSE)goto l77;
-  if(net_133(trp_const(879)))goto l2;
+  if(net_138(trp_const(879)))goto l2;
 l77:
   if(trp_notequal(_glb[8],trp_math_get_prec())==TRP_FALSE)goto l78;
   if(trp_notequal(trp_math_get_prec(),trp_const(880))==TRP_FALSE)goto l79;
-  if(net_133(trp_const(881)))goto l2;
+  if(net_138(trp_const(881)))goto l2;
 l79:
   if(trp_math_set_prec(_glb[8]))goto l2;
 l78:
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   goto l1;
 l76:
   if(trp_equal(trp_const(882),t0)==TRP_FALSE)goto l80;
   _glb[6]=TRP_TRUE;
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l2;
+  if(net_56())goto l2;
   if(trp_or(trp_not(_glb[7]),trp_not(trp_stringp(_glb[8])),NULL)==TRP_FALSE)goto l81;
-  if(net_133(trp_const(883)))goto l2;
+  if(net_138(trp_const(883)))goto l2;
 l81:
   if(trp_equal(_glb[20],UNDEF)==TRP_FALSE)goto l82;
-  _glb[20]=_glb[8];
+  _glb[20]=fun_6(_glb[8]);
   if(trp_not(trp_pathexists(_glb[20]))==TRP_FALSE)goto l83;
-  if(net_133(trp_const(884)))goto l2;
+  if(net_138(trp_const(884)))goto l2;
 l83:
 l82:
-  if(net_136())goto l2;
+  if(net_141())goto l2;
   goto l1;
 l80:
   if(trp_equal(trp_const(885),t0)==TRP_FALSE)goto l84;
-  if(net_106(UNO,trp_const(59),trp_const(886),trp_const(723)))goto l2;
+  if(net_111(UNO,trp_const(59),trp_const(886),trp_const(723)))goto l2;
   goto l1;
 l84:
   if(trp_equal(trp_const(887),t0)==TRP_FALSE)goto l85;
-  if(net_106(UNO,trp_const(59),trp_const(888),trp_const(723)))goto l2;
+  if(net_111(UNO,trp_const(59),trp_const(888),trp_const(723)))goto l2;
   goto l1;
 l85:
   if(trp_equal(trp_const(889),t0)==TRP_FALSE)goto l86;
-  if(net_106(UNO,trp_const(59),trp_const(890),trp_const(723)))goto l2;
+  if(net_111(UNO,trp_const(59),trp_const(890),trp_const(723)))goto l2;
   goto l1;
 l86:
   if(trp_equal(trp_const(891),t0)==TRP_FALSE)goto l87;
-  if(net_106(UNO,trp_const(59),trp_const(892),trp_const(723)))goto l2;
+  if(net_111(UNO,trp_const(59),trp_const(892),trp_const(723)))goto l2;
   goto l1;
 l87:
   if(trp_equal(trp_const(893),t0)==TRP_FALSE)goto l88;
-  if(net_106(trp_const(141),UNDEF,trp_const(894),trp_const(723)))goto l2;
+  if(net_111(trp_const(141),UNDEF,trp_const(894),trp_const(723)))goto l2;
   goto l1;
 l88:
   if(trp_equal(trp_const(895),t0)==TRP_FALSE)goto l89;
-  if(fun_16()==TRP_FALSE)goto l90;
+  if(fun_23()==TRP_FALSE)goto l90;
   if(trp_fprint(_glb[12],trp_const(894),NULL))goto l2;
 l90:
-  if(net_48())goto l2;
-  if(net_106(UNO,UNDEF,trp_const(775),trp_const(723)))goto l2;
+  if(net_53())goto l2;
+  if(net_111(UNO,UNDEF,trp_const(775),trp_const(723)))goto l2;
   goto l1;
 l89:
   if(trp_equal(trp_const(896),t0)==TRP_FALSE)goto l91;
-  if(net_106(trp_const(59),trp_const(141),trp_const(897),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(141),trp_const(897),trp_const(723)))goto l2;
   goto l1;
 l91:
   if(trp_equal(trp_const(898),t0)==TRP_FALSE)goto l92;
-  if(net_106(trp_const(141),trp_const(141),trp_const(899),trp_const(723)))goto l2;
+  if(net_111(trp_const(141),trp_const(141),trp_const(899),trp_const(723)))goto l2;
   goto l1;
 l92:
   if(trp_equal(trp_const(900),t0)==TRP_FALSE)goto l93;
-  if(net_106(trp_const(59),trp_const(141),trp_const(901),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(141),trp_const(901),trp_const(723)))goto l2;
   goto l1;
 l93:
   if(trp_equal(trp_const(902),t0)==TRP_FALSE)goto l94;
-  if(net_106(trp_const(59),trp_const(59),trp_const(903),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(903),trp_const(723)))goto l2;
   goto l1;
 l94:
   if(trp_equal(trp_const(520),t0)==TRP_FALSE)goto l95;
-  if(net_106(trp_const(59),trp_const(59),trp_const(904),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(904),trp_const(723)))goto l2;
   goto l1;
 l95:
   if(trp_equal(trp_const(905),t0)==TRP_FALSE)goto l96;
-  if(net_106(trp_const(141),trp_const(141),trp_const(906),trp_const(723)))goto l2;
+  if(net_111(trp_const(141),trp_const(141),trp_const(906),trp_const(723)))goto l2;
   goto l1;
 l96:
   if(trp_equal(trp_const(907),t0)==TRP_FALSE)goto l97;
-  if(net_106(trp_const(59),trp_const(59),trp_const(908),trp_const(723)))goto l2;
+  if(net_111(trp_const(59),trp_const(59),trp_const(908),trp_const(723)))goto l2;
   goto l1;
 l97:
   if(trp_equal(trp_const(909),t0)==TRP_FALSE)goto l98;
-  if(net_106(trp_const(141),trp_const(141),trp_const(910),trp_const(723)))goto l2;
+  if(net_111(trp_const(141),trp_const(141),trp_const(910),trp_const(723)))goto l2;
   goto l1;
 l98:
   goto l2;
@@ -12613,17 +12806,17 @@ l0:
   return 1;
 }
 
-static uns8b net_110()
+static uns8b net_115()
 {
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(net_17())goto l0;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(911),NULL))goto l0;
 l3:
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l4;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l4;
   if(trp_fprint(_glb[12],trp_const(912),trp_char(10),NULL))goto l0;
 l4:
   goto l1;
@@ -12633,20 +12826,20 @@ l0:
   return 1;
 }
 
-static uns8b net_111()
+static uns8b net_116()
 {
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l3;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l3:
-  if(net_138())goto l0;
-  if(fun_16()==TRP_FALSE)goto l4;
+  if(net_143())goto l0;
+  if(fun_23()==TRP_FALSE)goto l4;
   if(trp_fprint(_glb[12],trp_const(913),NULL))goto l0;
 l4:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l5;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l5;
   if(trp_fprint(_glb[12],trp_const(914),trp_char(10),NULL))goto l0;
 l5:
   goto l1;
@@ -12656,92 +12849,92 @@ l0:
   return 1;
 }
 
-static uns8b net_112()
+static uns8b net_117()
 {
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l1;
   if(trp_or(trp_notequal(_glb[0],trp_const(44)),trp_notequal(_glb[1],trp_const(50)),NULL)==TRP_FALSE)goto l2;
-  if(net_133(trp_const(915)))goto l0;
+  if(net_138(trp_const(915)))goto l0;
 l2:
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(916),NULL))goto l0;
 l3:
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
 l4:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(44)),trp_equal(_glb[1],trp_const(47)),NULL)!=TRP_FALSE)goto l5;
-  if(net_140())goto l0;
-  if(net_12())goto l0;
-  if(net_48())goto l0;
+  if(net_145())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
   goto l4;
 l5:
-  if(net_106(UNO,UNO,trp_char(44),trp_const(917)))goto l0;
+  if(net_111(UNO,UNO,trp_char(44),trp_const(917)))goto l0;
   goto l6;
 l1:
-  if(net_138())goto l0;
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(net_143())goto l0;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_fprint(_glb[12],trp_const(913),NULL))goto l0;
 l7:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_char(61),NULL))goto l0;
 l8:
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l9;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l9;
   if(trp_fprint(_glb[12],trp_char(59),trp_char(10),NULL))goto l0;
 l9:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
 l6:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_113(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_118(trp_obj_t *i0,trp_obj_t *i1)
 {
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l1;
   if(trp_or(trp_notequal(_glb[0],trp_const(44)),trp_notequal(_glb[1],trp_const(50)),NULL)==TRP_FALSE)goto l2;
-  if(net_133(trp_const(918)))goto l0;
+  if(net_138(trp_const(918)))goto l0;
 l2:
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(919),i0,trp_const(920),NULL))goto l0;
 l3:
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
 l4:
-  if(net_15())goto l0;
-  if(net_140())goto l0;
+  if(net_20())goto l0;
+  if(net_145())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(44)),trp_equal(_glb[1],trp_const(47)),NULL)!=TRP_FALSE)goto l5;
-  if(net_12())goto l0;
-  if(net_48())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
   goto l4;
 l5:
-  if(fun_16()==TRP_FALSE)goto l6;
+  if(fun_23()==TRP_FALSE)goto l6;
   if(trp_fprint(_glb[12],trp_const(743),NULL))goto l0;
 l6:
-  if(net_106(ZERO,UNDEF,UNDEF,trp_const(723)))goto l0;
+  if(net_111(ZERO,UNDEF,UNDEF,trp_const(723)))goto l0;
   goto l7;
 l1:
-  if(net_138())goto l0;
+  if(net_143())goto l0;
   _glb[6]=TRP_FALSE;
   _glb[5]=EMPTYCORD;
-  if(net_54())goto l0;
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(net_59())goto l0;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(913),_glb[5],trp_const(921),i1,trp_const(63),_glb[5],trp_char(44),NULL))goto l0;
 l8:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l9;
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(fun_23()==TRP_FALSE)goto l10;
   if(trp_fprint(_glb[12],trp_const(922),NULL))goto l0;
 l10:
   goto l11;
 l9:
-  if(net_12())goto l0;
-  if(net_49(UNO,UNDEF,UNDEF,trp_const(720)))goto l0;
+  if(net_17())goto l0;
+  if(net_54(UNO,UNDEF,UNDEF,trp_const(720)))goto l0;
 l11:
 l7:
   return 0;
@@ -12749,7 +12942,7 @@ l0:
   return 1;
 }
 
-static uns8b net_114()
+static uns8b net_119()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -12759,24 +12952,24 @@ static uns8b net_114()
   j1=TRP_FALSE;
   j2=trp_queue();
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[6]=_glb[11];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(_glb[7]==TRP_FALSE)goto l3;
   if(trp_not(trp_booleanp(_glb[8]))==TRP_FALSE)goto l4;
-  if(net_133(trp_const(694)))goto l0;
+  if(net_138(trp_const(694)))goto l0;
 l4:
   if(_glb[8]==TRP_FALSE)goto l5;
   j1=TRP_TRUE;
-  if(net_18())goto l0;
-  if(net_11(trp_const(31),UNDEF))goto l0;
+  if(net_23())goto l0;
+  if(net_16(trp_const(31),UNDEF))goto l0;
 l5:
   goto l6;
 l3:
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_queue_put(j2,trp_cat(trp_const(808),_glb[5],trp_const(809),j0,trp_char(59),trp_char(10),NULL)))goto l0;
 l7:
 l6:
@@ -12786,14 +12979,14 @@ l2:
   _glb[40]=trp_cat(_glb[40],trp_const(58),NULL);
   goto l9;
 l8:
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(fun_23()==TRP_FALSE)goto l10;
   if(trp_fprint(_glb[12],trp_sprint_list(j2,NULL),trp_const(748),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l10:
   if(trp_equal(trp_length(j2),ZERO)==TRP_FALSE)goto l11;
   _glb[40]=trp_cat(_glb[40],trp_const(58),NULL);
   goto l12;
 l11:
-  if(fun_16()==TRP_FALSE)goto l13;
+  if(fun_23()==TRP_FALSE)goto l13;
   if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
 l13:
 l12:
@@ -12803,37 +12996,37 @@ l0:
   return 1;
 }
 
-static uns8b net_115()
+static uns8b net_120()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   j0=TRP_FALSE;
   j1=trp_queue();
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[6]=_glb[11];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(_glb[7]==TRP_FALSE)goto l3;
   if(trp_not(trp_booleanp(_glb[8]))==TRP_FALSE)goto l4;
-  if(net_133(trp_const(695)))goto l0;
+  if(net_138(trp_const(695)))goto l0;
 l4:
   if(trp_not(_glb[8])==TRP_FALSE)goto l5;
   j0=TRP_TRUE;
-  if(net_18())goto l0;
-  if(net_11(trp_const(31),UNDEF))goto l0;
+  if(net_23())goto l0;
+  if(net_16(trp_const(31),UNDEF))goto l0;
 l5:
   goto l6;
 l3:
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_queue_put(j1,trp_cat(trp_const(808),_glb[5],trp_const(797),_glb[41],trp_char(59),trp_char(10),NULL)))goto l0;
 l7:
 l6:
   goto l1;
 l2:
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(j0==TRP_FALSE)goto l9;
   if(trp_fprint(_glb[12],trp_const(794),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
   goto l10;
@@ -12846,55 +13039,55 @@ l0:
   return 1;
 }
 
-static uns8b net_116()
+static uns8b net_121()
 {
   trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(678)),NULL)==TRP_FALSE)goto l1;
   j0=UNO;
   goto l2;
 l1:
   j0=ZERO;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
 l2:
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(923),j0,trp_char(44),NULL))goto l0;
 l3:
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_15())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l4;
-  if(fun_16()==TRP_FALSE)goto l5;
+  if(fun_23()==TRP_FALSE)goto l5;
   if(trp_fprint(_glb[12],trp_const(924),NULL))goto l0;
 l5:
   goto l6;
 l4:
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l7;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l7:
-  if(net_138())goto l0;
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(net_143())goto l0;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l8:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l9;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l9;
   if(trp_fprint(_glb[12],trp_const(737),NULL))goto l0;
 l9:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l10;
-  if(fun_16()==TRP_FALSE)goto l11;
+  if(fun_23()==TRP_FALSE)goto l11;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l11:
   goto l12;
 l10:
-  if(net_12())goto l0;
-  if(net_48())goto l0;
-  if(net_136())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
+  if(net_141())goto l0;
 l12:
 l6:
-  if(fun_16()==TRP_FALSE)goto l13;
+  if(fun_23()==TRP_FALSE)goto l13;
   if(trp_fprint(_glb[12],trp_const(925),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l13:
   return 0;
@@ -12902,7 +13095,7 @@ l0:
   return 1;
 }
 
-static uns8b net_117(trp_obj_t *i0)
+static uns8b net_122(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -12912,7 +13105,7 @@ static uns8b net_117(trp_obj_t *i0)
   j0=TRP_FALSE;
   j1=TRP_FALSE;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))!=TRP_FALSE)goto l2;
   if(trp_and(trp_notequal(_glb[1],trp_const(678)),trp_notequal(_glb[1],trp_const(848)),trp_notequal(_glb[1],trp_const(804)),trp_notequal(_glb[1],trp_const(926)),NULL)!=TRP_FALSE)goto l2;
   t0=_glb[1];
@@ -12926,25 +13119,25 @@ l5:
 l6:
   if(trp_equal(trp_const(804),t0)==TRP_FALSE)goto l7;
   if(trp_notequal(j2,UNDEF)==TRP_FALSE)goto l8;
-  if(net_133(trp_const(927)))goto l4;
+  if(net_138(trp_const(927)))goto l4;
 l8:
-  if(net_15())goto l4;
+  if(net_20())goto l4;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l9;
-  if(net_133(trp_const(689)))goto l4;
+  if(net_138(trp_const(689)))goto l4;
 l9:
-  if(net_138())goto l4;
+  if(net_143())goto l4;
   j2=_glb[1];
   goto l3;
 l7:
   if(trp_equal(trp_const(926),t0)==TRP_FALSE)goto l10;
   if(trp_notequal(j3,UNDEF)==TRP_FALSE)goto l11;
-  if(net_133(trp_const(928)))goto l4;
+  if(net_138(trp_const(928)))goto l4;
 l11:
-  if(net_15())goto l4;
+  if(net_20())goto l4;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l12;
-  if(net_133(trp_const(689)))goto l4;
+  if(net_138(trp_const(689)))goto l4;
 l12:
-  if(net_138())goto l4;
+  if(net_143())goto l4;
   j3=_glb[1];
   goto l3;
 l10:
@@ -12960,133 +13153,133 @@ l2:
   i0=trp_cat(i0,trp_const(59),NULL);
 l13:
   if(j1==TRP_FALSE)goto l14;
-  i0=trp_cat(i0,trp_const(13),NULL);
+  i0=trp_cat(i0,trp_const(5),NULL);
 l14:
-  if(fun_16()==TRP_FALSE)goto l15;
+  if(fun_23()==TRP_FALSE)goto l15;
   if(trp_fprint(_glb[12],trp_const(929),i0,trp_char(44),NULL))goto l0;
 l15:
   if(trp_equal(j2,UNDEF)==TRP_FALSE)goto l16;
-  if(fun_16()==TRP_FALSE)goto l17;
+  if(fun_23()==TRP_FALSE)goto l17;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l17:
   goto l18;
 l16:
-  if(net_12())goto l0;
-  if(net_11(trp_const(56),j2))goto l0;
-  if(net_15())goto l0;
-  if(fun_16()==TRP_FALSE)goto l19;
+  if(net_17())goto l0;
+  if(net_16(trp_const(56),j2))goto l0;
+  if(net_20())goto l0;
+  if(fun_23()==TRP_FALSE)goto l19;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l19:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l20;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l20;
   if(trp_fprint(_glb[12],trp_char(41),NULL))goto l0;
 l20:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
 l18:
-  if(net_140())goto l0;
+  if(net_145())goto l0;
   if(trp_equal(j3,UNDEF)==TRP_FALSE)goto l21;
-  if(fun_16()==TRP_FALSE)goto l22;
+  if(fun_23()==TRP_FALSE)goto l22;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l22:
   goto l23;
 l21:
-  if(net_12())goto l0;
-  if(net_11(trp_const(56),j3))goto l0;
-  if(net_15())goto l0;
-  if(fun_16()==TRP_FALSE)goto l24;
+  if(net_17())goto l0;
+  if(net_16(trp_const(56),j3))goto l0;
+  if(net_20())goto l0;
+  if(fun_23()==TRP_FALSE)goto l24;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l24:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l25;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l25;
   if(trp_fprint(_glb[12],trp_char(41),NULL))goto l0;
 l25:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
 l23:
-  if(fun_16()==TRP_FALSE)goto l26;
+  if(fun_23()==TRP_FALSE)goto l26;
   if(trp_fprint(_glb[12],trp_const(735),NULL))goto l0;
 l26:
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l27;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l27:
-  if(net_138())goto l0;
-  if(net_50())goto l0;
-  if(net_106(UNO,UNDEF,trp_const(737),trp_const(723)))goto l0;
+  if(net_143())goto l0;
+  if(net_55())goto l0;
+  if(net_111(UNO,UNDEF,trp_const(737),trp_const(723)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_118(trp_obj_t *i0)
+static uns8b net_123(trp_obj_t *i0)
 {
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(930),i0,trp_const(931),NULL))goto l0;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l2;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l2:
-  if(net_138())goto l0;
-  if(net_50())goto l0;
-  if(net_106(ZERO,UNDEF,trp_const(737),trp_const(723)))goto l0;
+  if(net_143())goto l0;
+  if(net_55())goto l0;
+  if(net_111(ZERO,UNDEF,trp_const(737),trp_const(723)))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_119()
+static uns8b net_124()
 {
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(932),NULL))goto l0;
 l1:
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_15())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(52))==TRP_FALSE)goto l2;
-  if(net_48())goto l0;
-  if(net_136())goto l0;
-  if(net_140())goto l0;
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(net_53())goto l0;
+  if(net_141())goto l0;
+  if(net_145())goto l0;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(924),NULL))goto l0;
 l3:
   goto l4;
 l2:
-  if(fun_16()==TRP_FALSE)goto l5;
+  if(fun_23()==TRP_FALSE)goto l5;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l5:
-  if(net_140())goto l0;
+  if(net_145())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l6;
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_fprint(_glb[12],trp_const(924),NULL))goto l0;
 l7:
   goto l8;
 l6:
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l9;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l9:
-  if(net_138())goto l0;
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(net_143())goto l0;
+  if(fun_23()==TRP_FALSE)goto l10;
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
 l10:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l11;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l11;
   if(trp_fprint(_glb[12],trp_const(737),NULL))goto l0;
 l11:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l12;
-  if(fun_16()==TRP_FALSE)goto l13;
+  if(fun_23()==TRP_FALSE)goto l13;
   if(trp_fprint(_glb[12],trp_const(180),NULL))goto l0;
 l13:
   goto l14;
 l12:
-  if(net_12())goto l0;
-  if(net_48())goto l0;
-  if(net_136())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
+  if(net_141())goto l0;
 l14:
 l8:
 l4:
-  if(fun_16()==TRP_FALSE)goto l15;
+  if(fun_23()==TRP_FALSE)goto l15;
   if(trp_fprint(_glb[12],trp_const(925),_glb[41],trp_char(59),trp_char(10),NULL))goto l0;
 l15:
   return 0;
@@ -13094,58 +13287,58 @@ l0:
   return 1;
 }
 
-static uns8b net_120()
+static uns8b net_125()
 {
   trp_obj_t *j0=UNDEF;
   _glb[6]=_glb[11];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
-  if(net_137(trp_const(933)))goto l0;
+  if(net_56())goto l0;
+  if(net_142(trp_const(933)))goto l0;
   if(_glb[7]==TRP_FALSE)goto l1;
   if(trp_not(trp_booleanp(_glb[8]))==TRP_FALSE)goto l2;
-  if(net_133(trp_const(675)))goto l0;
+  if(net_138(trp_const(675)))goto l0;
 l2:
   if(_glb[8]==TRP_FALSE)goto l3;
-  if(net_105())goto l0;
-  if(net_15())goto l0;
+  if(net_110())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(31))==TRP_FALSE)goto l4;
-  if(net_12())goto l0;
-  if(net_137(trp_const(934)))goto l0;
-  if(net_19())goto l0;
-  if(net_136())goto l0;
+  if(net_17())goto l0;
+  if(net_142(trp_const(934)))goto l0;
+  if(net_24())goto l0;
+  if(net_141())goto l0;
 l4:
   goto l5;
 l3:
-  if(net_19())goto l0;
-  if(net_15())goto l0;
+  if(net_24())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(31))==TRP_FALSE)goto l6;
-  if(net_12())goto l0;
-  if(net_137(trp_const(934)))goto l0;
-  if(net_105())goto l0;
-  if(net_136())goto l0;
+  if(net_17())goto l0;
+  if(net_142(trp_const(934)))goto l0;
+  if(net_110())goto l0;
+  if(net_141())goto l0;
 l6:
 l5:
   goto l7;
 l1:
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   j0=_glb[40];
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(935),_glb[5],trp_const(936),j0,trp_char(59),trp_char(10),NULL))goto l0;
 l8:
-  if(net_105())goto l0;
-  if(net_15())goto l0;
+  if(net_110())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(31))==TRP_FALSE)goto l9;
-  if(net_12())goto l0;
-  if(net_137(trp_const(934)))goto l0;
+  if(net_17())goto l0;
+  if(net_142(trp_const(934)))goto l0;
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(fun_23()==TRP_FALSE)goto l10;
   if(trp_fprint(_glb[12],trp_const(748),_glb[40],trp_char(59),trp_char(10),trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
 l10:
   j0=_glb[40];
-  if(net_105())goto l0;
-  if(net_136())goto l0;
+  if(net_110())goto l0;
+  if(net_141())goto l0;
 l9:
-  if(fun_16()==TRP_FALSE)goto l11;
+  if(fun_23()==TRP_FALSE)goto l11;
   if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
 l11:
 l7:
@@ -13154,7 +13347,7 @@ l0:
   return 1;
 }
 
-static uns8b net_121()
+static uns8b net_126()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -13171,43 +13364,43 @@ static uns8b net_121()
   j3=_glb[40];
   j5=_glb[41];
   _glb[41]=j3;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(744),j0,trp_char(61),NULL))goto l0;
 l1:
-  if(net_48())goto l0;
-  if(net_137(trp_const(937)))goto l0;
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(net_53())goto l0;
+  if(net_142(trp_const(937)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l2;
   if(trp_fprint(_glb[12],trp_char(59),trp_char(10),NULL))goto l0;
 l2:
   j4=TRP_FALSE;
 l3:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l4;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(683)),NULL)==TRP_FALSE)goto l5;
-  if(net_107())goto l0;
-  if(net_136())goto l0;
+  if(net_112())goto l0;
+  if(net_141())goto l0;
   j4=TRP_TRUE;
 l5:
   if(j4!=TRP_FALSE)goto l4;
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   j1=_glb[40];
-  if(fun_16()==TRP_FALSE)goto l6;
+  if(fun_23()==TRP_FALSE)goto l6;
   if(trp_fprint(_glb[12],trp_const(938),NULL))goto l0;
 l6:
-  if(net_12())goto l0;
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_fprint(_glb[12],trp_const(939),j0,trp_const(940),j1,trp_char(59),trp_char(10),NULL))goto l0;
 l7:
-  if(net_107())goto l0;
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(net_112())goto l0;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(748),j2,trp_char(59),trp_char(10),trp_char(108),j1,trp_char(58),trp_char(10),NULL))goto l0;
 l8:
   goto l3;
 l4:
   _glb[41]=j5;
   _glb[39]=trp_cat(_glb[39],trp_const(58),NULL);
-  if(fun_16()==TRP_FALSE)goto l9;
+  if(fun_23()==TRP_FALSE)goto l9;
   if(trp_fprint(_glb[12],trp_const(748),j2,trp_char(59),trp_char(10),trp_char(108),j3,trp_char(58),trp_char(10),trp_const(744),j0,trp_const(914),trp_char(10),trp_const(748),_glb[41],trp_char(59),trp_char(10),trp_char(108),j2,trp_char(58),trp_char(10),trp_const(744),j0,trp_const(914),trp_char(10),NULL))goto l0;
 l9:
   return 0;
@@ -13215,7 +13408,7 @@ l0:
   return 1;
 }
 
-static uns8b net_122()
+static uns8b net_127()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -13223,28 +13416,28 @@ static uns8b net_122()
   j0=_glb[40];
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   j1=_glb[40];
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
 l1:
 l2:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l3;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(941)),NULL)==TRP_FALSE)goto l4;
-  if(fun_16()==TRP_FALSE)goto l5;
+  if(fun_23()==TRP_FALSE)goto l5;
   if(trp_fprint(_glb[12],trp_const(935),NULL))goto l0;
 l5:
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l6;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l6;
   if(trp_fprint(_glb[12],trp_const(942),j1,trp_char(59),trp_char(10),NULL))goto l0;
 l6:
   goto l7;
 l4:
-  if(net_12())goto l0;
-  if(net_107())goto l0;
+  if(net_17())goto l0;
+  if(net_112())goto l0;
 l7:
   goto l2;
 l3:
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(748),j0,trp_char(59),trp_char(10),trp_char(108),j1,trp_char(58),trp_char(10),NULL))goto l0;
 l8:
   return 0;
@@ -13252,7 +13445,7 @@ l0:
   return 1;
 }
 
-static uns8b net_123()
+static uns8b net_128()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -13260,33 +13453,33 @@ static uns8b net_123()
   j0=_glb[40];
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   j1=_glb[40];
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),trp_const(935),NULL))goto l0;
 l1:
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l2;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l2;
   if(trp_fprint(_glb[12],trp_const(936),j1,trp_char(59),trp_char(10),NULL))goto l0;
 l2:
-  if(net_137(trp_const(943)))goto l0;
+  if(net_142(trp_const(943)))goto l0;
 l3:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l4;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(941)),NULL)==TRP_FALSE)goto l5;
-  if(fun_16()==TRP_FALSE)goto l6;
+  if(fun_23()==TRP_FALSE)goto l6;
   if(trp_fprint(_glb[12],trp_const(935),NULL))goto l0;
 l6:
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l7;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l7;
   if(trp_fprint(_glb[12],trp_const(942),j1,trp_char(59),trp_char(10),NULL))goto l0;
 l7:
   goto l8;
 l5:
-  if(net_12())goto l0;
-  if(net_107())goto l0;
+  if(net_17())goto l0;
+  if(net_112())goto l0;
 l8:
   goto l3;
 l4:
-  if(fun_16()==TRP_FALSE)goto l9;
+  if(fun_23()==TRP_FALSE)goto l9;
   if(trp_fprint(_glb[12],trp_const(748),j0,trp_char(59),trp_char(10),trp_char(108),j1,trp_char(58),trp_char(10),NULL))goto l0;
 l9:
   return 0;
@@ -13294,7 +13487,7 @@ l0:
   return 1;
 }
 
-static uns8b net_124()
+static uns8b net_129()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -13309,80 +13502,80 @@ l1:
   j1=_glb[40];
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   j2=_glb[40];
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l2;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l2:
-  if(net_138())goto l0;
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(net_143())goto l0;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(944),j0,trp_const(735),NULL))goto l0;
 l3:
-  if(net_50())goto l0;
-  if(fun_16()==TRP_FALSE)goto l4;
+  if(net_55())goto l0;
+  if(fun_23()==TRP_FALSE)goto l4;
   if(trp_fprint(_glb[12],trp_const(737),NULL))goto l0;
 l4:
-  if(net_137(trp_const(288)))goto l0;
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_15())goto l0;
+  if(net_142(trp_const(288)))goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(52))==TRP_FALSE)goto l5;
-  if(net_48())goto l0;
-  if(net_140())goto l0;
-  if(net_15())goto l0;
+  if(net_53())goto l0;
+  if(net_145())goto l0;
+  if(net_20())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(945)),NULL)==TRP_FALSE)goto l6;
-  if(net_48())goto l0;
-  if(net_15())goto l0;
+  if(net_53())goto l0;
+  if(net_20())goto l0;
   goto l7;
 l6:
-  if(fun_16()==TRP_FALSE)goto l8;
+  if(fun_23()==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_const(203),NULL))goto l0;
 l8:
 l7:
   goto l9;
 l5:
-  if(fun_16()==TRP_FALSE)goto l10;
+  if(fun_23()==TRP_FALSE)goto l10;
   if(trp_fprint(_glb[12],trp_const(946),NULL))goto l0;
 l10:
 l9:
-  if(net_140())goto l0;
+  if(net_145())goto l0;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(947)),NULL)==TRP_FALSE)goto l11;
-  if(fun_16()==TRP_FALSE)goto l12;
+  if(fun_23()==TRP_FALSE)goto l12;
   if(trp_fprint(_glb[12],UNO,NULL))goto l0;
 l12:
   goto l13;
 l11:
-  if(net_12())goto l0;
-  if(fun_16()==TRP_FALSE)goto l14;
+  if(net_17())goto l0;
+  if(fun_23()==TRP_FALSE)goto l14;
   if(trp_fprint(_glb[12],ZERO,NULL))goto l0;
 l14:
 l13:
-  if(net_137(trp_const(943)))goto l0;
-  if(fun_16()==TRP_FALSE)goto l15;
+  if(net_142(trp_const(943)))goto l0;
+  if(fun_23()==TRP_FALSE)goto l15;
   if(trp_fprint(_glb[12],trp_const(925),j2,trp_char(59),trp_char(10),trp_char(108),j1,trp_char(58),trp_char(10),NULL))goto l0;
 l15:
   j3=_glb[42];
   _glb[42]=j0;
 l16:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l17;
   if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(941)),NULL)==TRP_FALSE)goto l18;
-  if(fun_16()==TRP_FALSE)goto l19;
+  if(fun_23()==TRP_FALSE)goto l19;
   if(trp_fprint(_glb[12],trp_const(935),NULL))goto l0;
 l19:
-  if(net_48())goto l0;
-  if(fun_16()==TRP_FALSE)goto l20;
+  if(net_53())goto l0;
+  if(fun_23()==TRP_FALSE)goto l20;
   if(trp_fprint(_glb[12],trp_const(948),j0,trp_const(949),j2,trp_const(950),trp_char(10),NULL))goto l0;
 l20:
   goto l21;
 l18:
-  if(net_12())goto l0;
-  if(net_107())goto l0;
+  if(net_17())goto l0;
+  if(net_112())goto l0;
 l21:
   goto l16;
 l17:
   _glb[42]=j3;
   _glb[39]=trp_cat(_glb[39],trp_const(58),NULL);
-  if(fun_16()==TRP_FALSE)goto l22;
+  if(fun_23()==TRP_FALSE)goto l22;
   if(trp_fprint(_glb[12],trp_const(951),j0,trp_const(925),j1,trp_char(59),trp_char(10),trp_char(108),j2,trp_char(58),trp_char(10),NULL))goto l0;
 l22:
   return 0;
@@ -13390,55 +13583,55 @@ l0:
   return 1;
 }
 
-static uns8b net_125()
+static uns8b net_130()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   trp_obj_t *t0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(29))==TRP_FALSE)goto l1;
-  if(net_12())goto l0;
-  if(net_106(UNO,UNDEF,trp_const(952),trp_const(723)))goto l0;
+  if(net_17())goto l0;
+  if(net_111(UNO,UNDEF,trp_const(952),trp_const(723)))goto l0;
   goto l2;
 l1:
   j0=_glb[1];
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(fun_23()==TRP_FALSE)goto l3;
   j1=trp_nth(j0,_glb[30]);
   if(trp_equal(j1,UNDEF)==TRP_FALSE)goto l4;
-  if(net_133(trp_cat(j0,trp_const(953),NULL)))goto l0;
+  if(net_138(trp_cat(j0,trp_const(953),NULL)))goto l0;
 l4:
   if(trp_fprint(_glb[12],trp_const(954),trp_nth(ZERO,j1),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),trp_nth(UNO,j1),NULL,UNO,0))goto l6;
 l5:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l7;
-  if(net_133(trp_cat(j0,trp_const(955),NULL)))goto l0;
+  if(net_138(trp_cat(j0,trp_const(955),NULL)))goto l0;
 l7:
   if(trp_greater(trp_for_pos(t0),ZERO)==TRP_FALSE)goto l8;
   if(trp_fprint(_glb[12],trp_char(44),NULL))goto l0;
 l8:
   if(trp_cord_lmatch_func(0,j1,trp_const(186),NULL)==TRP_FALSE)goto l9;
   if(trp_or(trp_notequal(_glb[0],trp_const(56)),trp_in_func(_glb[1],trp_const(738),NULL),NULL)==TRP_FALSE)goto l10;
-  if(net_133(trp_const(689)))goto l0;
+  if(net_138(trp_const(689)))goto l0;
 l10:
   if(trp_fprint(_glb[12],trp_const(739),NULL))goto l0;
-  if(net_50())goto l0;
+  if(net_55())goto l0;
   if(trp_fprint(_glb[12],trp_char(41),NULL))goto l0;
   goto l11;
 l9:
-  if(net_12())goto l0;
-  if(net_48())goto l0;
+  if(net_17())goto l0;
+  if(net_53())goto l0;
 l11:
   if(trp_for_next(&t0))goto l5;
 l6:
   trp_push_env(j0,j1,NULL);
-  if(net_136())goto l13;
+  if(net_141())goto l13;
   trp_pop_env_void(2);
   goto l12;
 l13:
   trp_pop_env(&j1,&j0,NULL);
   trp_push_env(j0,j1,NULL);
-  if(net_133(trp_cat(j0,trp_const(956),NULL)))goto l14;
+  if(net_138(trp_cat(j0,trp_const(956),NULL)))goto l14;
   trp_pop_env_void(2);
   goto l12;
 l14:
@@ -13449,7 +13642,7 @@ l12:
   goto l15;
 l3:
   if(trp_assoc_inc(_glb[37],trp_cat(trp_const(691),j0,NULL),NULL))goto l0;
-  if(net_49(ZERO,UNDEF,UNDEF,UNDEF))goto l0;
+  if(net_54(ZERO,UNDEF,UNDEF,UNDEF))goto l0;
 l15:
 l2:
   return 0;
@@ -13457,11 +13650,11 @@ l0:
   return 1;
 }
 
-static uns8b net_126()
+static uns8b net_131()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(957),NULL))goto l0;
   if(trp_for_init(&t0,&(j0),_glb[35],NULL,UNO,0))goto l3;
 l2:
@@ -13480,11 +13673,11 @@ l0:
   return 1;
 }
 
-static uns8b net_127(trp_obj_t *i0)
+static uns8b net_132(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_const(958),trp_cat(trp_length(_glb[35]),trp_length(_glb[36]),NULL),trp_const(912),trp_char(10),trp_const(748),i0,trp_char(59),trp_char(10),trp_char(108),_glb[41],trp_char(58),trp_char(10),trp_const(959),NULL))goto l0;
   if(trp_for_init(&t0,&(j0),_glb[36],NULL,UNO,0))goto l3;
 l2:
@@ -13503,7 +13696,7 @@ l0:
   return 1;
 }
 
-static uns8b net_128()
+static uns8b net_133()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -13511,18 +13704,18 @@ static uns8b net_128()
   j0=_glb[40];
   j1=_glb[41];
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
-  if(net_126())goto l0;
+  if(net_17())goto l0;
+  if(net_131())goto l0;
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   _glb[41]=_glb[40];
-  if(net_107())goto l0;
-  if(net_127(j0))goto l0;
+  if(net_112())goto l0;
+  if(net_132(j0))goto l0;
   goto l1;
 l2:
   _glb[41]=j1;
-  if(fun_16()==TRP_FALSE)goto l3;
+  if(fun_23()==TRP_FALSE)goto l3;
   if(trp_fprint(_glb[12],trp_const(748),_glb[41],trp_char(59),trp_char(10),trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
 l3:
   return 0;
@@ -13530,80 +13723,17 @@ l0:
   return 1;
 }
 
-static uns8b net_129(trp_obj_t *i0)
+static uns8b net_134(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   j0=_glb[41];
   _glb[40]=trp_cat(_glb[40],UNO,NULL);
   _glb[41]=_glb[40];
-  if(net_126())goto l0;
-  if(net_105())goto l0;
-  if(net_136())goto l0;
-  if(net_127(i0))goto l0;
+  if(net_131())goto l0;
+  if(net_110())goto l0;
+  if(net_141())goto l0;
+  if(net_132(i0))goto l0;
   _glb[41]=j0;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_130()
-{
-  trp_obj_t *j0=UNDEF;
-  _glb[40]=trp_cat(_glb[40],UNO,NULL);
-  j0=_glb[40];
-  if(net_129(j0))goto l0;
-  if(fun_16()==TRP_FALSE)goto l1;
-  if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
-l1:
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_131()
-{
-  trp_obj_t *j0=UNDEF;
-  _glb[40]=trp_cat(_glb[40],UNO,NULL);
-  j0=_glb[40];
-  if(fun_16()==TRP_FALSE)goto l1;
-  if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
-l1:
-  if(net_129(j0))goto l0;
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_132()
-{
-  if(trp_print(trp_const(961),fun_15(),trp_const(962),trp_const(963),trp_char(10),trp_const(964),trp_date_arpa(trp_const(965)),trp_char(10),trp_const(966),trp_const(967),trp_const(968),trp_const(25),trp_const(969),trp_char(10),trp_const(970),trp_uname(),trp_char(10),trp_sig64(8*sizeof(void *)),trp_const(971),(trp_endianness()==TRP_TRUE)?(trp_const(972)):(trp_const(973)),trp_const(974),trp_const(975),trp_const(976),trp_const(977),trp_const(978),trp_char(10),trp_const(979),trp_math_gmp_version(),trp_char(10),NULL))goto l0;
-  trp_exit(NULL);
-  return 0;
-l0:
-  return 1;
-}
-
-static trp_obj_t *fun_15()
-{
-  return fun_4(trp_argv(ZERO));
-}
-
-static uns8b net_133(trp_obj_t *i0)
-{
-  if(trp_print(i0,trp_char(10),NULL))goto l0;
-  if(trp_greater(trp_length(_glb[18]),ZERO)==TRP_FALSE)goto l1;
-  if(trp_print(trp_const(980),trp_stack_pop(_glb[18]),trp_char(10),trp_const(981),trp_file_pos_line(_glb[16]),trp_char(10),NULL))goto l0;
-l1:
-  if(net_142())goto l0;
-  trp_exit(trp_const(58));
-  return 0;
-l0:
-  return 1;
-}
-
-static uns8b net_134()
-{
-  if(net_133(trp_const(982)))goto l0;
   return 0;
 l0:
   return 1;
@@ -13611,7 +13741,13 @@ l0:
 
 static uns8b net_135()
 {
-  if(net_133(trp_const(983)))goto l0;
+  trp_obj_t *j0=UNDEF;
+  _glb[40]=trp_cat(_glb[40],UNO,NULL);
+  j0=_glb[40];
+  if(net_134(j0))goto l0;
+  if(fun_23()==TRP_FALSE)goto l1;
+  if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
+l1:
   return 0;
 l0:
   return 1;
@@ -13619,40 +13755,97 @@ l0:
 
 static uns8b net_136()
 {
-  if(net_15())goto l0;
+  trp_obj_t *j0=UNDEF;
+  _glb[40]=trp_cat(_glb[40],UNO,NULL);
+  j0=_glb[40];
+  if(fun_23()==TRP_FALSE)goto l1;
+  if(trp_fprint(_glb[12],trp_char(108),j0,trp_char(58),trp_char(10),NULL))goto l0;
+l1:
+  if(net_134(j0))goto l0;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_137()
+{
+  if(trp_print(trp_const(961),fun_22(),trp_const(962),trp_const(963),trp_char(10),trp_const(964),trp_date_arpa(trp_const(965)),trp_char(10),trp_const(966),trp_const(967),trp_const(968),trp_const(25),trp_const(969),trp_char(10),trp_const(970),trp_uname(),trp_char(10),trp_sig64(8*sizeof(void *)),trp_const(971),(trp_endianness()==TRP_TRUE)?(trp_const(972)):(trp_const(973)),trp_const(974),trp_const(975),trp_const(976),trp_const(977),trp_const(978),trp_char(10),trp_const(979),trp_math_gmp_version(),trp_char(10),NULL))goto l0;
+  trp_exit(NULL);
+  return 0;
+l0:
+  return 1;
+}
+
+static trp_obj_t *fun_22()
+{
+  return fun_15(trp_argv(ZERO));
+}
+
+static uns8b net_138(trp_obj_t *i0)
+{
+  if(trp_print(i0,trp_char(10),NULL))goto l0;
+  if(trp_greater(trp_length(_glb[18]),ZERO)==TRP_FALSE)goto l1;
+  if(trp_print(trp_const(980),trp_stack_pop(_glb[18]),trp_char(10),trp_const(981),trp_file_pos_line(_glb[16]),trp_char(10),NULL))goto l0;
+l1:
+  if(net_147())goto l0;
+  trp_exit(trp_const(58));
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_139()
+{
+  if(net_138(trp_const(982)))goto l0;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_140()
+{
+  if(net_138(trp_const(983)))goto l0;
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_141()
+{
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_TRUE)goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_137(trp_obj_t *i0)
+static uns8b net_142(trp_obj_t *i0)
 {
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_or(trp_notequal(_glb[0],trp_const(56)),trp_notequal(_glb[1],i0),NULL)==TRP_FALSE)goto l1;
-  if(net_133(trp_cat(trp_const(984),i0,trp_const(673),NULL)))goto l0;
+  if(net_138(trp_cat(trp_const(984),i0,trp_const(673),NULL)))goto l0;
 l1:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_138()
+static uns8b net_143()
 {
   if(trp_in_func(_glb[1],trp_const(738),NULL)==TRP_FALSE)goto l1;
-  if(net_133(trp_cat(_glb[1],trp_const(985),NULL)))goto l0;
+  if(net_138(trp_cat(_glb[1],trp_const(985),NULL)))goto l0;
 l1:
   return 0;
 l0:
   return 1;
 }
 
-static trp_obj_t *fun_16()
+static trp_obj_t *fun_23()
 {
   return trp_equal(_glb[19],trp_const(59));
 }
 
-static uns8b net_139(trp_obj_t *i0,trp_obj_t *i1)
+static uns8b net_144(trp_obj_t *i0,trp_obj_t *i1)
 {
   if(trp_not(trp_in_func(i1,i0,NULL))==TRP_FALSE)goto l1;
   if(trp_queue_put(i0,i1))goto l0;
@@ -13662,9 +13855,9 @@ l0:
   return 1;
 }
 
-static uns8b net_140()
+static uns8b net_145()
 {
-  if(fun_16()==TRP_FALSE)goto l1;
+  if(fun_23()==TRP_FALSE)goto l1;
   if(trp_fprint(_glb[12],trp_char(44),NULL))goto l0;
 l1:
   return 0;
@@ -13672,12 +13865,12 @@ l0:
   return 1;
 }
 
-static trp_obj_t *fun_17(trp_obj_t *i0)
+static trp_obj_t *fun_24(trp_obj_t *i0)
 {
-  return fun_2(i0,trp_const(986),trp_const(189));
+  return fun_16(i0,trp_const(986),trp_const(189));
 }
 
-static uns8b net_141(trp_obj_t **i0,trp_obj_t **i1)
+static uns8b net_146(trp_obj_t **i0,trp_obj_t **i1)
 {
   trp_obj_t *j0=UNDEF;
   j0=ZERO;
@@ -13689,14 +13882,14 @@ l1:
 l2:
   *i1=trp_file_create(*i0);
   if(trp_equal(*i1,UNDEF)==TRP_FALSE)goto l3;
-  if(net_133(trp_const(989)))goto l0;
+  if(net_138(trp_const(989)))goto l0;
 l3:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_142()
+static uns8b net_147()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -13713,143 +13906,143 @@ l0:
   return 1;
 }
 
-static trp_obj_t *fun_18()
+static trp_obj_t *fun_25()
 {
   return trp_nth(trp_const(65),_glb[9]);
 }
 
-static trp_obj_t *fun_19()
+static trp_obj_t *fun_26()
 {
   return trp_nth(trp_const(69),_glb[9]);
 }
 
-static trp_obj_t *fun_20()
+static trp_obj_t *fun_27()
 {
   return trp_nth(trp_const(73),_glb[9]);
 }
 
-static trp_obj_t *fun_21()
+static trp_obj_t *fun_28()
 {
   return trp_nth(trp_const(77),_glb[9]);
 }
 
-static trp_obj_t *fun_22()
+static trp_obj_t *fun_29()
 {
   return trp_nth(trp_const(81),_glb[9]);
 }
 
-static trp_obj_t *fun_23()
+static trp_obj_t *fun_30()
 {
   return trp_nth(trp_const(105),_glb[9]);
 }
 
-static trp_obj_t *fun_24()
+static trp_obj_t *fun_31()
 {
   return trp_nth(trp_const(109),_glb[9]);
 }
 
-static trp_obj_t *fun_25()
+static trp_obj_t *fun_32()
 {
   return trp_nth(trp_const(113),_glb[9]);
 }
 
-static trp_obj_t *fun_26()
+static trp_obj_t *fun_33()
 {
   return trp_nth(trp_const(117),_glb[9]);
 }
 
-static trp_obj_t *fun_27()
+static trp_obj_t *fun_34()
 {
   return trp_nth(trp_const(121),_glb[9]);
 }
 
-static trp_obj_t *fun_28()
+static trp_obj_t *fun_35()
 {
   return trp_nth(trp_const(125),_glb[9]);
 }
 
-static trp_obj_t *fun_29()
+static trp_obj_t *fun_36()
 {
   return trp_nth(trp_const(128),_glb[9]);
 }
 
-static trp_obj_t *fun_30()
+static trp_obj_t *fun_37()
 {
   return trp_nth(trp_const(132),_glb[9]);
 }
 
-static trp_obj_t *fun_31()
+static trp_obj_t *fun_38()
 {
   return trp_nth(trp_const(136),_glb[9]);
 }
 
-static trp_obj_t *fun_32()
+static trp_obj_t *fun_39()
 {
   return trp_nth(trp_const(146),_glb[9]);
 }
 
-static trp_obj_t *fun_33()
+static trp_obj_t *fun_40()
 {
   return trp_nth(trp_const(150),_glb[9]);
 }
 
-static trp_obj_t *fun_34()
+static trp_obj_t *fun_41()
 {
   return trp_nth(trp_const(154),_glb[9]);
 }
 
-static trp_obj_t *fun_35()
+static trp_obj_t *fun_42()
 {
   return trp_nth(trp_const(158),_glb[9]);
 }
 
-static trp_obj_t *fun_36()
+static trp_obj_t *fun_43()
 {
   return trp_nth(trp_const(162),_glb[9]);
 }
 
-static trp_obj_t *fun_37()
+static trp_obj_t *fun_44()
 {
   return trp_nth(trp_const(166),_glb[9]);
 }
 
-static trp_obj_t *fun_38()
+static trp_obj_t *fun_45()
 {
   return trp_nth(trp_const(170),_glb[9]);
 }
 
-static trp_obj_t *fun_39()
+static trp_obj_t *fun_46()
 {
   return trp_nth(trp_const(174),_glb[9]);
 }
 
-static trp_obj_t *fun_40()
+static trp_obj_t *fun_47()
 {
   return trp_nth(trp_const(178),_glb[9]);
 }
 
-static trp_obj_t *fun_41()
+static trp_obj_t *fun_48()
 {
   return trp_nth(trp_const(793),_glb[9]);
 }
 
-static trp_obj_t *fun_42()
+static trp_obj_t *fun_49()
 {
   return trp_nth(trp_const(101),_glb[9]);
 }
 
-static trp_obj_t *fun_43()
+static trp_obj_t *fun_50()
 {
   return (_glb[14]==TRP_TRUE)?(trp_const(990)):((_glb[15]==TRP_TRUE)?(trp_const(991)):(trp_const(992)));
 }
 
-static trp_obj_t *fun_44(trp_obj_t *i0,trp_obj_t *i1)
+static trp_obj_t *fun_51(trp_obj_t *i0,trp_obj_t *i1)
 {
   trp_obj_t *r=UNDEF;
-  return net_143(i0,i1,&r)?UNDEF:r;
+  return net_148(i0,i1,&r)?UNDEF:r;
 }
 
-static uns8b net_143(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t **i2)
+static uns8b net_148(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t **i2)
 {
   trp_obj_t *j0=UNDEF;
   *i2=trp_const(993);
@@ -13872,17 +14065,17 @@ l0:
   return 1;
 }
 
-static trp_obj_t *fun_45(trp_obj_t *i0)
+static trp_obj_t *fun_52(trp_obj_t *i0)
 {
-  return fun_44(i0,trp_const(1003));
+  return fun_51(i0,trp_const(1003));
 }
 
-static trp_obj_t *fun_46(trp_obj_t *i0)
+static trp_obj_t *fun_53(trp_obj_t *i0)
 {
-  return fun_44(i0,trp_const(1004));
+  return fun_51(i0,trp_const(1004));
 }
 
-static uns8b net_144(trp_obj_t *i0)
+static uns8b net_149(trp_obj_t *i0)
 {
   if(trp_array_set_multi(_glb[9],i0,TRP_TRUE,NULL))goto l0;
   return 0;
@@ -13890,7 +14083,7 @@ l0:
   return 1;
 }
 
-static uns8b net_145(trp_obj_t *i0)
+static uns8b net_150(trp_obj_t *i0)
 {
   if(trp_array_set_multi(_glb[9],i0,TRP_FALSE,NULL))goto l0;
   return 0;
@@ -13898,7 +14091,7 @@ l0:
   return 1;
 }
 
-static uns8b net_146()
+static uns8b net_151()
 {
   _glb[9]=trp_assoc();
   if(trp_math_set_prec(trp_const(880)))goto l0;
@@ -13909,13 +14102,13 @@ static uns8b net_146()
   _glb[18]=trp_stack();
   _glb[33]=trp_assoc();
   _glb[23]=UNO;
-  if(net_147())goto l0;
+  if(net_152())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_147()
+static uns8b net_152()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -13931,7 +14124,7 @@ static uns8b net_147()
   _glb[32]=trp_assoc();
   if(trp_for_init(&t0,&(j0),trp_const(1005),NULL,UNO,0))goto l2;
 l1:
-  if(net_145(j0))goto l0;
+  if(net_150(j0))goto l0;
   if(trp_for_next(&t0))goto l1;
 l2:
   trp_gc();
@@ -13940,7 +14133,7 @@ l0:
   return 1;
 }
 
-static uns8b net_148(trp_obj_t **i0,trp_obj_t **i1,trp_obj_t **i2,trp_obj_t **i3,trp_obj_t **i4,trp_obj_t **i5,trp_obj_t **i6,trp_obj_t **i7,trp_obj_t **i8,trp_obj_t **i9,trp_obj_t **i10,trp_obj_t **i11,trp_obj_t **i12)
+static uns8b net_153(trp_obj_t **i0,trp_obj_t **i1,trp_obj_t **i2,trp_obj_t **i3,trp_obj_t **i4,trp_obj_t **i5,trp_obj_t **i6,trp_obj_t **i7,trp_obj_t **i8,trp_obj_t **i9,trp_obj_t **i10,trp_obj_t **i11,trp_obj_t **i12)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
@@ -13962,7 +14155,7 @@ static uns8b net_148(trp_obj_t **i0,trp_obj_t **i1,trp_obj_t **i2,trp_obj_t **i3
 l1:
   t1=trp_argv(j0);
   if(trp_equal(trp_const(1006),t1)==TRP_FALSE)goto l5;
-  if(net_132())goto l4;
+  if(net_137())goto l4;
   goto l3;
 l5:
   if(trp_equal(trp_const(1007),t1)==TRP_FALSE)goto l6;
@@ -13982,7 +14175,7 @@ l8:
   goto l3;
 l9:
   if(trp_equal(trp_const(1011),t1)==TRP_FALSE)goto l10;
-  *i1=trp_const(13);
+  *i1=trp_const(5);
   goto l3;
 l10:
   if(trp_equal(trp_const(1012),t1)==TRP_FALSE)goto l11;
@@ -14040,7 +14233,7 @@ l3:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_or(trp_equal(*i0,UNDEF),trp_and(*i8,*i9,NULL),NULL)==TRP_FALSE)goto l23;
-  if(net_133(trp_cat(trp_const(1023),fun_15(),trp_const(1024),NULL)))goto l0;
+  if(net_138(trp_cat(trp_const(1023),fun_22(),trp_const(1024),NULL)))goto l0;
 l23:
   if(*i8==TRP_FALSE)goto l24;
   if(trp_queue_put(*i12,trp_const(1025)))goto l0;
@@ -14061,7 +14254,7 @@ l0:
   return 1;
 }
 
-static uns8b net_149()
+static uns8b net_154()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14085,11 +14278,11 @@ static uns8b net_149()
   trp_obj_t *j19=UNDEF;
   trp_obj_t *j20=UNDEF;
   trp_obj_t *j21=UNDEF;
-  if(net_146())goto l0;
-  if(net_148(&(j2),&(j9),&(j10),&(_glb[10]),&(j11),&(j12),&(_glb[11]),&(j13),&(_glb[14]),&(_glb[15]),&(j14),&(j15),&(j16)))goto l0;
+  if(net_151())goto l0;
+  if(net_153(&(j2),&(j9),&(j10),&(_glb[10]),&(j11),&(j12),&(_glb[11]),&(j13),&(_glb[14]),&(_glb[15]),&(j14),&(j15),&(j16)))goto l0;
   j20=trp_or(_glb[14],_glb[15],NULL);
   if(trp_not(trp_pathexists(j2))==TRP_FALSE)goto l1;
-  if(net_133(trp_cat(j2,trp_const(1031),NULL)))goto l0;
+  if(net_138(trp_cat(j2,trp_const(1031),NULL)))goto l0;
 l1:
   trp_push_env(j0,j1,j2,j3,j4,j5,j6,j7,j8,j9,j10,j11,j12,j13,j14,j15,j16,j17,j18,j19,j20,j21,NULL);
   j5=j2;
@@ -14101,7 +14294,7 @@ l1:
 l3:
   trp_pop_env(&j21,&j20,&j19,&j18,&j17,&j16,&j15,&j14,&j13,&j12,&j11,&j10,&j9,&j8,&j7,&j6,&j5,&j4,&j3,&j2,&j1,&j0,NULL);
   trp_push_env(j0,j1,j2,j3,j4,j5,j6,j7,j8,j9,j10,j11,j12,j13,j14,j15,j16,j17,j18,j19,j20,j21,NULL);
-  if(net_133(trp_cat(j2,trp_const(1035),NULL)))goto l4;
+  if(net_138(trp_cat(j2,trp_const(1035),NULL)))goto l4;
   trp_pop_env_void(22);
   goto l2;
 l4:
@@ -14121,7 +14314,7 @@ l7:
   trp_pop_env(&j21,&j20,&j19,&j18,&j17,&j16,&j15,&j14,&j13,&j12,&j11,&j10,&j9,&j8,&j7,&j6,&j5,&j4,&j3,&j2,&j1,&j0,NULL);
 l6:
   if(trp_and(trp_not(j11),trp_pathexists(j6),NULL)==TRP_FALSE)goto l8;
-  if(net_133(trp_cat(j6,trp_const(1037),NULL)))goto l0;
+  if(net_138(trp_cat(j6,trp_const(1037),NULL)))goto l0;
 l8:
   _glb[16]=trp_file_openro(j2);
   if(trp_notequal(_glb[16],UNDEF)!=TRP_TRUE)goto l0;
@@ -14136,20 +14329,20 @@ l11:
 l10:
   _glb[13]=trp_file_create(j4);
   if(trp_equal(_glb[13],UNDEF)==TRP_FALSE)goto l12;
-  if(net_133(trp_const(1038)))goto l0;
+  if(net_138(trp_const(1038)))goto l0;
 l12:
 l9:
   _glb[19]=UNO;
-  if(trp_print(fun_15(),trp_const(1039),_glb[19],trp_const(1040),trp_char(10),NULL))goto l0;
-  if(net_156())goto l0;
+  if(trp_print(fun_22(),trp_const(1039),_glb[19],trp_const(1040),trp_char(10),NULL))goto l0;
+  if(net_162())goto l0;
   if(trp_equal(_glb[34],UNDEF)==TRP_FALSE)goto l13;
-  if(net_133(trp_const(1041)))goto l0;
+  if(net_138(trp_const(1041)))goto l0;
 l13:
   if(trp_not(trp_in_func(_glb[34],_glb[30],NULL))==TRP_FALSE)goto l14;
-  if(net_133(trp_const(1042)))goto l0;
+  if(net_138(trp_const(1042)))goto l0;
 l14:
-  if(net_150(j5,&(j8)))goto l0;
-  if(net_152(&(j1)))goto l0;
+  if(net_155(j5,&(j8)))goto l0;
+  if(net_158(&(j1)))goto l0;
   if(trp_or(trp_greater(trp_length(_glb[33]),ZERO),j1,trp_notequal(trp_math_get_prec(),trp_const(880)),NULL)==TRP_FALSE)goto l15;
   if(j14==TRP_FALSE)goto l16;
   j17=_glb[30];
@@ -14157,22 +14350,22 @@ l14:
   j19=_glb[25];
 l16:
 l17:
-  if(trp_print(fun_15(),trp_const(1039),_glb[19],trp_const(1043),trp_char(10),NULL))goto l0;
+  if(trp_print(fun_22(),trp_const(1039),_glb[19],trp_const(1043),trp_char(10),NULL))goto l0;
   j0=trp_length(_glb[33]);
-  if(net_147())goto l0;
-  if(net_156())goto l0;
-  if(net_152(&(j1)))goto l0;
+  if(net_152())goto l0;
+  if(net_162())goto l0;
+  if(net_158(&(j1)))goto l0;
   if(trp_and(trp_equal(trp_length(_glb[33]),j0),trp_not(j1),NULL)!=TRP_FALSE)goto l18;
   goto l17;
 l18:
   if(j14==TRP_FALSE)goto l19;
-  if(net_153(j17,j18,j19))goto l0;
+  if(net_159(j17,j18,j19))goto l0;
   j17=UNDEF;
   j18=UNDEF;
   j19=UNDEF;
 l19:
 l15:
-  if(net_154())goto l0;
+  if(net_160())goto l0;
   trp_push_env(j0,j1,j2,j3,j4,j5,j6,j7,j8,j9,j10,j11,j12,j13,j14,j15,j16,j17,j18,j19,j20,j21,NULL);
   if(trp_remove(j3))goto l21;
   trp_pop_env_void(22);
@@ -14182,25 +14375,25 @@ l21:
 l20:
   _glb[12]=trp_file_create(j3);
   if(trp_equal(_glb[12],UNDEF)==TRP_FALSE)goto l22;
-  if(net_133(trp_cat(trp_const(1044),j3,NULL)))goto l0;
+  if(net_138(trp_cat(trp_const(1044),j3,NULL)))goto l0;
 l22:
-  if(net_155())goto l0;
+  if(net_161())goto l0;
   _glb[19]=trp_const(59);
-  if(trp_print(fun_15(),trp_const(1039),_glb[19],trp_const(1045),trp_char(10),NULL))goto l0;
-  if(net_166())goto l0;
-  if(net_156())goto l0;
+  if(trp_print(fun_22(),trp_const(1039),_glb[19],trp_const(1045),trp_char(10),NULL))goto l0;
+  if(net_172())goto l0;
+  if(net_162())goto l0;
   if(trp_close_multi(_glb[12],NULL))goto l0;
-  j0=trp_cat(fun_43(),trp_const(1046),j9,trp_const(1047),(j10==TRP_TRUE)?(trp_const(1048)):(EMPTYCORD),trp_const(1049),(fun_0()==TRP_TRUE)?(trp_const(1050)):(EMPTYCORD),(trp_and(j20,trp_or(fun_18(),fun_19(),NULL),trp_not(j13),NULL)==TRP_TRUE)?(trp_const(1051)):(EMPTYCORD),trp_const(1052),(_glb[14]==TRP_TRUE)?(trp_const(1053)):(EMPTYCORD),(_glb[15]==TRP_TRUE)?(trp_const(1054)):(EMPTYCORD),(j20==TRP_TRUE)?(trp_const(1055)):(trp_const(1056)),(fun_18()==TRP_TRUE)?(fun_45(trp_const(1057))):(EMPTYCORD),(fun_19()==TRP_TRUE)?(trp_const(1058)):(EMPTYCORD),(fun_36()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1059)):(fun_45(trp_const(1060)))):(EMPTYCORD),trp_const(1061),fun_3(j6),trp_const(999),fun_3(j3),(trp_equal(j8,UNDEF)==TRP_TRUE)?(EMPTYCORD):(trp_cat(trp_const(999),fun_3(j8),NULL)),trp_const(1062),trp_sprint_list(j16,trp_const(1062)),(fun_20()==TRP_TRUE)?(trp_const(1063)):(EMPTYCORD),(fun_18()==TRP_TRUE)?(trp_cat(trp_const(1064),fun_46(trp_const(1057)),NULL)):(EMPTYCORD),(fun_19()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1065)):(trp_const(1066))):(EMPTYCORD),(fun_21()==TRP_TRUE)?(trp_const(1067)):(EMPTYCORD),(fun_22()==TRP_TRUE)?(trp_const(1068)):(EMPTYCORD),(fun_23()==TRP_TRUE)?(trp_const(1069)):(EMPTYCORD),(fun_24()==TRP_TRUE)?(trp_const(1070)):(EMPTYCORD),(fun_25()==TRP_TRUE)?(trp_const(1071)):(EMPTYCORD),(fun_26()==TRP_TRUE)?(trp_const(1072)):(EMPTYCORD),(fun_27()==TRP_TRUE)?(trp_const(1073)):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_const(1074)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_cat(trp_const(1076),fun_46(trp_const(1075)),NULL)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1077)):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_cat(trp_const(1079),fun_46(trp_const(1078)),trp_const(1080),NULL)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_cat(trp_const(1082),fun_46(trp_const(1081)),NULL)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1083)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1084)):(EMPTYCORD),(fun_35()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1085)):(trp_const(1086))):(EMPTYCORD),(fun_36()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1087)):(trp_const(1088))):(EMPTYCORD),(fun_37()==TRP_TRUE)?(trp_const(1089)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1090)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_cat(trp_const(1091),fun_46(trp_const(174)),NULL)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_cat(trp_const(1093),fun_46(trp_const(1092)),NULL)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_cat(trp_const(1095),fun_46(trp_const(1094)),NULL)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1096)):(EMPTYCORD),trp_const(1097),fun_46(trp_const(1098)),trp_const(1099),(j20==TRP_TRUE)?(trp_const(1100)):(EMPTYCORD),(_glb[10]==TRP_TRUE)?(trp_const(1101)):(EMPTYCORD),NULL);
-  j21=(j10==TRP_TRUE)?(EMPTYCORD):(trp_cat((_glb[14]==TRP_TRUE)?(trp_const(1102)):((_glb[15]==TRP_TRUE)?(trp_const(1103)):(trp_const(1104))),trp_const(1105),fun_3(j6),NULL));
+  j0=trp_cat(fun_50(),trp_const(1046),j9,trp_const(1047),(j10==TRP_TRUE)?(trp_const(1048)):(EMPTYCORD),trp_const(1049),(fun_17()==TRP_TRUE)?(trp_const(1050)):(EMPTYCORD),(trp_and(j20,trp_or(fun_25(),fun_26(),NULL),trp_not(j13),NULL)==TRP_TRUE)?(trp_const(1051)):(EMPTYCORD),trp_const(1052),(_glb[14]==TRP_TRUE)?(trp_const(1053)):(EMPTYCORD),(_glb[15]==TRP_TRUE)?(trp_const(1054)):(EMPTYCORD),(j20==TRP_TRUE)?(trp_const(1055)):(trp_const(1056)),(fun_25()==TRP_TRUE)?(fun_52(trp_const(1057))):(EMPTYCORD),(fun_26()==TRP_TRUE)?(trp_const(1058)):(EMPTYCORD),(fun_43()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1059)):(fun_52(trp_const(1060)))):(EMPTYCORD),trp_const(1061),fun_14(j6),trp_const(999),fun_14(j3),(trp_equal(j8,UNDEF)==TRP_TRUE)?(EMPTYCORD):(trp_cat(trp_const(999),fun_14(j8),NULL)),trp_const(1062),trp_sprint_list(j16,trp_const(1062)),(fun_27()==TRP_TRUE)?(trp_const(1063)):(EMPTYCORD),(fun_25()==TRP_TRUE)?(trp_cat(trp_const(1064),fun_53(trp_const(1057)),NULL)):(EMPTYCORD),(fun_26()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1065)):(trp_const(1066))):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_const(1067)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1068)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1069)):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1070)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1071)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1072)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1073)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_cat(trp_const(1075),fun_53(trp_const(1074)),NULL)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_cat(trp_const(1077),fun_53(trp_const(1076)),NULL)):(EMPTYCORD),(fun_37()==TRP_TRUE)?(trp_const(1078)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_cat(trp_const(1080),fun_53(trp_const(1079)),trp_const(1081),NULL)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_cat(trp_const(1083),fun_53(trp_const(1082)),NULL)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_const(1084)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_const(1085)):(EMPTYCORD),(fun_42()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1086)):(trp_const(1087))):(EMPTYCORD),(fun_43()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1088)):(trp_const(1089))):(EMPTYCORD),(fun_44()==TRP_TRUE)?(trp_const(1090)):(EMPTYCORD),(fun_45()==TRP_TRUE)?(trp_const(1091)):(EMPTYCORD),(fun_46()==TRP_TRUE)?(trp_cat(trp_const(1092),fun_53(trp_const(174)),NULL)):(EMPTYCORD),(fun_47()==TRP_TRUE)?(trp_cat(trp_const(1094),fun_53(trp_const(1093)),NULL)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_cat(trp_const(1096),fun_53(trp_const(1095)),NULL)):(EMPTYCORD),(fun_49()==TRP_TRUE)?(trp_const(1097)):(EMPTYCORD),trp_const(1098),fun_53(trp_const(1099)),trp_const(1100),(j20==TRP_TRUE)?(trp_const(1101)):(EMPTYCORD),(_glb[10]==TRP_TRUE)?(trp_const(1102)):(EMPTYCORD),NULL);
+  j21=(j10==TRP_TRUE)?(EMPTYCORD):(trp_cat((_glb[14]==TRP_TRUE)?(trp_const(1103)):((_glb[15]==TRP_TRUE)?(trp_const(1104)):(trp_const(1105))),trp_const(1106),fun_14(j6),NULL));
   if(j11==TRP_FALSE)goto l23;
-  j7=trp_cat(j5,trp_const(1106),NULL);
+  j7=trp_cat(j5,trp_const(1107),NULL);
   _glb[12]=trp_file_create(j7);
-  if(trp_fprint(_glb[12],trp_const(1107),trp_char(10),j0,trp_char(10),j21,(trp_equal(j21,EMPTYCORD)==TRP_TRUE)?(EMPTYCORD):(trp_char(10)),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1108),trp_char(10),j0,trp_char(10),j21,(trp_equal(j21,EMPTYCORD)==TRP_TRUE)?(EMPTYCORD):(trp_char(10)),NULL))goto l0;
   if(trp_close_multi(_glb[12],NULL))goto l0;
   goto l24;
 l23:
   _glb[19]=trp_cat(_glb[19],UNO,NULL);
-  if(trp_print(fun_15(),trp_const(1039),_glb[19],trp_const(1108),trp_char(10),NULL))goto l0;
+  if(trp_print(fun_22(),trp_const(1039),_glb[19],trp_const(1109),trp_char(10),NULL))goto l0;
   if(trp_system(j0,NULL)!=ZERO)goto l0;
   if(trp_notequal(j21,EMPTYCORD)==TRP_FALSE)goto l25;
   if(trp_system(j21,NULL)!=ZERO)goto l0;
@@ -14210,18 +14403,18 @@ l25:
 l26:
   if(trp_remove(j3))goto l0;
   if(trp_and(j15,j20,NULL)==TRP_FALSE)goto l27;
-  if(net_151(j6))goto l0;
+  if(net_156(j6))goto l0;
 l27:
 l24:
-  if(net_142())goto l0;
+  if(net_147())goto l0;
   trp_gc();
-  if(trp_print(trp_const(1109),trp_free_bytes(),trp_char(47),trp_heap_size(),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1110),trp_free_bytes(),trp_char(47),trp_heap_size(),trp_char(10),NULL))goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_150(trp_obj_t *i0,trp_obj_t **i1)
+static uns8b net_155(trp_obj_t *i0,trp_obj_t **i1)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14238,20 +14431,20 @@ l2:
 l3:
   trp_pop_env(&j1,&j0,i1,&i0,NULL);
   trp_push_env(i0,*i1,j0,j1,NULL);
-  j0=trp_cat(i0,trp_const(1110),NULL);
-  *i1=trp_cat(i0,trp_const(1111),NULL);
+  j0=trp_cat(i0,trp_const(1111),NULL);
+  *i1=trp_cat(i0,trp_const(1112),NULL);
   j1=trp_file_create(j0);
   if(trp_notequal(j1,UNDEF)!=TRP_TRUE)goto l4;
-  if(trp_fprint(j1,trp_const(1112),_glb[20],trp_const(1113),NULL))goto l4;
+  if(trp_fprint(j1,trp_const(1113),_glb[20],trp_const(1114),NULL))goto l4;
   if(trp_close_multi(j1,NULL))goto l4;
-  if(trp_system((_glb[14]==TRP_TRUE)?(trp_const(1114)):(trp_const(1115)),trp_const(999),fun_3(j0),trp_const(999),fun_3(*i1),NULL)!=ZERO)goto l4;
+  if(trp_system((_glb[14]==TRP_TRUE)?(trp_const(1115)):(trp_const(1116)),trp_const(999),fun_14(j0),trp_const(999),fun_14(*i1),NULL)!=ZERO)goto l4;
   if(trp_remove(j0))goto l4;
   trp_pop_env_void(4);
   goto l1;
 l4:
   trp_pop_env(&j1,&j0,i1,&i0,NULL);
   trp_push_env(i0,*i1,j0,j1,NULL);
-  if(net_133(trp_const(1116)))goto l5;
+  if(net_138(trp_const(1117)))goto l5;
   trp_pop_env_void(4);
   goto l1;
 l5:
@@ -14263,7 +14456,7 @@ l0:
   return 1;
 }
 
-static uns8b net_151(trp_obj_t *i0)
+static uns8b net_156(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14272,53 +14465,80 @@ static uns8b net_151(trp_obj_t *i0)
   trp_obj_t *j4=UNDEF;
   trp_obj_t *j5=UNDEF;
   trp_obj_t *j6=UNDEF;
+  trp_obj_t *j7=UNDEF;
+  trp_obj_t *t0=UNDEF;
   if(_glb[14]==TRP_FALSE)goto l1;
-  j0=trp_const(1117);
-  j1=trp_const(1118);
+  j0=trp_const(1118);
+  j1=trp_const(1119);
   goto l2;
 l1:
-  j0=trp_const(1119);
-  j1=trp_const(1120);
+  j0=trp_const(1120);
+  j1=trp_const(1121);
 l2:
   j2=trp_queue();
   j3=trp_assoc();
+  j4=trp_assoc();
   if(trp_queue_put(j2,i0))goto l0;
+  if(fun_35()==TRP_FALSE)goto l3;
+  if(trp_fprint(_glb[13],trp_const(1122),trp_char(10),NULL))goto l0;
 l3:
-  if(trp_greater(trp_length(j2),ZERO)==TRP_FALSE)goto l4;
-  i0=trp_queue_get(j2);
-  j4=fun_12(trp_cat(j0,trp_const(999),fun_3(i0),NULL));
+  if(fun_47()==TRP_FALSE)goto l4;
+  if(trp_fprint(_glb[13],trp_const(1123),trp_char(10),NULL))goto l0;
+  if(trp_for_init(&t0,&(j7),trp_const(1124),NULL,UNO,0))goto l6;
 l5:
-  if(net_3(&(j4),&(j5)))goto l0;
-  if(trp_equal(j5,UNDEF)!=TRP_FALSE)goto l6;
-  if(trp_cord_ltrim_test(&(j5),NULL))goto l0;
-  if(net_1(trp_const(1121),&(j5),&(j6)))goto l0;
-  if(trp_equal(trp_nth(j6,j3),UNDEF)==TRP_FALSE)goto l7;
-  if(trp_equal(j5,trp_const(1122))==TRP_FALSE)goto l8;
-  j5=trp_cat(j1,trp_const(1),j6,NULL);
-  if(trp_not(trp_pathexists(j5))==TRP_FALSE)goto l9;
-  j5=UNDEF;
-l9:
-l8:
-  if(trp_stringp(j5)==TRP_FALSE)goto l10;
-  if(trp_fprint(_glb[13],trp_const(1123),fun_3(j5),trp_const(1124),trp_char(10),NULL))goto l0;
-  if(trp_array_set_multi(j3,j6,j5,NULL))goto l0;
-  if(trp_queue_put(j2,j5))goto l0;
-l10:
-l7:
-  goto l5;
+  if(net_157(j7,trp_cat(j1,trp_const(7),j7,NULL),j2,j3,j4))goto l0;
+  if(trp_for_next(&t0))goto l5;
 l6:
-  goto l3;
 l4:
-  if(trp_notequal(trp_nth(trp_const(1125),j3),UNDEF)==TRP_FALSE)goto l11;
-  if(trp_fprint(_glb[13],trp_const(1126),trp_char(10),NULL))goto l0;
+l7:
+  if(trp_greater(trp_length(j2),ZERO)==TRP_FALSE)goto l8;
+  i0=trp_queue_get(j2);
+  j5=fun_20(trp_cat(j0,trp_const(999),fun_14(i0),NULL));
+l9:
+  if(net_12(&(j5),&(j6)))goto l0;
+  if(trp_equal(j6,UNDEF)!=TRP_FALSE)goto l10;
+  if(trp_cord_ltrim_test(&(j6),NULL))goto l0;
+  if(net_10(trp_const(1125),&(j6),&(j7)))goto l0;
+  j7=trp_cord_utf8_tolower(j7,NULL);
+  if(trp_equal(trp_nth(j7,j3),UNDEF)==TRP_FALSE)goto l11;
+  if(trp_equal(j6,trp_const(1126))==TRP_FALSE)goto l12;
+  j6=trp_cat(j1,trp_const(7),j7,NULL);
+l12:
+  if(net_157(j7,j6,j2,j3,j4))goto l0;
 l11:
-  if(trp_fprint(_glb[13],(_glb[14]==TRP_TRUE)?(trp_const(1102)):(trp_const(1103)),trp_const(1127),trp_char(10),NULL))goto l0;
+  goto l9;
+l10:
+  goto l7;
+l8:
+  if(trp_fprint(_glb[13],(_glb[14]==TRP_TRUE)?(trp_const(1103)):(trp_const(1104)),trp_const(1127),trp_char(10),NULL))goto l0;
+  j4=fun_19(j4);
+  if(trp_array_sort(j4,_funptr[0]))goto l0;
+  if(trp_for_init(&t0,&(j7),j4,NULL,UNO,0))goto l14;
+l13:
+  if(trp_fprint(_glb[13],trp_const(1129),trp_car(j7),trp_char(10),NULL))goto l0;
+  if(trp_for_next(&t0))goto l13;
+l14:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_152(trp_obj_t **i0)
+static uns8b net_157(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3,trp_obj_t *i4)
+{
+  if(trp_pathexists(i1)==TRP_FALSE)goto l1;
+  if(trp_fprint(_glb[13],trp_const(1130),fun_14(i1),trp_const(1131),trp_char(10),NULL))goto l0;
+  if(trp_array_set_multi(i3,i0,TRP_TRUE,NULL))goto l0;
+  if(trp_queue_put(i2,i1))goto l0;
+  goto l2;
+l1:
+  if(trp_array_set_multi(i4,i0,TRP_TRUE,NULL))goto l0;
+l2:
+  return 0;
+l0:
+  return 1;
+}
+
+static uns8b net_158(trp_obj_t **i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14368,28 +14588,28 @@ l0:
   return 1;
 }
 
-static uns8b net_153(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
+static uns8b net_159(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *t0=UNDEF;
   if(trp_for_init(&t0,&(j0),i0,NULL,UNO,0))goto l2;
 l1:
   if(trp_not(trp_in_func(trp_cat(trp_const(691),trp_car(j0),NULL),_glb[27],NULL))==TRP_FALSE)goto l3;
-  if(trp_print(trp_const(1128),trp_car(j0),trp_const(673),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1132),trp_car(j0),trp_const(673),trp_char(10),NULL))goto l0;
 l3:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_for_init(&t0,&(j0),i1,NULL,UNO,0))goto l5;
 l4:
   if(trp_not(trp_in_func(trp_cat(trp_const(671),trp_car(j0),NULL),_glb[27],NULL))==TRP_FALSE)goto l6;
-  if(trp_print(trp_const(1129),trp_car(j0),trp_const(673),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1133),trp_car(j0),trp_const(673),trp_char(10),NULL))goto l0;
 l6:
   if(trp_for_next(&t0))goto l4;
 l5:
   if(trp_for_init(&t0,&(j0),i2,NULL,UNO,0))goto l8;
 l7:
   if(trp_not(trp_in_func(trp_cat(trp_const(188),trp_car(j0),NULL),_glb[27],NULL))==TRP_FALSE)goto l9;
-  if(trp_print(trp_const(1130),trp_car(j0),trp_const(673),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1134),trp_car(j0),trp_const(673),trp_char(10),NULL))goto l0;
 l9:
   if(trp_for_next(&t0))goto l7;
 l8:
@@ -14398,71 +14618,71 @@ l0:
   return 1;
 }
 
-static uns8b net_154()
+static uns8b net_160()
 {
-  if(trp_and(fun_18(),fun_19(),NULL)==TRP_FALSE)goto l1;
-  if(net_133(trp_const(1131)))goto l0;
+  if(trp_and(fun_25(),fun_26(),NULL)==TRP_FALSE)goto l1;
+  if(net_138(trp_const(1135)))goto l0;
 l1:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_155()
+static uns8b net_161()
 {
-  if(trp_or(fun_18(),fun_19(),fun_35(),fun_38(),fun_39(),fun_40(),fun_36(),fun_37(),NULL)==TRP_FALSE)goto l1;
-  if(net_144(trp_const(136)))goto l0;
+  if(trp_or(fun_25(),fun_26(),fun_42(),fun_45(),fun_46(),fun_47(),fun_43(),fun_44(),NULL)==TRP_FALSE)goto l1;
+  if(net_149(trp_const(136)))goto l0;
 l1:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_156()
+static uns8b net_162()
 {
   trp_obj_t *t0=UNDEF;
   if(trp_file_set_pos(ZERO,_glb[16]))goto l0;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],UNDEF)!=TRP_FALSE)goto l2;
   if(trp_notequal(_glb[0],trp_const(30))==TRP_FALSE)goto l3;
-  if(net_134())goto l0;
+  if(net_139())goto l0;
 l3:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l4;
-  if(net_134())goto l0;
+  if(net_139())goto l0;
 l4:
   trp_push_env(NULL);
   t0=_glb[1];
-  if(trp_equal(trp_const(1132),t0)==TRP_FALSE)goto l9;
-  if(net_157())goto l8;
-  goto l7;
-l9:
-  if(trp_equal(trp_const(1133),t0)==TRP_FALSE)goto l10;
-  if(net_158())goto l8;
-  goto l7;
-l10:
-  if(trp_equal(trp_const(1134),t0)==TRP_FALSE)goto l11;
-  if(net_159())goto l8;
-  goto l7;
-l11:
-  if(trp_equal(trp_const(1135),t0)==TRP_FALSE)goto l12;
-  if(net_160())goto l8;
-  goto l7;
-l12:
-  if(trp_equal(trp_const(1136),t0)==TRP_FALSE)goto l13;
-  if(net_161())goto l8;
-  goto l7;
-l13:
-  if(trp_equal(trp_const(1137),t0)==TRP_FALSE)goto l14;
+  if(trp_equal(trp_const(1136),t0)==TRP_FALSE)goto l9;
   if(net_163())goto l8;
   goto l7;
-l14:
-  if(trp_equal(trp_const(1138),t0)==TRP_FALSE)goto l15;
+l9:
+  if(trp_equal(trp_const(1137),t0)==TRP_FALSE)goto l10;
+  if(net_164())goto l8;
+  goto l7;
+l10:
+  if(trp_equal(trp_const(1138),t0)==TRP_FALSE)goto l11;
   if(net_165())goto l8;
   goto l7;
+l11:
+  if(trp_equal(trp_const(1139),t0)==TRP_FALSE)goto l12;
+  if(net_166())goto l8;
+  goto l7;
+l12:
+  if(trp_equal(trp_const(1140),t0)==TRP_FALSE)goto l13;
+  if(net_167())goto l8;
+  goto l7;
+l13:
+  if(trp_equal(trp_const(1141),t0)==TRP_FALSE)goto l14;
+  if(net_169())goto l8;
+  goto l7;
+l14:
+  if(trp_equal(trp_const(1142),t0)==TRP_FALSE)goto l15;
+  if(net_171())goto l8;
+  goto l7;
 l15:
-  if(net_133(trp_const(1139)))goto l8;
+  if(net_138(trp_const(1143)))goto l8;
   goto l7;
 l8:
   t0=UNDEF;
@@ -14474,7 +14694,7 @@ l7:
 l6:
   trp_pop_env(NULL);
   trp_push_env(NULL);
-  if(net_134())goto l16;
+  if(net_139())goto l16;
   trp_pop_env_void(0);
   goto l5;
 l16:
@@ -14488,26 +14708,26 @@ l0:
   return 1;
 }
 
-static uns8b net_157()
+static uns8b net_163()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
   trp_obj_t *j2=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(29))!=TRP_TRUE)goto l0;
   j1=_glb[1];
-  j0=fun_1(j1);
-  if(net_136())goto l0;
+  j0=fun_6(j1);
+  if(net_141())goto l0;
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l1;
-  if(net_133(trp_cat(j1,trp_const(1031),NULL)))goto l0;
+  if(net_138(trp_cat(j1,trp_const(1031),NULL)))goto l0;
 l1:
   j1=trp_realpath(j0);
   if(trp_in_func(j1,_glb[18],NULL)==TRP_FALSE)goto l2;
-  if(net_133(trp_cat(trp_const(1140),j0,trp_const(1141),NULL)))goto l0;
+  if(net_138(trp_cat(trp_const(1144),j0,trp_const(1145),NULL)))goto l0;
 l2:
   j2=trp_file_openro(j0);
   if(trp_equal(j2,UNDEF)==TRP_FALSE)goto l3;
-  if(net_133(trp_cat(j0,trp_const(1031),NULL)))goto l0;
+  if(net_138(trp_cat(j0,trp_const(1031),NULL)))goto l0;
 l3:
   if(trp_stack_push(_glb[17],_glb[16]))goto l0;
   _glb[16]=j2;
@@ -14517,50 +14737,50 @@ l0:
   return 1;
 }
 
-static uns8b net_158()
+static uns8b net_164()
 {
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   if(trp_in_func(_glb[1],trp_const(1005),NULL)==TRP_FALSE)goto l1;
-  if(net_144(_glb[1]))goto l0;
+  if(net_149(_glb[1]))goto l0;
   goto l2;
 l1:
-  if(net_133(trp_cat(trp_const(1142),_glb[1],trp_const(1143),NULL)))goto l0;
+  if(net_138(trp_cat(trp_const(1146),_glb[1],trp_const(1147),NULL)))goto l0;
 l2:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_159()
+static uns8b net_165()
 {
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   _glb[34]=_glb[1];
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_160()
+static uns8b net_166()
 {
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l3;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(189),NULL)==TRP_FALSE)goto l4;
   if(trp_in_func(_glb[1],_glb[25],NULL)==TRP_FALSE)goto l5;
-  if(net_133(trp_cat(_glb[1],trp_const(1144),NULL)))goto l0;
+  if(net_138(trp_cat(_glb[1],trp_const(1148),NULL)))goto l0;
 l5:
   if(trp_or(trp_equal(_glb[27],UNDEF),trp_in_func(trp_cat(trp_const(188),_glb[1],NULL),_glb[27],NULL),NULL)==TRP_FALSE)goto l6;
   if(trp_array_set_multi(_glb[25],_glb[1],trp_length(_glb[25]),NULL))goto l0;
 l6:
   goto l7;
 l4:
-  if(net_133(trp_cat(_glb[1],trp_const(1145),NULL)))goto l0;
+  if(net_138(trp_cat(_glb[1],trp_const(1149),NULL)))goto l0;
 l7:
 l3:
   goto l1;
@@ -14570,24 +14790,24 @@ l0:
   return 1;
 }
 
-static uns8b net_161()
+static uns8b net_167()
 {
   trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   j0=_glb[1];
   if(trp_or(trp_equal(_glb[27],UNDEF),trp_in_func(trp_cat(trp_const(691),j0,NULL),_glb[27],NULL),NULL)==TRP_FALSE)goto l1;
-  if(net_162(j0))goto l0;
+  if(net_168(j0))goto l0;
   goto l2;
 l1:
-  if(net_18())goto l0;
+  if(net_23())goto l0;
 l2:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_162(trp_obj_t *i0)
+static uns8b net_168(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14597,7 +14817,7 @@ static uns8b net_162(trp_obj_t *i0)
   t0=_glb[19];
   if(trp_equal(UNO,t0)==TRP_FALSE)goto l3;
   if(trp_notequal(j0,UNDEF)==TRP_FALSE)goto l4;
-  if(net_133(trp_cat(i0,trp_const(1146),NULL)))goto l2;
+  if(net_138(trp_cat(i0,trp_const(1150),NULL)))goto l2;
 l4:
   _glb[35]=trp_queue();
   _glb[36]=trp_queue();
@@ -14605,23 +14825,23 @@ l4:
   goto l1;
 l3:
   if(trp_equal(trp_const(59),t0)==TRP_FALSE)goto l5;
-  if(trp_fprint(_glb[12],trp_const(1147),trp_nth(ZERO,j0),trp_const(63),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1151),trp_nth(ZERO,j0),trp_const(63),NULL))goto l2;
   _glb[35]=trp_nth(UNO,j0);
   _glb[36]=trp_nth(trp_const(59),j0);
   if(trp_for_init(&t1,&(j1),_glb[35],NULL,UNO,0))goto l7;
 l6:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1148),(trp_cord_lmatch_func(0,j1,trp_const(186),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),trp_char(105),trp_for_pos(t1),NULL))goto l2;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1152),(trp_cord_lmatch_func(0,j1,trp_const(186),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),trp_char(105),trp_for_pos(t1),NULL))goto l2;
   if(trp_for_next(&t1))goto l6;
 l7:
   if(trp_fprint(_glb[12],trp_char(41),trp_char(10),trp_char(123),trp_char(10),NULL))goto l2;
   if(trp_for_init(&t1,&(j1),_glb[36],NULL,UNO,0))goto l9;
 l8:
-  if(trp_fprint(_glb[12],trp_const(1149),trp_for_pos(t1),trp_const(914),trp_char(10),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1153),trp_for_pos(t1),trp_const(914),trp_char(10),NULL))goto l2;
   if(trp_for_next(&t1))goto l8;
 l9:
   if(trp_for_init(&t1,&(j1),UNO,trp_nth(trp_const(141),j0),UNO,0))goto l11;
 l10:
-  if(trp_fprint(_glb[12],trp_const(1150),trp_for_pos(t1),trp_const(914),trp_char(10),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1154),trp_for_pos(t1),trp_const(914),trp_char(10),NULL))goto l2;
   if(trp_for_next(&t1))goto l10;
 l11:
   goto l1;
@@ -14632,23 +14852,23 @@ l2:
   goto l0;
 l1:
   t0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(30))!=TRP_TRUE)goto l0;
   j0=TRP_TRUE;
   j1=TRP_FALSE;
 l12:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l13;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l14;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   j0=trp_and(j0,trp_not(j1),NULL);
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(189),NULL)==TRP_FALSE)goto l15;
-  if(net_133(trp_const(1151)))goto l0;
+  if(net_138(trp_const(1155)))goto l0;
 l15:
   if(trp_in_func(_glb[1],_glb[35],NULL)==TRP_FALSE)goto l16;
-  if(net_133(trp_const(1152)))goto l0;
+  if(net_138(trp_const(1156)))goto l0;
 l16:
-  if(net_138())goto l0;
+  if(net_143())goto l0;
   if(trp_queue_put(_glb[35],_glb[1]))goto l0;
   j1=trp_cord_lmatch_func(0,_glb[1],trp_const(186),NULL);
 l14:
@@ -14657,74 +14877,74 @@ l13:
   if(trp_and(trp_equal(_glb[19],UNO),j0,j1,NULL)==TRP_FALSE)goto l17;
   if(trp_array_set_multi(_glb[32],i0,trp_math_minus(trp_length(_glb[35]),UNO,NULL),NULL))goto l0;
 l17:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(30))==TRP_FALSE)goto l18;
-  if(net_15())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(1153)),NULL)==TRP_FALSE)goto l19;
+  if(net_20())goto l0;
+  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(1157)),NULL)==TRP_FALSE)goto l19;
 l20:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l21;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l22;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(189),trp_const(186),NULL)==TRP_FALSE)goto l23;
-  if(net_133(trp_const(1154)))goto l0;
+  if(net_138(trp_const(1158)))goto l0;
 l23:
   if(trp_in_func(_glb[1],_glb[36],NULL)==TRP_FALSE)goto l24;
-  if(net_133(trp_const(1155)))goto l0;
+  if(net_138(trp_const(1159)))goto l0;
 l24:
   if(trp_in_func(_glb[1],_glb[35],NULL)==TRP_FALSE)goto l25;
-  if(net_133(trp_const(1156)))goto l0;
+  if(net_138(trp_const(1160)))goto l0;
 l25:
-  if(net_138())goto l0;
+  if(net_143())goto l0;
   if(trp_queue_put(_glb[36],_glb[1]))goto l0;
 l22:
   goto l20;
 l21:
   goto l26;
 l19:
-  if(net_12())goto l0;
-  if(net_11(trp_const(30),UNDEF))goto l0;
+  if(net_17())goto l0;
+  if(net_16(trp_const(30),UNDEF))goto l0;
 l26:
   goto l27;
 l18:
-  if(net_12())goto l0;
+  if(net_17())goto l0;
 l27:
   _glb[38]=ZERO;
   _glb[39]=ZERO;
   _glb[40]=ZERO;
   _glb[41]=ZERO;
-  if(net_105())goto l0;
-  if(net_136())goto l0;
+  if(net_110())goto l0;
+  if(net_141())goto l0;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l28;
   if(trp_array_set_multi(_glb[30],i0,trp_list(trp_length(_glb[30]),_glb[35],_glb[36],_glb[38],NULL),NULL))goto l0;
   if(trp_array_set_multi(_glb[26],trp_cat(trp_const(691),i0,NULL),_glb[37],NULL))goto l0;
   goto l29;
 l28:
-  if(trp_fprint(_glb[12],trp_const(1157),trp_char(10),trp_const(1158),trp_char(10),trp_const(1159),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1161),trp_char(10),trp_const(1162),trp_char(10),trp_const(1163),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
 l29:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_163()
+static uns8b net_169()
 {
   trp_obj_t *j0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   j0=_glb[1];
   if(trp_or(trp_equal(_glb[27],UNDEF),trp_in_func(trp_cat(trp_const(671),j0,NULL),_glb[27],NULL),NULL)==TRP_FALSE)goto l1;
-  if(net_164(j0))goto l0;
+  if(net_170(j0))goto l0;
   goto l2;
 l1:
-  if(net_18())goto l0;
+  if(net_23())goto l0;
 l2:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_164(trp_obj_t *i0)
+static uns8b net_170(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14736,18 +14956,18 @@ static uns8b net_164(trp_obj_t *i0)
   t0=_glb[19];
   if(trp_equal(UNO,t0)==TRP_FALSE)goto l3;
   if(trp_notequal(j0,UNDEF)==TRP_FALSE)goto l4;
-  if(net_133(trp_cat(i0,trp_const(1160),NULL)))goto l2;
+  if(net_138(trp_cat(i0,trp_const(1164),NULL)))goto l2;
 l4:
   _glb[35]=trp_queue();
   _glb[37]=trp_assoc();
   goto l1;
 l3:
   if(trp_equal(trp_const(59),t0)==TRP_FALSE)goto l5;
-  if(trp_fprint(_glb[12],trp_const(1161),trp_car(j0),trp_const(63),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1165),trp_car(j0),trp_const(63),NULL))goto l2;
   _glb[35]=trp_cdr(j0);
   if(trp_for_init(&t1,&(j0),_glb[35],NULL,UNO,0))goto l7;
 l6:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1162),trp_for_pos(t1),NULL))goto l2;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1166),trp_for_pos(t1),NULL))goto l2;
   if(trp_for_next(&t1))goto l6;
 l7:
   if(trp_fprint(_glb[12],trp_char(41),trp_char(10),trp_char(123),trp_char(10),NULL))goto l2;
@@ -14759,55 +14979,55 @@ l2:
   goto l0;
 l1:
   t0=UNDEF;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(30))!=TRP_TRUE)goto l0;
 l8:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l9;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l10;
   if(trp_equal(_glb[0],trp_const(56))!=TRP_TRUE)goto l0;
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(189),trp_const(186),NULL)==TRP_FALSE)goto l11;
-  if(net_133(trp_const(1163)))goto l0;
+  if(net_138(trp_const(1167)))goto l0;
 l11:
   if(trp_in_func(_glb[1],_glb[35],NULL)==TRP_FALSE)goto l12;
-  if(net_133(trp_const(1152)))goto l0;
+  if(net_138(trp_const(1156)))goto l0;
 l12:
-  if(net_138())goto l0;
+  if(net_143())goto l0;
   if(trp_queue_put(_glb[35],_glb[1]))goto l0;
 l10:
   goto l8;
 l9:
   j2=TRP_FALSE;
-  if(net_15())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(1164)),NULL)==TRP_FALSE)goto l13;
-  if(net_15())goto l0;
+  if(net_20())goto l0;
+  if(trp_and(trp_equal(_glb[0],trp_const(56)),trp_equal(_glb[1],trp_const(1168)),NULL)==TRP_FALSE)goto l13;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l14;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[0]=trp_const(56);
-  _glb[1]=trp_const(1164);
+  _glb[1]=trp_const(1168);
   goto l15;
 l14:
   if(trp_notequal(_glb[0],trp_const(56))==TRP_FALSE)goto l16;
-  if(net_134())goto l0;
+  if(net_139())goto l0;
 l16:
-  if(fun_16()==TRP_FALSE)goto l17;
+  if(fun_23()==TRP_FALSE)goto l17;
   j0=trp_nth(_glb[1],_glb[32]);
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l18;
-  if(net_133(trp_cat(_glb[1],trp_const(1165),NULL)))goto l0;
+  if(net_138(trp_cat(_glb[1],trp_const(1169),NULL)))goto l0;
 l18:
   if(trp_less(trp_length(_glb[35]),j0)==TRP_FALSE)goto l19;
-  if(net_133(trp_cat(_glb[1],trp_const(955),NULL)))goto l0;
+  if(net_138(trp_cat(_glb[1],trp_const(955),NULL)))goto l0;
 l19:
   if(trp_greater(trp_length(_glb[35]),j0)==TRP_FALSE)goto l20;
-  if(net_133(trp_cat(_glb[1],trp_const(956),NULL)))goto l0;
+  if(net_138(trp_cat(_glb[1],trp_const(956),NULL)))goto l0;
 l20:
-  if(trp_fprint(_glb[12],trp_const(1166),trp_char(10),trp_const(1167),trp_nth(ZERO,trp_nth(_glb[1],_glb[30])),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1170),trp_char(10),trp_const(1171),trp_nth(ZERO,trp_nth(_glb[1],_glb[30])),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t0,&(j0),UNO,j0,UNO,0))goto l22;
 l21:
   if(trp_fprint(_glb[12],trp_char(105),trp_for_pos(t0),trp_char(44),NULL))goto l0;
   if(trp_for_next(&t0))goto l21;
 l22:
-  if(trp_fprint(_glb[12],trp_const(1168),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1172),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
   goto l23;
 l17:
   if(trp_assoc_inc(_glb[37],trp_cat(trp_const(691),_glb[1],NULL),NULL))goto l0;
@@ -14816,20 +15036,20 @@ l23:
 l15:
 l13:
   if(trp_not(j2)==TRP_FALSE)goto l24;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[6]=_glb[11];
   _glb[5]=EMPTYCORD;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(_glb[7]==TRP_FALSE)goto l25;
   if(trp_array_set_multi(_glb[33],i0,(trp_equal(_glb[8],UNDEF)==TRP_TRUE)?(_glb[33]):(_glb[8]),NULL))goto l0;
   _glb[6]=TRP_FALSE;
-  if(net_56(_glb[8]))goto l0;
+  if(net_61(_glb[8]))goto l0;
 l25:
-  if(fun_16()==TRP_FALSE)goto l26;
-  if(trp_fprint(_glb[12],trp_const(1169),_glb[5],trp_char(59),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
+  if(fun_23()==TRP_FALSE)goto l26;
+  if(trp_fprint(_glb[12],trp_const(1173),_glb[5],trp_char(59),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
 l26:
 l24:
-  if(net_136())goto l0;
+  if(net_141())goto l0;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l27;
   if(trp_array_set_multi(_glb[31],i0,trp_cons(trp_length(_glb[31]),_glb[35]),NULL))goto l0;
   if(trp_array_set_multi(_glb[26],trp_cat(trp_const(671),i0,NULL),_glb[37],NULL))goto l0;
@@ -14839,36 +15059,36 @@ l0:
   return 1;
 }
 
-static uns8b net_165()
+static uns8b net_171()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
 l1:
-  if(net_15())goto l0;
+  if(net_20())goto l0;
   if(trp_equal(_glb[0],trp_const(31))!=TRP_FALSE)goto l2;
-  if(net_12())goto l0;
+  if(net_17())goto l0;
   _glb[6]=TRP_TRUE;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l3;
-  if(net_133(trp_const(1170)))goto l0;
+  if(net_138(trp_const(1174)))goto l0;
 l3:
   j0=_glb[8];
   _glb[6]=TRP_TRUE;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l4;
-  if(net_133(trp_const(1170)))goto l0;
+  if(net_138(trp_const(1174)))goto l0;
 l4:
   j1=_glb[8];
   if(trp_or(trp_not(trp_integerp(j1)),trp_less(j1,UNO),NULL)==TRP_FALSE)goto l5;
-  if(net_133(trp_const(1171)))goto l0;
+  if(net_138(trp_const(1175)))goto l0;
 l5:
   _glb[23]=trp_max(_glb[23],trp_cat(j1,UNO,NULL),NULL);
   _glb[6]=TRP_TRUE;
-  if(net_51())goto l0;
+  if(net_56())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l6;
-  if(net_133(trp_const(1170)))goto l0;
+  if(net_138(trp_const(1174)))goto l0;
 l6:
-  if(trp_not(fun_16())==TRP_FALSE)goto l7;
+  if(trp_not(fun_23())==TRP_FALSE)goto l7;
   if(trp_queue_put(_glb[24],trp_list(j0,j1,_glb[8],NULL)))goto l0;
 l7:
   goto l1;
@@ -14878,7 +15098,7 @@ l0:
   return 1;
 }
 
-static uns8b net_166()
+static uns8b net_172()
 {
   trp_obj_t *j0=UNDEF;
   trp_obj_t *j1=UNDEF;
@@ -14889,89 +15109,89 @@ static uns8b net_166()
   trp_obj_t *t1=UNDEF;
   trp_obj_t *t2=UNDEF;
   trp_gc();
-  if(trp_fprint(_glb[12],trp_const(1172),trp_char(10),trp_const(1173),trp_const(963),trp_char(10),trp_const(1174),trp_char(10),NULL))goto l0;
-  if(net_167(trp_const(1175)))goto l0;
-  if(fun_18()==TRP_FALSE)goto l1;
-  if(net_167(trp_const(1176)))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1176),trp_char(10),trp_const(1177),trp_const(963),trp_char(10),trp_const(1178),trp_char(10),NULL))goto l0;
+  if(net_173(trp_const(1179)))goto l0;
+  if(fun_25()==TRP_FALSE)goto l1;
+  if(net_173(trp_const(1180)))goto l0;
 l1:
-  if(fun_19()==TRP_FALSE)goto l2;
-  if(net_167(trp_const(1177)))goto l0;
+  if(fun_26()==TRP_FALSE)goto l2;
+  if(net_173(trp_const(1181)))goto l0;
 l2:
-  if(fun_20()==TRP_FALSE)goto l3;
-  if(net_167(trp_const(1178)))goto l0;
+  if(fun_27()==TRP_FALSE)goto l3;
+  if(net_173(trp_const(1182)))goto l0;
 l3:
-  if(fun_21()==TRP_FALSE)goto l4;
-  if(net_167(trp_const(1179)))goto l0;
+  if(fun_28()==TRP_FALSE)goto l4;
+  if(net_173(trp_const(1183)))goto l0;
 l4:
-  if(fun_22()==TRP_FALSE)goto l5;
-  if(net_167(trp_const(1180)))goto l0;
+  if(fun_29()==TRP_FALSE)goto l5;
+  if(net_173(trp_const(1184)))goto l0;
 l5:
-  if(fun_23()==TRP_FALSE)goto l6;
-  if(net_167(trp_const(1181)))goto l0;
+  if(fun_30()==TRP_FALSE)goto l6;
+  if(net_173(trp_const(1185)))goto l0;
 l6:
-  if(fun_24()==TRP_FALSE)goto l7;
-  if(net_167(trp_const(1182)))goto l0;
+  if(fun_31()==TRP_FALSE)goto l7;
+  if(net_173(trp_const(1186)))goto l0;
 l7:
-  if(fun_25()==TRP_FALSE)goto l8;
-  if(net_167(trp_const(1183)))goto l0;
+  if(fun_32()==TRP_FALSE)goto l8;
+  if(net_173(trp_const(1187)))goto l0;
 l8:
-  if(fun_26()==TRP_FALSE)goto l9;
-  if(net_167(trp_const(1184)))goto l0;
+  if(fun_33()==TRP_FALSE)goto l9;
+  if(net_173(trp_const(1188)))goto l0;
 l9:
-  if(fun_27()==TRP_FALSE)goto l10;
-  if(net_167(trp_const(1185)))goto l0;
+  if(fun_34()==TRP_FALSE)goto l10;
+  if(net_173(trp_const(1189)))goto l0;
 l10:
-  if(fun_28()==TRP_FALSE)goto l11;
-  if(net_167(trp_const(1186)))goto l0;
+  if(fun_35()==TRP_FALSE)goto l11;
+  if(net_173(trp_const(1190)))goto l0;
 l11:
-  if(fun_29()==TRP_FALSE)goto l12;
-  if(net_167(trp_const(1187)))goto l0;
+  if(fun_36()==TRP_FALSE)goto l12;
+  if(net_173(trp_const(1191)))goto l0;
 l12:
-  if(fun_30()==TRP_FALSE)goto l13;
-  if(net_167(trp_const(1188)))goto l0;
+  if(fun_37()==TRP_FALSE)goto l13;
+  if(net_173(trp_const(1192)))goto l0;
 l13:
-  if(fun_31()==TRP_FALSE)goto l14;
-  if(net_167(trp_const(1189)))goto l0;
+  if(fun_38()==TRP_FALSE)goto l14;
+  if(net_173(trp_const(1193)))goto l0;
 l14:
-  if(fun_32()==TRP_FALSE)goto l15;
-  if(net_167(trp_const(1190)))goto l0;
+  if(fun_39()==TRP_FALSE)goto l15;
+  if(net_173(trp_const(1194)))goto l0;
 l15:
-  if(fun_33()==TRP_FALSE)goto l16;
-  if(net_167(trp_const(1191)))goto l0;
+  if(fun_40()==TRP_FALSE)goto l16;
+  if(net_173(trp_const(1195)))goto l0;
 l16:
-  if(fun_34()==TRP_FALSE)goto l17;
-  if(net_167(trp_const(1192)))goto l0;
+  if(fun_41()==TRP_FALSE)goto l17;
+  if(net_173(trp_const(1196)))goto l0;
 l17:
-  if(fun_35()==TRP_FALSE)goto l18;
-  if(net_167(trp_const(1193)))goto l0;
+  if(fun_42()==TRP_FALSE)goto l18;
+  if(net_173(trp_const(1197)))goto l0;
 l18:
-  if(fun_36()==TRP_FALSE)goto l19;
-  if(net_167(trp_const(1194)))goto l0;
+  if(fun_43()==TRP_FALSE)goto l19;
+  if(net_173(trp_const(1198)))goto l0;
 l19:
-  if(fun_37()==TRP_FALSE)goto l20;
-  if(net_167(trp_const(1195)))goto l0;
+  if(fun_44()==TRP_FALSE)goto l20;
+  if(net_173(trp_const(1199)))goto l0;
 l20:
-  if(fun_38()==TRP_FALSE)goto l21;
-  if(net_167(trp_const(1196)))goto l0;
+  if(fun_45()==TRP_FALSE)goto l21;
+  if(net_173(trp_const(1200)))goto l0;
 l21:
-  if(fun_39()==TRP_FALSE)goto l22;
-  if(net_167(trp_const(1197)))goto l0;
+  if(fun_46()==TRP_FALSE)goto l22;
+  if(net_173(trp_const(1201)))goto l0;
 l22:
-  if(fun_40()==TRP_FALSE)goto l23;
-  if(net_167(trp_const(1198)))goto l0;
+  if(fun_47()==TRP_FALSE)goto l23;
+  if(net_173(trp_const(1202)))goto l0;
 l23:
-  if(fun_41()==TRP_FALSE)goto l24;
-  if(net_167(trp_const(1199)))goto l0;
+  if(fun_48()==TRP_FALSE)goto l24;
+  if(net_173(trp_const(1203)))goto l0;
 l24:
-  if(fun_42()==TRP_FALSE)goto l25;
-  if(net_167(trp_const(1200)))goto l0;
+  if(fun_49()==TRP_FALSE)goto l25;
+  if(net_173(trp_const(1204)))goto l0;
 l25:
-  if(trp_fprint(_glb[12],trp_const(1201),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1205),trp_char(10),trp_char(10),NULL))goto l0;
   if(trp_greater(trp_length(_glb[22]),ZERO)==TRP_FALSE)goto l26;
-  if(trp_fprint(_glb[12],trp_const(1202),trp_char(10),trp_char(10),trp_const(1203),trp_char(10),trp_char(10),trp_const(1204),_glb[23],trp_const(1205),trp_length(_glb[22]),trp_const(1206),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1206),trp_char(10),trp_char(10),trp_const(1207),trp_char(10),trp_char(10),trp_const(1208),_glb[23],trp_const(1209),trp_length(_glb[22]),trp_const(1210),trp_char(10),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),UNO,_glb[23],UNO,0))goto l28;
 l27:
-  if(trp_fprint(_glb[12],trp_const(1207),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1211),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),_glb[22],NULL,UNO,0))goto l30;
 l29:
   j3=TRP_FALSE;
@@ -14985,27 +15205,27 @@ l33:
 l31:
   if(j3==TRP_FALSE)goto l34;
   j3=trp_nth(trp_const(59),j4);
-  if(net_139(_glb[21],j3))goto l0;
+  if(net_144(_glb[21],j3))goto l0;
   goto l35;
 l34:
   if(trp_and(trp_greater(j1,UNO),trp_notequal(_glb[13],UNDEF),trp_stringp(j2),NULL)==TRP_FALSE)goto l36;
-  j3=trp_cat(trp_const(1113),fun_2(fun_2(j2,trp_const(1113),trp_const(1208)),trp_const(6),trp_const(1209)),trp_const(1113),NULL);
+  j3=trp_cat(trp_const(1114),fun_16(fun_16(j2,trp_const(1114),trp_const(1212)),trp_const(13),trp_const(1213)),trp_const(1114),NULL);
   if(trp_fprint(_glb[13],j3,trp_char(10),trp_math_minus(j1,UNO,NULL),trp_char(10),j3,trp_char(10),trp_char(10),NULL))goto l0;
 l36:
   j3=j2;
 l35:
   if(trp_in_test(j3,_glb[21],NULL,&(j4),NULL))goto l0;
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_cat(trp_const(179),(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1210)),ZERO)==TRP_TRUE)?(trp_const(1211)):(EMPTYCORD),NULL)):(EMPTYCORD),j4,NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_cat(trp_const(179),(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1214)),ZERO)==TRP_TRUE)?(trp_const(1215)):(EMPTYCORD),NULL)):(EMPTYCORD),j4,NULL))goto l0;
   if(trp_for_next(&t1))goto l29;
 l30:
-  if(trp_fprint(_glb[12],trp_const(1212),(trp_less(j1,_glb[23])==TRP_TRUE)?(trp_const(179)):(EMPTYCORD),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1216),(trp_less(j1,_glb[23])==TRP_TRUE)?(trp_const(179)):(EMPTYCORD),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l27;
 l28:
-  if(trp_fprint(_glb[12],trp_const(1213),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1217),trp_char(10),trp_char(10),NULL))goto l0;
 l26:
   if(trp_greater(trp_length(_glb[21]),ZERO)==TRP_FALSE)goto l37;
   j0=ZERO;
-  if(trp_fprint(_glb[12],trp_const(1214),trp_length(_glb[21]),trp_const(1206),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1218),trp_length(_glb[21]),trp_const(1210),NULL))goto l0;
   j3=trp_queue();
   if(trp_for_init(&t0,&(j4),_glb[21],NULL,UNO,0))goto l39;
 l38:
@@ -15015,11 +15235,11 @@ l38:
   if(trp_queue_put(j3,trp_raw_compression_level(j1)))goto l0;
   if(trp_queue_put(j3,trp_length(j1)))goto l0;
   if(trp_queue_put(j3,trp_raw_uncompressed_len(j1)))goto l0;
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t0),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1215),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t0),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1219),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),ZERO,trp_math_minus(trp_length(j1),UNO,NULL),UNO,0))goto l41;
 l40:
-  if(trp_and(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1216)),ZERO),trp_greater(trp_for_pos(t1),ZERO),NULL)==TRP_FALSE)goto l42;
-  if(trp_fprint(_glb[12],trp_const(1217),trp_char(10),trp_const(1215),NULL))goto l0;
+  if(trp_and(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1220)),ZERO),trp_greater(trp_for_pos(t1),ZERO),NULL)==TRP_FALSE)goto l42;
+  if(trp_fprint(_glb[12],trp_const(1221),trp_char(10),trp_const(1219),NULL))goto l0;
 l42:
   j2=trp_length(trp_nth(j2,j1));
   if(trp_fprint(_glb[12],trp_char(92),trp_math_div(j2,trp_const(25)),trp_math_mod(trp_math_div(j2,trp_const(26)),trp_const(26)),trp_math_mod(j2,trp_const(26)),NULL))goto l0;
@@ -15032,34 +15252,34 @@ l41:
 l43:
   if(trp_for_next(&t0))goto l38;
 l39:
-  if(trp_fprint(_glb[12],trp_char(10),trp_const(1213),trp_char(10),trp_char(10),trp_const(1218),trp_length(_glb[21]),trp_const(1206),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_char(10),trp_const(1217),trp_char(10),trp_char(10),trp_const(1222),trp_length(_glb[21]),trp_const(1210),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),UNO,trp_length(_glb[21]),UNO,0))goto l45;
 l44:
-  if(trp_fprint(_glb[12],(trp_greater(j1,UNO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1219),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(j1,UNO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1223),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
-  if(trp_fprint(_glb[12],trp_queue_get(j3),trp_const(1220),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_queue_get(j3),trp_const(1224),NULL))goto l0;
   if(trp_for_next(&t0))goto l44;
 l45:
-  if(trp_fprint(_glb[12],trp_char(10),trp_const(1213),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_char(10),trp_const(1217),trp_char(10),trp_char(10),NULL))goto l0;
 l37:
   if(trp_greater(trp_length(_glb[25]),ZERO)==TRP_FALSE)goto l46;
-  if(trp_fprint(_glb[12],trp_const(1221),trp_length(_glb[25]),trp_const(1222),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1225),trp_length(_glb[25]),trp_const(1226),trp_char(10),trp_char(10),NULL))goto l0;
 l46:
   if(trp_greater(trp_length(_glb[28]),ZERO)==TRP_FALSE)goto l47;
-  if(trp_fprint(_glb[12],trp_const(1223),trp_length(_glb[28]),trp_const(1222),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1227),trp_length(_glb[28]),trp_const(1226),trp_char(10),trp_char(10),NULL))goto l0;
 l47:
   if(trp_greater(trp_length(_glb[29]),ZERO)==TRP_FALSE)goto l48;
-  if(trp_fprint(_glb[12],trp_const(1224),trp_length(_glb[29]),trp_const(1222),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1228),trp_length(_glb[29]),trp_const(1226),trp_char(10),trp_char(10),NULL))goto l0;
 l48:
   if(trp_for_init(&t0,&(j1),_glb[30],NULL,UNO,0))goto l50;
 l49:
-  if(trp_fprint(_glb[12],trp_const(1147),trp_nth(ZERO,trp_cdr(j1)),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1151),trp_nth(ZERO,trp_cdr(j1)),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),trp_nth(UNO,trp_cdr(j1)),NULL,UNO,0))goto l52;
 l51:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1148),(trp_cord_lmatch_func(0,j2,trp_const(186),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1152),(trp_cord_lmatch_func(0,j2,trp_const(186),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),NULL))goto l0;
   if(trp_for_next(&t1))goto l51;
 l52:
   if(trp_fprint(_glb[12],trp_const(912),trp_char(10),NULL))goto l0;
@@ -15067,35 +15287,35 @@ l52:
 l50:
   if(trp_for_init(&t0,&(j1),_glb[31],NULL,UNO,0))goto l54;
 l53:
-  if(trp_fprint(_glb[12],trp_const(1161),trp_car(trp_cdr(j1)),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1165),trp_car(trp_cdr(j1)),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),trp_cdr(trp_cdr(j1)),NULL,UNO,0))goto l56;
 l55:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1148),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1152),NULL))goto l0;
   if(trp_for_next(&t1))goto l55;
 l56:
   if(trp_fprint(_glb[12],trp_const(912),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l53;
 l54:
-  if(trp_fprint(_glb[12],trp_char(10),trp_const(1225),trp_char(10),trp_const(1226),trp_char(10),(fun_18()==TRP_TRUE)?(trp_const(1227)):(EMPTYCORD),(fun_19()==TRP_TRUE)?(trp_const(1228)):(EMPTYCORD),trp_const(1229),trp_char(10),(fun_31()==TRP_TRUE)?(trp_const(1230)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1231)):(EMPTYCORD),(fun_20()==TRP_TRUE)?(trp_const(1232)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1233)):(EMPTYCORD),(fun_23()==TRP_TRUE)?(trp_const(1234)):(EMPTYCORD),(fun_24()==TRP_TRUE)?(trp_const(1235)):(EMPTYCORD),(fun_25()==TRP_TRUE)?(trp_const(1236)):(EMPTYCORD),(fun_26()==TRP_TRUE)?(trp_const(1237)):(EMPTYCORD),(fun_21()==TRP_TRUE)?(trp_const(1238)):(EMPTYCORD),(fun_22()==TRP_TRUE)?(trp_const(1239)):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_const(1240)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1241)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1242)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1243)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_const(1244)):(EMPTYCORD),(fun_37()==TRP_TRUE)?(trp_const(1245)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1246)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_const(1247)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_const(1248)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_const(1249)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1250)):(EMPTYCORD),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_char(10),trp_const(1229),trp_char(10),trp_const(1230),trp_char(10),(fun_25()==TRP_TRUE)?(trp_const(1231)):(EMPTYCORD),(fun_26()==TRP_TRUE)?(trp_const(1232)):(EMPTYCORD),trp_const(1233),trp_char(10),(fun_38()==TRP_TRUE)?(trp_const(1234)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_const(1235)):(EMPTYCORD),(fun_27()==TRP_TRUE)?(trp_const(1236)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_const(1237)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1238)):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1239)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1240)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1241)):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_const(1242)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1243)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1244)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_const(1245)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_const(1246)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1247)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1248)):(EMPTYCORD),(fun_44()==TRP_TRUE)?(trp_const(1249)):(EMPTYCORD),(fun_45()==TRP_TRUE)?(trp_const(1250)):(EMPTYCORD),(fun_46()==TRP_TRUE)?(trp_const(1251)):(EMPTYCORD),(fun_47()==TRP_TRUE)?(trp_const(1252)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_const(1253)):(EMPTYCORD),(fun_49()==TRP_TRUE)?(trp_const(1254)):(EMPTYCORD),NULL))goto l0;
   if(trp_greater(trp_length(_glb[21]),ZERO)==TRP_FALSE)goto l57;
-  if(trp_fprint(_glb[12],trp_const(1251),trp_length(_glb[21]),trp_const(1252),j0,trp_const(912),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1255),trp_length(_glb[21]),trp_const(1256),j0,trp_const(912),trp_char(10),NULL))goto l0;
 l57:
   if(trp_greater(trp_length(_glb[25]),ZERO)==TRP_FALSE)goto l58;
-  if(trp_fprint(_glb[12],trp_const(1253),trp_length(_glb[25]),trp_const(1254),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1257),trp_length(_glb[25]),trp_const(1258),trp_char(10),NULL))goto l0;
 l58:
   if(trp_for_init(&t0,&(j1),_glb[28],NULL,UNO,0))goto l60;
 l59:
   j2=trp_nth(trp_car(j1),_glb[30]);
   if(trp_equal(j2,UNDEF)==TRP_FALSE)goto l61;
-  if(net_133(trp_cat(trp_car(j1),trp_const(953),NULL)))goto l0;
+  if(net_138(trp_cat(trp_car(j1),trp_const(953),NULL)))goto l0;
 l61:
   if(trp_in_test(trp_car(j1),_glb[21],NULL,&(j4),NULL))goto l0;
   j3=trp_nth(UNO,j2);
-  if(trp_fprint(_glb[12],trp_const(1255),trp_cdr(j1),trp_const(1256),trp_nth(ZERO,j2),trp_char(44),trp_length(j3),trp_const(713),j4,trp_const(1257),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1259),trp_cdr(j1),trp_const(1260),trp_nth(ZERO,j2),trp_char(44),trp_length(j3),trp_const(713),j4,trp_const(1261),trp_char(10),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),j3,NULL,UNO,0))goto l63;
 l62:
   if(trp_cord_lmatch_func(0,j2,trp_const(186),NULL)==TRP_FALSE)goto l64;
-  if(net_133(trp_cat(trp_car(j1),trp_const(1258),NULL)))goto l0;
+  if(net_138(trp_cat(trp_car(j1),trp_const(1262),NULL)))goto l0;
 l64:
   if(trp_for_next(&t1))goto l62;
 l63:
@@ -15105,35 +15325,35 @@ l60:
 l65:
   j2=trp_nth(trp_car(j1),_glb[31]);
   if(trp_equal(j2,UNDEF)==TRP_FALSE)goto l67;
-  if(net_133(trp_cat(trp_car(j1),trp_const(670),NULL)))goto l0;
+  if(net_138(trp_cat(trp_car(j1),trp_const(670),NULL)))goto l0;
 l67:
   if(trp_in_test(trp_car(j1),_glb[21],NULL,&(j4),NULL))goto l0;
-  if(trp_fprint(_glb[12],trp_const(1259),trp_cdr(j1),trp_const(1260),trp_car(j2),trp_char(44),trp_length(trp_cdr(j2)),trp_const(713),j4,trp_const(1257),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1263),trp_cdr(j1),trp_const(1264),trp_car(j2),trp_char(44),trp_length(trp_cdr(j2)),trp_const(713),j4,trp_const(1261),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l65;
 l66:
   j1=trp_nth(_glb[34],_glb[30]);
-  if(trp_fprint(_glb[12],trp_const(1261),trp_nth(ZERO,j1),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1265),trp_nth(ZERO,j1),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),trp_nth(UNO,j1),NULL,UNO,0))goto l69;
 l68:
   if(trp_cord_lmatch_func(0,j1,trp_const(186),NULL)==TRP_FALSE)goto l70;
-  if(net_133(trp_const(1262)))goto l0;
+  if(net_138(trp_const(1266)))goto l0;
 l70:
   if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t0),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(196),NULL))goto l0;
   if(trp_for_next(&t0))goto l68;
 l69:
-  if(trp_fprint(_glb[12],trp_const(912),trp_char(10),trp_const(1263),trp_char(10),trp_const(1157),trp_char(10),trp_const(1212),trp_char(10),trp_char(10),trp_const(1264),trp_char(10),trp_const(1226),trp_char(10),(fun_19()==TRP_TRUE)?(trp_const(1265)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1266)):(EMPTYCORD),(fun_22()==TRP_TRUE)?(trp_const(1267)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1268)):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1269)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1270)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_const(1271)):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_const(1272)):(EMPTYCORD),(fun_20()==TRP_TRUE)?(trp_const(1273)):(EMPTYCORD),trp_const(1212),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(912),trp_char(10),trp_const(1267),trp_char(10),trp_const(1161),trp_char(10),trp_const(1216),trp_char(10),trp_char(10),trp_const(1268),trp_char(10),trp_const(1230),trp_char(10),(fun_26()==TRP_TRUE)?(trp_const(1269)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1270)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1271)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_const(1272)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1273)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_const(1274)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_const(1275)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1276)):(EMPTYCORD),(fun_27()==TRP_TRUE)?(trp_const(1277)):(EMPTYCORD),trp_const(1216),trp_char(10),trp_char(10),NULL))goto l0;
   if(trp_greater(trp_length(_glb[22]),ZERO)==TRP_FALSE)goto l71;
-  if(trp_fprint(_glb[12],trp_const(1274),trp_char(10),trp_const(1226),trp_char(10),trp_const(1275),trp_char(10),trp_const(1276),trp_math_minus(_glb[23],UNO,NULL),trp_const(1277),trp_char(10),trp_const(1278),trp_char(10),trp_const(1157),trp_char(10),trp_const(1212),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1278),trp_char(10),trp_const(1230),trp_char(10),trp_const(1279),trp_char(10),trp_const(1280),trp_math_minus(_glb[23],UNO,NULL),trp_const(1281),trp_char(10),trp_const(1282),trp_char(10),trp_const(1161),trp_char(10),trp_const(1216),trp_char(10),trp_char(10),NULL))goto l0;
 l71:
   return 0;
 l0:
   return 1;
 }
 
-static uns8b net_167(trp_obj_t *i0)
+static uns8b net_173(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
-  if(trp_cord_search_test(0,trp_const(1279),i0,&(j0),NULL))goto l0;
+  if(trp_cord_search_test(0,trp_const(1283),i0,&(j0),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_sub(trp_cat(j0,trp_const(59),NULL),TRP_MAXINT,i0),trp_char(10),NULL))goto l0;
   return 0;
 l0:

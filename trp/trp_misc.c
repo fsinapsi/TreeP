@@ -402,6 +402,8 @@ uns8b trp_remove( trp_obj_t *path )
     if ( wp == NULL )
         return 1;
     res = _wremove( wp ) ? 1 : 0;
+    if ( res )
+        res = _wrmdir( wp ) ? 1 : 0;
     trp_gc_free( wp );
     return res;
 }

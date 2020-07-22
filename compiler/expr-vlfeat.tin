@@ -20,6 +20,11 @@
 
 (defun expr-vlfeat-table ()
         [ [ "version"                   0 0 ]
+          [ "configuration"             0 0 ]
+          [ "get-simd-enabled"          0 0 ]
+          [ "cpu-has-sse2"              0 0 ]
+          [ "cpu-has-sse3"              0 0 ]
+          [ "cpu-has-avx"               0 0 ]
           [ "sift-new"                  5 5 ]
           [ "sift-get-octave-index"     1 1 ]
           [ "sift-get-noctaves"         1 1 ]

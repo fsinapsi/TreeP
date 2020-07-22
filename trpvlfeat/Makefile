@@ -2,8 +2,17 @@
 myname=	vlfeat
 mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o vl/sift.o vl/kdtree.o vl/generic.o vl/random.o vl/host.o vl/imopv.o vl/mathop.o
+ifneq ($(TARGET), i686-w64-mingw32)
+myobjs+= vl/imopv_sse2.o vl/mathop_sse2.o
+endif
 
-CFLAGS= `cat ../.cflags` -DVL_DISABLE_SSE2 -DVL_DISABLE_AVX -DVL_DISABLE_THREADS -DVL_DISABLE_OPENMP
+CFLAGS= `cat ../.cflags` -DVL_DISABLE_AVX -DVL_DISABLE_THREADS -DVL_DISABLE_OPENMP
+ifeq ($(TARGET), i686-w64-mingw32)
+CFLAGS += -DVL_DISABLE_SSE2
+endif
+ifeq ($(TARGET), x86_64-w64-mingw32)
+CFLAGS += -D__LP64
+endif
 LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)

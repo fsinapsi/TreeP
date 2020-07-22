@@ -21,6 +21,11 @@
 
 uns8b trp_vl_init();
 trp_obj_t *trp_vl_version();
+trp_obj_t *trp_vl_configuration();
+trp_obj_t *trp_vl_get_simd_enabled();
+trp_obj_t *trp_vl_cpu_has_sse2();
+trp_obj_t *trp_vl_cpu_has_sse3();
+trp_obj_t *trp_vl_cpu_has_avx();
 trp_obj_t *trp_vl_sift_new( trp_obj_t *w, trp_obj_t *h, trp_obj_t *octaves, trp_obj_t *levels, trp_obj_t *o_min );
 uns8b trp_vl_sift_set_peak_thresh( trp_obj_t *f, trp_obj_t *val );
 uns8b trp_vl_sift_set_edge_thresh( trp_obj_t *f, trp_obj_t *val );

@@ -166,6 +166,39 @@ trp_obj_t *trp_vl_version()
     return trp_cord( VL_VERSION_STRING );
 }
 
+trp_obj_t *trp_vl_configuration()
+{
+    trp_obj_t *res;
+    uns8b *p = vl_configuration_to_string_copy();
+
+    if ( p ) {
+        res = trp_cord( p );
+        vl_free( p );
+    } else
+        res = UNDEF;
+    return res;
+}
+
+trp_obj_t *trp_vl_get_simd_enabled()
+{
+    return ( vl_get_simd_enabled() ) ? TRP_TRUE : TRP_FALSE;
+}
+
+trp_obj_t *trp_vl_cpu_has_sse2()
+{
+    return ( vl_cpu_has_sse2() ) ? TRP_TRUE : TRP_FALSE;
+}
+
+trp_obj_t *trp_vl_cpu_has_sse3()
+{
+    return ( vl_cpu_has_sse3() ) ? TRP_TRUE : TRP_FALSE;
+}
+
+trp_obj_t *trp_vl_cpu_has_avx()
+{
+    return ( vl_cpu_has_avx() ) ? TRP_TRUE : TRP_FALSE;
+}
+
 trp_obj_t *trp_vl_sift_new( trp_obj_t *w, trp_obj_t *h, trp_obj_t *octaves, trp_obj_t *levels, trp_obj_t *o_min )
 {
     trp_vlfeat_t *obj;

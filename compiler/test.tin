@@ -233,7 +233,7 @@
                                                 (not (stringp _expr_const_val)) )
                                         then    (error "`set-icon' requires a constant") )
                                         (if (= _icon undef)
-                                        then    (set _icon _expr_const_val)
+                                        then    (set _icon (search-path-default _expr_const_val))
                                                 (if (not (pathexists _icon))
                                                 then    (error "`set-icon': file not found") ))
                                         (chiusa) )

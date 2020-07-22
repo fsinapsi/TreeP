@@ -31,7 +31,7 @@
         (expr-basic)
         (if (not _expr_const)
         then    (error "`pix-load-static' requires a path") )
-        (set i (pix-load (search-default-path _expr_const_val)))
+        (set i (pix-load (search-path-default _expr_const_val)))
         (if (= i undef)
         then    (error (+ "`pix-load-static': cant't load a static image from " _expr_const_val)) )
         (chiusa)
