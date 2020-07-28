@@ -174,15 +174,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet iup-edit-string (parent title label @s)
-        (iup-edit-string-low parent title label false undef @s) )
+        (iup-edit-string-low parent title label false undef undef @s) )
+
+(defnet iup-edit-string-with-mask (parent title label mask @s)
+        (iup-edit-string-low parent title label false undef mask @s) )
 
 (defnet iup-edit-password (parent title label @s)
-        (iup-edit-string-low parent title label true undef @s) )
+        (iup-edit-string-low parent title label true undef undef @s) )
 
 (defnet iup-edit-string-hints (parent title label hints @s)
-        (iup-edit-string-low parent title label false hints @s) )
+        (iup-edit-string-low parent title label false hints undef @s) )
 
-(defnet iup-edit-string-low (parent title label password hints @s)
+(defnet iup-edit-string-low (parent title label password hints mask @s)
         (deflocal text hbox bt-ok bt-ok-img bt-cancel bt-cancel-img dlg i)
 
         (set i (length hints))
@@ -194,12 +197,21 @@
                         (iup-set-str-attribute text (+ (for-pos) 1) (utf8-validate0 i)) )
         else    (set text (iup-text))
                 (iup-set-str-attribute text "PASSWORD" (if password "YES" "NO")) )
-        (iup-set-int text "VISIBLECOLUMNS" 40)
+        (if (stringp mask)
+        then    (iup-set-str-attribute text "MASK" mask)
+                (iup-set-int text "VISIBLECOLUMNS" 6)
+        else    (iup-set-int text "VISIBLECOLUMNS" 40) )
         (iup-set-str-attribute text "VALUE" (if (stringp @s) (utf8-validate0 @s) ""))
 
-        (set hbox (iup-hbox (iup-label (+ label ":")) text))
+        (if (not (stringp label))
+        then    (set label (sprint label)) )
+        (set label (utf8-validate0 label))
+        (inc label ":")
+        (if (search "\n" label)
+        then    (inc label "\n") )
+        (set hbox (iup-hbox (iup-label label) text))
         (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
-        (iup-set-int hbox "GAP" 6)
+        (iup-set-int hbox "GAP" 4)
 
         (set bt-ok (iup-button "Conferma"))
         (iup-set-callback bt-ok "ACTION" (netptr iup-ok-cb))
@@ -221,7 +233,7 @@
                         hbox
                         i ))
         (iup-set-str-attribute i "MARGIN" "4x4")
-        (iup-set-int i "GAP" 0)
+        (iup-set-int i "GAP" 4)
 
         (set dlg (iup-dialog i))
         (if (<> parent undef)

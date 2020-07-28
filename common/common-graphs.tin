@@ -565,7 +565,7 @@
 ;;;
 
 (defun dgraph->pix (g)
-        (ag-dot2pix (dgraph->dot g)) )
+        (ag-dot2pix-transparent (dgraph->dot g)) )
 
 ;;;
 ;;; salva su path un`immagine del grafo g
