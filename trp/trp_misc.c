@@ -370,7 +370,7 @@ uns8b trp_mkfifo( trp_obj_t *path )
 #else
     uns8b *cpath = trp_csprint( path ), res;
 
-    res = mkfifo( cpath ,
+    res = mkfifo( cpath,
                   S_IRUSR | S_IWUSR | S_IXUSR |
                   S_IRGRP |           S_IXGRP |
                   S_IROTH |           S_IXOTH ) ? 1 : 0;

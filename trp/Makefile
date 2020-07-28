@@ -1,7 +1,7 @@
 
 mylibs=	../libs/libtrp.a ../libs/libtrp.so
 myobjs=	trp.o \
-	aks.o cordbscs.o cordxtra.o \
+	aks.o gc/cordbscs.o gc/cordxtra.o \
 	trp_arg.o trp_cast.o trp_functions.o trp_print.o trp_relations.o \
 	trp_support.o trp_misc.o trp_t_special.o trp_t_raw.o trp_t_char.o \
 	trp_t_date.o trp_t_file.o trp_t_math.o trp_t_list.o trp_t_array.o \
@@ -9,12 +9,21 @@ myobjs=	trp.o \
 	trp_t_funptr.o trp_t_netptr.o trp_t_regex.o trp_t_fibo.o
 
 CFLAGS= `cat ../.cflags`
+ifeq ($(TARGET), Linux)
+CFLAGS+= `pkg-config --cflags bdw-gc` -I/usr/include/gc
+endif
+ifeq ($(TARGET), i686-w64-mingw32)
+CFLAGS+= `i686-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/32/lib/pkgconfig/bdw-gc.pc`
+endif
+ifeq ($(TARGET), x86_64-w64-mingw32)
+CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/64/lib/pkgconfig/bdw-gc.pc`
+endif
 LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)
 
 clean:
-	rm -f *~ private/*~ $(mylibs) $(myobjs)
+	rm -f *~ gc/*~ $(mylibs) $(myobjs)
 
 $(mylibs):		$(myobjs)
 	rm -f $(mylibs)
