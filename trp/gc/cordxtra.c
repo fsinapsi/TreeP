@@ -1,4 +1,4 @@
-#include <gc/gc.h>
+#include "../trp.h"
 #if GC_VERSION_MAJOR == 7
 #include "gc7/cordxtra.c"
 #elif GC_VERSION_MAJOR == 8

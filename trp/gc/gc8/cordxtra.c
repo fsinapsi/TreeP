@@ -29,14 +29,14 @@
 # include <stdlib.h>
 # include <stdarg.h>
 
-# include "cord.h"
-# include "ec.h"
+// # include "cord.h"
+// # include "ec.h"
 
 # define I_HIDE_POINTERS    /* So we get access to allocation lock. */
                 /* We use this for lazy file reading,   */
                 /* so that we remain independent        */
                 /* of the threads primitives.           */
-# include "gc.h"
+// # include "gc.h"
 
 /* For now we assume that pointer reads and writes are atomic,  */
 /* i.e. another thread always sees the state before or after    */

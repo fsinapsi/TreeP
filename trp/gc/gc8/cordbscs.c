@@ -18,8 +18,8 @@
 # define CORD_BUILD
 #endif
 
-# include "gc.h"
-# include "cord.h"
+// # include "gc.h"
+// # include "cord.h"
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>

@@ -23,7 +23,7 @@ LDFLAGS= `cat ../.ldflags`
 all:			$(mylibs)
 
 clean:
-	rm -f *~ gc/*~ $(mylibs) $(myobjs)
+	rm -f *~ gc/*~ gc/gc7/*~ gc/gc8/*~ $(mylibs) $(myobjs)
 
 $(mylibs):		$(myobjs)
 	rm -f $(mylibs)

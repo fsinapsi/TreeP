@@ -91,92 +91,9 @@
 #define GC_THREADS
 #endif
 #include <gc/gc.h>
-
-/*
- definizioni inerenti le corde -- inizio
- */
-
-# define CORD_BUFSZ 128
-# define MAX_DEPTH 48
-# define CORD_EMPTY 0
-
-typedef const char * CORD;
-
-struct CORD_pe {
-    CORD pe_cord;
-    size_t pe_start_pos;
-};
-
-typedef struct CORD_ec_struct {
-    CORD ec_cord;
-    char * ec_bufptr;
-    char ec_buf[CORD_BUFSZ+1];
-} CORD_ec[1];
-
-typedef struct CORD_Pos {
-    size_t cur_pos;
-    int path_len;
-#	define CORD_POS_INVALID (0x55555555)
-		/* path_len == INVALID <==> position invalid */
-    const char *cur_leaf;	/* Current leaf, if it is a string.	*/
-    				/* If the current leaf is a function,	*/
-    				/* then this may point to function_buf	*/
-    				/* containing the next few characters.	*/
-    				/* Always points to a valid string	*/
-    				/* containing the current character 	*/
-    				/* unless cur_end is 0.			*/
-    size_t cur_start;	/* Start position of cur_leaf	*/
-    size_t cur_end;	/* Ending position of cur_leaf	*/
-    			/* 0 if cur_leaf is invalid.	*/
-    struct CORD_pe path[MAX_DEPTH + 1];
-    	/* path[path_len] is the leaf corresponding to cur_pos	*/
-    	/* path[0].pe_cord is the cord we point to.		*/
-#   define FUNCTION_BUF_SZ 8
-    char function_buf[FUNCTION_BUF_SZ];	/* Space for next few chars	*/
-    					/* from function node.		*/
-} CORD_pos[1];
-
-CORD CORD_cat(CORD x, CORD y);
-size_t CORD_len(CORD x);
-char * CORD_to_char_star(CORD x);
-CORD CORD_from_char_star(const char *s);
-const char * CORD_to_const_char_star(CORD x);
-char CORD_pos_fetch(CORD_pos p);
-void CORD_set_pos(CORD_pos p, CORD x, size_t i);
-void CORD_next(CORD_pos p);
-void CORD_prev(CORD_pos p);
-int CORD_pos_valid(CORD_pos p);
-char CORD_fetch(CORD x, size_t i);
-int CORD_cmp(CORD x, CORD y);
-CORD CORD_substr(CORD x, size_t i, size_t n);
-CORD CORD_chars(char c, size_t i);
-# define CORD_nul(i) CORD_chars('\0', (i))
-CORD CORD_balance(CORD x);
-typedef int (* CORD_iter_fn)(char c, void * client_data);
-typedef int (* CORD_batched_iter_fn)(const char * s, void * client_data);
-# define CORD_NO_FN ((CORD_batched_iter_fn)0)
-int CORD_iter5(CORD x, size_t i, CORD_iter_fn f1,
-	       CORD_batched_iter_fn f2, void * client_data);
-int CORD_iter(CORD x, CORD_iter_fn f1, void * client_data);
-# define CORD_iter(x, f1, cd) CORD_iter5(x, 0, f1, CORD_NO_FN, cd)
-int CORD_riter4(CORD x, size_t i, CORD_iter_fn f1, void * client_data);
-int CORD_riter(CORD x, CORD_iter_fn f1, void * client_data);
-# define CORD_FOR(pos, cord) \
-    for (CORD_set_pos(pos, cord, 0); CORD_pos_valid(pos); CORD_next(pos))
-# define CORD_ec_init(x) ((x)[0].ec_cord = 0, (x)[0].ec_bufptr = (x)[0].ec_buf)
-# define CORD_ec_append(x, c) \
-    {  \
-	if ((x)[0].ec_bufptr == (x)[0].ec_buf + CORD_BUFSZ) { \
-	  	CORD_ec_flush_buf(x); \
-	} \
-	*((x)[0].ec_bufptr)++ = (c); \
-    }
-void CORD_ec_flush_buf(CORD_ec x);
-# define CORD_ec_to_cord(x) (CORD_ec_flush_buf(x), (x)[0].ec_cord)
-
-/*
- definizioni inerenti le corde -- fine
- */
+#include <gc/cord.h>
+#include <gc/cord_pos.h>
+#include <gc/ec.h>
 
 /*
  definizioni inerenti gli alberi avl -- inizio

@@ -13,8 +13,8 @@
  * Author: Hans-J. Boehm (boehm@parc.xerox.com)
  */
 /* Boehm, October 3, 1994 5:19 pm PDT */
-# include <gc/gc.h>
-# include "cord.h"
+// # include <gc/gc.h>
+// # include "cord.h"
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
