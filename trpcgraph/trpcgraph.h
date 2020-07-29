@@ -21,5 +21,6 @@
 
 uns8b trp_ag_init();
 trp_obj_t *trp_ag_dot2pix( trp_obj_t *s );
+trp_obj_t *trp_ag_dot2pix_transparent( trp_obj_t *s );
 
 #endif /* !__trpcgraph__h */

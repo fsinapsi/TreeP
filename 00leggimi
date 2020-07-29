@@ -4,7 +4,7 @@ Installazione veloce
 
 Per chi ha fretta e non ha tempo di leggere tutto questo file,
 queste sono le istruzioni per compilare e installare il linguaggio
-sul proprio sistema (chi usa Ubuntu veda la prossima sezione):
+sul proprio sistema:
 
 1) impartire da questa directory il comando "make"
    (se tutto va bene, nella directory "libs" verranno creati dei
@@ -21,32 +21,6 @@ sul proprio sistema (chi usa Ubuntu veda la prossima sezione):
 Se il punto 1) fallisce, molto probabilmente occorre installare
 qualche pacchetto mancante (vedi piu' avanti, nella sezione
 "Pacchetti e librerie necessarie").
-
-
-
-Installazione veloce su Ubuntu 10.04 (e forse altre versioni)
--------------------------------------------------------------
-
-Impartire il seguente comando (tutto su una unica riga):
-
-sudo apt-get install libgc-dev libgmp3-dev libmysqlclient-dev
-  libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
-  libcv-dev libcvaux-dev libhighgui-dev libleptonica-dev
-  libgcrypt11-dev libgpg-error-dev libgpgme11-dev
-  libcurl4-openssl-dev libid3tag0-dev libsqlite3-dev
-  libexif-dev libmgl-dev libmagic-dev libgtk2.0-dev
-  zlib1g-dev libjpeg62-dev libpng12-dev build-essential
-
-Per quanto riguarda VLFeat, seguire le istruzioni nella sezione
-"Installazione di VLFeat".
-
-Se non vengono riportati errori, impartire il comando:
-
-make bootstrap
-
-Se non vengono riportati errori, il linguaggio dovrebbe essere stato
-installato correttamente.
-Altrimenti, si provi a leggere il resto di questo file.
 
 
 
@@ -176,8 +150,6 @@ seguenti librerie (e relativi pacchetti di sviluppo):
 - libexif
 - libmysqlclient
 - libavcodec
-- libmgl (pacchetto MathGL)
-- VLFeat
 
 Il pacchetto zlib e' molto diffuso, e comunque, se dovesse mancare,
 puo' essere scaricato da questa pagina:
@@ -208,23 +180,6 @@ make
 make install
 
 (l'ultimo comando va impartito da root)
-
-
-
-Installazione di VLFeat
------------------------
-
-Se per la propria distribuzione non esiste il pacchetto di VLFeat,
-lo si puo' installare scaricando il "binary package" dalla pagina
-http://www.vlfeat.org/download.html
-Bastera' copiare nella directory /usr/local/lib il file libvl.so
-appropriato per il proprio sistema (si veda la directory "bin" del
-"binary package") e creare la directory /usr/local/include/vl in
-cui vanno copiati tutti i file con estensione ".h" e ".th" che si
-trovano nella directory "vl" del "binary package".
-Infine dare il comando "sudo ldconfig".
-Se non si vuole il supporto a VLFeat, basta togliere le relative
-righe dal makefile principale.
 
 
 

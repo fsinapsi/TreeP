@@ -23,6 +23,7 @@
 #include <cgraph.h>
 
 // static uns8b trp_vl_print( trp_print_t *p, trp_vlfeat_t *obj );
+static trp_obj_t *trp_ag_dot2pix_low( uns8b flags, trp_obj_t *s );
 
 uns8b trp_ag_init()
 {
@@ -36,15 +37,14 @@ uns8b trp_ag_init()
     return 0;
 }
 
-trp_obj_t *trp_ag_dot2pix( trp_obj_t *s )
+static trp_obj_t *trp_ag_dot2pix_low( uns8b flags, trp_obj_t *s )
 {
     Agraph_t *g;
     GVC_t *gvc;
     trp_raw_t *raw;
     uns8b *res, *data;
-    trp_pix_color_t *c;
     unsigned len;
-    uns32b w, h, j;
+    uns32b w, h;
     uns8b i;
 
     res = trp_csprint( s );
@@ -75,9 +75,24 @@ trp_obj_t *trp_ag_dot2pix( trp_obj_t *s )
     gvFreeRenderData( (char *)res );
     if ( i )
         return UNDEF;
-    for ( j = w * h, c = (trp_pix_color_t *)data ; j ; j--, c++ )
-        c->alpha = ( ( c->red & c->green & c->blue ) == 0xff ) ? 0 : 0xff;
+    if ( flags & 1 ) {
+        trp_pix_color_t *c;
+        uns32b j;
+
+        for ( j = w * h, c = (trp_pix_color_t *)data ; j ; j--, c++ )
+            c->alpha = ( ( c->red & c->green & c->blue ) == 0xff ) ? 0 : 0xff;
+    }
     return trp_pix_create_image_from_data( 0, w, h, data );
+}
+
+trp_obj_t *trp_ag_dot2pix( trp_obj_t *s )
+{
+    return trp_ag_dot2pix_low( 0, s );
+}
+
+trp_obj_t *trp_ag_dot2pix_transparent( trp_obj_t *s )
+{
+    return trp_ag_dot2pix_low( 1, s );
 }
 
 

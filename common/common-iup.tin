@@ -211,7 +211,7 @@
         then    (inc label "\n") )
         (set hbox (iup-hbox (iup-label label) text))
         (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
-        (iup-set-int hbox "GAP" 4)
+        (iup-set-int hbox "GAP" 10)
 
         (set bt-ok (iup-button "Conferma"))
         (iup-set-callback bt-ok "ACTION" (netptr iup-ok-cb))

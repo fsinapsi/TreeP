@@ -78,18 +78,17 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <regex.h>
+#include <gmp.h>
 #ifndef MINGW
 #include <sys/socket.h>
 #include <poll.h>
-#endif
-#include <regex.h>
-#include <gmp.h>
-#ifdef MINGW
-#define GC_WIN32_PTHREADS
-#define GC_THREADS
 #else
-#define GC_THREADS
+#define GC_WIN32_PTHREADS
 #endif
+#define GC_THREADS
+#define CORD_BUILD
+#define I_HIDE_POINTERS
 #include <gc/gc.h>
 #include <gc/cord.h>
 #include <gc/cord_pos.h>

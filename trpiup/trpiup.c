@@ -1207,5 +1207,27 @@ trp_obj_t *trp_iup_convert_xy_to_pos( trp_obj_t *ih, trp_obj_t *x, trp_obj_t *y 
     return trp_sig64( IupConvertXYToPos( h, xx, yy ) );
 }
 
+static uns8bfun_t _trp_iup_post_call = NULL;
+
+static int trp_iup_post_call_cback()
+{
+    if ( _trp_iup_post_call ) {
+        (void)_trp_iup_post_call();
+        _trp_iup_post_call = NULL;
+    }
+    return IUP_IGNORE;
+}
+
+uns8b trp_iup_post_call( trp_obj_t *cback )
+{
+    if ( ( _trp_iup_post_call ) || ( cback->tipo != TRP_NETPTR ) )
+        return 1;
+    if ( ((trp_netptr_t *)cback)->nargs )
+        return 1;
+    _trp_iup_post_call = ((trp_netptr_t *)cback)->f;
+    (void)IupSetFunction( "IDLE_ACTION", trp_iup_post_call_cback );
+    return 0;
+}
+
 
 

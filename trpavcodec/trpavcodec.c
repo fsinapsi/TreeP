@@ -369,7 +369,7 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix )
     struct SwsContext *sws_ctx;
     uns8b *mapo[ 4 ];
     uns32b vstream;
-    int res, finished, strideo[ 4 ];
+    int res, strideo[ 4 ];
 
     if ( ( fmt_ctx == NULL ) || ( pix->tipo != TRP_PIX ) )
         return 1;
@@ -379,7 +379,7 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix )
     avctx = ((trp_avcodec_t *)fmtctx)->fmt.avctx;
     frame = ((trp_avcodec_t *)fmtctx)->fmt.frame;
     packet = ((trp_avcodec_t *)fmtctx)->fmt.packet;
-    for ( finished = 0 ; ; ) {
+    for ( ; ; ) {
         if ( av_read_frame( fmt_ctx, packet ) < 0 )
             return 1;
         if ( packet->stream_index == vstream ) {
@@ -393,15 +393,14 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix )
                     av_packet_unref( packet );
                     return 1;
                 }
-                finished = 1;
                 ((trp_avcodec_t *)fmtctx)->fmt.pts = packet->dts;
                 if ( packet->dts == 0 )
                     ((trp_avcodec_t *)fmtctx)->fmt.pts_shift = 0;
+                av_packet_unref( packet );
+                break;
             }
         }
         av_packet_unref( packet );
-        if ( finished )
-            break;
     }
     sws_ctx = ((trp_avcodec_t *)fmtctx)->fmt.sws_ctx =
         sws_getCachedContext( ((trp_avcodec_t *)fmtctx)->fmt.sws_ctx,
@@ -423,7 +422,7 @@ uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n )
     AVFrame *frame;
     AVPacket *packet;
     uns32b nn, vstream;
-    int res, finished;
+    int res;
 
     if ( fmt_ctx == NULL )
         return 1;
@@ -450,10 +449,10 @@ uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n )
                     av_packet_unref( packet );
                     return 1;
                 }
-                nn--;
                 ((trp_avcodec_t *)fmtctx)->fmt.pts = packet->dts;
                 if ( packet->dts == 0 )
                     ((trp_avcodec_t *)fmtctx)->fmt.pts_shift = 0;
+                nn--;
             }
         }
         av_packet_unref( packet );
