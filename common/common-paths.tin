@@ -245,7 +245,9 @@
         (for path in (list (cwd)
                            (datapath)
                            (homepathp "wd/programming/treep/trp")
-                           (callpath) ) do
+                           (callpath)
+                           (+ (cwd) "/TreeP")
+                           (callpathp "TreeP") ) do
                 (repeat (alt    (seq    (rtrim path '/')
                                         (search "/" path i (maxint)) )
                                 (clr i) )

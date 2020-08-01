@@ -97,28 +97,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun hexdigit (n) (if (= n undef) ' ' (hexdigit0 (% n 0x10))))
+(defun hexdigit (n) (if (integerp n) (hexdigit0 (% n 16)) ' '))
 (defun hexdigit0 (n)
-        (if (< n 10) (+ '0' n) (+ 'a' (- n 10))) )
+        (+ (if (< n 10) '0' (+ 'a' -10)) n) )
 
 (defun charhex2int (c)
-        (if (in c '0' .. '9') (- (length c) 48)
-        (if (in c 'A' .. 'F') (- (length c) 55)
-        (if (in c 'a' .. 'f') (- (length c) 87)
+        (if (in c '0' .. '9') (- (length c) (length '0'))
+        (if (in c 'A' .. 'F') (- (length c) (length (+ 'A' -10)))
+        (if (in c 'a' .. 'f') (- (length c) (length (+ 'a' -10)))
         undef ))))
 
-(defun int->hex (n) (sprintl (cons "0x" (int->hex0 n nil))))
-(defun int->hex0 (n l)
-        (if (= n 0) (if (= l nil) [ 0 ] l)
-                (int->hex0 (div n 16) (cons (hexdigit n) l)) ))
+(defun int->hex (n) net int->hex)
+(defnet int->hex (n @s)
+        (if (= n 0)
+        then    (set @s "0")
+        else    (integerp n)
+                (> n 0)
+                (set @s "")
+                (repeat (set @s (+ (sprint (hexdigit0 (% n 16))) @s))
+                        (set n (div n 16))
+                        until (= n 0) ))
+        (set @s (+ "0x" @s)) )
 
 (defun hex->int (s) net hex->int)
 (defnet hex->int (s @n)
+        (deflocal c)
+
+        (stringp s)
         (opt (lmatch remove s "0x"))
         (set @n 0)
-        (repeat until (= s "")
-                (set @n (+ (* @n 16) (charhex2int <s 0>)))
-                (set s (sub 1 (maxint) s)) ))
+        (for c in s do
+                (set @n (+ (* @n 16) (charhex2int c))) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
