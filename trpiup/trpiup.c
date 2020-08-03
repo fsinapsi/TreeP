@@ -27,6 +27,11 @@ typedef struct {
 
 typedef Ihandle * (*ihandle_t)();
 
+typedef struct {
+    trp_obj_t *val;
+    void *next;
+} trp_queue_elem;
+
 static uns8b trp_iup_close( trp_iup_t *obj );
 static trp_obj_t *trp_iup_equal( trp_iup_t *obj1, trp_iup_t *obj2 );
 static trp_obj_t *trp_iup_length( trp_iup_t *obj );
@@ -768,7 +773,7 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
 {
     int n = 0;
     trp_obj_t *l = NIL;
-    Ihandle **h = NULL;
+    Ihandle **h = NULL, *e;
 
     for ( ; child ; child = va_arg( args, trp_obj_t * ) ) {
         if ( ( flags & 1 ) && ( child == UNDEF ) )
@@ -784,11 +789,26 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
                 return UNDEF;
             for ( n = 0 ; n < ((trp_array_t *)child)->len ; n++ ) {
                 l = ((trp_array_t *)child)->data[ n ];
-                if ( trp_iup_check( l ) == NULL ) {
+                if ( ( e = trp_iup_check( l ) ) == NULL ) {
                     free( h );
                     return UNDEF;
                 }
-                h[ n ] = ((trp_iup_t *)l)->h;
+                h[ n ] = e;
+            }
+            h[ n ] = NULL;
+        } else if ( child->tipo == TRP_QUEUE ) {
+            trp_queue_elem *elem;
+
+            trp_gc_free( l );
+            if ( ( h = malloc( ( ((trp_queue_t *)child)->len + 1 ) * sizeof( Ihandle * ) ) ) == NULL )
+                return UNDEF;
+            for ( elem = (trp_queue_elem *)( ((trp_queue_t *)child)->first ), n = 0 ; elem ; elem = (trp_queue_elem *)( elem->next ), n++ ) {
+                l = elem->val;
+                if ( ( e = trp_iup_check( l ) ) == NULL ) {
+                    free( h );
+                    return UNDEF;
+                }
+                h[ n ] = e;
             }
             h[ n ] = NULL;
         } /* else if ... FIXME aggiungere liste o altro  */
@@ -801,12 +821,12 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
         h[ n ] = NULL;
         while ( l != NIL ) {
             child = trp_car( l );
-            if ( trp_iup_check( child ) == NULL ) {
+            if ( ( e = trp_iup_check( child ) ) == NULL ) {
                 free( h );
                 trp_free_list( l );
                 return UNDEF;
             }
-            h[ --n ] = ((trp_iup_t *)child)->h;
+            h[ --n ] = e;
             child = trp_cdr( l );
             trp_gc_free( l );
             l = child;
@@ -1004,6 +1024,32 @@ trp_obj_t *trp_iup_toggle( trp_obj_t *title )
     return title;
 }
 
+trp_obj_t *trp_iup_val()
+{
+    return trp_iup_handle( IupVal( NULL ) );
+}
+
+trp_obj_t *trp_iup_spin()
+{
+    return trp_iup_handle( IupSpin() );
+}
+
+trp_obj_t *trp_iup_spinbox( trp_obj_t *child )
+{
+    Ihandle *cchild;
+
+    if ( child ) {
+        if ( ( cchild = trp_iup_check( child ) ) == NULL )
+            return UNDEF;
+    } else cchild = NULL;
+    return trp_iup_handle( IupSpinbox( cchild ) );
+}
+
+trp_obj_t *trp_iup_color_browser()
+{
+    return trp_iup_handle( IupColorBrowser() );
+}
+
 trp_obj_t *trp_iup_list()
 {
     return trp_iup_handle( IupList( NULL ) );
@@ -1079,11 +1125,6 @@ trp_obj_t *trp_iup_menu( trp_obj_t *child, ... )
 trp_obj_t *trp_iup_date_pick()
 {
     return trp_iup_handle( IupDatePick() );
-}
-
-trp_obj_t *trp_iup_val()
-{
-    return trp_iup_handle( IupVal( NULL ) );
 }
 
 trp_obj_t *trp_iup_calendar()

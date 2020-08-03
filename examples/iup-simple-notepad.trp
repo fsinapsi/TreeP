@@ -210,6 +210,19 @@
         (close fontdlg)
         (iup-set-focus text) )
 
+(defnet item-color-cb (self)
+        (deflocal colordlg)
+
+        (set colordlg (iup-color-dlg))
+        (iup-set-str-attribute colordlg "VALUE" "255 0 0")
+        (iup-set-attribute-handle colordlg "PARENTDIALOG" (iup-get-dialog self))
+        (iup-popup colordlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
+        (if (= (iup-get-int colordlg "STATUS") 1)
+        then    (iup-info (iup-get-dialog self) (iup-get-str-attribute colordlg "VALUE"))
+                ;(iup-set-str-attribute text "FONT" (iup-get-str-attribute fontdlg "VALUE"))
+                )
+        (close colordlg) )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                      ;;;;
@@ -397,7 +410,7 @@
         (deflocal dlg text menu
                   sub-menu-file file-menu item-exit item-open item-saveas btn-open btn-save
                   sub-menu-edit edit-menu item-find item-goto btn-find
-                  sub-menu-format format-menu item-font
+                  sub-menu-format format-menu item-font item-color
                   sub-menu-help help-menu item-about item-date
                   lbl-statusbar toolbar-hb i )
 
@@ -443,6 +456,7 @@
         (set item-goto (iup-item "&Vai a...\tCtrl+G"))
 
         (set item-font (iup-item "&Font..."))
+        (set item-color (iup-item "Color..."))
         (set item-about (iup-item "&Info..."))
         (set item-date (iup-item "Scegli &data..."))
 
@@ -464,7 +478,8 @@
                 item-find
                 item-goto ))
         (set format-menu (iup-menu
-                item-font ))
+                item-font
+                item-color ))
         (set help-menu (iup-menu
                 item-about
                 item-date ))
@@ -533,6 +548,7 @@
         (iup-set-callback btn-find "ACTION" (netptr item-find-cb))
         (iup-set-callback item-goto "ACTION" (netptr item-goto-cb))
         (iup-set-callback item-font "ACTION" (netptr item-font-cb))
+        (iup-set-callback item-color "ACTION" (netptr item-color-cb))
         (iup-set-callback item-about "ACTION" (netptr item-about-cb))
         (iup-set-callback item-date "ACTION" (netptr item-date-cb))
         (iup-set-callback text "CARET_CB" (netptr caret-label-cb))

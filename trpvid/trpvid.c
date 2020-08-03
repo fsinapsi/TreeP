@@ -24,6 +24,7 @@ static void trp_vid_finalize( void *obj, void *data );
 static trp_obj_t *trp_vid_length( trp_vid_t *vid );
 static trp_obj_t *trp_vid_width( trp_vid_t *vid );
 static trp_obj_t *trp_vid_height( trp_vid_t *vid );
+static uns8b trp_vid_store_userdata_is_garbage( uns8b *src, uns32b size );
 static uns8b trp_vid_parse_internal( trp_vid_t *vid, trp_obj_t *size, trp_raw_t *stripped, uns8b matroska );
 
 uns8b _ZZ_SCAN4[] = {
@@ -196,7 +197,7 @@ void trp_vid_store_userdata( trp_vid_t *vid, uns8b *src, uns32b size )
     int e, ver, build;
     char last;
 
-    if ( size == 0 )
+    if ( trp_vid_store_userdata_is_garbage( src, size ) )
         return;
     for ( i = 0 ; i < vid->userdata_cnt ; i++ )
         if ( strncmp( vid->userdata[ i ], src, size ) == 0 )
@@ -218,6 +219,39 @@ void trp_vid_store_userdata( trp_vid_t *vid, uns8b *src, uns32b size )
         vid->divx_version = ver;
         vid->divx_build = build;
     }
+}
+
+static uns8b trp_vid_store_userdata_is_garbage( uns8b *src, uns32b size )
+{
+    uns32b score, i;
+    uns8b c;
+
+    if ( size == 0 )
+        return 1;
+    for ( score = 0, i = 0 ; i < size ; i++ ) {
+        c = src[ i ];
+        if ( ( ( c >= 'A' ) && ( c <= 'Z' ) ) ||
+             ( ( c >= 'a' ) && ( c <= 'z' ) ) ||
+             ( ( c >= '0' ) && ( c <= '9' ) ) ||
+             ( c == ' ' ) ||
+             ( c == ',' ) ||
+             ( c == '.' ) ||
+             ( c == ';' ) ||
+             ( c == ':' ) ||
+             ( c == '?' ) ||
+             ( c == '!' ) ||
+             ( c == '+' ) ||
+             ( c == '-' ) ||
+             ( c == '_' ) ||
+             ( c == '#' ) )
+            score++;
+    }
+    /*
+     se score non supera la metà di size
+     lo consideriamo garbage
+     */
+    score <<= 1;
+    return ( score > size ) ? 0 : 1;
 }
 
 void trp_vid_calculate_max_avg_frame_size( trp_vid_t *vid )
