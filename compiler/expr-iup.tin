@@ -60,6 +60,7 @@
           [ "user"                              0 0 ]
           [ "clipboard"                         0 0 ]
           [ "progress-bar"                      0 0 ]
+          [ "gauge"                             0 0 ]
           [ "item"                              1 1 ]
           [ "submenu"                           1 2 ]
           [ "separator"                         0 0 ]

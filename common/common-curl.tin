@@ -187,12 +187,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet curl-progress (tot act data)
-        (fprint (stderr) (car data) act '/' tot " (" (rint (/ act tot 0.01)) "%) "
+        (fprint (stderr) (car data) (format-num act) '/' (format-num tot) " (" (rint (/ act tot 0.01)) "%) "
                          (bitrate act (- (now) (cdr data))) " kb/s       \r" )
         (fflush (stderr)) )
 
 (defun bitrate (bytes s)
-        (/ (rint (/ bytes s 100)) 10) )
+        (rint (+ (/ bytes s 1000) 0.5)) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

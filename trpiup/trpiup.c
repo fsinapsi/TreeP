@@ -1080,6 +1080,11 @@ trp_obj_t *trp_iup_progress_bar()
     return trp_iup_handle( IupProgressBar() );
 }
 
+trp_obj_t *trp_iup_gauge()
+{
+    return trp_iup_handle( IupGauge() );
+}
+
 trp_obj_t *trp_iup_item( trp_obj_t *title )
 {
     uns8b *ti = trp_csprint( title );

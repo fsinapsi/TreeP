@@ -197,31 +197,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet item-font-cb (self)
-        (deflocal text fontdlg)
+        (deflocal text font)
 
         (set text (iup-get-dialog-child self "MULTITEXT"))
-        (set fontdlg (iup-font-dlg))
-        (iup-set-str-attribute fontdlg "VALUE" (iup-get-str-attribute text "FONT"))
-        (iup-set-attribute-handle fontdlg "PARENTDIALOG" (iup-get-dialog self))
-        (iup-popup fontdlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
-        (if (= (iup-get-int fontdlg "STATUS") 1)
-        then    (iup-info (iup-get-dialog self) (iup-get-str-attribute fontdlg "VALUE"))
-                (iup-set-str-attribute text "FONT" (iup-get-str-attribute fontdlg "VALUE")) )
-        (close fontdlg)
+        (set font (iup-choose-font self (iup-get-str-attribute text "FONT")))
+        (if (stringp font)
+        then    (iup-info self font)
+                (iup-set-str-attribute text "FONT" font) )
         (iup-set-focus text) )
-
-(defnet item-color-cb (self)
-        (deflocal colordlg)
-
-        (set colordlg (iup-color-dlg))
-        (iup-set-str-attribute colordlg "VALUE" "255 0 0")
-        (iup-set-attribute-handle colordlg "PARENTDIALOG" (iup-get-dialog self))
-        (iup-popup colordlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
-        (if (= (iup-get-int colordlg "STATUS") 1)
-        then    (iup-info (iup-get-dialog self) (iup-get-str-attribute colordlg "VALUE"))
-                ;(iup-set-str-attribute text "FONT" (iup-get-str-attribute fontdlg "VALUE"))
-                )
-        (close colordlg) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -368,9 +351,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet item-date-cb (self)
-        (set self (iup-choose-date self undef))
-        (if (datep self)
-        then    (iup-message "Info" "Hai scelto: " self) ))
+        (deflocal date)
+
+        (set date (iup-choose-date self undef))
+        (if (datep date)
+        then    (iup-info self (+ "Hai scelto: " date)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -410,7 +395,7 @@
         (deflocal dlg text menu
                   sub-menu-file file-menu item-exit item-open item-saveas btn-open btn-save
                   sub-menu-edit edit-menu item-find item-goto btn-find
-                  sub-menu-format format-menu item-font item-color
+                  sub-menu-format format-menu item-font
                   sub-menu-help help-menu item-about item-date
                   lbl-statusbar toolbar-hb i )
 
@@ -456,7 +441,6 @@
         (set item-goto (iup-item "&Vai a...\tCtrl+G"))
 
         (set item-font (iup-item "&Font..."))
-        (set item-color (iup-item "Color..."))
         (set item-about (iup-item "&Info..."))
         (set item-date (iup-item "Scegli &data..."))
 
@@ -478,8 +462,7 @@
                 item-find
                 item-goto ))
         (set format-menu (iup-menu
-                item-font
-                item-color ))
+                item-font ))
         (set help-menu (iup-menu
                 item-about
                 item-date ))
@@ -548,7 +531,6 @@
         (iup-set-callback btn-find "ACTION" (netptr item-find-cb))
         (iup-set-callback item-goto "ACTION" (netptr item-goto-cb))
         (iup-set-callback item-font "ACTION" (netptr item-font-cb))
-        (iup-set-callback item-color "ACTION" (netptr item-color-cb))
         (iup-set-callback item-about "ACTION" (netptr item-about-cb))
         (iup-set-callback item-date "ACTION" (netptr item-date-cb))
         (iup-set-callback text "CARET_CB" (netptr caret-label-cb))

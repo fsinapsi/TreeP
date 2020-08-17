@@ -102,5 +102,8 @@ trp_obj_t *trp_pix_trim_values( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *thr
 /*
 uns8b trp_pix_draw_text( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *text, ... );
 */
+uns8b trp_pix_avn_graph_qscale( trp_obj_t *obj, trp_obj_t *pix, trp_obj_t *framecnt );
+uns8b trp_pix_avn_graph_size( trp_obj_t *obj, trp_obj_t *pix, trp_obj_t *framecnt, trp_obj_t *mag, trp_obj_t *avg_int );
+uns8b trp_pix_avn_graph_vbvfill( trp_obj_t *obj, trp_obj_t *pix, trp_obj_t *framecnt, trp_obj_t *vbv_size, trp_obj_t *vbv_init, trp_obj_t *vbv_rate, trp_obj_t *fps );
 
 #endif /* !__trppix__h */

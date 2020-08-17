@@ -59,6 +59,9 @@
           [ "draw-dashed-line"          7 8 ]
           [ "draw-circle"               4 5 ]
           [ "draw-grid"                 2 3 ]
+          [ "avn-graph-qscale"          3 3 ]
+          [ "avn-graph-size"            5 5 ]
+          [ "avn-graph-vbvfill"         7 7 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

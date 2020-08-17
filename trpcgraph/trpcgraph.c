@@ -80,7 +80,12 @@ static trp_obj_t *trp_ag_dot2pix_low( uns8b flags, trp_obj_t *s )
         uns32b j;
 
         for ( j = w * h, c = (trp_pix_color_t *)data ; j ; j--, c++ )
-            c->alpha = ( ( c->red & c->green & c->blue ) == 0xff ) ? 0 : 0xff;
+            if ( ( c->red == c->green ) && ( c->green == c->blue ) ) {
+                c->alpha = ~( c->red );
+                c->red = 0;
+                c->green = 0;
+                c->blue = 0;
+            }
     }
     return trp_pix_create_image_from_data( 0, w, h, data );
 }

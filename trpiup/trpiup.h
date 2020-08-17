@@ -102,6 +102,7 @@ trp_obj_t *trp_iup_text();
 trp_obj_t *trp_iup_user();
 trp_obj_t *trp_iup_clipboard();
 trp_obj_t *trp_iup_progress_bar();
+trp_obj_t *trp_iup_gauge();
 trp_obj_t *trp_iup_item( trp_obj_t *title );
 trp_obj_t *trp_iup_submenu( trp_obj_t *title, trp_obj_t *child );
 trp_obj_t *trp_iup_separator();

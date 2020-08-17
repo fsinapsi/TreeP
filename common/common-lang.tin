@@ -8,21 +8,97 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(include "common-lang.tin")
-(include "common-paths.tin")
-(include "common-math.tin")
-(include "common-date.tin")
-(include "common-graphs.tin")
-(include "common-pix.tin")
-(include "common-strings.tin")
-(include "common-curl.tin")
-(include "common-sqlite.tin")
-(include "common-io.tin")
-(include "common-av.tin")
-(include "common-iup.tin")
-(include "common-gtk.tin")
-(include "common-imdb.tin")
-(include "common-misc.tin")
+(deflang
+
+"Yes"
+1
+(iso->utf8 "Sì")
+
+"Name"
+1
+"Nome"
+
+"Date"
+1
+"Data"
+
+"Size"
+1
+"Dimensione"
+
+"Note"
+1
+"Nota"
+
+"Width"
+1
+"Larghezza"
+
+"Height"
+1
+"Altezza"
+
+"Error"
+1
+"Errore"
+
+"Warning"
+1
+"Avviso"
+
+"Close"
+1
+"Chiudi"
+
+"Confirm"
+1
+"Conferma"
+
+"Cancel"
+1
+"Annulla"
+
+"Choose a date"
+1
+"Scegli una data"
+
+"Choose a font"
+1
+"Scegli un font"
+
+"Choose a color"
+1
+"Scegli un colore"
+
+"Choose a file"
+1
+"Scegli un file"
+
+"Choose a folder"
+1
+"Scegli una cartella"
+
+"Save as"
+1
+"Salva come"
+
+"Confirmation request"
+1
+"Richiesta di conferma"
+
+"Data input"
+1
+"Inserimento dati"
+
+"Creation time"
+1
+"Data di creazione"
+
+"Modification time"
+1
+"Data di modifica"
+
+        )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
