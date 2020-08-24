@@ -17,92 +17,24 @@
 */
 
 #include "./trpvid_internal.h"
+#include "JM-ldecod/global.h"
+#include "JM-ldecod/frame.h"
+#include "JM-ldecod/sei.h"
+#include "JM-ldecod/nalu.h"
+#include "JM-ldecod/vlc.h"
 
-#define MB_BLOCK_SIZE   16
-
-#define NAL_SLICE                1
-#define NAL_DPA                  2
-#define NAL_DPB                  3
-#define NAL_DPC                  4
-#define NAL_IDR_SLICE            5
-#define NAL_SEI                  6
-#define NAL_SPS                  7
-#define NAL_PPS                  8
-#define NAL_AUD                  9
-#define NAL_END_SEQUENCE        10
-#define NAL_END_STREAM          11
-#define NAL_FILLER_DATA         12
-#define NAL_SPS_EXT             13
-#define NAL_AUXILIARY_SLICE     19
-
-#define YUV400 0
-#define YUV420 1
-#define YUV422 2
-#define YUV444 3
-
-#define FREXT_HP        100      /* YUV 4:2:0/8 "High" */
-#define FREXT_Hi10P     110      /* YUV 4:2:0/10 "High 10" */
-#define FREXT_Hi422     122      /* YUV 4:2:2/10 "High 4:2:2" */
-#define FREXT_Hi444     144      /* YUV 4:4:4/12 "High 4:4:4" */
-
-typedef enum {
-  P_SLICE = 0,
-  B_SLICE,
-  I_SLICE,
-  SP_SLICE,
-  SI_SLICE
-} SliceType;
-
-typedef enum {
-  FRAME = 0,
-  TOP_FIELD,
-  BOTTOM_FIELD
-} PictureStructure;
-
-typedef enum {
-  SEI_BUFFERING_PERIOD = 0,
-  SEI_PIC_TIMING,
-  SEI_PAN_SCAN_RECT,
-  SEI_FILLER_PAYLOAD,
-  SEI_USER_DATA_REGISTERED_ITU_T_T35,
-  SEI_USER_DATA_UNREGISTERED,
-  SEI_RANDOM_ACCESS_POINT,
-  SEI_DEC_REF_PIC_MARKING_REPETITION,
-  SEI_SPARE_PIC,
-  SEI_SCENE_INFO,
-  SEI_SUB_SEQ_INFO,
-  SEI_SUB_SEQ_LAYER_CHARACTERISTICS,
-  SEI_SUB_SEQ_CHARACTERISTICS,
-  SEI_FULL_FRAME_FREEZE,
-  SEI_FULL_FRAME_FREEZE_RELEASE,
-  SEI_FULL_FRAME_SNAPSHOT,
-  SEI_PROGRESSIVE_REFINEMENT_SEGMENT_START,
-  SEI_PROGRESSIVE_REFINEMENT_SEGMENT_END,
-  SEI_MOTION_CONSTRAINED_SLICE_GROUP_SET,
-
-  SEI_MAX_ELEMENTS  /* number of maximum syntax elements */
-} SEI_type;
-
-typedef struct {
-  int    frame_bitoffset;    /* actual position in the codebuffer, bit-oriented, UVLC only */
-  int    bitstream_length;   /* over codebuffer length, byte oriented, UVLC only */
-  int    usedbits;
-  uns8b *streamBuffer;       /* actual codebuffer for read bytes */
-} Bitstream;
-
-extern int se_v ( Bitstream *bitstream );
-extern int ue_v ( Bitstream *bitstream );
-extern int u_v ( int LenInBits, Bitstream *bitstream );
-extern int u_1 ( Bitstream *bitstream );
-extern int more_rbsp_data (uns8b buffer[],int totbitoffset,int bytecount);
-
+static int se_v( Bitstream *bitstream );
+static int ue_v( Bitstream *bitstream );
+static int u_1( Bitstream *bitstream );
+static int u_v( int LenInBits, Bitstream *bitstream );
+static int i_v( int LenInBits, Bitstream *bitstream );
+static uns32b avc_next_start_code( uns8b *buf, uns32b size );
+static uns32b EBSPtoRBSP_( uns8b *buf, uns32b size );
+static uns32b RBSPtoSODB_( uns8b *buf, uns32b last_byte_pos );
 static uns8b decode_matroska_codec_private( trp_vid_t *vid, int *slice_cnt );
 static uns8b decode_matroska_nal( trp_vid_t *vid, uns8b *buf, uns32b *pos, uns32b *size, uns32b nal_size_size, int *slice_cnt );
 static uns8b decode_avi_nal( trp_vid_t *vid, int *slice_cnt );
 static uns8b decode_nal( trp_vid_t *vid, uns8b *buf, uns32b size, int *slice_cnt );
-static uns32b EBSPtoRBSP( uns8b *buf, uns32b size );
-static uns32b RBSPtoSODB( uns8b *buf, uns32b last_byte_pos );
-static uns32b avc_next_start_code( uns8b *buf, uns32b size );
 static sps_t *sps_by_id( trp_vid_t *vid, int seq_parameter_set_id );
 static pps_t *pps_by_id( trp_vid_t *vid, int pic_parameter_set_id );
 static uns8b decode_sei( trp_vid_t *vid, uns8b *buf, uns32b size );
@@ -110,6 +42,94 @@ static uns8b *decode_scaling_list( Bitstream *b, int size );
 static uns8b decode_sps( trp_vid_t *vid, uns8b *buf, uns32b size );
 static uns8b decode_pps( trp_vid_t *vid, uns8b *buf, uns32b size );
 static uns8b decode_slice( trp_vid_t *vid, uns8b *buf, uns32b size, int nal_ref_idc, int slice_cnt );
+
+static int se_v( Bitstream *bitstream )
+{
+    int used_bits;
+
+    return read_se_v( "", bitstream, &used_bits );
+}
+
+static int ue_v( Bitstream *bitstream )
+{
+    int used_bits;
+
+    return read_ue_v( "", bitstream, &used_bits );
+}
+
+static int u_1( Bitstream *bitstream )
+{
+    int used_bits;
+
+    return (int)read_u_1( "", bitstream, &used_bits );
+}
+
+static int u_v( int LenInBits, Bitstream *bitstream )
+{
+    int used_bits;
+
+    return read_u_v( LenInBits, "", bitstream, &used_bits );
+}
+
+static int i_v( int LenInBits, Bitstream *bitstream )
+{
+    int used_bits;
+
+    return read_i_v( LenInBits, "", bitstream, &used_bits );
+}
+
+static uns32b avc_next_start_code( uns8b *buf, uns32b size )
+{
+    uns32b i, count = 0;
+
+    for( i = 0 ; i < size ; i++ ) {
+        if ( ( count == 3 ) && ( buf[ i ] == 0x01 ) )
+            return i + 1;
+        if( buf[ i ] == 0 )
+            count++;
+        else
+            count = 0;
+    }
+    return size;
+}
+
+static uns32b EBSPtoRBSP_( uns8b *buf, uns32b size )
+{
+    uns32b i, j, count = 0;
+
+    for( i = j = 0 ; i < size ; i++ ) {
+        if ( ( count == 2 ) && ( buf[ i ] == 0x03 ) ) {
+            i++;
+            count = 0;
+        }
+        buf[ j++ ] = buf[ i ];
+        if( buf[ i ] == 0 )
+            count++;
+        else
+            count = 0;
+    }
+    return j;
+}
+
+static uns32b RBSPtoSODB_( uns8b *buf, uns32b last_byte_pos )
+{
+    int ctr_bit, bitoffset = 0;
+
+    for ( ctr_bit = ( buf[ last_byte_pos - 1 ] & ( 0x01 << bitoffset ) ) ;
+          ctr_bit == 0 ;
+          ctr_bit = buf[ last_byte_pos - 1 ] & ( 0x01 << bitoffset ) )
+        if( ++bitoffset == 8 ) {
+            /*
+             FIXME
+             if( last_byte_pos == 0 )
+             printf( " Panic: All zero data sequence in RBSP \n" );
+             assert( last_byte_pos != 0 );
+             */
+            last_byte_pos--;
+            bitoffset = 0;
+        }
+    return last_byte_pos;
+}
 
 uns8b trp_vid_parse_mpeg4avc( trp_vid_t *vid )
 {
@@ -240,114 +260,51 @@ static uns8b decode_nal( trp_vid_t *vid, uns8b *buf, uns32b size, int *slice_cnt
     buf++;
     size--;
 
-    size = EBSPtoRBSP( buf, size );
+    size = EBSPtoRBSP_( buf, size );
 
 #if 0
     fprintf( stderr, "size = %lu, nal unit type = %d\n", size, (int)nal_unit_type );
 #endif
 
     switch ( nal_unit_type ) {
-    case NAL_SLICE:
-    case NAL_IDR_SLICE:
-        vid->idr_flag = ( nal_unit_type == NAL_IDR_SLICE );
+    case NALU_TYPE_SLICE:
+    case NALU_TYPE_IDR:
+        vid->idr_flag = ( nal_unit_type == NALU_TYPE_IDR );
         if ( decode_slice( vid, buf, size, (int)nal_ref_idc, *slice_cnt ) ) {
-            vid->error = "Errore di sintassi in NALU di tipo SLICE";
+            vid->error = "Syntax error in NALU di tipo SLICE";
             return 1;
         }
         *slice_cnt = *slice_cnt + 1;
         break;
-    case NAL_SPS:
+    case NALU_TYPE_SPS:
         if ( decode_sps( vid, buf, size ) ) {
-            vid->error = "Errore di sintassi in NALU di tipo SPS";
+            vid->error = "Syntax error (NALU SPS)";
             return 1;
         }
         break;
-    case NAL_PPS:
+    case NALU_TYPE_PPS:
         if ( decode_pps( vid, buf, size ) ) {
-            vid->error = "Errore di sintassi in NALU di tipo PPS";
+            vid->error = "Syntax error (NALU PPS)";
             return 1;
         }
         break;
-    case NAL_SEI:
+    case NALU_TYPE_SEI:
         if ( decode_sei( vid, buf, size ) ) {
-            vid->error = "Errore di sintassi in NALU di tipo SEI";
+            vid->error = "Syntax error (NALU SEI)";
             return 1;
         }
         break;
-    case NAL_DPA:
+    case NALU_TYPE_DPA:
         if ( decode_slice( vid, buf, size, (int)nal_ref_idc, *slice_cnt ) ) {
-            vid->error = "Errore di sintassi in NALU di tipo DPA";
+            vid->error = "Syntax error (NALU DPA)";
             return 1;
         }
         *slice_cnt = *slice_cnt + 1;
-        break;
-    case NAL_DPB:
-    case NAL_DPC:
-    case NAL_AUD:
-    case NAL_END_SEQUENCE:
-    case NAL_END_STREAM:
-    case NAL_FILLER_DATA:
-    case NAL_SPS_EXT:
-    case NAL_AUXILIARY_SLICE:
         break;
     default:
-        vid->error = "NALU di tipo sconosciuto";
-        return 1;
+        break;
     }
     return 0;
-}
-
-static uns32b EBSPtoRBSP( uns8b *buf, uns32b size )
-{
-    uns32b i, j, count = 0;
-
-    for( i = j = 0 ; i < size ; i++ ) {
-        if ( ( count == 2 ) && ( buf[ i ] == 0x03 ) ) {
-            i++;
-            count = 0;
-        }
-        buf[ j++ ] = buf[ i ];
-        if( buf[ i ] == 0 )
-            count++;
-        else
-            count = 0;
-    }
-    return j;
-}
-
-static uns32b RBSPtoSODB( uns8b *buf, uns32b last_byte_pos )
-{
-    int ctr_bit, bitoffset = 0;
-
-    for ( ctr_bit = ( buf[ last_byte_pos - 1 ] & ( 0x01 << bitoffset ) ) ;
-          ctr_bit == 0 ;
-          ctr_bit = buf[ last_byte_pos - 1 ] & ( 0x01 << bitoffset ) )
-        if( ++bitoffset == 8 ) {
-            /*
-             FIXME
-             if( last_byte_pos == 0 )
-             printf( " Panic: All zero data sequence in RBSP \n" );
-             assert( last_byte_pos != 0 );
-             */
-            last_byte_pos--;
-            bitoffset = 0;
-        }
-    return last_byte_pos;
-}
-
-static uns32b avc_next_start_code( uns8b *buf, uns32b size )
-{
-    uns32b i, count = 0;
-
-    for( i = 0 ; i < size ; i++ ) {
-        if ( ( count == 3 ) && ( buf[ i ] == 0x01 ) )
-            return i + 1;
-        if( buf[ i ] == 0 )
-            count++;
-        else
-            count = 0;
-    }
-    return size;
 }
 
 static sps_t *sps_by_id( trp_vid_t *vid, int seq_parameter_set_id )
@@ -452,8 +409,8 @@ static uns8b decode_sps( trp_vid_t *vid, uns8b *buf, uns32b size )
     sps_t sps;
 
     b.streamBuffer = buf;
-    b.usedbits = b.frame_bitoffset = 0;
-    b.bitstream_length = (int)RBSPtoSODB( buf, size );
+    b.frame_bitoffset = 0;
+    b.bitstream_length = (int)RBSPtoSODB_( buf, size );
 
     memset( &sps, 0, sizeof( sps_t ) );
 
@@ -580,8 +537,8 @@ static uns8b decode_pps( trp_vid_t *vid, uns8b *buf, uns32b size )
     pps_t pps;
 
     b.streamBuffer = buf;
-    b.usedbits = b.frame_bitoffset = 0;
-    b.bitstream_length = (int)RBSPtoSODB( buf, size );
+    b.frame_bitoffset = 0;
+    b.bitstream_length = (int)RBSPtoSODB_( buf, size );
 
     memset( &pps, 0, sizeof( pps_t ) );
 
@@ -695,8 +652,8 @@ static uns8b decode_slice( trp_vid_t *vid, uns8b *buf, uns32b size, int nal_ref_
     sps_t *sps;
 
     b.streamBuffer = buf;
-    b.usedbits = b.frame_bitoffset = 0;
-    b.bitstream_length = (int)RBSPtoSODB( buf, size );
+    b.frame_bitoffset = 0;
+    b.bitstream_length = (int)RBSPtoSODB_( buf, size );
 
     (void)ue_v( &b ); /* first_mb_in_slice / start_mb_nr */
     type = ue_v( &b ); /* slice_type */

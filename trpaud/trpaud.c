@@ -234,14 +234,23 @@ static char *_aac_type[ 46 ] = {
     "USAC"
 };
 
-static char *_aac_mode[7] = {
+static char *_aac_mode[ 16 ] = {
+    "unknown", /* FIXME */
     "1: front-center",
     "2: front-left, front-right",
     "3: front-center, front-left, front-right",
     "4: front-center, front-left, front-right, back-center",
     "5: front-center, front-left, front-right, back-left, back-right",
-    "6: front-center, front-left, front-right, back-left, back-right, LFE-channel",
-    "8: front-center, front-left, front-right, side-left, side-right, back-left, back-right, LFE-channel"
+    "5.1: front-center, front-left, front-right, back-left, back-right, LFE-channel",
+    "7.1: front-center, front-left, front-right, side-left, side-right, back-left, back-right, LFE-channel"
+    "reserved value",
+    "reserved value",
+    "reserved value",
+    "6.1",
+    "7.1",
+    "reserved value",
+    "7.1 top",
+    "reserved value"
 };
 
 uns8b trp_aud_init()
@@ -1296,8 +1305,8 @@ trp_obj_t *trp_aud_mode( trp_obj_t *aud )
             res = UNDEF;
         break;
     case 7:
-        if ( ((trp_aud_t *)aud)->h_first.mode && ( ((trp_aud_t *)aud)->h_first.mode < 8 ) )
-            res = trp_cord( _aac_mode[ ((trp_aud_t *)aud)->h_first.mode - 1 ] );
+        if ( ((trp_aud_t *)aud)->h_first.mode < 16 )
+            res = trp_cord( _aac_mode[ ((trp_aud_t *)aud)->h_first.mode ] );
         else
             res = UNDEF;
         break;
