@@ -90,6 +90,7 @@ trp_obj_t *trp_iup_expander( trp_obj_t *child );
 trp_obj_t *trp_iup_split( trp_obj_t *child1, trp_obj_t *child2 );
 trp_obj_t *trp_iup_label( trp_obj_t *title, ... );
 trp_obj_t *trp_iup_animated_label( trp_obj_t *animation );
+trp_obj_t *trp_iup_link( trp_obj_t *url, trp_obj_t *title, ... );
 trp_obj_t *trp_iup_button( trp_obj_t *title );
 trp_obj_t *trp_iup_toggle( trp_obj_t *title );
 trp_obj_t *trp_iup_val();

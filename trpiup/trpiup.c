@@ -996,6 +996,25 @@ trp_obj_t *trp_iup_animated_label( trp_obj_t *animation )
     return trp_iup_handle( IupAnimatedLabel( h ) );
 }
 
+trp_obj_t *trp_iup_link( trp_obj_t *url, trp_obj_t *title, ... )
+{
+    uns8b *u, *s;
+    va_list args;
+
+    u = trp_csprint( url );
+    if ( title ) {
+        va_start( args, title );
+        s = trp_csprint_multi( title, args );
+        va_end( args );
+    } else
+        s = NULL;
+    title = trp_iup_handle( IupLink( u, s ) );
+    trp_csprint_free( u );
+    if ( s )
+        trp_csprint_free( s );
+    return title;
+}
+
 trp_obj_t *trp_iup_button( trp_obj_t *title )
 {
     uns8b *tt;
