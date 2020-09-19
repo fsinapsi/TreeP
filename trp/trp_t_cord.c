@@ -286,14 +286,58 @@ trp_obj_t *trp_cord_decode( uns8b **buf )
     return res;
 }
 
+/*
+ ho riscritto CORD_cmp perché quella originale non funziona su
+ specifici casi; il motivo è che usa CORD_pos_chars_left(p)
+ in modo improprio: da cord_pos.h:
+ Number of characters in cache.  <= 0 ==> none
+ però in CORD_cmp abbiamo i test == 0 (nelle vecchie versioni
+ c'era correttamente <= 0);
+ il modo in cui l'ho riscritto è un po' più inefficiente
+ ma corretto
+ */
+
+static int trp_CORD_cmp( trp_cord_t *o1, trp_cord_t *o2 )
+{
+    CORD_pos pos1, pos2;
+    CORD c1, c2;
+    uns32b len1 = o1->len, len2 = o2->len, len;
+    uns8b v1, v2;
+
+    if ( len2 == 0 )
+        return len1 ? 1 : 0;
+    if ( len1 == 0 )
+        return -1;
+    c1 = o1->c;
+    c2 = o2->c;
+    if ( CORD_IS_STRING( c1 ) && CORD_IS_STRING( c2 ) )
+        return strcmp( c1, c2 );
+    CORD_set_pos( pos1, c1, 0 );
+    CORD_set_pos( pos2, c2, 0 );
+    len = ( len1 < len2 ) ? len1 : len2;
+    for ( ; ; ) {
+        v1 = (uns8b)( CORD_pos_fetch( pos1 ) );
+        v2 = (uns8b)( CORD_pos_fetch( pos2 ) );
+        if ( v1 != v2 )
+            return ( v1 < v2 ) ? -1 : 1;
+        if ( --len == 0 )
+            break;
+        CORD_next( pos1 );
+        CORD_next( pos2 );
+    }
+    return ( len1 == len2 ) ? 0 : ( ( len1 < len2 ) ? -1 : 1 );
+}
+
 trp_obj_t *trp_cord_equal( trp_cord_t *o1, trp_cord_t *o2 )
 {
-    return ( CORD_cmp( o1->c, o2->c ) == 0 ) ? TRP_TRUE : TRP_FALSE;
+    if ( o1->len != o2->len )
+        return TRP_FALSE;
+    return ( trp_CORD_cmp( o1, o2 ) == 0 ) ? TRP_TRUE : TRP_FALSE;
 }
 
 trp_obj_t *trp_cord_less( trp_cord_t *o1, trp_cord_t *o2 )
 {
-    return ( CORD_cmp( o1->c, o2->c ) < 0 ) ? TRP_TRUE : TRP_FALSE;
+    return ( trp_CORD_cmp( o1, o2 ) < 0 ) ? TRP_TRUE : TRP_FALSE;
 }
 
 trp_obj_t *trp_cord_length( trp_cord_t *obj )
@@ -1116,7 +1160,7 @@ trp_obj_t *trp_cord_load( trp_obj_t *path )
 
     /*
      FIXME
-     se il file � troppo grande,
+     se il file è troppo grande,
      trattare in modo adeguato...
      */
     fp = trp_fopen( cpath, "rb" );
