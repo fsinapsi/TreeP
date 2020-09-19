@@ -35,9 +35,9 @@ void compute_residue (imgpel **curImg, imgpel **mpr, int **mb_rres, int mb_x, in
 
   for (j = 0; j < height; j++)
   {
-    imgOrg = &curImg[j][opix_x];    
+    imgOrg = &curImg[j][opix_x];
     imgPred = &mpr[j][mb_x];
-    m7 = &mb_rres[j][mb_x]; 
+    m7 = &mb_rres[j][mb_x];
     for (i = 0; i < width; i++)
     {
       *m7++ = *imgOrg++ - *imgPred++;
@@ -55,7 +55,7 @@ void sample_reconstruct (imgpel **curImg, imgpel **mpr, int **mb_rres, int mb_x,
   {
     imgOrg = &curImg[j][opix_x];
     imgPred = &mpr[j][mb_x];
-    m7 = &mb_rres[j][mb_x]; 
+    m7 = &mb_rres[j][mb_x];
     for (i=0;i<width;i++)
       *imgOrg++ = (imgpel) iClip1( max_imgpel_value, rshift_rnd_sf(*m7++, dq_bits) + *imgPred++);
   }

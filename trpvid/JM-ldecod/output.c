@@ -51,7 +51,7 @@ void init_output(CodingParameters *p_cps, int symbol_size_in_bytes)
       p_cps->img2buf = img2buf_endian;
     else
       p_cps->img2buf = img2buf_normal;
-  }    
+  }
 }
 
 /*!
@@ -126,9 +126,9 @@ static void img2buf_normal (imgpel** imgX, unsigned char* buf, int size_x, int s
 #else
     {
       imgpel *cur_pixel;
-      unsigned char *pDst; 
+      unsigned char *pDst;
       for(j = 0; j < size_y; j++)
-      {  
+      {
         cur_pixel = imgX[j];
         pDst = buf +j*iOutStride;
         for(i=0; i < size_x; i++)
@@ -169,7 +169,7 @@ static void img2buf_byte (imgpel** imgX, unsigned char* buf, int size_x, int siz
   int theight = size_y - crop_top - crop_bottom;
   imgpel **img = &imgX[crop_top];
   int i;
-  for(i = 0; i < theight; i++) 
+  for(i = 0; i < theight; i++)
   {
     memcpy(buf, *img++ + crop_left, twidth);
     buf += iOutStride;
@@ -255,7 +255,7 @@ static void img2buf_endian (imgpel** imgX, unsigned char* buf, int size_x, int s
       error ("writing only to formats of 8, 16 or 32 bit allowed on big endian architecture", 500);
       break;
     }
-  }  
+  }
 }
 
 
@@ -311,7 +311,7 @@ void write_picture(VideoParameters *p_Vid, StorablePicture *p, int p_out, int re
 
   if (real_structure==FRAME)
   {
-    
+
     flush_pending_output(p_Vid, p_out);
     write_out_picture(p_Vid, p, p_out);
     return;
@@ -437,7 +437,7 @@ void write_picture(VideoParameters *p_Vid, StorablePicture *p, int p_out, int re
 static void allocate_p_dec_pic(VideoParameters *p_Vid, DecodedPicList *pDecPic, StorablePicture *p, int iLumaSize, int iFrameSize, int iLumaSizeX, int iLumaSizeY, int iChromaSizeX, int iChromaSizeY)
 {
   int symbol_size_in_bytes = ((p_Vid->pic_unit_bitsize_on_disk+7) >> 3);
-  
+
   if(pDecPic->pY)
     mem_free(pDecPic->pY);
   pDecPic->iBufSize = iFrameSize;
@@ -542,15 +542,15 @@ static void write_out_picture(VideoParameters *p_Vid, StorablePicture *p, int p_
 #else
   pDecPic->bValid = 1;
 #endif
-  
+
   pDecPic->iPOC = p->frame_poc;
-  
+
   if (NULL==pDecPic->pY)
   {
     no_mem_exit("write_out_picture: buf");
   }
 
-  
+
   if(rgb_output)
   {
     buf = malloc (p->size_x * p->size_y * symbol_size_in_bytes);
@@ -580,7 +580,7 @@ static void write_out_picture(VideoParameters *p_Vid, StorablePicture *p, int p_
     {
       crop_left = crop_right = crop_top = crop_bottom = 0;
     }
-    if(buf) 
+    if(buf)
       free(buf);
   }
 
@@ -636,7 +636,7 @@ static void write_out_picture(VideoParameters *p_Vid, StorablePicture *p, int p_
       imgpel cr_val = (imgpel) (1<<(p_Vid->bitdepth_luma - 1));
 
       get_mem3Dpel (&(p->imgUV), 1, p->size_y/2, p->size_x/2);
-      
+
       for (j=0; j<p->size_y/2; j++)
       {
         for (i=0; i<p->size_x/2; i++)
@@ -680,7 +680,7 @@ static void write_out_picture(VideoParameters *p_Vid, StorablePicture *p, int p_
  */
 void init_out_buffer(VideoParameters *p_Vid)
 {
-  p_Vid->out_buffer = alloc_frame_store();  
+  p_Vid->out_buffer = alloc_frame_store();
 
 #if (PAIR_FIELDS_IN_OUTPUT)
   p_Vid->pending_output = calloc (sizeof(StorablePicture), 1);

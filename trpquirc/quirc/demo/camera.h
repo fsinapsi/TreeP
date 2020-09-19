@@ -22,38 +22,38 @@
 #define CAMERA_MAX_BUFFERS	32
 
 typedef enum {
-	CAMERA_FORMAT_UNKNOWN = 0,
-	CAMERA_FORMAT_MJPEG,
-	CAMERA_FORMAT_YUYV
+        CAMERA_FORMAT_UNKNOWN = 0,
+        CAMERA_FORMAT_MJPEG,
+        CAMERA_FORMAT_YUYV
 } camera_format_t;
 
 struct camera_parms {
-	camera_format_t		format;
-	int			width;
-	int			height;
-	int			pitch_bytes;
-	int			interval_n;
-	int			interval_d;
+        camera_format_t		format;
+        int			width;
+        int			height;
+        int			pitch_bytes;
+        int			interval_n;
+        int			interval_d;
 };
 
 struct camera_buffer {
-	void			*addr;
-	size_t			size;
-	unsigned long		offset;
+        void			*addr;
+        size_t			size;
+        unsigned long		offset;
 };
 
 struct camera {
-	int			fd;
+        int			fd;
 
-	struct camera_parms	parms;
+        struct camera_parms	parms;
 
-	struct camera_buffer	buf_desc[CAMERA_MAX_BUFFERS];
-	int			buf_count;
+        struct camera_buffer	buf_desc[CAMERA_MAX_BUFFERS];
+        int			buf_count;
 
-	/* Stream state */
-	int			s_on;
-	int			s_qc;
-	int			s_qhead;
+        /* Stream state */
+        int			s_on;
+        int			s_qc;
+        int			s_qhead;
 };
 
 /* Initialize/destroy a camera. No resources are allocated. */
@@ -62,19 +62,19 @@ void camera_destroy(struct camera *c);
 
 /* Open/close the camera device */
 int camera_open(struct camera *c, const char *path,
-		int target_w, int target_h,
-		int tr_n, int tr_d);
+                int target_w, int target_h,
+                int tr_n, int tr_d);
 void camera_close(struct camera *c);
 
 static inline int camera_get_fd(const struct camera *c)
 {
-	return c->fd;
+        return c->fd;
 }
 
 static inline const struct camera_parms *camera_get_parms
-	(const struct camera *c)
+        (const struct camera *c)
 {
-	return &c->parms;
+        return &c->parms;
 }
 
 /* Map buffers */
@@ -83,7 +83,7 @@ void camera_unmap(struct camera *c);
 
 static inline int camera_get_buf_count(const struct camera *c)
 {
-	return c->buf_count;
+        return c->buf_count;
 }
 
 /* Switch streaming on/off */
@@ -96,9 +96,9 @@ int camera_dequeue_one(struct camera *c);
 
 /* Fetch the oldest dequeued buffer */
 static inline const struct camera_buffer *camera_get_head
-	(const struct camera *c)
+        (const struct camera *c)
 {
-	return &c->buf_desc[(c->s_qhead + c->buf_count - 1) % c->buf_count];
+        return &c->buf_desc[(c->s_qhead + c->buf_count - 1) % c->buf_count];
 }
 
 #endif

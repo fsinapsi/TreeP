@@ -1340,7 +1340,7 @@ trp_obj_t *trp_chess_threat_of_checkmate( trp_obj_t *st )
     if ( trp_chess_legal_moves_low( (trp_chess_t *)st ) == NIL )
         return TRP_FALSE;
     /*
-     uno scacco doppio non è minaccia di matto
+     uno scacco doppio non Ã¨ minaccia di matto
      */
     interr = trp_chess_color_m( st );
     if ( trp_chess_dominance_low( (trp_chess_t *)st )->domin[ 1 - interr ][ interr ? ((trp_chess_t *)st)->kb : ((trp_chess_t *)st)->kw ] >= 2 )
@@ -1767,7 +1767,7 @@ trp_obj_t *trp_chess_fen_st( trp_obj_t *fen )
     st->moves = NULL;
     if ( trp_chess_dominated_low( st, color ? kw : kb, color ) ) {
         /*
-         il re del colore che non muove non può essere sotto scacco
+         il re del colore che non muove non puÃ² essere sotto scacco
          */
         trp_gc_free( st );
         trp_gc_free( board );
@@ -2021,9 +2021,9 @@ static void trp_chess_next_low( trp_chess_t *st, uns8b idx1, uns16b idx2 )
             if ( d == 16 ) {
                 uns8b col = idx1 & 7;
                 /*
-                 settiamo enp solo se c'è un pedone adiacente che effettivamente
-                 può catturare questo alla prossima mossa; in tal modo si ottengono
-                 più posizioni equivalenti...
+                 settiamo enp solo se c'Ã¨ un pedone adiacente che effettivamente
+                 puÃ² catturare questo alla prossima mossa; in tal modo si ottengono
+                 piÃ¹ posizioni equivalenti...
                  */
                 if ( col > 0 )
                     if ( st->board->board[ idx2 - 1 ] == 0 )
@@ -2032,7 +2032,7 @@ static void trp_chess_next_low( trp_chess_t *st, uns8b idx1, uns16b idx2 )
                     if ( st->board->board[ idx2 + 1 ] == 0 )
                         enp = ( idx1 + idx2 ) >> 1;
             } else if ( ( d != 8 ) && ( cattura == 64 ) ) {
-                /* è una presa al varco */
+                /* Ã¨ una presa al varco */
                 cattura = ( idx1 & 248 ) | ( idx2 & 7 );
                 st->board->board[ cattura ] = 16;
             } else
@@ -2071,9 +2071,9 @@ static void trp_chess_next_low( trp_chess_t *st, uns8b idx1, uns16b idx2 )
             if ( d == 16 ) {
                 uns8b col = idx1 & 7;
                 /*
-                 settiamo enp solo se c'è un pedone adiacente che effettivamente
-                 può catturare questo alla prossima mossa; in tal modo si ottengono
-                 più posizioni equivalenti...
+                 settiamo enp solo se c'Ã¨ un pedone adiacente che effettivamente
+                 puÃ² catturare questo alla prossima mossa; in tal modo si ottengono
+                 piÃ¹ posizioni equivalenti...
                  */
                 if ( col > 0 )
                     if ( st->board->board[ idx2 - 1 ] == 8 )
@@ -2082,7 +2082,7 @@ static void trp_chess_next_low( trp_chess_t *st, uns8b idx1, uns16b idx2 )
                     if ( st->board->board[ idx2 + 1 ] == 8 )
                         enp = ( idx1 + idx2 ) >> 1;
             } else if ( ( d != 8 ) && ( cattura == 64 ) ) {
-                /* è una presa al varco */
+                /* Ã¨ una presa al varco */
                 cattura = ( idx1 & 248 ) | ( idx2 & 7 );
                 st->board->board[ cattura ] = 16;
             } else
@@ -2257,7 +2257,7 @@ trp_obj_t *trp_chess_move_is_capture( trp_obj_t *st, trp_obj_t *move )
         return TRP_TRUE;
     if ( idx == ((trp_chess_t *)st)->board->enp )
         if ( ( ((trp_chess_t *)st)->board->board[ ((trp_sig64_t *)trp_car( move ))->val ] & 7 ) == 0 )
-            return TRP_TRUE; /* è una presa al varco */
+            return TRP_TRUE; /* Ã¨ una presa al varco */
     return TRP_FALSE;
 }
 
@@ -2358,7 +2358,7 @@ trp_obj_t *trp_chess_move_is_discovery_check( trp_obj_t *st, trp_obj_t *move )
          FIXME
          il caso particolare di una presa e.p. che provoca uno scacco indirettamente
          va considerato "discovery check" oppure no?
-         vedi /home/frank/wd/a/scacchi/curiosità/is-a-discovery-check-or-not.pgn
+         vedi /home/frank/wd/a/scacchi/curiositÃ /is-a-discovery-check-or-not.pgn
          */
     }
     trp_gc_free( newst->board );

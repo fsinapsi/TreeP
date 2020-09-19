@@ -166,8 +166,8 @@ void trace_info(
 )
 
 {
-  char tstring[20];   
-  sprintf( tstring, "%s%d", description_str, value1); 
+  char tstring[20];
+  sprintf( tstring, "%s%d", description_str, value1);
   strncpy(currSE->tracestring, tstring, TRACESTRING_SIZE);
 }
 

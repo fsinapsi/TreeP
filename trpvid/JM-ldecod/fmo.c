@@ -545,7 +545,7 @@ static void FmoGenerateType5MapUnitMap (VideoParameters *p_Vid, unsigned PicSize
  */
 static void FmoGenerateType6MapUnitMap (VideoParameters *p_Vid, unsigned PicSizeInMapUnits )
 {
-  pic_parameter_set_rbsp_t* pps = p_Vid->active_pps; 
+  pic_parameter_set_rbsp_t* pps = p_Vid->active_pps;
   unsigned i;
   for (i=0; i<PicSizeInMapUnits; i++)
   {

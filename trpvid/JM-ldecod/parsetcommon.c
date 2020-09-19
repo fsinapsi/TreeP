@@ -70,7 +70,7 @@ seq_parameter_set_rbsp_t *AllocSPS ()
  void FreePPS (pic_parameter_set_rbsp_t *pps)
  {
    assert (pps != NULL);
-   if (pps->slice_group_id != NULL) 
+   if (pps->slice_group_id != NULL)
      free (pps->slice_group_id);
    free (pps);
  }

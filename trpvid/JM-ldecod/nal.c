@@ -94,7 +94,7 @@ int EBSPtoRBSP(byte *streamBuffer, int end_bytepos, int begin_bytepos)
   for(i = begin_bytepos; i < end_bytepos; ++i)
   { //starting from begin_bytepos to avoid header information
     //in NAL unit, 0x000000, 0x000001 or 0x000002 shall not occur at any byte-aligned position
-    if(count == ZEROBYTES_SHORTSTARTCODE && streamBuffer[i] < 0x03) 
+    if(count == ZEROBYTES_SHORTSTARTCODE && streamBuffer[i] < 0x03)
       return -1;
     if(count == ZEROBYTES_SHORTSTARTCODE && streamBuffer[i] == 0x03)
     {

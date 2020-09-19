@@ -247,7 +247,7 @@ static uns8b trp_vid_store_userdata_is_garbage( uns8b *src, uns32b size )
             score++;
     }
     /*
-     se score non supera la met‡ di size
+     se score non supera la met√† di size
      lo consideriamo garbage
      */
     score <<= 1;

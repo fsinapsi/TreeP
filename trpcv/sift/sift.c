@@ -1,12 +1,12 @@
 /*
   Functions for detecting SIFT image features.
-  
+
   For more information, refer to:
-  
+
   Lowe, D.  Distinctive image features from scale-invariant keypoints.
   <EM>International Journal of Computer Vision, 60</EM>, 2 (2004),
   pp.91--110.
-  
+
   Copyright (C) 2006-2010  Rob Hess <hess@eecs.oregonstate.edu>
 
   Note: The SIFT algorithm is patented in the United States and cannot be
@@ -32,16 +32,16 @@ static IplImage*** build_gauss_pyr( IplImage*, int, int, double );
 static IplImage* downsample( IplImage* );
 static IplImage*** build_dog_pyr( IplImage***, int, int );
 static CvSeq* scale_space_extrema( IplImage***, int, int, double, int,
-				   CvMemStorage*);
+                                   CvMemStorage*);
 static int is_extremum( IplImage***, int, int, int, int );
 static struct feature* interp_extremum( IplImage***, int, int, int, int, int,
-					double);
+                                        double);
 static void interp_step( IplImage***, int, int, int, int, double*, double*,
-			 double* );
+                         double* );
 static CvMat* deriv_3D( IplImage***, int, int, int, int );
 static CvMat* hessian_3D( IplImage***, int, int, int, int );
 static double interp_contr( IplImage***, int, int, int, int, double, double,
-			    double );
+                            double );
 static struct feature* new_feature( void );
 static int is_too_edge_like( IplImage*, int, int, int );
 static void calc_feature_scales( CvSeq*, double, int );
@@ -52,12 +52,12 @@ static int calc_grad_mag_ori( IplImage*, int, int, double*, double* );
 static void smooth_ori_hist( double*, int );
 static double dominant_ori( double*, int );
 static void add_good_ori_features( CvSeq*, double*, int, double,
-				   struct feature* );
+                                   struct feature* );
 static struct feature* clone_feature( struct feature* );
 static void compute_descriptors( CvSeq*, IplImage***, int, int );
 static double*** descr_hist( IplImage*, int, int, double, double, int, int );
 static void interp_hist_entry( double***, double, double, double, double, int,
-			       int);
+                               int);
 static void hist_to_descr( double***, int, int, struct feature* );
 static void normalize_descr( struct feature* );
 static int feature_cmp( void*, void*, void* );
@@ -81,8 +81,8 @@ static void release_pyr( IplImage****, int, int );
 int sift_features( IplImage* img, struct feature** feat )
 {
   return _sift_features( img, feat, SIFT_INTVLS, SIFT_SIGMA, SIFT_CONTR_THR,
-			 SIFT_CURV_THR, SIFT_IMG_DBL, SIFT_DESCR_WIDTH,
-			 SIFT_DESCR_HIST_BINS );
+                         SIFT_CURV_THR, SIFT_IMG_DBL, SIFT_DESCR_WIDTH,
+                         SIFT_DESCR_HIST_BINS );
 }
 
 
@@ -113,15 +113,15 @@ int sift_features( IplImage* img, struct feature** feat )
    @see sift_keypoints()
 */
 int _sift_features( IplImage* img, struct feature** feat, int intvls,
-		    double sigma, double contr_thr, int curv_thr,
-		    int img_dbl, int descr_width, int descr_hist_bins )
+                    double sigma, double contr_thr, int curv_thr,
+                    int img_dbl, int descr_width, int descr_hist_bins )
 {
   IplImage* init_img;
   IplImage*** gauss_pyr, *** dog_pyr;
   CvMemStorage* storage;
   CvSeq* features;
   int octvs, i, n = 0;
-  
+
   /* check arguments */
   if( ! img )
     fatal_error( "NULL pointer error, %s, line %d",  __FILE__, __LINE__ );
@@ -133,10 +133,10 @@ int _sift_features( IplImage* img, struct feature** feat, int intvls,
   octvs = log( MIN( init_img->width, init_img->height ) ) / log(2) - 2;
   gauss_pyr = build_gauss_pyr( init_img, octvs, intvls, sigma );
   dog_pyr = build_dog_pyr( gauss_pyr, octvs, intvls );
-  
+
   storage = cvCreateMemStorage( 0 );
   features = scale_space_extrema( dog_pyr, octvs, intvls, contr_thr,
-				  curv_thr, storage );
+                                  curv_thr, storage );
   calc_feature_scales( features, sigma, intvls );
   if( img_dbl )
     adjust_for_img_dbl( features );
@@ -153,7 +153,7 @@ int _sift_features( IplImage* img, struct feature** feat, int intvls,
       free( (*feat)[i].feature_data );
       (*feat)[i].feature_data = NULL;
     }
-  
+
   cvReleaseMemStorage( &storage );
   cvReleaseImage( &init_img );
   release_pyr( &gauss_pyr, octvs, intvls + 3 );
@@ -182,7 +182,7 @@ static IplImage* create_init_img( IplImage* img, int img_dbl, double sigma )
     {
       sig_diff = sqrt( sigma * sigma - SIFT_INIT_SIGMA * SIFT_INIT_SIGMA * 4 );
       dbl = cvCreateImage( cvSize( img->width*2, img->height*2 ),
-			   IPL_DEPTH_32F, 1 );
+                           IPL_DEPTH_32F, 1 );
       cvResize( gray, dbl, CV_INTER_CUBIC );
       cvSmooth( dbl, dbl, CV_GAUSSIAN, 0, 0, sig_diff, sig_diff );
       cvReleaseImage( &gray );
@@ -208,7 +208,7 @@ static IplImage* create_init_img( IplImage* img, int img_dbl, double sigma )
 static IplImage* convert_to_gray32( IplImage* img )
 {
   IplImage* gray8, * gray32;
-  
+
   gray32 = cvCreateImage( cvGetSize(img), IPL_DEPTH_32F, 1 );
   if( img->nChannels == 1 )
     gray8 = cvClone( img );
@@ -237,7 +237,7 @@ static IplImage* convert_to_gray32( IplImage* img )
     array
 */
 static IplImage*** build_gauss_pyr( IplImage* base, int octvs,
-			     int intvls, double sigma )
+                             int intvls, double sigma )
 {
   IplImage*** gauss_pyr;
   const int _intvls = intvls;
@@ -265,21 +265,21 @@ static IplImage*** build_gauss_pyr( IplImage* base, int octvs,
   for( o = 0; o < octvs; o++ )
     for( i = 0; i < intvls + 3; i++ )
       {
-	if( o == 0  &&  i == 0 )
-	  gauss_pyr[o][i] = cvCloneImage(base);
+        if( o == 0  &&  i == 0 )
+          gauss_pyr[o][i] = cvCloneImage(base);
 
-	/* base of new octvave is halved image from end of previous octave */
-	else if( i == 0 )
-	  gauss_pyr[o][i] = downsample( gauss_pyr[o-1][intvls] );
-	  
-	/* blur the current octave's last image to create the next one */
-	else
-	  {
-	    gauss_pyr[o][i] = cvCreateImage( cvGetSize(gauss_pyr[o][i-1]),
-					     IPL_DEPTH_32F, 1 );
-	    cvSmooth( gauss_pyr[o][i-1], gauss_pyr[o][i],
-		      CV_GAUSSIAN, 0, 0, sig[i], sig[i] );
-	  }
+        /* base of new octvave is halved image from end of previous octave */
+        else if( i == 0 )
+          gauss_pyr[o][i] = downsample( gauss_pyr[o-1][intvls] );
+
+        /* blur the current octave's last image to create the next one */
+        else
+          {
+            gauss_pyr[o][i] = cvCreateImage( cvGetSize(gauss_pyr[o][i-1]),
+                                             IPL_DEPTH_32F, 1 );
+            cvSmooth( gauss_pyr[o][i-1], gauss_pyr[o][i],
+                      CV_GAUSSIAN, 0, 0, sig[i], sig[i] );
+          }
       }
 
   return gauss_pyr;
@@ -298,7 +298,7 @@ static IplImage*** build_gauss_pyr( IplImage* base, int octvs,
 static IplImage* downsample( IplImage* img )
 {
   IplImage* smaller = cvCreateImage( cvSize(img->width / 2, img->height / 2),
-				     img->depth, img->nChannels );
+                                     img->depth, img->nChannels );
   cvResize( img, smaller, CV_INTER_NN );
 
   return smaller;
@@ -329,9 +329,9 @@ static IplImage*** build_dog_pyr( IplImage*** gauss_pyr, int octvs, int intvls )
   for( o = 0; o < octvs; o++ )
     for( i = 0; i < intvls + 2; i++ )
       {
-	dog_pyr[o][i] = cvCreateImage( cvGetSize(gauss_pyr[o][i]),
-				       IPL_DEPTH_32F, 1 );
-	cvSub( gauss_pyr[o][i+1], gauss_pyr[o][i], dog_pyr[o][i], NULL );
+        dog_pyr[o][i] = cvCreateImage( cvGetSize(gauss_pyr[o][i]),
+                                       IPL_DEPTH_32F, 1 );
+        cvSub( gauss_pyr[o][i+1], gauss_pyr[o][i], dog_pyr[o][i], NULL );
       }
 
   return dog_pyr;
@@ -354,8 +354,8 @@ static IplImage*** build_dog_pyr( IplImage*** gauss_pyr, int octvs, int intvls )
     and descriptors are yet to be determined.
 */
 static CvSeq* scale_space_extrema( IplImage*** dog_pyr, int octvs, int intvls,
-				   double contr_thr, int curv_thr,
-				   CvMemStorage* storage )
+                                   double contr_thr, int curv_thr,
+                                   CvMemStorage* storage )
 {
   CvSeq* features;
   double prelim_contr_thr = 0.5 * contr_thr / intvls;
@@ -367,26 +367,26 @@ static CvSeq* scale_space_extrema( IplImage*** dog_pyr, int octvs, int intvls,
   for( o = 0; o < octvs; o++ )
     for( i = 1; i <= intvls; i++ )
       for(r = SIFT_IMG_BORDER; r < dog_pyr[o][0]->height-SIFT_IMG_BORDER; r++)
-	for(c = SIFT_IMG_BORDER; c < dog_pyr[o][0]->width-SIFT_IMG_BORDER; c++)
-	  /* perform preliminary check on contrast */
-	  if( ABS( pixval32f( dog_pyr[o][i], r, c ) ) > prelim_contr_thr )
-	    if( is_extremum( dog_pyr, o, i, r, c ) )
-	      {
-		feat = interp_extremum(dog_pyr, o, i, r, c, intvls, contr_thr);
-		if( feat )
-		  {
-		    ddata = feat_detection_data( feat );
-		    if( ! is_too_edge_like( dog_pyr[ddata->octv][ddata->intvl],
-					    ddata->r, ddata->c, curv_thr ) )
-		      {
-			cvSeqPush( features, feat );
-		      }
-		    else
-		      free( ddata );
-		    free( feat );
-		  }
-	      }
-  
+        for(c = SIFT_IMG_BORDER; c < dog_pyr[o][0]->width-SIFT_IMG_BORDER; c++)
+          /* perform preliminary check on contrast */
+          if( ABS( pixval32f( dog_pyr[o][i], r, c ) ) > prelim_contr_thr )
+            if( is_extremum( dog_pyr, o, i, r, c ) )
+              {
+                feat = interp_extremum(dog_pyr, o, i, r, c, intvls, contr_thr);
+                if( feat )
+                  {
+                    ddata = feat_detection_data( feat );
+                    if( ! is_too_edge_like( dog_pyr[ddata->octv][ddata->intvl],
+                                            ddata->r, ddata->c, curv_thr ) )
+                      {
+                        cvSeqPush( features, feat );
+                      }
+                    else
+                      free( ddata );
+                    free( feat );
+                  }
+              }
+
   return features;
 }
 
@@ -414,20 +414,20 @@ static int is_extremum( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
   if( val > 0 )
     {
       for( i = -1; i <= 1; i++ )
-	for( j = -1; j <= 1; j++ )
-	  for( k = -1; k <= 1; k++ )
-	    if( val < pixval32f( dog_pyr[octv][intvl+i], r + j, c + k ) )
-	      return 0;
+        for( j = -1; j <= 1; j++ )
+          for( k = -1; k <= 1; k++ )
+            if( val < pixval32f( dog_pyr[octv][intvl+i], r + j, c + k ) )
+              return 0;
     }
 
   /* check for minimum */
   else
     {
       for( i = -1; i <= 1; i++ )
-	for( j = -1; j <= 1; j++ )
-	  for( k = -1; k <= 1; k++ )
-	    if( val > pixval32f( dog_pyr[octv][intvl+i], r + j, c + k ) )
-	      return 0;
+        for( j = -1; j <= 1; j++ )
+          for( k = -1; k <= 1; k++ )
+            if( val > pixval32f( dog_pyr[octv][intvl+i], r + j, c + k ) )
+              return 0;
     }
 
   return 1;
@@ -438,7 +438,7 @@ static int is_extremum( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
 /*
   Interpolates a scale-space extremum's location and scale to subpixel
   accuracy to form an image feature.  Rejects features with low contrast.
-  Based on Section 4 of Lowe's paper.  
+  Based on Section 4 of Lowe's paper.
 
   @param dog_pyr DoG scale space pyramid
   @param octv feature's octave of scale space
@@ -454,41 +454,41 @@ static int is_extremum( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
     returned, its scale, orientation, and descriptor are yet to be determined.
 */
 static struct feature* interp_extremum( IplImage*** dog_pyr, int octv,
-					int intvl, int r, int c, int intvls,
-					double contr_thr )
+                                        int intvl, int r, int c, int intvls,
+                                        double contr_thr )
 {
   struct feature* feat;
   struct detection_data* ddata;
   double xi, xr, xc, contr;
   int i = 0;
-  
+
   while( i < SIFT_MAX_INTERP_STEPS )
     {
       interp_step( dog_pyr, octv, intvl, r, c, &xi, &xr, &xc );
       if( ABS( xi ) < 0.5  &&  ABS( xr ) < 0.5  &&  ABS( xc ) < 0.5 )
-	break;
-      
+        break;
+
       c += cvRound( xc );
       r += cvRound( xr );
       intvl += cvRound( xi );
-      
+
       if( intvl < 1  ||
-	  intvl > intvls  ||
-	  c < SIFT_IMG_BORDER  ||
-	  r < SIFT_IMG_BORDER  ||
-	  c >= dog_pyr[octv][0]->width - SIFT_IMG_BORDER  ||
-	  r >= dog_pyr[octv][0]->height - SIFT_IMG_BORDER )
-	{
-	  return NULL;
-	}
-      
+          intvl > intvls  ||
+          c < SIFT_IMG_BORDER  ||
+          r < SIFT_IMG_BORDER  ||
+          c >= dog_pyr[octv][0]->width - SIFT_IMG_BORDER  ||
+          r >= dog_pyr[octv][0]->height - SIFT_IMG_BORDER )
+        {
+          return NULL;
+        }
+
       i++;
     }
-  
+
   /* ensure convergence of interpolation */
   if( i >= SIFT_MAX_INTERP_STEPS )
     return NULL;
-  
+
   contr = interp_contr( dog_pyr, octv, intvl, r, c, xi, xr, xc );
   if( ABS( contr ) < contr_thr / intvls )
     return NULL;
@@ -523,18 +523,18 @@ static struct feature* interp_extremum( IplImage*** dog_pyr, int octv,
 */
 
 static void interp_step( IplImage*** dog_pyr, int octv, int intvl, int r, int c,
-			 double* xi, double* xr, double* xc )
+                         double* xi, double* xr, double* xc )
 {
   CvMat* dD, * H, * H_inv, X;
   double x[3] = { 0 };
-  
+
   dD = deriv_3D( dog_pyr, octv, intvl, r, c );
   H = hessian_3D( dog_pyr, octv, intvl, r, c );
   H_inv = cvCreateMat( 3, 3, CV_64FC1 );
   cvInvert( H, H_inv, CV_SVD );
   cvInitMatHeader( &X, 3, 1, CV_64FC1, x, CV_AUTOSTEP );
   cvGEMM( H_inv, dD, -1, NULL, 0, &X, 0 );
-  
+
   cvReleaseMat( &dD );
   cvReleaseMat( &H );
   cvReleaseMat( &H_inv );
@@ -565,12 +565,12 @@ static CvMat* deriv_3D( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
   double dx, dy, ds;
 
   dx = ( pixval32f( dog_pyr[octv][intvl], r, c+1 ) -
-	 pixval32f( dog_pyr[octv][intvl], r, c-1 ) ) / 2.0;
+         pixval32f( dog_pyr[octv][intvl], r, c-1 ) ) / 2.0;
   dy = ( pixval32f( dog_pyr[octv][intvl], r+1, c ) -
-	 pixval32f( dog_pyr[octv][intvl], r-1, c ) ) / 2.0;
+         pixval32f( dog_pyr[octv][intvl], r-1, c ) ) / 2.0;
   ds = ( pixval32f( dog_pyr[octv][intvl+1], r, c ) -
-	 pixval32f( dog_pyr[octv][intvl-1], r, c ) ) / 2.0;
-  
+         pixval32f( dog_pyr[octv][intvl-1], r, c ) ) / 2.0;
+
   dI = cvCreateMat( 3, 1, CV_64FC1 );
   cvmSet( dI, 0, 0, dx );
   cvmSet( dI, 1, 0, dy );
@@ -597,31 +597,31 @@ static CvMat* deriv_3D( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
   \ Ixs  Iys  Iss /
 */
 static CvMat* hessian_3D( IplImage*** dog_pyr, int octv, int intvl, int r,
-			  int c )
+                          int c )
 {
   CvMat* H;
   double v, dxx, dyy, dss, dxy, dxs, dys;
-  
+
   v = pixval32f( dog_pyr[octv][intvl], r, c );
-  dxx = ( pixval32f( dog_pyr[octv][intvl], r, c+1 ) + 
-	  pixval32f( dog_pyr[octv][intvl], r, c-1 ) - 2 * v );
+  dxx = ( pixval32f( dog_pyr[octv][intvl], r, c+1 ) +
+          pixval32f( dog_pyr[octv][intvl], r, c-1 ) - 2 * v );
   dyy = ( pixval32f( dog_pyr[octv][intvl], r+1, c ) +
-	  pixval32f( dog_pyr[octv][intvl], r-1, c ) - 2 * v );
+          pixval32f( dog_pyr[octv][intvl], r-1, c ) - 2 * v );
   dss = ( pixval32f( dog_pyr[octv][intvl+1], r, c ) +
-	  pixval32f( dog_pyr[octv][intvl-1], r, c ) - 2 * v );
+          pixval32f( dog_pyr[octv][intvl-1], r, c ) - 2 * v );
   dxy = ( pixval32f( dog_pyr[octv][intvl], r+1, c+1 ) -
-	  pixval32f( dog_pyr[octv][intvl], r+1, c-1 ) -
-	  pixval32f( dog_pyr[octv][intvl], r-1, c+1 ) +
-	  pixval32f( dog_pyr[octv][intvl], r-1, c-1 ) ) / 4.0;
+          pixval32f( dog_pyr[octv][intvl], r+1, c-1 ) -
+          pixval32f( dog_pyr[octv][intvl], r-1, c+1 ) +
+          pixval32f( dog_pyr[octv][intvl], r-1, c-1 ) ) / 4.0;
   dxs = ( pixval32f( dog_pyr[octv][intvl+1], r, c+1 ) -
-	  pixval32f( dog_pyr[octv][intvl+1], r, c-1 ) -
-	  pixval32f( dog_pyr[octv][intvl-1], r, c+1 ) +
-	  pixval32f( dog_pyr[octv][intvl-1], r, c-1 ) ) / 4.0;
+          pixval32f( dog_pyr[octv][intvl+1], r, c-1 ) -
+          pixval32f( dog_pyr[octv][intvl-1], r, c+1 ) +
+          pixval32f( dog_pyr[octv][intvl-1], r, c-1 ) ) / 4.0;
   dys = ( pixval32f( dog_pyr[octv][intvl+1], r+1, c ) -
-	  pixval32f( dog_pyr[octv][intvl+1], r-1, c ) -
-	  pixval32f( dog_pyr[octv][intvl-1], r+1, c ) +
-	  pixval32f( dog_pyr[octv][intvl-1], r-1, c ) ) / 4.0;
-  
+          pixval32f( dog_pyr[octv][intvl+1], r-1, c ) -
+          pixval32f( dog_pyr[octv][intvl-1], r+1, c ) +
+          pixval32f( dog_pyr[octv][intvl-1], r-1, c ) ) / 4.0;
+
   H = cvCreateMat( 3, 3, CV_64FC1 );
   cvmSet( H, 0, 0, dxx );
   cvmSet( H, 0, 1, dxy );
@@ -654,7 +654,7 @@ static CvMat* hessian_3D( IplImage*** dog_pyr, int octv, int intvl, int r,
   @param Returns interpolated contrast.
 */
 static double interp_contr( IplImage*** dog_pyr, int octv, int intvl, int r,
-			    int c, double xi, double xr, double xc )
+                            int c, double xi, double xr, double xc )
 {
   CvMat* dD, X, T;
   double t[1], x[3] = { xc, xr, xi };
@@ -714,7 +714,7 @@ static int is_too_edge_like( IplImage* dog_img, int r, int c, int curv_thr )
   dxx = pixval32f( dog_img, r, c+1 ) + pixval32f( dog_img, r, c-1 ) - 2 * d;
   dyy = pixval32f( dog_img, r+1, c ) + pixval32f( dog_img, r-1, c ) - 2 * d;
   dxy = ( pixval32f(dog_img, r+1, c+1) - pixval32f(dog_img, r+1, c-1) -
-	  pixval32f(dog_img, r-1, c+1) + pixval32f(dog_img, r-1, c-1) ) / 4.0;
+          pixval32f(dog_img, r-1, c+1) + pixval32f(dog_img, r-1, c-1) ) / 4.0;
   tr = dxx + dyy;
   det = dxx * dyy - dxy * dxy;
 
@@ -803,14 +803,14 @@ static void calc_feature_oris( CvSeq* features, IplImage*** gauss_pyr )
       cvSeqPopFront( features, feat );
       ddata = feat_detection_data( feat );
       hist = ori_hist( gauss_pyr[ddata->octv][ddata->intvl],
-		       ddata->r, ddata->c, SIFT_ORI_HIST_BINS,
-		       cvRound( SIFT_ORI_RADIUS * ddata->scl_octv ),
-		       SIFT_ORI_SIG_FCTR * ddata->scl_octv );
+                       ddata->r, ddata->c, SIFT_ORI_HIST_BINS,
+                       cvRound( SIFT_ORI_RADIUS * ddata->scl_octv ),
+                       SIFT_ORI_SIG_FCTR * ddata->scl_octv );
       for( j = 0; j < SIFT_ORI_SMOOTH_PASSES; j++ )
-	smooth_ori_hist( hist, SIFT_ORI_HIST_BINS );
+        smooth_ori_hist( hist, SIFT_ORI_HIST_BINS );
       omax = dominant_ori( hist, SIFT_ORI_HIST_BINS );
       add_good_ori_features( features, hist, SIFT_ORI_HIST_BINS,
-			     omax * SIFT_ORI_PEAK_RATIO, feat );
+                             omax * SIFT_ORI_PEAK_RATIO, feat );
       free( ddata );
       free( feat );
       free( hist );
@@ -833,7 +833,7 @@ static void calc_feature_oris( CvSeq* features, IplImage*** gauss_pyr )
     representing orientations between 0 and 2 PI.
 */
 static double* ori_hist( IplImage* img, int r, int c, int n, int rad,
-			 double sigma )
+                         double sigma )
 {
   double* hist;
   double mag, ori, w, exp_denom, PI2 = CV_PI * 2.0;
@@ -844,12 +844,12 @@ static double* ori_hist( IplImage* img, int r, int c, int n, int rad,
   for( i = -rad; i <= rad; i++ )
     for( j = -rad; j <= rad; j++ )
       if( calc_grad_mag_ori( img, r + i, c + j, &mag, &ori ) )
-	{
-	  w = exp( -( i*i + j*j ) / exp_denom );
-	  bin = cvRound( n * ( ori + CV_PI ) / PI2 );
-	  bin = ( bin < n )? bin : 0;
-	  hist[bin] += w * mag;
-	}
+        {
+          w = exp( -( i*i + j*j ) / exp_denom );
+          bin = cvRound( n * ( ori + CV_PI ) / PI2 );
+          bin = ( bin < n )? bin : 0;
+          hist[bin] += w * mag;
+        }
 
   return hist;
 }
@@ -869,7 +869,7 @@ static double* ori_hist( IplImage* img, int r, int c, int n, int rad,
     ori accordingly; otherwise returns 0
 */
 static int calc_grad_mag_ori( IplImage* img, int r, int c, double* mag,
-			      double* ori )
+                              double* ori )
 {
   double dx, dy;
 
@@ -903,8 +903,8 @@ static void smooth_ori_hist( double* hist, int n )
   for( i = 0; i < n; i++ )
     {
       tmp = hist[i];
-      hist[i] = 0.25 * prev + 0.5 * hist[i] + 
-	0.25 * ( ( i+1 == n )? h0 : hist[i+1] );
+      hist[i] = 0.25 * prev + 0.5 * hist[i] +
+        0.25 * ( ( i+1 == n )? h0 : hist[i+1] );
       prev = tmp;
     }
 }
@@ -929,8 +929,8 @@ static double dominant_ori( double* hist, int n )
   for( i = 1; i < n; i++ )
     if( hist[i] > omax )
       {
-	omax = hist[i];
-	maxbin = i;
+        omax = hist[i];
+        maxbin = i;
       }
   return omax;
 }
@@ -955,7 +955,7 @@ static double dominant_ori( double* hist, int n )
   @param feat new features are clones of this with different orientations
 */
 static void add_good_ori_features( CvSeq* features, double* hist, int n,
-				   double mag_thr, struct feature* feat )
+                                   double mag_thr, struct feature* feat )
 {
   struct feature* new_feat;
   double bin, PI2 = CV_PI * 2.0;
@@ -965,16 +965,16 @@ static void add_good_ori_features( CvSeq* features, double* hist, int n,
     {
       l = ( i == 0 )? n - 1 : i-1;
       r = ( i + 1 ) % n;
-      
+
       if( hist[i] > hist[l]  &&  hist[i] > hist[r]  &&  hist[i] >= mag_thr )
-	{
-	  bin = i + interp_hist_peak( hist[l], hist[i], hist[r] );
-	  bin = ( bin < 0 )? n + bin : ( bin >= n )? bin - n : bin;
-	  new_feat = clone_feature( feat );
-	  new_feat->ori = ( ( PI2 * bin ) / n ) - CV_PI;
-	  cvSeqPush( features, new_feat );
-	  free( new_feat );
-	}
+        {
+          bin = i + interp_hist_peak( hist[l], hist[i], hist[r] );
+          bin = ( bin < 0 )? n + bin : ( bin >= n )? bin - n : bin;
+          new_feat = clone_feature( feat );
+          new_feat->ori = ( ( PI2 * bin ) / n ) - CV_PI;
+          cvSeqPush( features, new_feat );
+          free( new_feat );
+        }
     }
 }
 
@@ -1013,7 +1013,7 @@ static struct feature* clone_feature( struct feature* feat )
   @param n number of bins per orientation histogram
 */
 static void compute_descriptors( CvSeq* features, IplImage*** gauss_pyr, int d,
-				 int n )
+                                 int n )
 {
   struct feature* feat;
   struct detection_data* ddata;
@@ -1025,7 +1025,7 @@ static void compute_descriptors( CvSeq* features, IplImage*** gauss_pyr, int d,
       feat = CV_GET_SEQ_ELEM( struct feature, features, i );
       ddata = feat_detection_data( feat );
       hist = descr_hist( gauss_pyr[ddata->octv][ddata->intvl], ddata->r,
-			 ddata->c, feat->ori, ddata->scl_octv, d, n );
+                         ddata->c, feat->ori, ddata->scl_octv, d, n );
       hist_to_descr( hist, d, n, feat );
       release_descr_hist( &hist, d );
     }
@@ -1048,7 +1048,7 @@ static void compute_descriptors( CvSeq* features, IplImage*** gauss_pyr, int d,
   @return Returns a d x d array of n-bin orientation histograms.
 */
 static double*** descr_hist( IplImage* img, int r, int c, double ori,
-			     double scl, int d, int n )
+                             double scl, int d, int n )
 {
   double*** hist;
   double cos_t, sin_t, hist_width, exp_denom, r_rot, c_rot, grad_mag,
@@ -1060,9 +1060,9 @@ static double*** descr_hist( IplImage* img, int r, int c, double ori,
     {
       hist[i] = calloc( d, sizeof( double* ) );
       for( j = 0; j < d; j++ )
-	hist[i][j] = calloc( n, sizeof( double ) );
+        hist[i][j] = calloc( n, sizeof( double ) );
     }
-  
+
   cos_t = cos( ori );
   sin_t = sin( ori );
   bins_per_rad = n / PI2;
@@ -1072,29 +1072,29 @@ static double*** descr_hist( IplImage* img, int r, int c, double ori,
   for( i = -radius; i <= radius; i++ )
     for( j = -radius; j <= radius; j++ )
       {
-	/*
-	  Calculate sample's histogram array coords rotated relative to ori.
-	  Subtract 0.5 so samples that fall e.g. in the center of row 1 (i.e.
-	  r_rot = 1.5) have full weight placed in row 1 after interpolation.
-	*/
-	c_rot = ( j * cos_t - i * sin_t ) / hist_width;
-	r_rot = ( j * sin_t + i * cos_t ) / hist_width;
-	rbin = r_rot + d / 2 - 0.5;
-	cbin = c_rot + d / 2 - 0.5;
-	
-	if( rbin > -1.0  &&  rbin < d  &&  cbin > -1.0  &&  cbin < d )
-	  if( calc_grad_mag_ori( img, r + i, c + j, &grad_mag, &grad_ori ))
-	    {
-	      grad_ori -= ori;
-	      while( grad_ori < 0.0 )
-		grad_ori += PI2;
-	      while( grad_ori >= PI2 )
-		grad_ori -= PI2;
-	      
-	      obin = grad_ori * bins_per_rad;
-	      w = exp( -(c_rot * c_rot + r_rot * r_rot) / exp_denom );
-	      interp_hist_entry( hist, rbin, cbin, obin, grad_mag * w, d, n );
-	    }
+        /*
+          Calculate sample's histogram array coords rotated relative to ori.
+          Subtract 0.5 so samples that fall e.g. in the center of row 1 (i.e.
+          r_rot = 1.5) have full weight placed in row 1 after interpolation.
+        */
+        c_rot = ( j * cos_t - i * sin_t ) / hist_width;
+        r_rot = ( j * sin_t + i * cos_t ) / hist_width;
+        rbin = r_rot + d / 2 - 0.5;
+        cbin = c_rot + d / 2 - 0.5;
+
+        if( rbin > -1.0  &&  rbin < d  &&  cbin > -1.0  &&  cbin < d )
+          if( calc_grad_mag_ori( img, r + i, c + j, &grad_mag, &grad_ori ))
+            {
+              grad_ori -= ori;
+              while( grad_ori < 0.0 )
+                grad_ori += PI2;
+              while( grad_ori >= PI2 )
+                grad_ori -= PI2;
+
+              obin = grad_ori * bins_per_rad;
+              w = exp( -(c_rot * c_rot + r_rot * r_rot) / exp_denom );
+              interp_hist_entry( hist, rbin, cbin, obin, grad_mag * w, d, n );
+            }
       }
 
   return hist;
@@ -1115,7 +1115,7 @@ static double*** descr_hist( IplImage* img, int r, int c, double ori,
   @param n number of bins per orientation histogram
 */
 static void interp_hist_entry( double*** hist, double rbin, double cbin,
-			       double obin, double mag, int d, int n )
+                               double obin, double mag, int d, int n )
 {
   double d_r, d_c, d_o, v_r, v_c, v_o;
   double** row, * h;
@@ -1137,25 +1137,25 @@ static void interp_hist_entry( double*** hist, double rbin, double cbin,
     {
       rb = r0 + r;
       if( rb >= 0  &&  rb < d )
-	{
-	  v_r = mag * ( ( r == 0 )? 1.0 - d_r : d_r );
-	  row = hist[rb];
-	  for( c = 0; c <= 1; c++ )
-	    {
-	      cb = c0 + c;
-	      if( cb >= 0  &&  cb < d )
-		{
-		  v_c = v_r * ( ( c == 0 )? 1.0 - d_c : d_c );
-		  h = row[cb];
-		  for( o = 0; o <= 1; o++ )
-		    {
-		      ob = ( o0 + o ) % n;
-		      v_o = v_c * ( ( o == 0 )? 1.0 - d_o : d_o );
-		      h[ob] += v_o;
-		    }
-		}
-	    }
-	}
+        {
+          v_r = mag * ( ( r == 0 )? 1.0 - d_r : d_r );
+          row = hist[rb];
+          for( c = 0; c <= 1; c++ )
+            {
+              cb = c0 + c;
+              if( cb >= 0  &&  cb < d )
+                {
+                  v_c = v_r * ( ( c == 0 )? 1.0 - d_c : d_c );
+                  h = row[cb];
+                  for( o = 0; o <= 1; o++ )
+                    {
+                      ob = ( o0 + o ) % n;
+                      v_o = v_c * ( ( o == 0 )? 1.0 - d_o : d_o );
+                      h[ob] += v_o;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1164,7 +1164,7 @@ static void interp_hist_entry( double*** hist, double rbin, double cbin,
 /*
   Converts the 2D array of orientation histograms into a feature's descriptor
   vector.
-  
+
   @param hist 2D array of orientation histograms
   @param d width of hist
   @param n bins per histogram
@@ -1177,7 +1177,7 @@ static void hist_to_descr( double*** hist, int d, int n, struct feature* feat )
   for( r = 0; r < d; r++ )
     for( c = 0; c < d; c++ )
       for( o = 0; o < n; o++ )
-	feat->descr[k++] = hist[r][c][o];
+        feat->descr[k++] = hist[r][c][o];
 
   feat->d = k;
   normalize_descr( feat );
@@ -1256,7 +1256,7 @@ static void release_descr_hist( double**** hist, int d )
   for( i = 0; i < d; i++)
     {
       for( j = 0; j < d; j++ )
-	free( (*hist)[i][j] );
+        free( (*hist)[i][j] );
       free( (*hist)[i] );
     }
   free( *hist );
@@ -1277,7 +1277,7 @@ static void release_pyr( IplImage**** pyr, int octvs, int n )
   for( i = 0; i < octvs; i++ )
     {
       for( j = 0; j < n; j++ )
-	cvReleaseImage( &(*pyr)[i][j] );
+        cvReleaseImage( &(*pyr)[i][j] );
       free( (*pyr)[i] );
     }
   free( *pyr );

@@ -7,28 +7,28 @@ extern "C" {
 
    typedef enum _Epeg_Colorspace
      {
-	EPEG_GRAY8,
-	  EPEG_YUV8,
-	  EPEG_RGB8,
-	  EPEG_BGR8,
-	  EPEG_RGBA8,
-	  EPEG_BGRA8,
-	  EPEG_ARGB32,
-	  EPEG_CMYK
+        EPEG_GRAY8,
+          EPEG_YUV8,
+          EPEG_RGB8,
+          EPEG_BGR8,
+          EPEG_RGBA8,
+          EPEG_BGRA8,
+          EPEG_ARGB32,
+          EPEG_CMYK
      }
    Epeg_Colorspace;
-   
+
    typedef struct _Epeg_Image          Epeg_Image;
    typedef struct _Epeg_Thumbnail_Info Epeg_Thumbnail_Info;
 
    struct _Epeg_Thumbnail_Info
      {
-	char                   *uri;
-	unsigned long long int  mtime;
-	int                     w, h;
-	char                   *mimetype;
+        char                   *uri;
+        unsigned long long int  mtime;
+        int                     w, h;
+        char                   *mimetype;
      };
-   
+
    Epeg_Image   *epeg_file_open                 (const char *file);
    Epeg_Image   *epeg_memory_open               (unsigned char *data, int size);
    void          epeg_size_get                  (Epeg_Image *im, int *w, int *h);
@@ -46,7 +46,7 @@ extern "C" {
    int           epeg_encode                    (Epeg_Image *im);
    int           epeg_trim                      (Epeg_Image *im);
    void          epeg_close                     (Epeg_Image *im);
-   
+
 #ifdef __cplusplus
 }
 #endif

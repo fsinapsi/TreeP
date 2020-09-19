@@ -53,17 +53,17 @@ static inline int imax(int a, int b)
 static inline int imedian(int a,int b,int c)
 {
   if (a > b) // a > b
-  { 
-    if (b > c) 
+  {
+    if (b > c)
       return(b); // a > b > c
-    else if (a > c) 
+    else if (a > c)
       return(c); // a > c > b
-    else 
+    else
       return(a); // c > a > b
   }
   else // b > a
-  { 
-    if (a > c) 
+  {
+    if (a > c)
       return(a); // b > a > c
     else if (b > c)
       return(c); // b > c > a
@@ -138,7 +138,7 @@ static inline double dabs2(double x)
   return (x) * (x);
 }
 
-static inline int iabs2(int x) 
+static inline int iabs2(int x)
 {
   return (x) * (x);
 }
@@ -239,7 +239,7 @@ static inline int RSD(int x)
  return ((x&2)?(x|1):(x&(~1)));
 }
 
-static inline int power2(int x) 
+static inline int power2(int x)
 {
   return 1 << (x);
 }
@@ -271,23 +271,23 @@ static inline int get_bit(int64 x,int n)
 }
 
 #if ZEROSNR
-static inline float psnr(int max_sample_sq, int samples, float sse_distortion ) 
+static inline float psnr(int max_sample_sq, int samples, float sse_distortion )
 {
   return (float) (10.0 * log10(max_sample_sq * (double) ((double) samples / (sse_distortion < 1.0 ? 1.0 : sse_distortion))));
 }
 #else
-static inline float psnr(int max_sample_sq, int samples, float sse_distortion ) 
+static inline float psnr(int max_sample_sq, int samples, float sse_distortion )
 {
   return (float) (sse_distortion == 0.0 ? 0.0 : (10.0 * log10(max_sample_sq * (double) ((double) samples / sse_distortion))));
 }
 #endif
 
-static inline int CheckCost_Shift(int64 mcost, int64 min_mcost)  
+static inline int CheckCost_Shift(int64 mcost, int64 min_mcost)
 {
-  if((mcost<<LAMBDA_ACCURACY_BITS) >= min_mcost)  
+  if((mcost<<LAMBDA_ACCURACY_BITS) >= min_mcost)
     return 1;
   else
-    return 0; 
+    return 0;
 }
 
 static inline int CheckCost(int64 mcost, int64 min_mcost)
@@ -295,21 +295,21 @@ static inline int CheckCost(int64 mcost, int64 min_mcost)
   return ((mcost) >= (min_mcost));
 }
 
-static inline void down_scale(distblk *pblkdistCost) 
+static inline void down_scale(distblk *pblkdistCost)
 {
 #if JCOST_CALC_SCALEUP
   *pblkdistCost = (*pblkdistCost)>>LAMBDA_ACCURACY_BITS;
 #endif
 }
 
-static inline void up_scale(distblk *pblkdistCost) 
+static inline void up_scale(distblk *pblkdistCost)
 {
 #if JCOST_CALC_SCALEUP
   *pblkdistCost = (*pblkdistCost)<<LAMBDA_ACCURACY_BITS;
 #endif
 }
 
-static inline distblk dist_scale(distblk blkdistCost) 
+static inline distblk dist_scale(distblk blkdistCost)
 {
 #if JCOST_CALC_SCALEUP
   return ((blkdistCost)<<LAMBDA_ACCURACY_BITS);
@@ -318,7 +318,7 @@ static inline distblk dist_scale(distblk blkdistCost)
 #endif
 }
 
-static inline int dist_down(distblk blkdistCost) 
+static inline int dist_down(distblk blkdistCost)
 {
 #if JCOST_CALC_SCALEUP
   return ((int)((blkdistCost)>>LAMBDA_ACCURACY_BITS));
@@ -353,7 +353,7 @@ static inline void free_pointer(void *pointer)
   }
 }
 
-static inline void i32_swap(int *x, int *y) 
+static inline void i32_swap(int *x, int *y)
 {
   int temp = *x;
   *x = *y;

@@ -6,7 +6,7 @@
  *    Functions for intra chroma prediction
  *
  * \author
- *      Main contributors (see contributors.h for copyright, 
+ *      Main contributors (see contributors.h for copyright,
  *                         address and affiliation details)
  *      - Alexis Michael Tourapis  <alexismt@ieee.org>
  *
@@ -24,13 +24,13 @@ static void intra_chroma_DC_single_mbaff(imgpel **curr_img, int up_avail, int le
 
   if ((direction && up_avail) || (!left_avail && up_avail))
   {
-    for (i = blk_x; i < (blk_x + 4);++i)  
+    for (i = blk_x; i < (blk_x + 4);++i)
       s0 += curr_img[up.pos_y][up.pos_x + i];
     *pred = (s0 + 2) >> 2;
   }
-  else if (left_avail)  
+  else if (left_avail)
   {
-    for (i = blk_y; i < (blk_y + 4);++i)  
+    for (i = blk_y; i < (blk_y + 4);++i)
       s0 += curr_img[left[i].pos_y][left[i].pos_x];
     *pred = (s0 + 2) >> 2;
   }
@@ -64,7 +64,7 @@ void intrapred_chroma_ver_mbaff(Macroblock *currMB)
     imgpel *i0 = &(dec_picture->imgUV[0][up.pos_y][up.pos_x]);
     imgpel *i1 = &(dec_picture->imgUV[1][up.pos_y][up.pos_x]);
 
-    for (j = 0; j < cr_MB_y; ++j) 
+    for (j = 0; j < cr_MB_y; ++j)
     {
       memcpy(&(mb_pred0[j][0]),i0, cr_MB_x * sizeof(imgpel));
       memcpy(&(mb_pred1[j][0]),i1, cr_MB_x * sizeof(imgpel));
@@ -78,12 +78,12 @@ static void intra_chroma_DC_all_mbaff(imgpel **curr_img, int up_avail, int left_
   int i;
   int s0 = 0, s1 = 0;
 
-  if (up_avail)       
-    for (i = blk_x; i < (blk_x + 4);++i)  
+  if (up_avail)
+    for (i = blk_x; i < (blk_x + 4);++i)
       s0 += curr_img[up.pos_y][up.pos_x + i];
 
-  if (left_avail)  
-    for (i = blk_y; i < (blk_y + 4);++i)  
+  if (left_avail)
+    for (i = blk_y; i < (blk_y + 4);++i)
       s1 += curr_img[left[i].pos_y][left[i].pos_x];
 
   if (up_avail && left_avail)
@@ -122,9 +122,9 @@ void intra_pred_chroma_mbaff(Macroblock *currMB)
     { {0, 1, 2, 3},{1, 1, 3, 3},{4, 5, 4, 5},{5, 5, 5, 5}}
   };
 
-  switch (currMB->c_ipred_mode) 
+  switch (currMB->c_ipred_mode)
   {
-  case DC_PRED_8:  
+  case DC_PRED_8:
     {
       PixelPos up;        //!< pixel position  p(0,-1)
       PixelPos left[17];  //!< pixel positions p(-1, -1..16)
@@ -333,7 +333,7 @@ void intra_pred_chroma_mbaff(Macroblock *currMB)
       else
       {
         int uv;
-        for (uv = 0; uv < 2; uv++) 
+        for (uv = 0; uv < 2; uv++)
         {
           imgpel **imgUV = dec_picture->imgUV[uv];
           imgpel **mb_pred = currSlice->mb_pred[uv + 1];
@@ -356,7 +356,7 @@ void intra_pred_chroma_mbaff(Macroblock *currMB)
 
           for (j = 0; j < cr_MB_y; ++j)
             for (i = 0; i < cr_MB_x; ++i)
-              mb_pred[j][i]=(imgpel) iClip1(max_imgpel_value, ((iaa + (i - cr_MB_x2 + 1) * ib + (j - cr_MB_y2 + 1) * ic + 16) >> 5));  
+              mb_pred[j][i]=(imgpel) iClip1(max_imgpel_value, ((iaa + (i - cr_MB_x2 + 1) * ib + (j - cr_MB_y2 + 1) * ic + 16) >> 5));
         }
       }
     }

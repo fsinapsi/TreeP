@@ -246,7 +246,7 @@ typedef struct
   int **non_anchor_ref_l0;
   int *num_non_anchor_refs_l1;
   int **non_anchor_ref_l1;
-   
+
   int num_level_values_signalled_minus1;
   int *level_idc;
   int *num_applicable_ops_minus1;

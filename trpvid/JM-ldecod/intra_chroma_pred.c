@@ -6,7 +6,7 @@
  *    Functions for intra chroma prediction
  *
  * \author
- *      Main contributors (see contributors.h for copyright, 
+ *      Main contributors (see contributors.h for copyright,
  *                         address and affiliation details)
  *      - Alexis Michael Tourapis  <alexismt@ieee.org>
  *
@@ -26,15 +26,15 @@ static void intra_chroma_DC_single(imgpel **curr_img, int up_avail, int left_ava
   if ((direction && up_avail) || (!left_avail && up_avail))
   {
     imgpel *cur_pel = &curr_img[up.pos_y][up.pos_x + blk_x];
-    for (i = 0; i < 4;++i)  
+    for (i = 0; i < 4;++i)
       s0 += *(cur_pel++);
     *pred = (s0 + 2) >> 2;
   }
-  else if (left_avail)  
+  else if (left_avail)
   {
     imgpel **cur_pel = &(curr_img[left.pos_y + blk_y - 1]);
     int pos_x = left.pos_x;
-    for (i = 0; i < 4;++i)  
+    for (i = 0; i < 4;++i)
       s0 += *((*cur_pel++) + pos_x);
     *pred = (s0 + 2) >> 2;
   }
@@ -46,10 +46,10 @@ static void intra_chroma_DC_all(imgpel **curr_img, int up_avail, int left_avail,
   int i;
   int s0 = 0, s1 = 0;
 
-  if (up_avail)  
-  {    
+  if (up_avail)
+  {
     imgpel *cur_pel = &curr_img[up.pos_y][up.pos_x + blk_x];
-    for (i = 0; i < 4;++i)  
+    for (i = 0; i < 4;++i)
       s0 += *(cur_pel++);
   }
 
@@ -57,7 +57,7 @@ static void intra_chroma_DC_all(imgpel **curr_img, int up_avail, int left_avail,
   {
     imgpel **cur_pel = &(curr_img[left.pos_y + blk_y - 1]);
     int pos_x = left.pos_x;
-    for (i = 0; i < 4;++i)  
+    for (i = 0; i < 4;++i)
       s1 += *((*cur_pel++) + pos_x);
   }
 
@@ -97,12 +97,12 @@ static void intrapred_chroma_dc(Macroblock *currMB)
   getNonAffNeighbour(currMB, -1,  0, p_Vid->mb_size[IS_CHROMA], &left);
   getNonAffNeighbour(currMB,  0, -1, p_Vid->mb_size[IS_CHROMA], &up);
 
-  if (!p_Vid->active_pps->constrained_intra_pred_flag) 
+  if (!p_Vid->active_pps->constrained_intra_pred_flag)
   {
     up_avail      = up.available;
     left_avail    = left.available;
   }
-  else 
+  else
   {
     up_avail = up.available ? currSlice->intra_block[up.mb_addr] : 0;
     left_avail = left.available ? currSlice->intra_block[left.mb_addr]: 0;
@@ -111,9 +111,9 @@ static void intrapred_chroma_dc(Macroblock *currMB)
   // DC prediction
   // Note that unlike what is stated in many presentations and papers, this mode does not operate
   // the same way as I_16x16 DC prediction.
-  for(b8 = 0; b8 < (p_Vid->num_uv_blocks) ;++b8) 
+  for(b8 = 0; b8 < (p_Vid->num_uv_blocks) ;++b8)
   {
-    for (b4 = 0; b4 < 4; ++b4) 
+    for (b4 = 0; b4 < 4; ++b4)
     {
       blk_y = subblk_offset_y[yuv][b8][b4];
       blk_x = subblk_offset_x[yuv][b8][b4];
@@ -143,7 +143,7 @@ static void intrapred_chroma_dc(Macroblock *currMB)
 #if (IMGTYPE == 0)
       {
         int jj;
-        for (jj = blk_y; jj < blk_y + BLOCK_SIZE; ++jj) 
+        for (jj = blk_y; jj < blk_y + BLOCK_SIZE; ++jj)
         {
           memset(&mb_pred0[jj][blk_x],  pred, BLOCK_SIZE * sizeof(imgpel));
           memset(&mb_pred1[jj][blk_x], pred1, BLOCK_SIZE * sizeof(imgpel));
@@ -152,9 +152,9 @@ static void intrapred_chroma_dc(Macroblock *currMB)
 #else
       {
         int jj, ii;
-        for (jj = blk_y; jj < blk_y + BLOCK_SIZE; ++jj) 
+        for (jj = blk_y; jj < blk_y + BLOCK_SIZE; ++jj)
         {
-          for (ii = blk_x; ii < blk_x + BLOCK_SIZE; ++ii) 
+          for (ii = blk_x; ii < blk_x + BLOCK_SIZE; ++ii)
           {
             mb_pred0[jj][ii]=(imgpel) pred;
             mb_pred1[jj][ii]=(imgpel) pred1;
@@ -168,12 +168,12 @@ static void intrapred_chroma_dc(Macroblock *currMB)
 
 static void intrapred_chroma_hor(Macroblock *currMB)
 {
-  VideoParameters *p_Vid = currMB->p_Vid;  
+  VideoParameters *p_Vid = currMB->p_Vid;
   PixelPos a;  //!< pixel positions p(-1, -1..16)
   int left_avail;
- 
+
   getNonAffNeighbour(currMB, -1, 0, p_Vid->mb_size[IS_CHROMA], &a);
-  
+
   if (!p_Vid->active_pps->constrained_intra_pred_flag)
     left_avail = a.available;
   else
@@ -181,13 +181,13 @@ static void intrapred_chroma_hor(Macroblock *currMB)
   // Horizontal Prediction
   if (!left_avail )
     error("unexpected HOR_PRED_8 chroma intra prediction mode",-1);
-  else 
+  else
   {
     Slice *currSlice = currMB->p_Slice;
     int cr_MB_x = p_Vid->mb_cr_size_x;
     int cr_MB_y = p_Vid->mb_cr_size_y;
 
-    int j;  
+    int j;
     StorablePicture *dec_picture = currSlice->dec_picture;
 #if (IMGTYPE != 0)
     int i, pred, pred1;
@@ -198,8 +198,8 @@ static void intrapred_chroma_hor(Macroblock *currMB)
     imgpel **mb_pred1 = currSlice->mb_pred[1 + 1];
     imgpel **i0 = &dec_picture->imgUV[0][pos_y];
     imgpel **i1 = &dec_picture->imgUV[1][pos_y];
-    
-    for (j = 0; j < cr_MB_y; ++j) 
+
+    for (j = 0; j < cr_MB_y; ++j)
     {
 #if (IMGTYPE == 0)
       memset(mb_pred0[j], (*i0++)[pos_x], cr_MB_x * sizeof(imgpel));
@@ -207,7 +207,7 @@ static void intrapred_chroma_hor(Macroblock *currMB)
 #else
       pred  = (*i0++)[pos_x];
       pred1 = (*i1++)[pos_x];
-      for (i = 0; i < cr_MB_x; ++i) 
+      for (i = 0; i < cr_MB_x; ++i)
       {
         mb_pred0[j][i]=(imgpel) pred;
         mb_pred1[j][i]=(imgpel) pred1;
@@ -245,7 +245,7 @@ static void intrapred_chroma_ver(Macroblock *currMB)
     imgpel *i0 = &(dec_picture->imgUV[0][up.pos_y][up.pos_x]);
     imgpel *i1 = &(dec_picture->imgUV[1][up.pos_y][up.pos_x]);
 
-    for (j = 0; j < cr_MB_y; ++j) 
+    for (j = 0; j < cr_MB_y; ++j)
     {
       memcpy(mb_pred0[j], i0, cr_MB_x * sizeof(imgpel));
       memcpy(mb_pred1[j], i1, cr_MB_x * sizeof(imgpel));
@@ -268,13 +268,13 @@ static void intrapred_chroma_plane(Macroblock *currMB)
   getNonAffNeighbour(currMB, -1,  0, p_Vid->mb_size[IS_CHROMA], &left);
   getNonAffNeighbour(currMB,  0, -1, p_Vid->mb_size[IS_CHROMA], &up);
 
-  if (!p_Vid->active_pps->constrained_intra_pred_flag) 
+  if (!p_Vid->active_pps->constrained_intra_pred_flag)
   {
     up_avail      = up.available;
     left_avail    = left.available;
     left_up_avail = up_left.available;
   }
-  else 
+  else
   {
     up_avail      = up.available ? currSlice->intra_block[up.mb_addr] : 0;
     left_avail    = left.available ? currSlice->intra_block[left.mb_addr]: 0;
@@ -283,7 +283,7 @@ static void intrapred_chroma_plane(Macroblock *currMB)
   // plane prediction
   if (!left_up_avail || !left_avail || !up_avail)
     error("unexpected PLANE_8 chroma intra prediction mode",-1);
-  else 
+  else
   {
     int cr_MB_x = p_Vid->mb_cr_size_x;
     int cr_MB_y = p_Vid->mb_cr_size_y;
@@ -293,7 +293,7 @@ static void intrapred_chroma_plane(Macroblock *currMB)
     int i,j;
     int ih, iv, ib, ic, iaa;
     int uv;
-    for (uv = 0; uv < 2; uv++) 
+    for (uv = 0; uv < 2; uv++)
     {
       imgpel **imgUV = dec_picture->imgUV[uv];
       imgpel **mb_pred = currSlice->mb_pred[uv + 1];
@@ -310,7 +310,7 @@ static void intrapred_chroma_plane(Macroblock *currMB)
         ih += (i + 1) * (upPred[cr_MB_x2 + i] - upPred[cr_MB_x2 - 2 - i]);
 
       iv = cr_MB_y2 * (imgUV[left.pos_y + cr_MB_y - 1][pos_x] - imgUV[up_left.pos_y][pos_x]);
-           
+
       for (i = 0; i < cr_MB_y2 - 1; ++i)
       {
         iv += (i + 1)*(*(imgUV[pos_y1++] + pos_x) - *((*predU2--) + pos_x));
@@ -341,18 +341,18 @@ static void intrapred_chroma_plane(Macroblock *currMB)
  */
 void intra_pred_chroma(Macroblock *currMB)
 {
-  switch (currMB->c_ipred_mode) 
+  switch (currMB->c_ipred_mode)
   {
-  case DC_PRED_8:  
+  case DC_PRED_8:
     intrapred_chroma_dc(currMB);
     break;
-  case HOR_PRED_8: 
+  case HOR_PRED_8:
     intrapred_chroma_hor(currMB);
     break;
-  case VERT_PRED_8: 
+  case VERT_PRED_8:
     intrapred_chroma_ver(currMB);
     break;
-  case PLANE_8: 
+  case PLANE_8:
     intrapred_chroma_plane(currMB);
     break;
   default:

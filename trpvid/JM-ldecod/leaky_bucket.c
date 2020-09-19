@@ -107,9 +107,9 @@ void calc_buffer(InputParameters *p_Inp)
   }
 
   printf("\n");
-  if(iBucket > 0 ) 
+  if(iBucket > 0 )
   {
-    if(iBucket < NumberLeakyBuckets) 
+    if(iBucket < NumberLeakyBuckets)
     {
       dnr = (float) (Rmin[iBucket] - Rmin[iBucket-1]);
       frac1 = (float) (R_decoder - Rmin[iBucket-1]);

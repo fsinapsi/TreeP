@@ -8,7 +8,7 @@
  * \author
  *    Main contributors (see contributors.h for copyright, address and affiliation details)
  *     - Karsten Suehring
- *     - Alexis Michael Tourapis         <alexismt@ieee.org> 
+ *     - Alexis Michael Tourapis         <alexismt@ieee.org>
  *     - Yuwen He                        <yhe@dolby.com>
  *
  ************************************************************************
@@ -203,7 +203,7 @@ static inline void* mem_malloc(size_t nitems)
  ************************************************************************/
 static inline void* mem_calloc(size_t nitems, size_t size)
 {
-  size_t padded_size = nitems * size; 
+  size_t padded_size = nitems * size;
   void *d = mem_malloc(padded_size);
   memset(d, 0, (int)padded_size);
   return d;

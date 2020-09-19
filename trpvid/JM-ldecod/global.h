@@ -270,7 +270,7 @@ typedef struct macroblock_dec
   void (*itrans_4x4)(struct macroblock_dec *currMB, ColorPlane pl, int ioff, int joff);
   void (*itrans_8x8)(struct macroblock_dec *currMB, ColorPlane pl, int ioff, int joff);
 
-  void (*GetMVPredictor) (struct macroblock_dec *currMB, PixelPos *block, 
+  void (*GetMVPredictor) (struct macroblock_dec *currMB, PixelPos *block,
     MotionVector *pmv, short ref_frame, struct pic_motion_params **mv_info, int list, int mb_x, int mb_y, int blockshape_x, int blockshape_y);
 
   int  (*read_and_store_CBP_block_bit)  (struct macroblock_dec *currMB, DecodingEnvironmentPtr  dep_dp, int type);
@@ -442,7 +442,7 @@ typedef struct slice
   //slice header information;
   int colour_plane_id;               //!< colour_plane_id of the current coded slice
   int redundant_pic_cnt;
-  int sp_switch;                              //!< 1 for switching sp, 0 for normal sp  
+  int sp_switch;                              //!< 1 for switching sp, 0 for normal sp
   int slice_group_change_cycle;
   int redundant_slice_ref_idx;     //!< reference index of redundant slice
   int no_output_of_prior_pics_flag;
@@ -495,10 +495,10 @@ typedef struct slice
   int cofu[16];
 
   imgpel **tmp_block_l0;
-  imgpel **tmp_block_l1;  
+  imgpel **tmp_block_l1;
   int    **tmp_res;
   imgpel **tmp_block_l2;
-  imgpel **tmp_block_l3;  
+  imgpel **tmp_block_l3;
 
   // Scaling matrix info
   int  InvLevelScale4x4_Intra[3][6][4][4];
@@ -511,7 +511,7 @@ typedef struct slice
   // Cabac
   int  coeff[64]; // one more for EOB
   int  coeff_ctr;
-  int  pos;  
+  int  pos;
 
 
   //weighted prediction
@@ -520,7 +520,7 @@ typedef struct slice
 
   unsigned short luma_log2_weight_denom;
   unsigned short chroma_log2_weight_denom;
-  
+
   WPParams **wp_params; // wp parameters in [list][index]
 
   int ***wp_weight;  // weight in [list][index][component] order
@@ -550,7 +550,7 @@ typedef struct slice
   char  chroma_vector_adjustment[6][32];
   void (*read_CBP_and_coeffs_from_NAL) (Macroblock *currMB);
   int  (*decode_one_component     )    (Macroblock *currMB, ColorPlane curr_plane, imgpel **currImg, struct storable_picture *dec_picture);
-  int  (*readSlice                )    (struct video_par *, struct inp_par *);  
+  int  (*readSlice                )    (struct video_par *, struct inp_par *);
   int  (*nal_startcode_follows    )    (struct slice*, int );
   void (*read_motion_info_from_NAL)    (Macroblock *currMB);
   void (*read_one_macroblock      )    (Macroblock *currMB);
@@ -563,7 +563,7 @@ typedef struct slice
   int  (*intra_pred_16x16)             (Macroblock *currMB, ColorPlane pl, int predmode);
 
   void (*linfo_cbp_intra          )    (int len, int info, int *cbp, int *dummy);
-  void (*linfo_cbp_inter          )    (int len, int info, int *cbp, int *dummy);    
+  void (*linfo_cbp_inter          )    (int len, int info, int *cbp, int *dummy);
   void (*update_direct_mv_info    )    (Macroblock *currMB);
   void (*read_coeff_4x4_CAVLC     )    (Macroblock *currMB, int block_type, int i, int j, int levarr[16], int runarr[16], int *number_coefficients);
 
@@ -580,7 +580,7 @@ typedef struct decodedpic_t
   byte *pY;                   //if iPictureFormat is 1, [0]: top; [1] bottom;
   byte *pU;
   byte *pV;
-  int iWidth;                 //frame width;              
+  int iWidth;                 //frame width;
   int iHeight;                //frame height;
   int iYBufStride;            //stride of pY[0/1] buffer in bytes;
   int iUVBufStride;           //stride of pU[0/1] and pV[0/1] buffer in bytes;
@@ -596,7 +596,7 @@ typedef struct coding_par
   int profile_idc;
   int width;
   int height;
-  int width_cr;                               //!< width chroma  
+  int width_cr;                               //!< width chroma
   int height_cr;                              //!< height chroma
 
   int pic_unit_bitsize_on_disk;
@@ -619,9 +619,9 @@ typedef struct coding_par
   int mb_cr_size_y_blk;
   int mb_cr_size;
   int mb_size[3][2];                         //!< component macroblock dimensions
-  int mb_size_blk[3][2];                     //!< component macroblock dimensions 
+  int mb_size_blk[3][2];                     //!< component macroblock dimensions
   int mb_size_shift[3][2];
-  
+
   int max_vmv_r;                             //!< maximum vertical motion vector range in luma quarter frame pixel units for the current level_idc
   int separate_colour_plane_flag;
   int ChromaArrayType;
@@ -652,7 +652,7 @@ typedef struct coding_par
   Macroblock *mb_data_JV[MAX_PLANE]; //!< mb_data to be used for 4:4:4 independent mode
   char  *intra_block;
   char  *intra_block_JV[MAX_PLANE];
-  BlockPos *PicPos;  
+  BlockPos *PicPos;
   byte **ipredmode;                  //!< prediction type [90][74]
   byte **ipredmode_JV[MAX_PLANE];
   byte ****nz_coeff;
@@ -698,7 +698,7 @@ typedef struct video_par
   struct old_slice_par *old_slice;
   struct snr_par       *snr;
   int number;                                 //!< frame number
-  
+
   //current picture property;
   unsigned int num_dec_mb;
   int iSliceNumOfCurrPic;
@@ -709,7 +709,7 @@ typedef struct video_par
   char  *intra_block_JV[MAX_PLANE];
   //int qp;                                     //!< quant for the current frame
 
-  //int sp_switch;                              //!< 1 for switching sp, 0 for normal sp  
+  //int sp_switch;                              //!< 1 for switching sp, 0 for normal sp
   int type;                                   //!< image type INTER/INTRA
 
   byte **ipredmode;                  //!< prediction type [90][74]
@@ -805,7 +805,7 @@ typedef struct video_par
   int Is_primary_correct;          //!< if primary frame is correct, 0: incorrect
   int Is_redundant_correct;        //!< if redundant frame is correct, 0:incorrect
 
-  // Time 
+  // Time
   int64 tot_time;
 
   // files
@@ -859,7 +859,7 @@ typedef struct video_par
   int BitStreamFile;
 
   // report
-  char cslice_type[9];  
+  char cslice_type[9];
   // FMO
   int *MbToSliceGroupMap;
   int *MapUnitToSliceGroupMap;
@@ -904,7 +904,7 @@ typedef struct video_par
 /******************* deprecative variables; ***************************************/
   int width;
   int height;
-  int width_cr;                               //!< width chroma  
+  int width_cr;                               //!< width chroma
   int height_cr;                              //!< height chroma
   // Fidelity Range Extensions Stuff
   int pic_unit_bitsize_on_disk;
@@ -931,7 +931,7 @@ typedef struct video_par
   int mb_cr_size_y_blk;
   int mb_cr_size;
   int mb_size[3][2];                         //!< component macroblock dimensions
-  int mb_size_blk[3][2];                     //!< component macroblock dimensions 
+  int mb_size_blk[3][2];                     //!< component macroblock dimensions
   int mb_size_shift[3][2];
   int subpel_x;
   int subpel_y;
@@ -960,8 +960,8 @@ typedef struct snr_par
   float snr[3];                                //!< current SNR (component)
   float snr1[3];                               //!< SNR (dB) first frame (component)
   float snra[3];                               //!< Average component SNR (dB) remaining frames
-  float sse[3];                                //!< component SSE 
-  float msse[3];                                //!< Average component SSE 
+  float sse[3];                                //!< component SSE
+  float msse[3];                                //!< Average component SSE
 } SNRParameters;
 
 // input parameters from configuration file
@@ -976,7 +976,7 @@ typedef struct inp_par
   int poc_scale;
   int write_uv;
   int silent;
-  int intra_profile_deblocking;               //!< Loop filter usage determined by flags and parameters in bitstream 
+  int intra_profile_deblocking;               //!< Loop filter usage determined by flags and parameters in bitstream
 
   // Input/output sequence format related variables
   FrameFormat source;                   //!< source related information
@@ -1011,7 +1011,7 @@ typedef struct inp_par
   int stdRange;                         //!< 1 - standard range, 0 - full range
   int videoCode;                        //!< 1 - 709, 3 - 601:  See VideoCode in io_tiff.
   int export_views;
-  
+
   int iDecFrmNum;
 
   int bDisplayDecParams;
@@ -1020,7 +1020,7 @@ typedef struct inp_par
 
 typedef struct old_slice_par
 {
-  unsigned field_pic_flag;   
+  unsigned field_pic_flag;
   unsigned frame_num;
   int      nal_ref_idc;
   unsigned pic_oder_cnt_lsb;
@@ -1086,7 +1086,7 @@ extern void copy_slice_info ( Slice *currSlice, OldSliceParams *p_old_slice );
 extern void OpenOutputFiles(VideoParameters *p_Vid, int view0_id, int view1_id);
 extern void set_global_coding_par(VideoParameters *p_Vid, CodingParameters *cps);
 
-static inline int is_FREXT_profile(unsigned int profile_idc) 
+static inline int is_FREXT_profile(unsigned int profile_idc)
 {
   // we allow all FRExt tools, when no profile is active
   return ( profile_idc==NO_PROFILE || profile_idc==FREXT_HP || profile_idc==FREXT_Hi10P || profile_idc==FREXT_Hi422 || profile_idc==FREXT_Hi444 || profile_idc == FREXT_CAVLC444 );
@@ -1096,12 +1096,12 @@ static inline int is_HI_intra_only_profile(unsigned int profile_idc, Boolean con
 {
   return ( ( ( (profile_idc == FREXT_Hi10P)||(profile_idc == FREXT_Hi422)|| (profile_idc == FREXT_Hi444)) && constrained_set3_flag) || (profile_idc == FREXT_CAVLC444) );
 }
-static inline int is_BL_profile(unsigned int profile_idc) 
+static inline int is_BL_profile(unsigned int profile_idc)
 {
   return ( profile_idc == FREXT_CAVLC444 || profile_idc == BASELINE || profile_idc == MAIN || profile_idc == EXTENDED ||
            profile_idc == FREXT_HP || profile_idc == FREXT_Hi10P || profile_idc == FREXT_Hi422 || profile_idc == FREXT_Hi444);
 }
-static inline int is_EL_profile(unsigned int profile_idc) 
+static inline int is_EL_profile(unsigned int profile_idc)
 {
   return ( (profile_idc == MVC_HIGH) || (profile_idc == STEREO_HIGH) );
 }

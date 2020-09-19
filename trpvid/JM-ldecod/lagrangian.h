@@ -1,11 +1,11 @@
 /*!
  **************************************************************************
  *  \file lagrangian.h
- *  \brief  
+ *  \brief
  *     Distortion data header file
  *  \date 2.23.2009,
  *
- *  \author 
+ *  \author
  *   Alexis Michael Tourapis        <alexismt@ieee.org>
  *
  **************************************************************************

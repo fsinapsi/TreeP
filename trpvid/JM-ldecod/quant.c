@@ -88,7 +88,7 @@ void init_qp_process(CodingParameters *cps)
   int bitdepth_qp_scale = imax(cps->bitdepth_luma_qp_scale, cps->bitdepth_chroma_qp_scale);
   int i;
 
-  // We should allocate memory outside of this process since maybe we will have a change of SPS 
+  // We should allocate memory outside of this process since maybe we will have a change of SPS
   // and we may need to recreate these. Currently should only support same bitdepth
   if (cps->qp_per_matrix == NULL)
     if ((cps->qp_per_matrix = (int*)malloc((MAX_QP + 1 +  bitdepth_qp_scale)*sizeof(int))) == NULL)
@@ -237,7 +237,7 @@ void assign_quant_params(Slice *currSlice)
               if(!sps->seq_scaling_matrix_present_flag)
                 currSlice->qmatrix[i] = quant8_inter_default;
             }
-            else  
+            else
               currSlice->qmatrix[i] = currSlice->qmatrix[i-2];
           }
           else

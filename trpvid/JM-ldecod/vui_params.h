@@ -27,7 +27,7 @@ typedef struct vui_parameters
   int video_full_range_flag;
   int colour_description_present_flag;
   int colour_primaries;
-  int transfer_characteristics; 
+  int transfer_characteristics;
   int matrix_coefficients;
   int chroma_location_info_present_flag;
   int chroma_sample_loc_type_top_field;

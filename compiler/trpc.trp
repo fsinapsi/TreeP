@@ -620,7 +620,7 @@
                 1       (seq    (if (<> i undef)
                                 then    (error (+ name ": net already defined")) )
                                 ; FIXME
-                                ; valutare se è il caso...
+                                ; valutare se Ã¨ il caso...
                                 ;(queue-append _cst name)
                                 (set _act_params (queue))
                                 (set _act_locals (queue))
@@ -653,7 +653,7 @@
                         then    (error "double formal") )
                         (not-predefined)
                         ; FIXME
-                        ; valutare se è il caso...
+                        ; valutare se Ã¨ il caso...
                         ;(queue-append _cst _tokenval)
                         (queue-put _act_params _tokenval)
                         (set j (lmatch _tokenval "@")) ))
@@ -675,7 +675,7 @@
                                         then    (error "local conflicts with formal") )
                                         (not-predefined)
                                         ; FIXME
-                                        ; valutare se è il caso...
+                                        ; valutare se Ã¨ il caso...
                                         ;(queue-append _cst _tokenval)
                                         (queue-put _act_locals _tokenval) ))
                 else    (token-retract)
@@ -715,7 +715,7 @@
                 1       (seq    (if (<> i undef)
                                 then    (error (+ name ": function already defined")) )
                                 ; FIXME
-                                ; valutare se è il caso...
+                                ; valutare se Ã¨ il caso...
                                 ;(queue-append _cst _tokenval)
                                 (set _act_params (queue))
                                 (set _act_calls (assoc)) )

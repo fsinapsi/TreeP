@@ -3,7 +3,7 @@
  * \file io_image.h
  *
  * \brief
- *    Image I/O 
+ *    Image I/O
  *
  * \author
  *     - Alexis Michael Tourapis         <alexismt@ieee.org>
@@ -28,7 +28,7 @@ typedef struct image_data
   imgpel **frm_data_buf[2][MAX_PLANE];     //!< Frame Data
   imgpel **top_data_buf[2][MAX_PLANE];     //!< pointers to top field data
   imgpel **bot_data_buf[2][MAX_PLANE];     //!< pointers to bottom field data
-  
+
   //! Optional data (could also add uint8 data in case imgpel is of type uint16)
   //! These can be useful for enabling input/conversion of content of different types
   //! while keeping optimal processing size.

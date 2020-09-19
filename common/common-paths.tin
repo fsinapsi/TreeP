@@ -567,7 +567,9 @@
                         (set @ext "7z") )
                 (seq    (alt    (search case "Zip archive data" m)
                                 (search case "Zip data" m) )
-                        (alt    (seq    (path-suggest-extension-permissive path [ "cbr" "cbz" "jar" "epub" "docx" "odt" "ods" "xps" "htmlz" "xlsx" "apk" ] @ext)
+                        (alt    (seq    (path-suggest-extension-permissive path [ "cbr" "cbz" "jar" "epub"
+                                                                                  "docx" "odt" "ods" "xps"
+                                                                                  "htmlz" "xlsx" "apk" ] @ext )
                                         (if (= @ext "cbr")
                                         then    (set @ext "cbz") ))
                                 (set @ext "zip") ))
@@ -644,6 +646,10 @@
                 (seq    (search case "lyx " m)
                         (search case "text" m)
                         (set @ext "lyx") )
+                (seq    (search case "python" m)
+                        (search case "text" m)
+                        (search case "executable" m)
+                        (set @ext "py") )
                 (seq    (search case "SQLite" m)
                         (alt    (path-suggest-extension-permissive path [ "cfg" ] @ext)
                                 (set @ext "db") ))
@@ -662,7 +668,9 @@
                         (alt    (seq    (= (path-extension path) "")
                                         (set @ext "") )
                                 (path-suggest-extension-permissive path
-                                        [ "txt" "cue" "log" "srt" "bat" "avs" "mfl" "pgn" "fen" "c" "h" "cpp" "cc" "pas" "hs" "go" "clp" "l" "ss" "sh" ] @ext )))))
+                                        [ "txt" "cue" "log" "srt" "bat" "avs" "mfl" "pgn" "fen"
+                                          "c" "h" "cpp" "cc" "pas" "hs" "go" "clp" "l" "ss"
+                                          "java" "sh" ] @ext )))))
 
 (defnet path-suggest-extension-permissive (path ext-l @ext)
         (deflocal found)

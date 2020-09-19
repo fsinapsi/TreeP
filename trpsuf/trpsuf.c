@@ -603,7 +603,7 @@ static trp_obj_t *trp_suf_lcs_k_low( uns8b flags, trp_obj_t *k, trp_obj_t *s, va
             saj = (uns32b)( SA[ j ] );
             /*
              FIXME
-             vautare se è possibile, nel cacolo di lcp,
+             vautare se Ã¨ possibile, nel cacolo di lcp,
              tenere conto anche dei caratteri UTF-8...
              */
             for ( lcp = 0 ; ; lcp++ ) {
@@ -661,7 +661,7 @@ static trp_obj_t *trp_suf_lcs_k_low( uns8b flags, trp_obj_t *k, trp_obj_t *s, va
         free( T );
     } else {
         /*
-         versione O(n), che però usa più spazio
+         versione O(n), che perÃ² usa piÃ¹ spazio
          */
         uns32b *LCP = trp_suf_lcp_array( n, T, (uns32b *)SA );
 

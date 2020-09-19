@@ -31,13 +31,13 @@
   \verbatim
 
       Lowell Winger                   <lwinger@videolocus.com><lwinger@uwaterloo.ca>
-      Guy Côté                        <gcote@videolocus.com>
+      Guy CÃ´tÃ©                        <gcote@videolocus.com>
       Michael Gallant                 <mgallant@videolocus.com>
       VideoLocus Inc.
       97 Randall Dr.
       Waterloo, ON, Canada  N2V1C5
 
-      Inge Lille-Langøy               <inge.lille-langoy@telenor.com>
+      Inge Lille-LangÃ¸y               <inge.lille-langoy@telenor.com>
       Telenor Satellite Services
       P.O.Box 6914 St.Olavs plass
       N-0130 Oslo, Norway
@@ -212,13 +212,13 @@
       Princeton, NJ 08540
 
       Shun-ichi Sekiguchi             <Sekiguchi.Shunichi@eb.MitsubishiElectric.co.jp>
-      Information Technology R&D Center, 
+      Information Technology R&D Center,
       Mitsubishi Electric Corporation
       5-1-1, Ofuna, Kamakura, Japan
 
       Yung-Lyul Lee                   <yllee@sejong.ac.kr>
       Ki-Hun Han                      <khhan@dms.sejong.ac.kr>
-      Department of Computer Engineering, 
+      Department of Computer Engineering,
       Sejong University
       98 Kunja-Dong, Kwangjin-Gu, Seoul 143-747, Korea
 

@@ -140,8 +140,8 @@
 ;;; legge il prossimo token;
 ;;; non fallisce mai;
 ;;; lascia il risultato su _token (ed eventualmente _tokenval);
-;;; se il token non è valido esce;
-;;; se non ci sono più token, _token è undef
+;;; se il token non Ã¨ valido esce;
+;;; se non ci sono piÃ¹ token, _token Ã¨ undef
 ;;;
 
 (defnet next-token ()
@@ -257,7 +257,7 @@
                         (push _cstack _c)
                         (set _token "identificatore")
                         (set _tokenval (sprintl _tokenval))
-                        (opt*   ; un identificatore non può terminare con '>'!
+                        (opt*   ; un identificatore non puÃ² terminare con '>'!
                                 (rmatch remove _tokenval ">")
                                 (push _cstack '>') )
                 else    (lexical-error) )))

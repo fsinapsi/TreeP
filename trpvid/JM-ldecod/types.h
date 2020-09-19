@@ -181,7 +181,7 @@ typedef enum
 
 typedef enum {
   SSE              = 0,
-  SSE_RGB          = 1,  
+  SSE_RGB          = 1,
   PSNR             = 2,
   PSNR_RGB         = 3,
   SSIM             = 4,

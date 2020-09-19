@@ -2,7 +2,7 @@
    Functions and structures for implementing a minimizing priority queue.
 
    Copyright (C) 2006-2010  Rob Hess <hess@eecs.oregonstate.edu>
-   
+
    @version 1.1.2-20100521
 */
 
@@ -60,9 +60,9 @@ extern int minpq_insert( struct min_pq* min_pq, void* data, int key );
 /**
    Returns the element of a minimizing priority queue with the smallest key
    without removing it from the queue.
-   
+
    @param min_pq a minimizing priority queue
-   
+
    @return Returns the element of \a min_pq with the smallest key or NULL
      if \a min_pq is empty
 */
@@ -72,9 +72,9 @@ extern void* minpq_get_min( struct min_pq* min_pq );
 /**
    Removes and returns the element of a minimizing priority queue with the
    smallest key.
-   
+
    @param min_pq a minimizing priority queue
-   
+
    @return Returns the element of \a min_pq with the smallest key of NULL
      if \a min_pq is empty
 */

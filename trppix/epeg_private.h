@@ -33,18 +33,18 @@ struct _Epeg_Image
    struct trp_stat                 stat_info;
    unsigned char                  *pixels;
    unsigned char                 **lines;
-   
+
    char                            scaled : 1;
-   
+
    int                             error;
-   
+
    Epeg_Colorspace                 color_space;
-   
+
    struct {
       char                          *file;
       struct {
-	 unsigned char           **data;
-	 int                       size;
+         unsigned char           **data;
+         int                       size;
       } mem;
       int                            w, h;
       char                          *comment;
@@ -52,17 +52,17 @@ struct _Epeg_Image
       J_COLOR_SPACE                  color_space;
       struct jpeg_decompress_struct  jinfo;
       struct {
-	 char                       *uri;
-	 unsigned long long int      mtime;
-	 int                         w, h;
-	 char                       *mime;
+         char                       *uri;
+         unsigned long long int      mtime;
+         int                         w, h;
+         char                       *mime;
       } thumb_info;
    } in;
    struct {
       char                        *file;
       struct {
-	 unsigned char           **data;
-	 int                      *size;
+         unsigned char           **data;
+         int                      *size;
       } mem;
       int                          x, y;
       int                          w, h;
@@ -83,7 +83,7 @@ METHODDEF(void) _jpeg_term_source(j_decompress_ptr cinfo);
 METHODDEF(void) _jpeg_init_destination(j_compress_ptr cinfo);
 METHODDEF(boolean) _jpeg_empty_output_buffer (j_compress_ptr cinfo);
 METHODDEF(void) _jpeg_term_destination (j_compress_ptr cinfo);
-    
+
 METHODDEF(void) _emit_message (j_common_ptr cinfo, int msg_level);
 METHODDEF(void) _output_message (j_common_ptr cinfo);
 METHODDEF(void) _format_message (j_common_ptr cinfo, char * buffer);

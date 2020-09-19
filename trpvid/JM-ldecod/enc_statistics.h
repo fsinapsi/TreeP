@@ -24,7 +24,7 @@ struct stat_parameters
   int64  bit_ctr_n;                   //!< bit usage for the current frame
   int64  bit_ctr_emulation_prevention; //!< stored bits needed to prevent start code emulation
   int    bit_slice;                   //!< number of bits in current slice
-  int    stored_bit_slice;            //!< keep number of bits in current slice (to restore status in case of MB re-encoding)  
+  int    stored_bit_slice;            //!< keep number of bits in current slice (to restore status in case of MB re-encoding)
   int    b8_mode_0_use     [NUM_SLICE_TYPES][2];
   int64  mode_use_transform[NUM_SLICE_TYPES][MAXMODE][2];
   int64  intra_chroma_mode[4];
@@ -39,12 +39,12 @@ struct stat_parameters
   int64  bit_counter          [NUM_SLICE_TYPES];
   float  bitrate_st           [NUM_SLICE_TYPES];
   int64  mode_use             [NUM_SLICE_TYPES][MAXMODE]; //!< Macroblock mode usage for Intra frames
-  int64  bit_use_mode         [NUM_SLICE_TYPES][MAXMODE]; //!< statistics of bit usage  
+  int64  bit_use_mode         [NUM_SLICE_TYPES][MAXMODE]; //!< statistics of bit usage
   int64  bit_use_mb_type      [NUM_SLICE_TYPES];
   int64  bit_use_header       [NUM_SLICE_TYPES];
   int64  tmp_bit_use_cbp      [NUM_SLICE_TYPES];
   int64  bit_use_coeffC       [NUM_SLICE_TYPES];
-  int64  bit_use_coeff     [3][NUM_SLICE_TYPES];  
+  int64  bit_use_coeff     [3][NUM_SLICE_TYPES];
   int64  bit_use_delta_quant  [NUM_SLICE_TYPES];
   int64  bit_use_stuffing_bits[NUM_SLICE_TYPES];
 

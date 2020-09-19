@@ -560,10 +560,10 @@ key. For example, @c vlfeat.bib file contains the entry:
 
 <pre>
 @@inproceedings{martin97the-det-curve,
-	Author = {A. Martin and G. Doddington and T. Kamm and M. Ordowski and M. Przybocki},
-	Booktitle = {Proc. Conf. on Speech Communication and Technology},
-	Title = {The {DET} curve in assessment of detection task performance},
-	Year = {1997}}
+        Author = {A. Martin and G. Doddington and T. Kamm and M. Ordowski and M. Przybocki},
+        Booktitle = {Proc. Conf. on Speech Communication and Technology},
+        Title = {The {DET} curve in assessment of detection task performance},
+        Year = {1997}}
 </pre>
 
 For example, the Doxygen directive

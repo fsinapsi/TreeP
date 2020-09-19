@@ -24,7 +24,7 @@
  ***********************************************************************
  */
 void init_dec_stats(DecStatParameters *stats)
-{ 
+{
   int i, j;
   int64 *hist;
   for (i = 0; i < NUM_SLICE_TYPES; i++)
@@ -32,7 +32,7 @@ void init_dec_stats(DecStatParameters *stats)
     stats->frame_ctr[i] = 0;
     for (j = 0; j < MAXMODE; j++)
     {
-      stats->mode_use          [i][j]    = 0; 
+      stats->mode_use          [i][j]    = 0;
       stats->mode_use_transform[i][j][0] = 0;
       stats->mode_use_transform[i][j][1] = 0;
     }
@@ -55,7 +55,7 @@ void init_dec_stats(DecStatParameters *stats)
 }
 
 void delete_dec_stats(DecStatParameters *stats)
-{ 
+{
   int i, j;
 
   for (i = 0; i < 2; i++)

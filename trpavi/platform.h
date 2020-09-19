@@ -49,7 +49,7 @@ void plat_free(void *ptr);
             _plat_realloc(__FILE__, __LINE__, p, size)
 
 /*************************************************************************/
-/* simple logging facility                                               */ 
+/* simple logging facility                                               */
 /*************************************************************************/
 
 typedef enum platloglevel_ PlatLogLevel;

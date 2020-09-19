@@ -1,14 +1,14 @@
 /*
   Functions and structures for maintaining a k-d tree database of image
   features.
-  
+
   For more information, refer to:
-  
+
   Beis, J. S. and Lowe, D. G.  Shape indexing using approximate
   nearest-neighbor search in high-dimensional spaces.  In <EM>Conference
   on Computer Vision and Pattern Recognition (CVPR)</EM> (2003),
   pp. 1000--1006.
-  
+
   Copyright (C) 2006-2010  Rob Hess <hess@eecs.oregonstate.edu>
 
   @version 1.1.2-20100521
@@ -40,7 +40,7 @@ static void insertion_sort( double*, int );
 static int partition_array( double*, int, double );
 static void partition_features( struct kd_node* );
 static struct kd_node* explore_to_leaf( struct kd_node*, struct feature*,
-					struct min_pq* );
+                                        struct min_pq* );
 static int insert_into_nbr_array( struct feature*, struct feature**, int, int );
 static int within_rect( CvPoint2D64f, CvRect );
 
@@ -50,10 +50,10 @@ static int within_rect( CvPoint2D64f, CvRect );
 
 /*
   A function to build a k-d tree database from keypoints in an array.
-  
+
   @param features an array of features
   @param n the number of features in features
-  
+
   @return Returns the root of a kd tree built from features or NULL on
     error.
 */
@@ -64,7 +64,7 @@ struct kd_node* kdtree_build( struct feature* features, int n )
   if( ! features  ||  n <= 0 )
     {
       fprintf( stderr, "Warning: kdtree_build(): no features, %s, line %d\n",
-	       __FILE__, __LINE__ );
+               __FILE__, __LINE__ );
       return NULL;
     }
 
@@ -79,19 +79,19 @@ struct kd_node* kdtree_build( struct feature* features, int n )
 /*
   Finds an image feature's approximate k nearest neighbors in a kd tree using
   Best Bin First search.
-  
+
   @param kd_root root of an image feature kd tree
   @param feat image feature for whose neighbors to search
   @param k number of neighbors to find
    @param nbrs pointer to an array in which to store pointers to neighbors
      in order of increasing descriptor distance
   @param max_nn_chks search is cut off after examining this many tree entries
-  
+
   @return Returns the number of neighbors found and stored in nbrs, or
     -1 on error.
 */
 int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat, int k,
-		    struct feature*** nbrs, int max_nn_chks )
+                    struct feature*** nbrs, int max_nn_chks )
 {
   struct kd_node* expl;
   struct min_pq* min_pq;
@@ -102,7 +102,7 @@ int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat, int k,
   if( ! nbrs  ||  ! feat  ||  ! kd_root )
     {
       fprintf( stderr, "Warning: NULL pointer error, %s, line %d\n",
-	       __FILE__, __LINE__ );
+               __FILE__, __LINE__ );
       return -1;
     }
 
@@ -113,35 +113,35 @@ int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat, int k,
     {
       expl = (struct kd_node*)minpq_extract_min( min_pq );
       if( ! expl )
-	{
-	  fprintf( stderr, "Warning: PQ unexpectedly empty, %s line %d\n",
-		   __FILE__, __LINE__ );
-	  goto fail;
-	}
+        {
+          fprintf( stderr, "Warning: PQ unexpectedly empty, %s line %d\n",
+                   __FILE__, __LINE__ );
+          goto fail;
+        }
 
       expl = explore_to_leaf( expl, feat, min_pq );
       if( ! expl )
-	{
-	  fprintf( stderr, "Warning: PQ unexpectedly empty, %s line %d\n",
-		   __FILE__, __LINE__ );
-	  goto fail;
-	}
+        {
+          fprintf( stderr, "Warning: PQ unexpectedly empty, %s line %d\n",
+                   __FILE__, __LINE__ );
+          goto fail;
+        }
 
       for( i = 0; i < expl->n; i++ )
-	{
-	  tree_feat = &expl->features[i];
-	  bbf_data = malloc( sizeof( struct bbf_data ) );
-	  if( ! bbf_data )
-	    {
-	      fprintf( stderr, "Warning: unable to allocate memory,"
-		       " %s line %d\n", __FILE__, __LINE__ );
-	      goto fail;
-	    }
-	  bbf_data->old_data = tree_feat->feature_data;
-	  bbf_data->d = descr_dist_sq(feat, tree_feat);
-	  tree_feat->feature_data = bbf_data;
-	  n += insert_into_nbr_array( tree_feat, _nbrs, n, k );
-	}
+        {
+          tree_feat = &expl->features[i];
+          bbf_data = malloc( sizeof( struct bbf_data ) );
+          if( ! bbf_data )
+            {
+              fprintf( stderr, "Warning: unable to allocate memory,"
+                       " %s line %d\n", __FILE__, __LINE__ );
+              goto fail;
+            }
+          bbf_data->old_data = tree_feat->feature_data;
+          bbf_data->d = descr_dist_sq(feat, tree_feat);
+          tree_feat->feature_data = bbf_data;
+          n += insert_into_nbr_array( tree_feat, _nbrs, n, k );
+        }
       t++;
     }
 
@@ -173,7 +173,7 @@ int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat, int k,
 /*
   Finds an image feature's approximate k nearest neighbors within a specified
   spatial region in a kd tree using Best Bin First search.
-  
+
   @param kd_root root of an image feature kd tree
   @param feat image feature for whose neighbors to search
   @param k number of neighbors to find
@@ -183,14 +183,14 @@ int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat, int k,
    @param rect rectangular region in which to search for neighbors
    @param model if true, spatial search is based on kdtree features' model
      locations; otherwise it is based on their image locations
-   
+
    @return Returns the number of neighbors found and stored in \a nbrs
      (in case \a k neighbors could not be found before examining
      \a max_nn_checks keypoint entries).
 */
 int kdtree_bbf_spatial_knn( struct kd_node* kd_root, struct feature* feat,
-			    int k, struct feature*** nbrs, int max_nn_chks,
-			    CvRect rect, int model )
+                            int k, struct feature*** nbrs, int max_nn_chks,
+                            CvRect rect, int model )
 {
   struct feature** all_nbrs, ** sp_nbrs;
   CvPoint2D64f pt;
@@ -201,16 +201,16 @@ int kdtree_bbf_spatial_knn( struct kd_node* kd_root, struct feature* feat,
   for( i = 0; i < n; i++ )
     {
       if( model )
-	pt = all_nbrs[i]->mdl_pt;
+        pt = all_nbrs[i]->mdl_pt;
       else
-	pt = all_nbrs[i]->img_pt;
+        pt = all_nbrs[i]->img_pt;
 
       if( within_rect( pt, rect ) )
-	{
-	  sp_nbrs[t++] = all_nbrs[i];
-	  if( t == k )
-	    goto end;
-	}
+        {
+          sp_nbrs[t++] = all_nbrs[i];
+          if( t == k )
+            goto end;
+        }
     }
  end:
   free( all_nbrs );
@@ -222,7 +222,7 @@ int kdtree_bbf_spatial_knn( struct kd_node* kd_root, struct feature* feat,
 
 /*
   De-allocates memory held by a kd tree
-  
+
   @param kd_root pointer to the root of a kd tree
 */
 void kdtree_release( struct kd_node* kd_root )
@@ -241,7 +241,7 @@ void kdtree_release( struct kd_node* kd_root )
 /*
   Initializes a kd tree node with a set of features.  The node is not
   expanded, and no ordering is imposed on the features.
-  
+
   @param features an array of image features
   @param n number of features
 
@@ -310,20 +310,20 @@ static void assign_part_key( struct kd_node* kd_node )
     {
       mean = var = 0;
       for( i = 0; i < n; i++ )
-	mean += features[i].descr[j];
+        mean += features[i].descr[j];
       mean /= n;
       for( i = 0; i < n; i++ )
-	{
-	  x = features[i].descr[j] - mean;
-	  var += x * x;
-	}
+        {
+          x = features[i].descr[j] - mean;
+          var += x * x;
+        }
       var /= n;
 
       if( var > var_max )
-	{
-	  ki = j;
-	  var_max = var;
-	}
+        {
+          ki = j;
+          var_max = var;
+        }
     }
 
   /* partition key value is median of descriptor values at ki */
@@ -363,7 +363,7 @@ static double median_select( double* array, int n )
   @param array an array; the order of its elelemts is reordered
   @param n number of elements in array
   @param r the zero-based rank of the element to be selected
-  
+
   @return Returns the element from array with zero-based rank r.
 */
 static double rank_select( double* array, int n, int r )
@@ -395,7 +395,7 @@ static double rank_select( double* array, int n, int r )
     tmp[i++] = array[n - 1 - rem_elts/2];
   med = rank_select( tmp, i, ( i - 1 ) / 2 );
   free( tmp );
-  
+
   /* partition around median of medians and recursively select if necessary */
   j = partition_array( array, n, med );
   if( r == j )
@@ -427,10 +427,10 @@ static void insertion_sort( double* array, int n )
       k = array[i];
       j = i-1;
       while( j >= 0  &&  array[j] > k )
-	{
-	  array[j+1] = array[j];
-	  j -= 1;
-	}
+        {
+          array[j+1] = array[j];
+          j -= 1;
+        }
       array[j+1] = k;
     }
 }
@@ -455,15 +455,15 @@ static int partition_array( double* array, int n, double pivot )
   for( j = 0; j < n; j++ )
     if( array[j] <= pivot )
       {
-	tmp = array[++i];
-	array[i] = array[j];
-	array[j] = tmp;
-	if( array[i] == pivot )
-	  p = i;
+        tmp = array[++i];
+        array[i] = array[j];
+        array[j] = tmp;
+        if( array[i] == pivot )
+          p = i;
       }
   array[p] = array[i];
   array[i] = pivot;
-  
+
   return i;
 }
 
@@ -488,11 +488,11 @@ static void partition_features( struct kd_node* kd_node )
   for( i = 0; i < n; i++ )
     if( features[i].descr[ki] <= kv )
       {
-	tmp = features[++j];
-	features[j] = features[i];
-	features[i] = tmp;
-	if( features[j].descr[ki] == kv )
-	  p = j;
+        tmp = features[++j];
+        features[j] = features[i];
+        features[i] = tmp;
+        if( features[j].descr[ki] == kv )
+          p = j;
       }
   tmp = features[p];
   features[p] = features[j];
@@ -517,7 +517,7 @@ static void partition_features( struct kd_node* kd_node )
   examined but not explored is put into a priority queue to be explored
   later, keyed based on the distance from its partition key value to the
   given feature's desctiptor.
-  
+
   @param kd_node root of the subtree to be explored
   @param feat feature upon which branching decisions are based
   @param min_pq a minimizing priority queue into which tree nodes are placed
@@ -527,8 +527,8 @@ static void partition_features( struct kd_node* kd_node )
     NULL on error.
 */
 static struct kd_node* explore_to_leaf( struct kd_node* kd_node,
-					struct feature* feat,
-					struct min_pq* min_pq )
+                                        struct feature* feat,
+                                        struct min_pq* min_pq )
 {
   struct kd_node* unexpl, * expl = kd_node;
   double kv;
@@ -538,30 +538,30 @@ static struct kd_node* explore_to_leaf( struct kd_node* kd_node,
     {
       ki = expl->ki;
       kv = expl->kv;
-      
+
       if( ki >= feat->d )
-	{
-	  fprintf( stderr, "Warning: comparing imcompatible descriptors, %s" \
-		   " line %d\n", __FILE__, __LINE__ );
-	  return NULL;
-	}
+        {
+          fprintf( stderr, "Warning: comparing imcompatible descriptors, %s" \
+                   " line %d\n", __FILE__, __LINE__ );
+          return NULL;
+        }
       if( feat->descr[ki] <= kv )
-	{
-	  unexpl = expl->kd_right;
-	  expl = expl->kd_left;
-	}
+        {
+          unexpl = expl->kd_right;
+          expl = expl->kd_left;
+        }
       else
-	{
-	  unexpl = expl->kd_left;
-	  expl = expl->kd_right;
-	}
-      
+        {
+          unexpl = expl->kd_left;
+          expl = expl->kd_right;
+        }
+
       if( minpq_insert( min_pq, unexpl, ABS( kv - feat->descr[ki] ) ) )
-	{
-	  fprintf( stderr, "Warning: unable to insert into PQ, %s, line %d\n",
-		   __FILE__, __LINE__ );
-	  return NULL;
-	}
+        {
+          fprintf( stderr, "Warning: unable to insert into PQ, %s, line %d\n",
+                   __FILE__, __LINE__ );
+          return NULL;
+        }
     }
 
   return expl;
@@ -584,7 +584,7 @@ static struct kd_node* explore_to_leaf( struct kd_node* kd_node,
     returns 0.
 */
 static int insert_into_nbr_array( struct feature* feat, struct feature** nbrs,
-				  int n, int k )
+                                  int n, int k )
 {
   struct bbf_data* fdata, * ndata;
   double dn, df;
@@ -604,11 +604,11 @@ static int insert_into_nbr_array( struct feature* feat, struct feature** nbrs,
   if( df >= dn )
     {
       if( n == k )
-	{
-	  feat->feature_data = fdata->old_data;
-	  free( fdata );
-	  return 0;
-	}
+        {
+          feat->feature_data = fdata->old_data;
+          free( fdata );
+          return 0;
+        }
       nbrs[n] = feat;
       return 1;
     }
@@ -630,7 +630,7 @@ static int insert_into_nbr_array( struct feature* feat, struct feature** nbrs,
       ndata = (struct bbf_data*)nbrs[i]->feature_data;
       dn = ndata->d;
       if( dn <= df )
-	break;
+        break;
       nbrs[i+1] = nbrs[i];
       i--;
     }

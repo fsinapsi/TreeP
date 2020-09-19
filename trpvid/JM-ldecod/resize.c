@@ -106,14 +106,14 @@ typedef int worktype;
 /*******************************************************
 only downsample 2:1, the destination is width/2*(height+1)/2;
 ********************************************************/
-int PyrDownG5x5_U8CnR(  const imgpel* src, 
-                      int srcstep, 
+int PyrDownG5x5_U8CnR(  const imgpel* src,
+                      int srcstep,
                       int width,        //width of source;
                       int height,       //height of source;
                       imgpel* dst,
                       int dststep,
-                      int Cs 
-                      ) 
+                      int Cs
+                      )
 {
   worktype *buf=NULL;
   worktype *buffer;  /* pointer to temporary buffer */

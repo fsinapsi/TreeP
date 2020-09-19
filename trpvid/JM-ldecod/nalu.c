@@ -62,7 +62,7 @@ int read_next_nalu(VideoParameters *p_Vid, NALU_t *nalu)
     break;
   case PAR_OF_RTP:
     ret = GetRTPNALU(p_Vid, nalu, p_Vid->BitStreamFile);
-    break;   
+    break;
   }
 
   if (ret < 0)
@@ -120,7 +120,7 @@ void CheckZeroByteNonVCL(VideoParameters *p_Vid, NALU_t *nalu)
   //for the first NAL unit in an access unit, zero_byte shall exists
   if(p_Vid->NALUCount==1)
     CheckZeroByte=1;
-  if(CheckZeroByte && nalu->startcodeprefix_len==3)   
+  if(CheckZeroByte && nalu->startcodeprefix_len==3)
   {
     printf("Warning: zero_byte shall exist\n");
     //because it is not a very serious problem, we do not exit here
@@ -154,8 +154,8 @@ void CheckZeroByteVCL(VideoParameters *p_Vid, NALU_t *nalu)
 
 #if (MVC_EXTENSION_ENABLE)
 void nal_unit_header_mvc_extension(NALUnitHeaderMVCExt_t *NaluHeaderMVCExt, Bitstream *s)
-{  
-  //to be implemented;  
+{
+  //to be implemented;
   NaluHeaderMVCExt->non_idr_flag     = read_u_v (1, "non_idr_flag",     s, &p_Dec->UsedBits);
   NaluHeaderMVCExt->priority_id      = read_u_v (6, "priority_id",      s, &p_Dec->UsedBits);
   NaluHeaderMVCExt->view_id          = read_u_v (10, "view_id",         s, &p_Dec->UsedBits);

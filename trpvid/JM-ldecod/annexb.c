@@ -14,7 +14,7 @@
 
 #include "global.h"
 #include "annexb.h"
-#include "memalloc.h" 
+#include "memalloc.h"
 #include "fast_memory.h"
 
 static const int IOBUFFERSIZE = 512*1024; //65536;
@@ -49,7 +49,7 @@ void free_annex_b(ANNEXB_t **p_annex_b)
   free((*p_annex_b)->Buf);
   (*p_annex_b)->Buf = NULL;
   free(*p_annex_b);
-  *p_annex_b = NULL;  
+  *p_annex_b = NULL;
 }
 
 /*!
@@ -60,7 +60,7 @@ void free_annex_b(ANNEXB_t **p_annex_b)
 */
 static inline int getChunk(ANNEXB_t *annex_b)
 {
-  unsigned int readbytes = read (annex_b->BitStreamFile, annex_b->iobuffer, annex_b->iIOBufferSize); 
+  unsigned int readbytes = read (annex_b->BitStreamFile, annex_b->iobuffer, annex_b->iIOBufferSize);
   if (0==readbytes)
   {
     annex_b->is_eof = TRUE;
@@ -181,7 +181,7 @@ int get_annex_b_NALU (VideoParameters *p_Vid, NALU_t *nalu, ANNEXB_t *annex_b)
       printf( "get_annex_b_NALU can't read start code\n");
       return -1;
     }
-  }  
+  }
 
   if(*(pBuf - 1) != 1 || pos < 3)
   {
@@ -238,7 +238,7 @@ int get_annex_b_NALU (VideoParameters *p_Vid, NALU_t *nalu, ANNEXB_t *annex_b)
     }
 
     pos++;
-    *(pBuf ++)  = getfbyte(annex_b);    
+    *(pBuf ++)  = getfbyte(annex_b);
     info3 = FindStartCode(pBuf - 4, 3);
     if(info3 != 1)
     {
@@ -281,7 +281,7 @@ int get_annex_b_NALU (VideoParameters *p_Vid, NALU_t *nalu, ANNEXB_t *annex_b)
   nalu->nal_unit_type     = (NaluType) ((*(nalu->buf)) & 0x1f);
   nalu->lost_packets = 0;
 
-  
+
   //printf ("get_annex_b_NALU, regular case: pos %d nalu->len %d, nalu->reference_idc %d, nal_unit_type %d \n", pos, nalu->len, nalu->nal_reference_idc, nalu->nal_unit_type);
 #if TRACE
   fprintf (p_Dec->p_trace, "\n\nAnnex B NALU w/ %s startcode, len %d, forbidden_bit %d, nal_reference_idc %d, nal_unit_type %d\n\n",

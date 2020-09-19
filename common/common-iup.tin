@@ -548,8 +548,8 @@
         (iup-set-callback dlg "K_ANY" (netptr iup-confirm-cb))
         (iup-set-str-attribute dlg "TITLE" $"Confirmation request")
         (iup-set-bool dlg "DIALOGFRAME" true)
-        ; notare che defaultenter è il pulsante annulla
-        ; perché vogliamo che l`utente confermi cliccando sul pulsante conferma
+        ; notare che defaultenter Ã¨ il pulsante annulla
+        ; perchÃ© vogliamo che l`utente confermi cliccando sul pulsante conferma
         ;(iup-set-attribute-handle dlg "DEFAULTENTER" (iup-box-ok-cancel-btn-cancel butbox))
         ;(iup-set-attribute-handle dlg "DEFAULTESC" (iup-box-ok-cancel-btn-cancel butbox))
         (iup-set-int dlg "STATUS" 0)

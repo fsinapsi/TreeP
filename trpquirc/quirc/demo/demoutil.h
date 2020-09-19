@@ -24,7 +24,7 @@
  * Include version info if requested.
  */
 void print_data(const struct quirc_data *data, struct dthash *dt,
-		int want_verbose);
+                int want_verbose);
 
 /* Parse a string of the form "WxH" and return width and height as
  * integers. Returns 0 on success or -1 if a parser error occurs.

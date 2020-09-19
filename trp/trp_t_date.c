@@ -349,7 +349,7 @@ static void trp_date_abs2gma( uns32b d, uns32b *g, uns32b *m, uns32b *a )
     } else {
         /*
          FIXME
-         si può evitare il ciclo?
+         si puÃ² evitare il ciclo?
          */
         for ( *a = 1583 + ( d - 578181 ) / 366 ;
               trp_date_gma2abs( 1, 1, *a + 1 ) <= d ;

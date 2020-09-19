@@ -38,7 +38,7 @@ static const VIDEO_SIZE VideoRes[] = {
  *
  ************************************************************************
  */
-int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, double *fps) 
+int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, double *fps)
 {
   char *p1, *p2, *tail;
   char *fn = input_file->fname;
@@ -47,7 +47,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
 
   *x_size = *y_size = -1;
   p1 = p2 = fn;
-  while (p1 != NULL && p2 != NULL) 
+  while (p1 != NULL && p2 != NULL)
   {
     // Search for first '_'
     p1 = strstr( p1, "_");
@@ -58,7 +58,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
     p2 = strstr( p1, "x");
 
     // If no 'x' is found, exit
-    if (p2 == NULL)    
+    if (p2 == NULL)
       break;
 
     // Try conversion of number
@@ -66,7 +66,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
     *x_size = strtol( p1 + 1, &tail, 10);
 
     // If there are characters left in the string, or the string is null, discard conversion
-    if (*tail != '\0' || *(p1 + 1) == '\0') 
+    if (*tail != '\0' || *(p1 + 1) == '\0')
     {
       *p2 = 'x';
       p1 = tail;
@@ -79,7 +79,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
     // Search for end character of y_size (first '_' or '.' after last 'x')
     p1 = strpbrk( p2 + 1, "_.");
     // If no '_' or '.' is found, try again from current position
-    if (p1 == NULL) 
+    if (p1 == NULL)
     {
       p1 = p2 + 1;
       continue;
@@ -91,7 +91,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
     *y_size = strtol( p2 + 1, &tail, 10);
 
     // If there are characters left in the string, or the string is null, discard conversion
-    if (*tail != '\0' || *(p2 + 1) == '\0') 
+    if (*tail != '\0' || *(p2 + 1) == '\0')
     {
       *p1 = c;
       p1 = tail;
@@ -105,7 +105,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
     p2 = strstr( p1 + 1, "ip");
 
     // If no 'i' or 'p' is found, exit
-    if (p2 == NULL)      
+    if (p2 == NULL)
       break;
 
     // Try conversion of number
@@ -114,7 +114,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
     *fps = strtod( p1 + 1, &tail);
 
     // If there are characters left in the string, or the string is null, discard conversion
-    if (*tail != '\0' || *(p1 + 1) == '\0') 
+    if (*tail != '\0' || *(p1 + 1) == '\0')
     {
       *p2 = c;
       p1 = tail;
@@ -128,20 +128,20 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
 
   // Now lets test some common video file formats
   if (p1 == NULL || p2 == NULL)
-  {       
-    for (i = 0; VideoRes[i].name != NULL; i++) 
+  {
+    for (i = 0; VideoRes[i].name != NULL; i++)
     {
-      if (strcasecmp (fn, VideoRes[i].name)) 
+      if (strcasecmp (fn, VideoRes[i].name))
       {
         *x_size = VideoRes[i].x_size;
-        *y_size = VideoRes[i].y_size;       
+        *y_size = VideoRes[i].y_size;
         // Should add frame rate support as well
         break;
       }
     }
   }
 
-  return (*x_size == -1 || *y_size == -1) ? 0 : 1; 
+  return (*x_size == -1 || *y_size == -1) ? 0 : 1;
 }
 
 /*!
@@ -153,7 +153,7 @@ int ParseSizeFromString (VideoDataFile *input_file, int *x_size, int *y_size, do
  */
 void ParseFrameNoFormatFromString (VideoDataFile *input_file)
 {
-  char *p1, *p2, *tail;  
+  char *p1, *p2, *tail;
   char *fn         = input_file->fname;
   char *fhead      = input_file->fhead;
   char *ftail      = input_file->ftail;
@@ -163,7 +163,7 @@ void ParseFrameNoFormatFromString (VideoDataFile *input_file)
   *zero_pad = 0;
   *num_digits = -1;
   p1 = p2 = fn;
-  while (p1 != NULL && p2 != NULL) 
+  while (p1 != NULL && p2 != NULL)
   {
     // Search for first '_'
     p1 = strstr( p1, "%");
@@ -176,9 +176,9 @@ void ParseFrameNoFormatFromString (VideoDataFile *input_file)
     p2 = strstr( p1, "d");
 
     // If no 'x' is found, exit
-    if (p2 == NULL)    
+    if (p2 == NULL)
       break;
-    
+
     // Try conversion of number
     *p2 = 0;
 
@@ -188,7 +188,7 @@ void ParseFrameNoFormatFromString (VideoDataFile *input_file)
     *num_digits = strtol( p1 + 1, &tail, 10);
 
     // If there are characters left in the string, or the string is null, discard conversion
-    if (*tail != '\0' || *(p1 + 1) == '\0') 
+    if (*tail != '\0' || *(p1 + 1) == '\0')
     {
       *p2 = 'd';
       p1 = tail;
@@ -223,7 +223,7 @@ void OpenFrameFile( VideoDataFile *input_file, int FrameNumberInFile)
   infile[FILE_NAME_SIZE-1]='\0';
   strncpy(infile, input_file->fhead, FILE_NAME_SIZE-1);
 
-  if (input_file->zero_pad)       
+  if (input_file->zero_pad)
     snprintf(in_number, 16, "%0*d", input_file->num_digits, FrameNumberInFile);
   else
     snprintf(in_number, 16, "%*d", input_file->num_digits, FrameNumberInFile);
@@ -235,7 +235,7 @@ void OpenFrameFile( VideoDataFile *input_file, int FrameNumberInFile)
   {
     printf ("OpenFrameFile: cannot open file %s\n", infile);
     report_stats_on_error();
-  }    
+  }
 }
 
 /*!
@@ -304,7 +304,7 @@ VideoFileType ParseVideoType (VideoDataFile *input_file)
     input_file->vdtype = VIDEO_TIFF;
     input_file->avi = NULL;
   }
-  else if (strcasecmp (format, "avi") == 0) 
+  else if (strcasecmp (format, "avi") == 0)
   {
     input_file->vdtype = VIDEO_AVI;
   }

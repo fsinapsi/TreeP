@@ -268,7 +268,7 @@
 
 (defun str-ellipsize-middle-b (str len clen)
         (+ (sub 0 (ceil clen) str)
-           "\342\200\246"
+           "…"
            (sub (- len (floor clen)) (maxint) str) ))
 
 (defun str-ellipsize-start (str maxlen)
@@ -276,14 +276,14 @@
 
 (defun str-ellipsize-start-a (str len maxlen)
         (if (<= len maxlen) str
-                (+ (sub 0 (- maxlen 1) str) "\342\200\246") ))
+                (+ (sub 0 (- maxlen 1) str) "…") ))
 
 (defun str-ellipsize-end (str maxlen)
         (str-ellipsize-end-a str (length str) maxlen) )
 
 (defun str-ellipsize-end-a (str len maxlen)
         (if (<= len maxlen) str
-                (+ "\342\200\246" (sub (- len maxlen -1) (maxint) str)) ))
+                (+ "…" (sub (- len maxlen -1) (maxint) str)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

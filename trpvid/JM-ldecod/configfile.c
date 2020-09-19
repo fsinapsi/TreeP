@@ -203,22 +203,22 @@ void ParseCommand(InputParameters *p_Inp, int ac, char *av[])
       printf ("\n");
       free (content);
       CLcount += 2;
-    } 
+    }
     else if (0 == strncmp (av[CLcount], "-i", 2) || 0 == strncmp (av[CLcount], "-I", 2))  // A file parameter?
     {
       strncpy(p_Inp->infile, av[CLcount+1], FILE_NAME_SIZE);
       CLcount += 2;
-    } 
+    }
     else if (0 == strncmp (av[CLcount], "-r", 2) || 0 == strncmp (av[CLcount], "-R", 2))  // A file parameter?
     {
       strncpy(p_Inp->reffile, av[CLcount+1], FILE_NAME_SIZE);
       CLcount += 2;
-    } 
+    }
     else if (0 == strncmp (av[CLcount], "-o", 2) || 0 == strncmp (av[CLcount], "-O", 2))  // A file parameter?
     {
       strncpy(p_Inp->outfile, av[CLcount+1], FILE_NAME_SIZE);
       CLcount += 2;
-    } 
+    }
     else if (0 == strncmp (av[CLcount], "-s", 2) || 0 == strncmp (av[CLcount], "-S", 2))  // A file parameter?
     {
       p_Inp->silent = 1;
@@ -234,7 +234,7 @@ void ParseCommand(InputParameters *p_Inp, int ac, char *av[])
     {
       conf_read_check (sscanf(av[CLcount+1],"%d", &p_Inp->DecodeAllLayers), 1);
       CLcount += 2;
-    } 
+    }
 #endif
     else if (0 == strncmp (av[CLcount], "-p", 2) || 0 == strncmp (av[CLcount], "-P", 2))  // A config change?
     {
@@ -266,7 +266,7 @@ void ParseCommand(InputParameters *p_Inp, int ac, char *av[])
           if (*source == '=')  // The Parser expects whitespace before and after '='
           {
             *destin++=' '; *destin++='='; *destin++=' ';  // Hence make sure we add it
-          } 
+          }
           else
             *destin++=*source;
           source++;

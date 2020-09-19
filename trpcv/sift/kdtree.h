@@ -1,14 +1,14 @@
 /**@file
    Functions and structures for maintaining a k-d tree database of image
    features.
-   
+
    For more information, refer to:
-   
+
    Beis, J. S. and Lowe, D. G.  Shape indexing using approximate
    nearest-neighbor search in high-dimensional spaces.  In <EM>Conference
    on Computer Vision and Pattern Recognition (CVPR)</EM> (2003),
    pp. 1000--1006.
-   
+
    Copyright (C) 2006-2010  Rob Hess <hess@eecs.oregonstate.edu>
 
    @version 1.1.2-20100521
@@ -42,13 +42,13 @@ struct kd_node
 
 /**
    A function to build a k-d tree database from keypoints in an array.
-   
+
    @param features an array of features; <EM>this function rearranges the order
      of the features in this array, so you should take appropriate measures if
      you are relying on the order of the features (e.g. call this function
      before order is important)</EM>
    @param n the number of features in \a features
-   
+
    @return Returns the root of a kd tree built from \a features.
 */
 extern struct kd_node* kdtree_build( struct feature* features, int n );
@@ -58,7 +58,7 @@ extern struct kd_node* kdtree_build( struct feature* features, int n );
 /**
    Finds an image feature's approximate k nearest neighbors in a kd tree using
    Best Bin First search.
-   
+
    @param kd_root root of an image feature kd tree
    @param feat image feature for whose neighbors to search
    @param k number of neighbors to find
@@ -67,18 +67,18 @@ extern struct kd_node* kdtree_build( struct feature* features, int n );
      allocated by this function and must be freed by the caller using
      free(*nbrs)
    @param max_nn_chks search is cut off after examining this many tree entries
-   
+
    @return Returns the number of neighbors found and stored in \a nbrs, or
      -1 on error.
 */
 extern int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat,
-			   int k, struct feature*** nbrs, int max_nn_chks );
+                           int k, struct feature*** nbrs, int max_nn_chks );
 
 
 /**
    Finds an image feature's approximate k nearest neighbors within a specified
    spatial region in a kd tree using Best Bin First search.
-   
+
    @param kd_root root of an image feature kd tree
    @param feat image feature for whose neighbors to search
    @param k number of neighbors to find
@@ -90,15 +90,15 @@ extern int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat,
    @param rect rectangular region in which to search for neighbors
    @param model if true, spatial search is based on kdtree features' model
      locations; otherwise it is based on their image locations
-   
+
    @return Returns the number of neighbors found and stored in \a nbrs
      (in case \a k neighbors could not be found before examining
      \a max_nn_checks keypoint entries).
 */
 extern int kdtree_bbf_spatial_knn( struct kd_node* kd_root,
-				   struct feature* feat, int k,
-				   struct feature*** nbrs, int max_nn_chks,
-				   CvRect rect, int model );
+                                   struct feature* feat, int k,
+                                   struct feature*** nbrs, int max_nn_chks,
+                                   CvRect rect, int model );
 
 
 /**

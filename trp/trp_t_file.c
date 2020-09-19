@@ -324,7 +324,7 @@ uns32b trp_file_write_chars( FILE *fp, uns8b *buf, uns32b n )
 {
     /*
      FIXME
-     andr‡ riscritta meglio...
+     andr√† riscritta meglio...
      */
     return fwrite( buf, 1, n, fp );
 }

@@ -1,7 +1,7 @@
 /*
   This file contains definitions for functions to compute transforms from
   image feature correspondences
-  
+
   Copyright (C) 2006-2010  Rob Hess <hess@eecs.oregonstate.edu>
 
   @version 1.1.2-20100521
@@ -24,11 +24,11 @@ static int calc_min_inliers( int, int, double, double );
 static inline double log_factorial( int );
 static struct feature** draw_ransac_sample( struct feature**, int, int );
 static void extract_corresp_pts( struct feature**, int, int, CvPoint2D64f**,
-			  CvPoint2D64f** );
+                          CvPoint2D64f** );
 static int find_consensus( struct feature**, int, int, CvMat*, ransac_err_fn,
-		    double, struct feature*** );
+                    double, struct feature*** );
 static inline void release_mem( CvPoint2D64f*, CvPoint2D64f*,
-				struct feature** );
+                                struct feature** );
 
 /********************** Functions prototyped in model.h **********************/
 
@@ -36,13 +36,13 @@ static inline void release_mem( CvPoint2D64f*, CvPoint2D64f*,
 /*
   Calculates a best-fit image transform from image feature correspondences
   using RANSAC.
-  
+
   For more information refer to:
-  
+
   Fischler, M. A. and Bolles, R. C.  Random sample consensus: a paradigm for
   model fitting with applications to image analysis and automated cartography.
   <EM>Communications of the ACM, 24</EM>, 6 (1981), pp. 381--395.
-  
+
   @param features an array of features; only features with a non-NULL match
     of type mtype are used in homography computation
   @param n number of features in feat
@@ -67,14 +67,14 @@ static inline void release_mem( CvPoint2D64f*, CvPoint2D64f*,
     set of inliers
   @param n_in if not NULL and \a inliers is not NULL, output as the final
     number of inliers
-  
+
   @return Returns a transformation matrix computed using RANSAC or NULL
     on error or if an acceptable transform could not be computed.
 */
 CvMat* ransac_xform( struct feature* features, int n, int mtype,
-		     ransac_xform_fn xform_fn, int m, double p_badxform,
-		     ransac_err_fn err_fn, double err_tol,
-		     struct feature*** inliers, int* n_in )
+                     ransac_xform_fn xform_fn, int m, double p_badxform,
+                     ransac_err_fn err_fn, double err_tol,
+                     struct feature*** inliers, int* n_in )
 {
   struct feature** matched, ** sample, ** consensus, ** consensus_max = NULL;
   struct ransac_data* rdata;
@@ -87,7 +87,7 @@ CvMat* ransac_xform( struct feature* features, int n, int mtype,
   if( nm < m )
     {
       fprintf( stderr, "Warning: not enough matches to compute xform, %s" \
-	       " line %d\n", __FILE__, __LINE__ );
+               " line %d\n", __FILE__, __LINE__ );
       goto end;
     }
 
@@ -101,18 +101,18 @@ CvMat* ransac_xform( struct feature* features, int n, int mtype,
       extract_corresp_pts( sample, m, mtype, &pts, &mpts );
       M = xform_fn( pts, mpts, m );
       if( ! M )
-	goto iteration_end;
+        goto iteration_end;
       in = find_consensus( matched, nm, mtype, M, err_fn, err_tol, &consensus);
       if( in > in_max )
-	{
-	  if( consensus_max )
-	    free( consensus_max );
-	  consensus_max = consensus;
-	  in_max = in;
-	  in_frac = (double)in_max / nm;
-	}
+        {
+          if( consensus_max )
+            free( consensus_max );
+          consensus_max = consensus;
+          in_max = in;
+          in_frac = (double)in_max / nm;
+        }
       else
-	free( consensus );
+        free( consensus );
       cvReleaseMat( &M );
 
     iteration_end:
@@ -131,20 +131,20 @@ CvMat* ransac_xform( struct feature* features, int n, int mtype,
       extract_corresp_pts( consensus, in, mtype, &pts, &mpts );
       M = xform_fn( pts, mpts, in );
       if( inliers )
-	{
-	  *inliers = consensus;
-	  consensus = NULL;
-	}
+        {
+          *inliers = consensus;
+          consensus = NULL;
+        }
       if( n_in )
-	*n_in = in;
+        *n_in = in;
       release_mem( pts, mpts, consensus );
     }
   else if( consensus_max )
     {
       if( inliers )
-	*inliers = NULL;
+        *inliers = NULL;
       if( n_in )
-	*n_in = 0;
+        *n_in = 0;
       free( consensus_max );
     }
 
@@ -164,12 +164,12 @@ CvMat* ransac_xform( struct feature* features, int n, int mtype,
 /*
   Calculates a planar homography from point correspondeces using the direct
   linear transform.  Intended for use as a ransac_xform_fn.
-  
+
   @param pts array of points
   @param mpts array of corresponding points; each pts[i], i=0..n-1,
     corresponds to mpts[i]
   @param n number of points in both pts and mpts; must be at least 4
-  
+
   @return Returns the 3x3 planar homography matrix that transforms points
     in pts to their corresponding points in mpts or NULL if fewer than 4
     correspondences were provided
@@ -222,12 +222,12 @@ CvMat* dlt_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n )
 
 /*
   Calculates a least-squares planar homography from point correspondeces.
-  
+
   @param pts array of points
   @param mpts array of corresponding points; each pts[i], i=1..n, corresponds
     to mpts[i]
   @param n number of points in both pts and mpts; must be at least 4
-  
+
   @return Returns the 3 x 3 least-squares planar homography matrix that
     transforms points in pts to their corresponding points in mpts or NULL if
     fewer than 4 correspondences were provided
@@ -241,7 +241,7 @@ CvMat* lsq_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n )
   if( n < 4 )
     {
       fprintf( stderr, "Warning: too few points in lsq_homog(), %s line %d\n",
-	       __FILE__, __LINE__ );
+               __FILE__, __LINE__ );
       return NULL;
     }
 
@@ -282,17 +282,17 @@ CvMat* lsq_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n )
   Calculates the transfer error between a point and its correspondence for
   a given homography, i.e. for a point x, it's correspondence x', and
   homography H, computes d(x', Hx)^2.
-  
+
   @param pt a point
   @param mpt pt's correspondence
   @param H a homography matrix
-  
+
   @return Returns the transfer error between pt and mpt given H
 */
 double homog_xfer_err( CvPoint2D64f pt, CvPoint2D64f mpt, CvMat* H )
 {
   CvPoint2D64f xpt = persp_xform_pt( pt, H );
-  
+
   return sqrt( dist_sq_2D( xpt, mpt ) );
 }
 
@@ -302,18 +302,18 @@ double homog_xfer_err( CvPoint2D64f pt, CvPoint2D64f mpt, CvMat* H )
   Performs a perspective transformation on a single point.  That is, for a
   point (x, y) and a 3 x 3 matrix T this function returns the point
   (u, v), where
-  
+
   [x' y' w']^T = T * [x y 1]^T,
-  
+
   and
-  
+
   (u, v) = (x'/w', y'/w').
 
   Note that affine transforms are a subset of perspective transforms.
-  
+
   @param pt a 2D point
   @param T a perspective transformation matrix
-  
+
   @return Returns the point (u, v) as above.
 */
 CvPoint2D64f persp_xform_pt( CvPoint2D64f pt, CvMat* T )
@@ -369,7 +369,7 @@ static inline struct feature* get_match( struct feature* feat, int mtype )
   @return Returns the number of features output in matched.
 */
 static int get_matched_features( struct feature* features, int n, int mtype,
-				 struct feature*** matched )
+                                 struct feature*** matched )
 {
   struct feature** _matched;
   struct ransac_data* rdata;
@@ -379,12 +379,12 @@ static int get_matched_features( struct feature* features, int n, int mtype,
   for( i = 0; i < n; i++ )
     if( get_match( features + i, mtype ) )
       {
-	rdata = malloc( sizeof( struct ransac_data ) );
-	memset( rdata, 0, sizeof( struct ransac_data ) );
-	rdata->orig_feat_data = features[i].feature_data;
-	_matched[m] = features + i;
-	_matched[m]->feature_data = rdata;
-	m++;
+        rdata = malloc( sizeof( struct ransac_data ) );
+        memset( rdata, 0, sizeof( struct ransac_data ) );
+        rdata->orig_feat_data = features[i].feature_data;
+        _matched[m] = features + i;
+        _matched[m]->feature_data = rdata;
+        m++;
       }
   *matched = _matched;
   return m;
@@ -395,7 +395,7 @@ static int get_matched_features( struct feature* features, int n, int mtype,
 /*
   Calculates the minimum number of inliers as a function of the number of
   putative correspondences.  Based on equation (7) in
-  
+
   Chum, O. and Matas, J.  Matching with PROSAC -- Progressive Sample Consensus.
   In <EM>Conference on Computer Vision and Pattern Recognition (CVPR)</EM>,
   (2005), pp. 220--226.
@@ -404,7 +404,7 @@ static int get_matched_features( struct feature* features, int n, int mtype,
   @param m min number of correspondences to compute the model in question
   @param p_badsupp prob. that a bad model is supported by a correspondence
   @param p_badxform desired prob. that the final transformation returned is bad
-  
+
   @return Returns the minimum number of inliers required to guarantee, based
     on p_badsupp, that the probability that the final transformation returned
     by RANSAC is less than p_badxform
@@ -418,17 +418,17 @@ static int calc_min_inliers( int n, int m, double p_badsupp, double p_badxform )
     {
       sum = 0;
       for( i = j; i <= n; i++ )
-	{
-	  pi = (i-m) * log( p_badsupp ) + (n-i+m) * log( 1.0 - p_badsupp ) +
-	    log_factorial( n - m ) - log_factorial( i - m ) -
-	    log_factorial( n - i );
-	  /*
-	   * Last three terms above are equivalent to log( n-m choose i-m )
-	   */
-	  sum += exp( pi );
-	}
+        {
+          pi = (i-m) * log( p_badsupp ) + (n-i+m) * log( 1.0 - p_badsupp ) +
+            log_factorial( n - m ) - log_factorial( i - m ) -
+            log_factorial( n - i );
+          /*
+           * Last three terms above are equivalent to log( n-m choose i-m )
+           */
+          sum += exp( pi );
+        }
       if( sum < p_badxform )
-	break;
+        break;
     }
   return j;
 }
@@ -465,7 +465,7 @@ static inline double log_factorial( int n )
     field of each sampled feature's ransac_data is set to 1
 */
 static struct feature** draw_ransac_sample( struct feature** features, int n,
-					    int m )
+                                            int m )
 {
   struct feature** sample, * feat;
   struct ransac_data* rdata;
@@ -481,11 +481,11 @@ static struct feature** draw_ransac_sample( struct feature** features, int n,
   for( i = 0; i < m; i++ )
     {
       do
-	{
-	  x = random() % n;
-	  feat = features[x];
-	  rdata = feat_ransac_data( feat );
-	}
+        {
+          x = random() % n;
+          feat = features[x];
+          rdata = feat_ransac_data( feat );
+        }
       while( rdata->sampled );
       sample[i] = feat;
       rdata->sampled = 1;
@@ -509,7 +509,7 @@ static struct feature** draw_ransac_sample( struct feature** features, int n,
   @param mpts output as an array of raw point locations from features' matches
 */
 static void extract_corresp_pts( struct feature** features, int n, int mtype,
-				 CvPoint2D64f** pts, CvPoint2D64f** mpts )
+                                 CvPoint2D64f** pts, CvPoint2D64f** mpts )
 {
   struct feature* match;
   CvPoint2D64f* _pts, * _mpts;
@@ -521,23 +521,23 @@ static void extract_corresp_pts( struct feature** features, int n, int mtype,
   if( mtype == FEATURE_MDL_MATCH )
     for( i = 0; i < n; i++ )
       {
-	match = get_match( features[i], mtype );
-	if( ! match )
-	  fatal_error( "feature does not have match of type %d, %s line %d",
-		       mtype, __FILE__, __LINE__ );
-	_pts[i] = features[i]->img_pt;
-	_mpts[i] = match->mdl_pt;
+        match = get_match( features[i], mtype );
+        if( ! match )
+          fatal_error( "feature does not have match of type %d, %s line %d",
+                       mtype, __FILE__, __LINE__ );
+        _pts[i] = features[i]->img_pt;
+        _mpts[i] = match->mdl_pt;
       }
 
   else
     for( i = 0; i < n; i++ )
       {
-	match = get_match( features[i], mtype );
-	if( ! match )
-	  fatal_error( "feature does not have match of type %d, %s line %d",
-		       mtype, __FILE__, __LINE__ );
-	_pts[i] = features[i]->img_pt;
-	_mpts[i] = match->img_pt;
+        match = get_match( features[i], mtype );
+        if( ! match )
+          fatal_error( "feature does not have match of type %d, %s line %d",
+                       mtype, __FILE__, __LINE__ );
+        _pts[i] = features[i]->img_pt;
+        _mpts[i] = match->img_pt;
       }
 
   *pts = _pts;
@@ -567,8 +567,8 @@ static void extract_corresp_pts( struct feature** features, int n, int mtype,
   @return Returns the number of points in the consensus set
 */
 static int find_consensus( struct feature** features, int n, int mtype,
-			   CvMat* M, ransac_err_fn err_fn, double err_tol,
-			   struct feature*** consensus )
+                           CvMat* M, ransac_err_fn err_fn, double err_tol,
+                           struct feature*** consensus )
 {
   struct feature** _consensus;
   struct feature* match;
@@ -581,29 +581,29 @@ static int find_consensus( struct feature** features, int n, int mtype,
   if( mtype == FEATURE_MDL_MATCH )
     for( i = 0; i < n; i++ )
       {
-	match = get_match( features[i], mtype );
-	if( ! match )
-	  fatal_error( "feature does not have match of type %d, %s line %d",
-		       mtype, __FILE__, __LINE__ );
-	pt = features[i]->img_pt;
-	mpt = match->mdl_pt;
-	err = err_fn( pt, mpt, M );
-	if( err <= err_tol )
-	  _consensus[in++] = features[i];
+        match = get_match( features[i], mtype );
+        if( ! match )
+          fatal_error( "feature does not have match of type %d, %s line %d",
+                       mtype, __FILE__, __LINE__ );
+        pt = features[i]->img_pt;
+        mpt = match->mdl_pt;
+        err = err_fn( pt, mpt, M );
+        if( err <= err_tol )
+          _consensus[in++] = features[i];
       }
 
   else
     for( i = 0; i < n; i++ )
       {
-	match = get_match( features[i], mtype );
-	if( ! match )
-	  fatal_error( "feature does not have match of type %d, %s line %d",
-		       mtype, __FILE__, __LINE__ );
-	pt = features[i]->img_pt;
-	mpt = match->img_pt;
-	err = err_fn( pt, mpt, M );
-	if( err <= err_tol )
-	  _consensus[in++] = features[i];
+        match = get_match( features[i], mtype );
+        if( ! match )
+          fatal_error( "feature does not have match of type %d, %s line %d",
+                       mtype, __FILE__, __LINE__ );
+        pt = features[i]->img_pt;
+        mpt = match->img_pt;
+        err = err_fn( pt, mpt, M );
+        if( err <= err_tol )
+          _consensus[in++] = features[i];
       }
   *consensus = _consensus;
   return in;
@@ -619,7 +619,7 @@ static int find_consensus( struct feature** features, int n, int mtype,
   @param features an array of pointers to features; can be NULL
 */
 static inline void release_mem( CvPoint2D64f* pts1, CvPoint2D64f* pts2,
-				struct feature** features )
+                                struct feature** features )
 {
   free( pts1 );
   free( pts2 );

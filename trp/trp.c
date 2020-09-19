@@ -38,7 +38,7 @@ void trp_init( int argc, char *argv[] )
     extern trp_obj_t *trp_date_19700101();
 
     GC_INIT();
-//    _trp_gc_warn_proc = 
+//    _trp_gc_warn_proc =
     GC_set_warn_proc( trp_gc_warn_proc );
     if ( _trp_env_stack == NULL )
         _trp_env_stack = trp_env_stack;
@@ -52,9 +52,9 @@ void trp_init( int argc, char *argv[] )
     mp_set_memory_functions( trp_gc_malloc, trp_mp_realloc, trp_mp_free );
     /*
      costruisce gli oggetti speciali
-     (non e' strettamente necessario, ma cosi' siamo certi,
+     (non è strettamente necessario, ma così siamo certi,
      in ambito multithreading, che non verranno costruiti
-     piu' di una volta)
+     più di una volta)
      */
     (void)EMPTYCORD;
     (void)trp_double( 0.0 );

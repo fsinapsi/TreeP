@@ -7,7 +7,7 @@
  *    Direct Prediction functions
  *
  * \author
- *      Main contributors (see contributors.h for copyright, 
+ *      Main contributors (see contributors.h for copyright,
  *                         address and affiliation details)
  *      - Alexis Michael Tourapis  <alexismt@ieee.org>
  *      - Yuwen He                 <yhe@dolby.com>
@@ -60,7 +60,7 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
             int ref_idx;
             int mapped_idx = -1, iref;
 
-            colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+            colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
               &list1[0]->mv_info[RSD(currMB->block_y_aff + j0)][RSD(i0)] : &list1[0]->mv_info[currMB->block_y_aff + j0][i0];
             if(currSlice->mb_aff_frame_flag)
             {
@@ -70,12 +70,12 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
               {
                 if (iabs(dec_picture->poc - currSlice->listX[LIST_1+4][0]->poc)> iabs(dec_picture->poc -currSlice->listX[LIST_1+2][0]->poc) )
                 {
-                  colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                  colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                     &currSlice->listX[LIST_1+2][0]->mv_info[RSD(currMB->block_y_aff + j0)>>1][RSD(i0)] : &currSlice->listX[LIST_1+2][0]->mv_info[(currMB->block_y_aff + j0)>>1][i0];
                 }
                 else
                 {
-                  colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                  colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                     &currSlice->listX[LIST_1+4][0]->mv_info[RSD(currMB->block_y_aff + j0)>>1][RSD(i0)] : &currSlice->listX[LIST_1+4][0]->mv_info[(currMB->block_y_aff + j0)>>1][i0];
                 }
               }
@@ -84,12 +84,12 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
             {
               if (iabs(dec_picture->poc - list1[0]->bottom_field->poc)> iabs(dec_picture->poc -list1[0]->top_field->poc) )
               {
-                colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                   &list1[0]->top_field->mv_info[RSD(currMB->block_y_aff + j0)>>1][RSD(i0)] : &list1[0]->top_field->mv_info[(currMB->block_y_aff + j0)>>1][i0];
               }
               else
               {
-                colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                   &list1[0]->bottom_field->mv_info[RSD(currMB->block_y_aff + j0)>>1][RSD(i0)] : &list1[0]->bottom_field->mv_info[(currMB->block_y_aff + j0)>>1][i0];
               }
             }
@@ -97,12 +97,12 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
             {
               if (currSlice->structure == TOP_FIELD)
               {
-                colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                   &list1[0]->frame->top_field->mv_info[RSD(currMB->block_y_aff + j0)][RSD(i0)] : &list1[0]->frame->top_field->mv_info[currMB->block_y_aff + j0][i0];
               }
               else
               {
-                colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                   &list1[0]->frame->bottom_field->mv_info[RSD(currMB->block_y_aff + j0)][RSD(i0)] : &list1[0]->frame->bottom_field->mv_info[currMB->block_y_aff + j0][i0];
               }
             }
@@ -128,7 +128,7 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
             }
             else
             {
-              if( (currSlice->mb_aff_frame_flag && ( (currMB->mb_field && colocated->ref_pic[refList]->structure==FRAME) || 
+              if( (currSlice->mb_aff_frame_flag && ( (currMB->mb_field && colocated->ref_pic[refList]->structure==FRAME) ||
                 (!currMB->mb_field && colocated->ref_pic[refList]->structure!=FRAME))) ||
                 (!currSlice->mb_aff_frame_flag && ((currSlice->field_pic_flag==0 && colocated->ref_pic[refList]->structure!=FRAME)||
                 (currSlice->field_pic_flag==1 && colocated->ref_pic[refList]->structure==FRAME))) )
@@ -138,7 +138,7 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
                 {
                   if (currSlice->listX[LIST_0 + list_offset][iref]->top_field == colocated->ref_pic[refList] ||
                     currSlice->listX[LIST_0 + list_offset][iref]->bottom_field == colocated->ref_pic[refList] ||
-                    currSlice->listX[LIST_0 + list_offset][iref]->frame == colocated->ref_pic[refList] ) 
+                    currSlice->listX[LIST_0 + list_offset][iref]->frame == colocated->ref_pic[refList] )
                   {
                     if ((currSlice->field_pic_flag==1) && (currSlice->listX[LIST_0 + list_offset][iref]->structure != currSlice->structure))
                     {
@@ -146,7 +146,7 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
                     }
                     else
                     {
-                      mapped_idx = iref;            
+                      mapped_idx = iref;
                       break;
                     }
                   }
@@ -177,7 +177,7 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
 
                   for (i4 = i0; i4 < i0 + step_h0; ++i4)
                   {
-                    PicMotionParams *colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                    PicMotionParams *colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                       &list1[0]->mv_info[RSD(j6)][RSD(i4)] : &list1[0]->mv_info[j6][i4];
                     PicMotionParams *mv_info = &dec_picture->mv_info[j4][i4];
                     int mv_y;
@@ -188,12 +188,12 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
                       {
                         if (iabs(dec_picture->poc - currSlice->listX[LIST_1+4][0]->poc)> iabs(dec_picture->poc -currSlice->listX[LIST_1+2][0]->poc) )
                         {
-                          colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                          colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                             &currSlice->listX[LIST_1+2][0]->mv_info[RSD(j6)>>1][RSD(i4)] : &currSlice->listX[LIST_1+2][0]->mv_info[j6>>1][i4];
                         }
                         else
                         {
-                          colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                          colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                             &currSlice->listX[LIST_1+4][0]->mv_info[RSD(j6)>>1][RSD(i4)] : &currSlice->listX[LIST_1+4][0]->mv_info[j6>>1][i4];
                         }
                       }
@@ -202,12 +202,12 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
                     {
                       if (iabs(dec_picture->poc - list1[0]->bottom_field->poc)> iabs(dec_picture->poc -list1[0]->top_field->poc) )
                       {
-                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                           &list1[0]->top_field->mv_info[RSD(j6)>>1][RSD(i4)] : &list1[0]->top_field->mv_info[(j6)>>1][i4];
                       }
                       else
                       {
-                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                           &list1[0]->bottom_field->mv_info[RSD(j6)>>1][RSD(i4)] : &list1[0]->bottom_field->mv_info[(j6)>>1][i4];
                       }
                     }
@@ -215,17 +215,17 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
                     {
                       if (currSlice->structure == TOP_FIELD)
                       {
-                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                           &list1[0]->frame->top_field->mv_info[RSD(j6)][RSD(i4)] : &list1[0]->frame->top_field->mv_info[j6][i4];
                       }
                       else
                       {
-                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ? 
+                        colocated = p_Vid->active_sps->direct_8x8_inference_flag ?
                           &list1[0]->frame->bottom_field->mv_info[RSD(j6)][RSD(i4)] : &list1[0]->frame->bottom_field->mv_info[j6][i4];
                       }
                     }
 
-                    mv_y = colocated->mv[refList].mv_y; 
+                    mv_y = colocated->mv[refList].mv_y;
                     if((currSlice->mb_aff_frame_flag && !currMB->mb_field && colocated->ref_pic[refList]->structure!=FRAME) ||
                       (!currSlice->mb_aff_frame_flag && currSlice->field_pic_flag==0 && colocated->ref_pic[refList]->structure!=FRAME))
                       mv_y *= 2;
@@ -265,7 +265,7 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
           }
         }
       }
-    }    
+    }
   }
 }
 
@@ -280,7 +280,7 @@ static inline void update_neighbor_mvs(PicMotionParams **motion, const PicMotion
 /*!
 *************************************************************************************
 * \brief
-*    Colocated info <= direct_inference is disabled. 
+*    Colocated info <= direct_inference is disabled.
 *************************************************************************************
 */
 int get_colocated_info_4x4(Macroblock *currMB, StorablePicture *list1, int i, int j)
@@ -300,14 +300,14 @@ int get_colocated_info_4x4(Macroblock *currMB, StorablePicture *list1, int i, in
       &&  (iabs(fs->mv[LIST_1].mv_x)>>1 == 0)
       &&  (iabs(fs->mv[LIST_1].mv_y)>>1 == 0)));
 
-    return moving;  
+    return moving;
   }
 }
 
 /*!
 *************************************************************************************
 * \brief
-*    Temporary function for colocated info when direct_inference is enabled. Will be replaced with 
+*    Temporary function for colocated info when direct_inference is enabled. Will be replaced with
 *    function that will access directly motion information
 *************************************************************************************
 */
@@ -327,7 +327,7 @@ int get_colocated_info_8x8(Macroblock *currMB, StorablePicture *list1, int i, in
       int jdiv = (jj>>1);
       int moving;
       PicMotionParams *fs = &list1->mv_info[jj][ii];
-      
+
       if(currSlice->field_pic_flag && currSlice->structure!=list1->structure && list1->coded_frame)
       {
          if(currSlice->structure == TOP_FIELD)
@@ -338,7 +338,7 @@ int get_colocated_info_8x8(Macroblock *currMB, StorablePicture *list1, int i, in
       else
       {
         if( (currSlice->mb_aff_frame_flag && ((!currMB->mb_field && list1->motion.mb_field[currMB->mbAddrX]) ||
-          (!currMB->mb_field && list1->iCodingType == FIELD_CODING))) 
+          (!currMB->mb_field && list1->iCodingType == FIELD_CODING)))
           || (!currSlice->mb_aff_frame_flag))
         {
           if (iabs(currSlice->dec_picture->poc - list1->bottom_field->poc)> iabs(currSlice->dec_picture->poc -list1->top_field->poc) )
@@ -373,7 +373,7 @@ int get_colocated_info_8x8(Macroblock *currMB, StorablePicture *list1, int i, in
         &&  (fs->ref_idx[LIST_1] == 0)
         &&  (iabs(fs->mv[LIST_1].mv_x)>>1 == 0)
         &&  (iabs(fs->mv[LIST_1].mv_y)>>1 == 0)));
-      return moving;  
+      return moving;
     }
   }
 }
@@ -419,7 +419,7 @@ static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
         is_not_moving = (get_colocated_info_8x8(currMB, list1[0], i4, currMB->block_y_aff + j) == 0);
 
         if (is_not_moving && (l0_rFrame == 0 || l1_rFrame == 0))
-        {            
+        {
           if (l1_rFrame == -1)
           {
             if  (l0_rFrame == 0)
@@ -436,7 +436,7 @@ static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
               mv_info->ref_pic[LIST_0] = list0[(short) l0_rFrame];
               mv_info->ref_pic[LIST_1] = NULL;
               mv_info->mv[LIST_0] = pmvl0;
-              mv_info->mv[LIST_1] = zero_mv;                    
+              mv_info->mv[LIST_1] = zero_mv;
               mv_info->ref_idx[LIST_0] = l0_rFrame;
               mv_info->ref_idx[LIST_1] = -1;
             }
@@ -448,7 +448,7 @@ static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
               mv_info->ref_pic[LIST_0] = NULL;
               mv_info->ref_pic[LIST_1] = list1[0];
               mv_info->mv[LIST_0] = zero_mv;
-              mv_info->mv[LIST_1] = zero_mv;                    
+              mv_info->mv[LIST_1] = zero_mv;
               mv_info->ref_idx[LIST_0] = -1;
               mv_info->ref_idx[LIST_1] = 0;
             }
@@ -457,7 +457,7 @@ static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
               mv_info->ref_pic[LIST_0] = NULL;
               mv_info->ref_pic[LIST_1] = list1[(short) l1_rFrame];
               mv_info->mv[LIST_0] = zero_mv;
-              mv_info->mv[LIST_1] = pmvl1;                    
+              mv_info->mv[LIST_1] = pmvl1;
               mv_info->ref_idx[LIST_0] = -1;
               mv_info->ref_idx[LIST_1] = l1_rFrame;
             }
@@ -484,7 +484,7 @@ static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
               mv_info->ref_idx[LIST_1] = 0;
             }
             else
-            {                    
+            {
               mv_info->ref_pic[LIST_1] = list1[(short) l1_rFrame];
               mv_info->mv[LIST_1] = pmvl1;
               mv_info->ref_idx[LIST_1] = l1_rFrame;
@@ -531,7 +531,7 @@ static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
             mv_info->ref_idx[LIST_1] = l1_rFrame;
           }
         }
-        update_neighbor_mvs(&dec_picture->mv_info[j4], mv_info, i4);              
+        update_neighbor_mvs(&dec_picture->mv_info[j4], mv_info, i4);
       }
     }
   }
@@ -542,7 +542,7 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
   Boolean has_direct = (currMB->b8mode[0] == 0) | (currMB->b8mode[1] == 0) | (currMB->b8mode[2] == 0) | (currMB->b8mode[3] == 0);
 
   if (has_direct)
-  {   
+  {
     VideoParameters *p_Vid = currMB->p_Vid;
     Slice *currSlice = currMB->p_Slice;
     int i,j,k;
@@ -571,7 +571,7 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
           for(i4 = currMB->block_x + i; i4 < currMB->block_x + i + 2; ++i4)
           {
             PicMotionParams *mv_info = &dec_picture->mv_info[j4][i4];
-            //===== DIRECT PREDICTION =====      
+            //===== DIRECT PREDICTION =====
             if (l0_rFrame == 0 || l1_rFrame == 0)
             {
               int is_not_moving = (get_colocated_info_4x4(currMB, list1[0], i4, currMB->block_y_aff + j) == 0);
@@ -597,7 +597,7 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
                   mv_info->ref_idx[LIST_1] = -1;
                 }
               }
-              else if (l0_rFrame == -1) 
+              else if (l0_rFrame == -1)
               {
                 if  (is_not_moving)
                 {
@@ -612,7 +612,7 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
                 {
                   mv_info->ref_pic[LIST_0] = NULL;
                   mv_info->ref_pic[LIST_1] = list1[(short) l1_rFrame];
-                  mv_info->mv[LIST_0] = zero_mv;            
+                  mv_info->mv[LIST_0] = zero_mv;
                   mv_info->mv[LIST_1] = pmvl1;
                   mv_info->ref_idx[LIST_0] = -1;
                   mv_info->ref_idx[LIST_1] = l1_rFrame;
@@ -643,12 +643,12 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
                 {
                   mv_info->ref_pic[LIST_1] = list1[(short) l1_rFrame];
                   mv_info->mv[LIST_1] = pmvl1;
-                  mv_info->ref_idx[LIST_1] = l1_rFrame;              
-                }            
+                  mv_info->ref_idx[LIST_1] = l1_rFrame;
+                }
               }
             }
-            else 
-            {       
+            else
+            {
               mv_info = &dec_picture->mv_info[j4][i4];
 
               if (l0_rFrame < 0 && l1_rFrame < 0)
@@ -669,7 +669,7 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
                 mv_info->ref_idx[LIST_0] = l0_rFrame;
                 mv_info->ref_idx[LIST_1] = -1;
               }
-              else if (l0_rFrame == -1) 
+              else if (l0_rFrame == -1)
               {
                 mv_info->ref_pic[LIST_0] = NULL;
                 mv_info->ref_pic[LIST_1] = list1[(short) l1_rFrame];
@@ -685,13 +685,13 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
                 mv_info->mv[LIST_0] = pmvl0;
                 mv_info->mv[LIST_1] = pmvl1;
                 mv_info->ref_idx[LIST_0] = l0_rFrame;
-                mv_info->ref_idx[LIST_1] = l1_rFrame;            
+                mv_info->ref_idx[LIST_1] = l1_rFrame;
               }
             }
           }
         }
       }
-    }        
+    }
   }
 }
 

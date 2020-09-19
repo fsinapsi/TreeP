@@ -6,7 +6,7 @@
  *    Functions for intra 16x16 prediction
  *
  * \author
- *      Main contributors (see contributors.h for copyright, 
+ *      Main contributors (see contributors.h for copyright,
  *                         address and affiliation details)
  *      - Yuri Vatis
  *      - Jan Muenster
@@ -39,9 +39,9 @@ static int intra16x16_dc_pred(Macroblock *currMB, ColorPlane pl)
   int i,j;
 
   imgpel **imgY = (pl) ? currSlice->dec_picture->imgUV[pl - 1] : currSlice->dec_picture->imgY;
-  imgpel **mb_pred = &(currSlice->mb_pred[pl][0]); 
+  imgpel **mb_pred = &(currSlice->mb_pred[pl][0]);
 
-  PixelPos a, b; 
+  PixelPos a, b;
 
   int up_avail, left_avail;
 
@@ -51,7 +51,7 @@ static int intra16x16_dc_pred(Macroblock *currMB, ColorPlane pl)
   if (!p_Vid->active_pps->constrained_intra_pred_flag)
   {
     up_avail      = b.available;
-    left_avail    = a.available;    
+    left_avail    = a.available;
   }
   else
   {
@@ -76,7 +76,7 @@ static int intra16x16_dc_pred(Macroblock *currMB, ColorPlane pl)
     int pos_x = a.pos_x;
     for (i = 0; i < MB_BLOCK_SIZE; ++i)
     {
-      s2 += imgY[pos_y++][pos_x]; 
+      s2 += imgY[pos_y++][pos_x];
     }
   }
 
@@ -123,7 +123,7 @@ static int intra16x16_vert_pred(Macroblock *currMB, ColorPlane pl)
 {
   Slice *currSlice = currMB->p_Slice;
   VideoParameters *p_Vid = currMB->p_Vid;
-  
+
   int j;
 
   imgpel **imgY = (pl) ? currSlice->dec_picture->imgUV[pl - 1] : currSlice->dec_picture->imgY;
@@ -184,7 +184,7 @@ static int intra16x16_hor_pred(Macroblock *currMB, ColorPlane pl)
 #endif
 
   imgpel **imgY = (pl) ? currSlice->dec_picture->imgUV[pl - 1] : currSlice->dec_picture->imgY;
-  imgpel **mb_pred = &(currSlice->mb_pred[pl][0]); 
+  imgpel **mb_pred = &(currSlice->mb_pred[pl][0]);
   imgpel prediction;
   int pos_y, pos_x;
 
@@ -244,19 +244,19 @@ static int intra16x16_plane_pred(Macroblock *currMB, ColorPlane pl)
 {
   Slice *currSlice = currMB->p_Slice;
   VideoParameters *p_Vid = currMB->p_Vid;
-  
+
   int i,j;
 
   int ih = 0, iv = 0;
   int ib,ic,iaa;
 
   imgpel **imgY = (pl) ? currSlice->dec_picture->imgUV[pl - 1] : currSlice->dec_picture->imgY;
-  imgpel **mb_pred = &(currSlice->mb_pred[pl][0]); 
+  imgpel **mb_pred = &(currSlice->mb_pred[pl][0]);
   imgpel *mpr_line;
   int max_imgpel_value = p_Vid->max_pel_value_comp[pl];
   int pos_y, pos_x;
 
-  PixelPos a, b, d;  
+  PixelPos a, b, d;
 
   int up_avail, left_avail, left_up_avail;
 
@@ -315,7 +315,7 @@ static int intra16x16_plane_pred(Macroblock *currMB, ColorPlane pl)
 /*!
  ***********************************************************************
  * \brief
- *    makes and returns 16x16 intra prediction blocks 
+ *    makes and returns 16x16 intra prediction blocks
  *
  * \return
  *    DECODING_OK   decoding of intraprediction mode was successful            \n
@@ -323,7 +323,7 @@ static int intra16x16_plane_pred(Macroblock *currMB, ColorPlane pl)
  ***********************************************************************
  */
 int intrapred_16x16_normal(Macroblock *currMB,  //!< Current Macroblock
-                           ColorPlane pl,       //!< Current colorplane (for 4:4:4)                         
+                           ColorPlane pl,       //!< Current colorplane (for 4:4:4)
                            int predmode)        //!< prediction mode
 {
   switch (predmode)

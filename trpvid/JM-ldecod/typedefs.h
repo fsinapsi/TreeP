@@ -4,7 +4,7 @@
  *
  * \brief
  *    Common type definitions
- *    Currently only supports Windows and Linux operating systems. 
+ *    Currently only supports Windows and Linux operating systems.
  *    Need to add support for other "older systems such as VAX, DECC, Unix Alpha etc
  *
  * \author

@@ -9,7 +9,7 @@
  *    Main contributors (see contributors.h for copyright, address and affiliation details)
  *     - Karsten Suehring
  *     - Alexis Michael Tourapis         <alexismt@ieee.org>
- *     
+ *
  *************************************************************************************
  */
 #include "contributors.h"
@@ -96,7 +96,7 @@ static inline int ReadDataV210 (int vfile, int framesize_in_bytes, unsigned char
  * \param HeaderSize
  *    Number of bytes in the source file to be skipped
  * \param source
- *    source file (on disk) information 
+ *    source file (on disk) information
  * \param buf
  *    image buffer data
  ************************************************************************
@@ -112,7 +112,7 @@ int ReadFrameConcatenated (InputParameters *p_Inp, VideoDataFile *input_file, in
   const int bytes_uv = source->size_cmp[1] * symbol_size_in_bytes;
 
   const int64 framesize_in_bytes = (is_v210 == TRUE) ? 16 * (source->size_cmp[0] / 6) : bytes_y + 2 * bytes_uv;
-  
+
   // Let us seek directly to the current frame
   if (lseek (vfile, HeaderSize + framesize_in_bytes * (FrameNoInFile + p_Inp->start_frame), SEEK_SET) == -1)
   {
@@ -120,7 +120,7 @@ int ReadFrameConcatenated (InputParameters *p_Inp, VideoDataFile *input_file, in
     error (errortext,-1);
   }
 
-  // Here we are at the correct position for the source frame in the file.  
+  // Here we are at the correct position for the source frame in the file.
   // Now read it.
   if ((source->pic_unit_size_on_disk & 0x07) == 0)
   {
@@ -128,7 +128,7 @@ int ReadFrameConcatenated (InputParameters *p_Inp, VideoDataFile *input_file, in
     {
       file_read = ReadDataV210(vfile, (int) framesize_in_bytes, buf);
     }
-    else 
+    else
     {
 #if FAST_READ
       file_read = ReadData (vfile, source, buf);
@@ -158,7 +158,7 @@ int ReadFrameConcatenated (InputParameters *p_Inp, VideoDataFile *input_file, in
  * \param HeaderSize
  *    Number of bytes in the source file to be skipped
  * \param source
- *    source file (on disk) information 
+ *    source file (on disk) information
  * \param buf
  *    taget buffer
  ************************************************************************

@@ -119,11 +119,11 @@
 
         (set tmp-path (+ path ".part"))
         (alt    (seq    ; FIXME
-                        ; non è detto che il server supporti il resume;
+                        ; non Ã¨ detto che il server supporti il resume;
                         ; in tal caso non so se (curl-easy-setopt-resume-from)
                         ; fallisca o il fallimento sia rimandato fino a
                         ; (curl-easy-perform)...
-                        ; Nel caso di raiplay è rimandato.
+                        ; Nel caso di raiplay Ã¨ rimandato.
                         (pathexists tmp-path)
                         (truep (isreg tmp-path))
                         (set i (fsize tmp-path))

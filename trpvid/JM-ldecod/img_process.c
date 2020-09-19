@@ -80,7 +80,7 @@ static inline void FilterImageSep(ImageData *imgOut, ImageData *imgIn)
     frm_data = imgIn->frm_data[0][j];
     for (i = 0; i < imgOut->format.width[0]; i++)
     {
-      temp_data[j][i] = 
+      temp_data[j][i] =
         SepFilter[0] * frm_data[iClip3(0, max_width, i - 2)] +
         SepFilter[1] * frm_data[iClip3(0, max_width, i - 1)] +
         SepFilter[2] * frm_data[iClip3(0, max_width, i    )] +
@@ -120,7 +120,7 @@ static inline void FilterImageSep(ImageData *imgOut, ImageData *imgIn)
         frm_data = imgIn->frm_data[k][j];
         for (i = 0; i < imgOut->format.width[k]; i++)
         {
-          temp_data[j][i] = 
+          temp_data[j][i] =
             SepFilter[0] * frm_data[iClip3(0, max_width, i - 2)] +
             SepFilter[1] * frm_data[iClip3(0, max_width, i - 1)] +
             SepFilter[2] * frm_data[iClip3(0, max_width, i    )] +
@@ -162,7 +162,7 @@ static inline void MuxImages(ImageData *imgOut, ImageData *imgIn0, ImageData *im
       imgOut->frm_data[0][j][i] = (imgpel) rshift_rnd_sf(imgIn0->frm_data[0][j][i] * (Map->format.max_value[0] - Map->frm_data[0][j][i]) + imgIn1->frm_data[0][j][i] * Map->frm_data[0][j][i], Map->format.bit_depth[0]);
     }
   }
-  
+
   if (imgOut->format.yuv_format != YUV400)
   {
     int k;

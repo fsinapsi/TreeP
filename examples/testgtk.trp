@@ -220,7 +220,7 @@
                 (gtk-spin-button-set-wrap gamma-sb false)
                 (gtk-box-pack-start hb gamma-sb false false 0)
 
-                (set i (gtk-label-new (iso->utf8 "Luminosit‡")))
+                (set i (gtk-label-new "Luminosit√†"))
                 (gtk-box-pack-start hb i false false 0)
 
                 (set brightness-sb (gtk-spin-button-new-with-range -2 2 0.01))

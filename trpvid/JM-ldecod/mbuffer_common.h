@@ -110,7 +110,7 @@ static inline int compare_pic_by_poc_asc( const void *arg1, const void *arg2 )
   int poc2 = (*(StorablePicture**)arg2)->poc;
 
   if ( poc1 < poc2)
-    return -1;  
+    return -1;
   else if ( poc1 > poc2)
     return 1;
   else

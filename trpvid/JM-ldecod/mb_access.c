@@ -78,7 +78,7 @@ void CheckAvailabilityOfNeighbors(Macroblock *currMB)
     currMB->mbAvailA = (Boolean) (mb_is_available(currMB->mbAddrA, currMB) && ((p_pic_pos->x)!=0));
     currMB->mbAvailD = (Boolean) (mb_is_available(currMB->mbAddrD, currMB) && ((p_pic_pos->x)!=0));
     currMB->mbAvailC = (Boolean) (mb_is_available(currMB->mbAddrC, currMB) && (((p_pic_pos + 1)->x)!=0));
-    currMB->mbAvailB = (Boolean) (mb_is_available(currMB->mbAddrB, currMB));        
+    currMB->mbAvailB = (Boolean) (mb_is_available(currMB->mbAddrB, currMB));
   }
 
   currMB->mb_left = (currMB->mbAvailA) ? &(currSlice->mb_data[currMB->mbAddrA]) : NULL;
@@ -109,7 +109,7 @@ void CheckAvailabilityOfNeighborsNormal(Macroblock *currMB)
   currMB->mbAvailA = (Boolean) (mb_is_available(currMB->mbAddrA, currMB) && ((p_pic_pos->x)!=0));
   currMB->mbAvailD = (Boolean) (mb_is_available(currMB->mbAddrD, currMB) && ((p_pic_pos->x)!=0));
   currMB->mbAvailC = (Boolean) (mb_is_available(currMB->mbAddrC, currMB) && (((p_pic_pos + 1)->x)!=0));
-  currMB->mbAvailB = (Boolean) (mb_is_available(currMB->mbAddrB, currMB));        
+  currMB->mbAvailB = (Boolean) (mb_is_available(currMB->mbAddrB, currMB));
 
 
   currMB->mb_left = (currMB->mbAvailA) ? &(currSlice->mb_data[currMB->mbAddrA]) : NULL;
@@ -256,7 +256,7 @@ void getNonAffNeighbour(Macroblock *currMB, int xN, int yN, int mb_size[2], Pixe
   {
     BlockPos *CurPos = &(currMB->p_Vid->PicPos[ pix->mb_addr ]);
     pix->x     = (short) (xN & (maxW - 1));
-    pix->y     = (short) (yN & (maxH - 1));    
+    pix->y     = (short) (yN & (maxH - 1));
     pix->pos_x = (short) (pix->x + CurPos->x * maxW);
     pix->pos_y = (short) (pix->y + CurPos->y * maxH);
   }

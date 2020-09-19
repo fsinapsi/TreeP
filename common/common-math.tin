@@ -59,21 +59,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; (nextprime n)
-;;; il più piccolo primo maggiore di n, tuttavia:
+;;; il piÃ¹ piccolo primo maggiore di n, tuttavia:
 ;;; - potrebbe non essere primo
-;;; - potrebbe non essere il più piccolo
+;;; - potrebbe non essere il piÃ¹ piccolo
 ;;;
 ;;; (nextprime-secure n)
-;;; il più piccolo primo maggiore di n (garantito)
+;;; il piÃ¹ piccolo primo maggiore di n (garantito)
 ;;;
 ;;; (nextprime-secure-fast n)
-;;; il più piccolo primo maggiore di n, tuttavia:
-;;; - è primo garantito
-;;; - potrebbe non essere il più piccolo
+;;; il piÃ¹ piccolo primo maggiore di n, tuttavia:
+;;; - Ã¨ primo garantito
+;;; - potrebbe non essere il piÃ¹ piccolo
 ;;;
 ;;; Note:
-;;; - nextprime è il test di primalità di Miller-Rabin
-;;; - isprime è il test AKS
+;;; - nextprime Ã¨ il test di primalitÃ  di Miller-Rabin
+;;; - isprime Ã¨ il test AKS
 
 (defun nextprime-secure (n) net nextprime-secure)
 (defnet nextprime-secure (n @n)

@@ -160,11 +160,11 @@ int RestOfSliceHeader(Slice *currSlice)
   currSlice->mb_aff_frame_flag = (active_sps->mb_adaptive_frame_field_flag && (currSlice->field_pic_flag==0));
   //currSlice->mb_aff_frame_flag = p_Vid->mb_aff_frame_flag;
 
-  if (currSlice->structure == FRAME       ) 
+  if (currSlice->structure == FRAME       )
     assert (currSlice->field_pic_flag == 0);
-  if (currSlice->structure == TOP_FIELD   ) 
+  if (currSlice->structure == TOP_FIELD   )
     assert (currSlice->field_pic_flag == 1 && (currSlice->bottom_field_flag == FALSE));
-  if (currSlice->structure == BOTTOM_FIELD) 
+  if (currSlice->structure == BOTTOM_FIELD)
     assert (currSlice->field_pic_flag == 1 && (currSlice->bottom_field_flag == TRUE ));
 
   if (currSlice->idr_flag)
@@ -244,8 +244,8 @@ int RestOfSliceHeader(Slice *currSlice)
   ref_pic_list_reordering(currSlice);
 #endif
 
-  currSlice->weighted_pred_flag = (unsigned short) ((currSlice->slice_type == P_SLICE || currSlice->slice_type == SP_SLICE) 
-    ? p_Vid->active_pps->weighted_pred_flag 
+  currSlice->weighted_pred_flag = (unsigned short) ((currSlice->slice_type == P_SLICE || currSlice->slice_type == SP_SLICE)
+    ? p_Vid->active_pps->weighted_pred_flag
     : (currSlice->slice_type == B_SLICE && p_Vid->active_pps->weighted_bipred_idc == 1));
   currSlice->weighted_bipred_idc = (unsigned short) (currSlice->slice_type == B_SLICE && p_Vid->active_pps->weighted_bipred_idc > 0);
 
@@ -281,7 +281,7 @@ int RestOfSliceHeader(Slice *currSlice)
       currSlice->sp_switch = read_u_1 ("SH: sp_for_switch_flag", currStream, &p_Dec->UsedBits);
     }
     currSlice->slice_qs_delta = val = read_se_v("SH: slice_qs_delta", currStream, &p_Dec->UsedBits);
-    currSlice->qs = 26 + p_Vid->active_pps->pic_init_qs_minus26 + val;    
+    currSlice->qs = 26 + p_Vid->active_pps->pic_init_qs_minus26 + val;
     if ((currSlice->qs < 0) || (currSlice->qs > 51))
       error ("slice_qs_delta makes slice_qs_y out of range", 500);
   }
@@ -897,7 +897,7 @@ void decode_poc(VideoParameters *p_Vid, Slice *pSlice)
         pSlice->toppoc = pSlice->bottompoc = pSlice->framepoc = pSlice->ThisPOC;
       else if (pSlice->bottom_field_flag == FALSE)
          pSlice->toppoc = pSlice->framepoc = pSlice->ThisPOC;
-      else 
+      else
         pSlice->bottompoc = pSlice->framepoc = pSlice->ThisPOC;
     }
 
@@ -921,7 +921,7 @@ void decode_poc(VideoParameters *p_Vid, Slice *pSlice)
  *    none
  ************************************************************************
  */
-int dumppoc(VideoParameters *p_Vid) 
+int dumppoc(VideoParameters *p_Vid)
 {
   seq_parameter_set_rbsp_t *active_sps = p_Vid->active_sps;
 

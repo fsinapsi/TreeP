@@ -37,7 +37,7 @@
  */
 void reorder_short_term(Slice *currSlice, int cur_list, int num_ref_idx_lX_active_minus1, int picNumLX, int *refIdxLX, int currViewID)
 {
-  StorablePicture **RefPicListX = currSlice->listX[cur_list]; 
+  StorablePicture **RefPicListX = currSlice->listX[cur_list];
   int cIdx, nIdx;
 
   StorablePicture *picLX;
@@ -54,7 +54,7 @@ void reorder_short_term(Slice *currSlice, int cur_list, int num_ref_idx_lX_activ
   for( cIdx = *refIdxLX; cIdx <= num_ref_idx_lX_active_minus1+1; cIdx++ )
     if (RefPicListX[ cIdx ])
     {
-      if( (RefPicListX[ cIdx ]->is_long_term ) ||  (RefPicListX[ cIdx ]->pic_num != picNumLX ) ||  
+      if( (RefPicListX[ cIdx ]->is_long_term ) ||  (RefPicListX[ cIdx ]->pic_num != picNumLX ) ||
         ( currViewID != -1 && RefPicListX[ cIdx ]->layer_id  != currViewID )
         )
         RefPicListX[ nIdx++ ] = RefPicListX[ cIdx ];
@@ -88,7 +88,7 @@ void reorder_long_term(Slice *currSlice, StorablePicture **RefPicListX, int num_
   {
     if (RefPicListX[ cIdx ])
     {
-      if( (!RefPicListX[ cIdx ]->is_long_term ) ||  (RefPicListX[ cIdx ]->long_term_pic_num != LongTermPicNum ) ||  
+      if( (!RefPicListX[ cIdx ]->is_long_term ) ||  (RefPicListX[ cIdx ]->long_term_pic_num != LongTermPicNum ) ||
           ( currViewID != -1 && RefPicListX[ cIdx ]->layer_id  != currViewID )
         )
         RefPicListX[ nIdx++ ] = RefPicListX[ cIdx ];
@@ -112,12 +112,12 @@ static StorablePicture*  get_inter_view_pic(VideoParameters *p_Vid, Slice *currS
   if (listidx == 0)
   {
     fs_listinterview = currSlice->fs_listinterview0;
-    listinterview_size = currSlice->listinterviewidx0; 
+    listinterview_size = currSlice->listinterviewidx0;
   }
   else
   {
     fs_listinterview = currSlice->fs_listinterview1;
-    listinterview_size = currSlice->listinterviewidx1; 
+    listinterview_size = currSlice->listinterviewidx1;
   }
 
   for(i=0; i<listinterview_size; i++)
@@ -287,11 +287,11 @@ void init_lists_p_slice_mvc(Slice *currSlice)
     free(fs_listlt);
   }
 
-  currSlice->listXsize[1] = 0;    
+  currSlice->listXsize[1] = 0;
 
 #if !SIMULCAST_ENABLE
   if (currSlice->svc_extension_flag == 0)
-  {        
+  {
     int curr_view_id = currSlice->layer_id;
     currSlice->fs_listinterview0 = calloc(p_Dpb->size, sizeof (FrameStore*));
     if (NULL==currSlice->fs_listinterview0)
@@ -327,7 +327,7 @@ void init_lists_p_slice_mvc(Slice *currSlice)
     currSlice->listX[1][i] = p_Vid->no_reference_picture;
   }
 
-  #if PRINTREFLIST  
+  #if PRINTREFLIST
   // print out for debug purpose
   if((p_Vid->profile_idc == MVC_HIGH || p_Vid->profile_idc == STEREO_HIGH) && currSlice->current_slice_nr==0)
   {
@@ -577,7 +577,7 @@ void init_lists_b_slice_mvc(Slice *currSlice)
         p_Vid->p_Dpb_layer[1],
         currSlice->structure, 1, currSlice->fs_listinterview1, &currSlice->listinterviewidx1, currPOC, curr_view_id, anchor_pic_flag);
       gen_pic_list_from_frame_interview_list(currSlice->structure, currSlice->fs_listinterview1, currSlice->listinterviewidx1, currSlice->listX[1], &currSlice->listXsize[1]);
-    }    
+    }
   }
 #endif
   // set max size
@@ -730,7 +730,7 @@ void reorder_ref_pic_list_mvc(Slice *currSlice, int cur_list, int **anchor_ref, 
     {
       reorder_long_term(currSlice, currSlice->listX[cur_list], num_ref_idx_lX_active_minus1, long_term_pic_idx[i], &refIdxLX, view_id);
     }
-    else 
+    else
     {
       if(modification_of_pic_nums_idc[i] == 4) //(modification_of_pic_nums_idc[i] == 4)
       {
@@ -804,8 +804,8 @@ void reorder_lists_mvc(Slice * currSlice, int currPOC)
   free_ref_pic_list_reordering_buffer(currSlice);
 
   if ( currSlice->slice_type == P_SLICE )
-  {    
-#if PRINTREFLIST  
+  {
+#if PRINTREFLIST
     unsigned int i;
     // print out for debug purpose
     if((p_Vid->profile_idc == MVC_HIGH || p_Vid->profile_idc == STEREO_HIGH) && currSlice->current_slice_nr==0)
@@ -853,4 +853,4 @@ void reorder_lists_mvc(Slice * currSlice, int currPOC)
 }
 
 #endif
- 
+

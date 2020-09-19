@@ -200,11 +200,11 @@ int GetRTPNALU (VideoParameters *p_Vid, NALU_t *nalu, int BitStreamFile)
   free (p);
 
 //  printf ("Got an RTP NALU, len %d, first byte %x\n", nalu->len, nalu->buf[0]);
-  
+
   if (ret>0)
     // length of packet
     return nalu->len;
-  else 
+  else
     // error code
     return ret;
 }

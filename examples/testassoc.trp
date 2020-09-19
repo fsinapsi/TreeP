@@ -23,7 +23,7 @@
         (for p in (directory) do
                 (assoc-inc a (path-extension p)) )
         (print a " -> " (assoc-list a) nl)
-        (print (iso->utf8 "profondit‡ dell'albero: ") (height a) nl)
+        (print "profondit√† dell'albero: " (height a) nl)
         (print "programmini trovati: " <a "trp"> nl)
         (print "subassoc->msg: " <a "subassoc" "msg"> nl)
 

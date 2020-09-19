@@ -10,7 +10,7 @@
  *    Main contributors (see contributors.h for copyright, address and affiliation details)
  *     - Karsten Suehring
  *     - Alexis Michael Tourapis         <alexismt@ieee.org>
- *     
+ *
  *************************************************************************************
  */
 #include "contributors.h"
@@ -115,9 +115,9 @@ void fillPlane ( imgpel** imgX,                 //!< Pointer to image plane
   }
   else
   {
-    for (j = 0; j < size_y; j++) 
+    for (j = 0; j < size_y; j++)
     {
-      for (i = 0; i < size_x; i++) 
+      for (i = 0; i < size_x; i++)
       {
         imgX[j][i] = (imgpel) nVal;
       }
@@ -129,9 +129,9 @@ static void deinterleave_yuv420( unsigned char** input,       //!< input buffer
   unsigned char** output,      //!< output buffer
   FrameFormat *source,         //!< format of source buffer
   int symbol_size_in_bytes     //!< number of bytes per symbol
-  ) 
+  )
 {
-  int i;  
+  int i;
   // original buffer
   unsigned char *icmp  = *input;
   // final buffer
@@ -140,7 +140,7 @@ static void deinterleave_yuv420( unsigned char** input,       //!< input buffer
   unsigned char *ocmp1 = ocmp0 + symbol_size_in_bytes * source->size_cmp[Y_COMP];
   unsigned char *ocmp2 = ocmp1 + symbol_size_in_bytes * source->size_cmp[U_COMP];
 
-  for (i = 0; i < source->size_cmp[U_COMP]; i++) 
+  for (i = 0; i < source->size_cmp[U_COMP]; i++)
   {
     memcpy(ocmp1, icmp, symbol_size_in_bytes);
     ocmp1 += symbol_size_in_bytes;
@@ -159,16 +159,16 @@ static void deinterleave_yuv420( unsigned char** input,       //!< input buffer
   // flip buffers
   icmp    = *input;
   *input  = *output;
-  *output = icmp;  
+  *output = icmp;
 }
 
 static void deinterleave_yuv444( unsigned char** input,       //!< input buffer
   unsigned char** output,      //!< output buffer
   FrameFormat *source,         //!< format of source buffer
   int symbol_size_in_bytes     //!< number of bytes per symbol
-  ) 
+  )
 {
-  int i;  
+  int i;
   // original buffer
   unsigned char *icmp  = *input;
   // final buffer
@@ -177,7 +177,7 @@ static void deinterleave_yuv444( unsigned char** input,       //!< input buffer
   unsigned char *ocmp1 = ocmp0 + symbol_size_in_bytes * source->size_cmp[Y_COMP];
   unsigned char *ocmp2 = ocmp1 + symbol_size_in_bytes * source->size_cmp[U_COMP];
 
-  for (i = 0; i < source->size_cmp[Y_COMP]; i++) 
+  for (i = 0; i < source->size_cmp[Y_COMP]; i++)
   {
     memcpy(ocmp0, icmp, symbol_size_in_bytes);
     ocmp0 += symbol_size_in_bytes;
@@ -199,9 +199,9 @@ static void deinterleave_yuyv ( unsigned char** input,       //!< input buffer
   unsigned char** output,      //!< output buffer
   FrameFormat *source,         //!< format of source buffer
   int symbol_size_in_bytes     //!< number of bytes per symbol
-  ) 
+  )
 {
-  int i;  
+  int i;
   // original buffer
   unsigned char *icmp = *input;
   // final buffer
@@ -210,7 +210,7 @@ static void deinterleave_yuyv ( unsigned char** input,       //!< input buffer
   unsigned char *ocmp1 = ocmp0 + symbol_size_in_bytes * source->size_cmp[Y_COMP];
   unsigned char *ocmp2 = ocmp1 + symbol_size_in_bytes * source->size_cmp[U_COMP];
 
-  for (i = 0; i < source->size_cmp[U_COMP]; i++) 
+  for (i = 0; i < source->size_cmp[U_COMP]; i++)
   {
     // Y
     memcpy(ocmp0, icmp, symbol_size_in_bytes);
@@ -239,9 +239,9 @@ static void deinterleave_yvyu ( unsigned char** input,       //!< input buffer
   unsigned char** output,      //!< output buffer
   FrameFormat *source,         //!< format of source buffer
   int symbol_size_in_bytes     //!< number of bytes per symbol
-  ) 
+  )
 {
-  int i;  
+  int i;
   // original buffer
   unsigned char *icmp  = *input;
   // final buffer
@@ -250,7 +250,7 @@ static void deinterleave_yvyu ( unsigned char** input,       //!< input buffer
   unsigned char *ocmp1 = ocmp0 + symbol_size_in_bytes * source->size_cmp[Y_COMP];
   unsigned char *ocmp2 = ocmp1 + symbol_size_in_bytes * source->size_cmp[U_COMP];
 
-  for (i = 0; i < source->size_cmp[U_COMP]; i++) 
+  for (i = 0; i < source->size_cmp[U_COMP]; i++)
   {
     // Y
     memcpy(ocmp0, icmp, symbol_size_in_bytes);
@@ -279,9 +279,9 @@ static void deinterleave_uyvy ( unsigned char** input,       //!< input buffer
   unsigned char** output,      //!< output buffer
   FrameFormat *source,         //!< format of source buffer
   int symbol_size_in_bytes     //!< number of bytes per symbol
-  ) 
+  )
 {
-  int i;  
+  int i;
   // original buffer
   unsigned char *icmp  = *input;
   // final buffer
@@ -290,7 +290,7 @@ static void deinterleave_uyvy ( unsigned char** input,       //!< input buffer
   unsigned char *ocmp1 = ocmp0 + symbol_size_in_bytes * source->size_cmp[Y_COMP];
   unsigned char *ocmp2 = ocmp1 + symbol_size_in_bytes * source->size_cmp[U_COMP];
 
-  for (i = 0; i < source->size_cmp[U_COMP]; i++) 
+  for (i = 0; i < source->size_cmp[U_COMP]; i++)
   {
     // U
     memcpy(ocmp1, icmp, symbol_size_in_bytes);
@@ -319,9 +319,9 @@ static void deinterleave_v210 ( unsigned char** input,       //!< input buffer
   unsigned char** output,      //!< output buffer
   FrameFormat *source,         //!< format of source buffer
   int symbol_size_in_bytes     //!< number of bytes per symbol
-  ) 
+  )
 {
-  int i;  
+  int i;
   // original buffer
   unsigned char *icmp  = *input;
 
@@ -330,7 +330,7 @@ static void deinterleave_v210 ( unsigned char** input,       //!< input buffer
   unsigned short *ui16cmp1 = ui16cmp0 + source->size_cmp[0];
   unsigned short *ui16cmp2 = ui16cmp1 + source->size_cmp[1];
 
-  for (i = 0; i < source->size_cmp[U_COMP] / 3; i++) 
+  for (i = 0; i < source->size_cmp[U_COMP] / 3; i++)
   {
     // Byte 3          Byte 2          Byte 1          Byte 0
     // Cr 0                Y 0                 Cb 0
@@ -384,13 +384,13 @@ static void deinterleave ( unsigned char** input,       //!< input buffer
                            int symbol_size_in_bytes     //!< number of bytes per symbol
                           )
 {
-  if (source->yuv_format == YUV420) 
-  { // UYYVYY 
+  if (source->yuv_format == YUV420)
+  { // UYYVYY
     deinterleave_yuv420(input, output, source, symbol_size_in_bytes);
-  }  
+  }
   else if (source->yuv_format == YUV422)
   {
-    if (source->pixel_format == YUYV || source->pixel_format == YUY2) 
+    if (source->pixel_format == YUYV || source->pixel_format == YUY2)
     {
       deinterleave_yuyv(input, output, source, symbol_size_in_bytes);
     }
@@ -398,11 +398,11 @@ static void deinterleave ( unsigned char** input,       //!< input buffer
     {
       deinterleave_yvyu(input, output, source, symbol_size_in_bytes);
     }
-    else if (source->pixel_format == UYVY) 
+    else if (source->pixel_format == UYVY)
     {
       deinterleave_uyvy(input, output, source, symbol_size_in_bytes);
     }
-    else if (source->pixel_format == V210) 
+    else if (source->pixel_format == V210)
     {
       deinterleave_v210(input, output, source, symbol_size_in_bytes);
     }
@@ -411,7 +411,7 @@ static void deinterleave ( unsigned char** input,       //!< input buffer
       exit(EXIT_FAILURE);
     }
   }
-  else if (source->yuv_format == YUV444)  
+  else if (source->yuv_format == YUV444)
     deinterleave_yuv444(input, output, source, symbol_size_in_bytes);
 }
 
@@ -511,20 +511,20 @@ void buf2img_bitshift ( imgpel** imgX,            //!< Pointer to image plane
           memcpy(&(ui16), buf + ((i + j_pos) * symbol_size_in_bytes), symbol_size_in_bytes);
           imgX[j][i] = (imgpel) rshift_rnd(ui16,bitshift);
         }
-      }  
+      }
     }
     else
     {
       int iminwidth   = imin(size_x, o_size_x);
       int iminheight  = imin(size_y, o_size_y);
-      int dst_offset_x  = 0, dst_offset_y = 0;        
+      int dst_offset_x  = 0, dst_offset_y = 0;
       int offset_x = 0, offset_y = 0; // currently not used
 
       // determine whether we need to center the copied frame or crop it
-      if ( o_size_x >= size_x ) 
+      if ( o_size_x >= size_x )
         dst_offset_x = ( o_size_x  - size_x  ) >> 1;
 
-      if (o_size_y >= size_y) 
+      if (o_size_y >= size_y)
         dst_offset_y = ( o_size_y - size_y ) >> 1;
 
       // check copied area to avoid copying memory garbage
@@ -536,7 +536,7 @@ void buf2img_bitshift ( imgpel** imgX,            //!< Pointer to image plane
       iminheight =  ( (dst_offset_y + iminheight) > o_size_y )  ? (o_size_y - dst_offset_y) : iminheight;
 
       for (j=0; j < iminheight; j++)
-      {        
+      {
         j_pos = (j + offset_y) * size_x + offset_x;
         for (i=0; i < iminwidth; i++)
         {
@@ -544,7 +544,7 @@ void buf2img_bitshift ( imgpel** imgX,            //!< Pointer to image plane
           memcpy(&(ui16), buf + ((i + j_pos) * symbol_size_in_bytes), symbol_size_in_bytes);
           imgX[j + dst_offset_y][i + dst_offset_x] = (imgpel) rshift_rnd(ui16,bitshift);
         }
-      }    
+      }
     }
   }
 }
@@ -575,7 +575,7 @@ void buf2img_basic (imgpel** imgX,            //!< Pointer to image plane
   }
 
   if (( sizeof (imgpel) == symbol_size_in_bytes))
-  {    
+  {
     // imgpel == pixel_in_file -> simple copy
     if (size_x == o_size_x && size_y == o_size_y)
       memcpy(&imgX[0][0], temp_buf, size_x * size_y * sizeof(imgpel));
@@ -587,10 +587,10 @@ void buf2img_basic (imgpel** imgX,            //!< Pointer to image plane
       int offset_x = 0, offset_y = 0; // currently not used
 
       // determine whether we need to center the copied frame or crop it
-      if ( o_size_x >= size_x ) 
+      if ( o_size_x >= size_x )
         dst_offset_x = ( o_size_x  - size_x  ) >> 1;
 
-      if (o_size_y >= size_y) 
+      if (o_size_y >= size_y)
         dst_offset_y = ( o_size_y - size_y ) >> 1;
 
       // check copied area to avoid copying memory garbage
@@ -617,11 +617,11 @@ void buf2img_basic (imgpel** imgX,            //!< Pointer to image plane
         j_pos = j * size_x;
         for (i=0; i < o_size_x; i++)
         {
-          ui16=0;          
+          ui16=0;
           memcpy(&(ui16), buf + ((i + j_pos) * symbol_size_in_bytes), symbol_size_in_bytes);
           imgX[j][i]= (imgpel) ui16;
         }
-      }    
+      }
     }
     else
     {
@@ -631,10 +631,10 @@ void buf2img_basic (imgpel** imgX,            //!< Pointer to image plane
       int offset_x = 0, offset_y = 0; // currently not used
 
       // determine whether we need to center the copied frame or crop it
-      if ( o_size_x >= size_x ) 
+      if ( o_size_x >= size_x )
         dst_offset_x = ( o_size_x  - size_x  ) >> 1;
 
-      if (o_size_y >= size_y) 
+      if (o_size_y >= size_y)
         dst_offset_y = ( o_size_y - size_y ) >> 1;
 
       // check copied area to avoid copying memory garbage
@@ -645,12 +645,12 @@ void buf2img_basic (imgpel** imgX,            //!< Pointer to image plane
       iminwidth  =  ( (dst_offset_x + iminwidth ) > o_size_x  ) ? (o_size_x  - dst_offset_x) : iminwidth;
       iminheight =  ( (dst_offset_y + iminheight) > o_size_y )  ? (o_size_y - dst_offset_y) : iminheight;
 
-      for (j = 0; j < iminheight; j++) 
+      for (j = 0; j < iminheight; j++)
       {
         memcpy(&imgX[j + dst_offset_y][dst_offset_x], &(temp_buf[(j + offset_y) * size_x + offset_x]), iminwidth * symbol_size_in_bytes);
       }
       for (j=0; j < iminheight; j++)
-      {        
+      {
         j_pos = (j + offset_y) * size_x + offset_x;
         for (i=0; i < iminwidth; i++)
         {
@@ -658,7 +658,7 @@ void buf2img_basic (imgpel** imgX,            //!< Pointer to image plane
           memcpy(&(ui16), buf + ((i + j_pos) * symbol_size_in_bytes), symbol_size_in_bytes);
           imgX[j + dst_offset_y][i + dst_offset_x]= (imgpel) ui16;
         }
-      }    
+      }
     }
   }
 }
@@ -739,7 +739,7 @@ void buf2img_endian (imgpel** imgX,            //!< Pointer to image plane
       error ("reading only from formats of 8, 16 or 32 bit allowed on big endian architecture", 500);
       break;
     }
-  }   
+  }
 }
 
 /*!
@@ -751,7 +751,7 @@ void buf2img_endian (imgpel** imgX,            //!< Pointer to image plane
  */
 void AllocateFrameMemory (VideoParameters *p_Vid, InputParameters *p_Inp, FrameFormat *source)
 {
-  // Note that size seems to be ok even for v210 formats (wasteful yes, but should not 
+  // Note that size seems to be ok even for v210 formats (wasteful yes, but should not
   // create any issues with how we manage that format.
   if (NULL == (p_Vid->buf = malloc (source->size * source->pic_unit_size_shift3)))
     no_mem_exit("AllocateFrameMemory: p_Vid->buf");
@@ -789,7 +789,7 @@ void DeleteFrameMemory (VideoParameters *p_Vid)
  * \param HeaderSize
  *    Number of bytes in the source file to be skipped
  * \param source
- *    source file (on disk) information 
+ *    source file (on disk) information
  * \param output
  *    output file (for encoding) information
  * \param pImage
@@ -804,12 +804,12 @@ int read_one_frame (VideoParameters *p_Vid, VideoDataFile *input_file, int Frame
 
   const int bytes_y  = source->size_cmp[0] * symbol_size_in_bytes;
   const int bytes_uv = source->size_cmp[1] * symbol_size_in_bytes;
-  int bit_scale;  
+  int bit_scale;
 
   Boolean rgb_input = (Boolean) (source->color_model == CM_RGB && source->yuv_format == YUV444);
 
   if (input_file->is_concatenated == 0)
-  {    
+  {
     if (input_file->vdtype == VIDEO_TIFF)
     {
       file_read = ReadTIFFImage     (p_Inp, input_file, FrameNoInFile, source, p_Vid->buf);
@@ -835,7 +835,7 @@ int read_one_frame (VideoParameters *p_Vid, VideoDataFile *input_file, int Frame
     deinterleave ( &p_Vid->buf, &p_Vid->ibuf, source, symbol_size_in_bytes);
   }
 
-  bit_scale = source->bit_depth[0] - output->bit_depth[0];  
+  bit_scale = source->bit_depth[0] - output->bit_depth[0];
 
   if(rgb_input)
     p_Vid->buf2img(pImage[0], p_Vid->buf + bytes_y, source->width[0], source->height[0], output->width[0], output->height[0], symbol_size_in_bytes, bit_scale);
@@ -850,12 +850,12 @@ int read_one_frame (VideoParameters *p_Vid, VideoDataFile *input_file, int Frame
   {
     bit_scale = source->bit_depth[1] - output->bit_depth[1];
 #if (ALLOW_GRAYSCALE)
-    if (!p_Inp->grayscale) 
+    if (!p_Inp->grayscale)
 #endif
     {
       if(rgb_input)
         p_Vid->buf2img(pImage[1], p_Vid->buf + bytes_y + bytes_uv, source->width[1], source->height[1], output->width[1], output->height[1], symbol_size_in_bytes, bit_scale);
-      else 
+      else
         p_Vid->buf2img(pImage[1], p_Vid->buf + bytes_y, source->width[1], source->height[1], output->width[1], output->height[1], symbol_size_in_bytes, bit_scale);
 
       bit_scale = source->bit_depth[2] - output->bit_depth[2];

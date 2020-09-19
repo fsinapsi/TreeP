@@ -162,7 +162,7 @@ static uns8b trp_vid_parse_vol( trp_vid_t *vid )
         /*
          FIXME
          il campo che viene qui letto si chiama shape_extension
-         e può essere utilizzato per sapere come leggere le
+         e puÃ² essere utilizzato per sapere come leggere le
          matrici grayscale (vedi sotto)
          */
         trp_vid_bs( vid, 4, &val );

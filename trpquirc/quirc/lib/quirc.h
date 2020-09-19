@@ -58,20 +58,20 @@ void quirc_end(struct quirc *q);
 
 /* This structure describes a location in the input image buffer. */
 struct quirc_point {
-	int	x;
-	int	y;
+        int	x;
+        int	y;
 };
 
 /* This enum describes the various decoder errors which may occur. */
 typedef enum {
-	QUIRC_SUCCESS = 0,
-	QUIRC_ERROR_INVALID_GRID_SIZE,
-	QUIRC_ERROR_INVALID_VERSION,
-	QUIRC_ERROR_FORMAT_ECC,
-	QUIRC_ERROR_DATA_ECC,
-	QUIRC_ERROR_UNKNOWN_DATA_TYPE,
-	QUIRC_ERROR_DATA_OVERFLOW,
-	QUIRC_ERROR_DATA_UNDERFLOW
+        QUIRC_SUCCESS = 0,
+        QUIRC_ERROR_INVALID_GRID_SIZE,
+        QUIRC_ERROR_INVALID_VERSION,
+        QUIRC_ERROR_FORMAT_ECC,
+        QUIRC_ERROR_DATA_ECC,
+        QUIRC_ERROR_UNKNOWN_DATA_TYPE,
+        QUIRC_ERROR_DATA_OVERFLOW,
+        QUIRC_ERROR_DATA_UNDERFLOW
 } quirc_decode_error_t;
 
 /* Return a string error message for an error code. */
@@ -114,43 +114,43 @@ const char *quirc_strerror(quirc_decode_error_t err);
  * in the input image.
  */
 struct quirc_code {
-	/* The four corners of the QR-code, from top left, clockwise */
-	struct quirc_point	corners[4];
+        /* The four corners of the QR-code, from top left, clockwise */
+        struct quirc_point	corners[4];
 
-	/* The number of cells across in the QR-code. The cell bitmap
-	 * is a bitmask giving the actual values of cells. If the cell
-	 * at (x, y) is black, then the following bit is set:
-	 *
-	 *     cell_bitmap[i >> 3] & (1 << (i & 7))
-	 *
-	 * where i = (y * size) + x.
-	 */
-	int			size;
-	uint8_t			cell_bitmap[QUIRC_MAX_BITMAP];
+        /* The number of cells across in the QR-code. The cell bitmap
+         * is a bitmask giving the actual values of cells. If the cell
+         * at (x, y) is black, then the following bit is set:
+         *
+         *     cell_bitmap[i >> 3] & (1 << (i & 7))
+         *
+         * where i = (y * size) + x.
+         */
+        int			size;
+        uint8_t			cell_bitmap[QUIRC_MAX_BITMAP];
 };
 
 /* This structure holds the decoded QR-code data */
 struct quirc_data {
-	/* Various parameters of the QR-code. These can mostly be
-	 * ignored if you only care about the data.
-	 */
-	int			version;
-	int			ecc_level;
-	int			mask;
+        /* Various parameters of the QR-code. These can mostly be
+         * ignored if you only care about the data.
+         */
+        int			version;
+        int			ecc_level;
+        int			mask;
 
-	/* This field is the highest-valued data type found in the QR
-	 * code.
-	 */
-	int			data_type;
+        /* This field is the highest-valued data type found in the QR
+         * code.
+         */
+        int			data_type;
 
-	/* Data payload. For the Kanji datatype, payload is encoded as
-	 * Shift-JIS. For all other datatypes, payload is ASCII text.
-	 */
-	uint8_t			payload[QUIRC_MAX_PAYLOAD];
-	int			payload_len;
+        /* Data payload. For the Kanji datatype, payload is encoded as
+         * Shift-JIS. For all other datatypes, payload is ASCII text.
+         */
+        uint8_t			payload[QUIRC_MAX_PAYLOAD];
+        int			payload_len;
 
-	/* ECI assignment number */
-	uint32_t		eci;
+        /* ECI assignment number */
+        uint32_t		eci;
 };
 
 /* Return the number of QR-codes identified in the last processed
@@ -160,11 +160,11 @@ int quirc_count(const struct quirc *q);
 
 /* Extract the QR-code specified by the given index. */
 void quirc_extract(const struct quirc *q, int index,
-		   struct quirc_code *code);
+                   struct quirc_code *code);
 
 /* Decode a QR-code, returning the payload data. */
 quirc_decode_error_t quirc_decode(const struct quirc_code *code,
-				  struct quirc_data *data);
+                                  struct quirc_data *data);
 
 #ifdef __cplusplus
 }

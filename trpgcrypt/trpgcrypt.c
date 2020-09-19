@@ -108,9 +108,9 @@ static uns8b trp_gcry_luby_rackoff_md_initialize( int flags, gcry_md_hd_t *hd, i
 static uns32b trp_gcry_luby_rackoff( uns32b len, gcry_md_hd_t *hd, uns32b index )
 /*
  generatore di permutazioni pseudocasuali di Luby-Rackoff;
- len Ë la lunghezza in bit degli indici;
- hd Ë la chiave, gi‡ suddivisa in 4 context;
- index Ë l'indice da rimappare;
+ len √® la lunghezza in bit degli indici;
+ hd √® la chiave, gi√† suddivisa in 4 context;
+ index √® l'indice da rimappare;
  le strutture context non vengono modificate, quindi possono essere
  riutilizzate
  */
@@ -204,7 +204,7 @@ static trp_obj_t *trp_gcry_permute_basic( trp_obj_t *size, trp_obj_t *pass_phras
 /*
  dato l'indice index, rende l'indice ad esso associato dalla permutazione
  di Luby-Rackoff generata dalla chiave pass_phrase (una stringa di lunghezza arbitraria);
- size Ë la dimensione dello spazio degli indici
+ size √® la dimensione dello spazio degli indici
  */
 {
     static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
@@ -502,7 +502,7 @@ uns8b trp_gcry_stego_destroy( trp_obj_t *obj, trp_obj_t *pass_phrase )
     len = ( k << 3 ) + 88;
     if ( ( len == 0 ) || ( k & 0xe0000000 ) || ( len > cnt_len ) ) {
         /*
-         si prova se Ë compatibile con il vecchio formato
+         si prova se √® compatibile con il vecchio formato
          */
         cnt_len -= 32;
         for ( j = 0, i = 0, m = 1 ; j < 32 ; j++, m <<= 1 )
@@ -517,7 +517,7 @@ uns8b trp_gcry_stego_destroy( trp_obj_t *obj, trp_obj_t *pass_phrase )
             return 1;
         }
         /*
-         Ë compatibile
+         √® compatibile
          */
         pass_phrase = trp_sig64( 0x100000000LL );
         obj = trp_math_random( pass_phrase );
@@ -567,9 +567,9 @@ static void trp_gcry_luby_rackoff_md_initialize( struct md5_ctx *context, char *
 static uns32b trp_gcry_luby_rackoff( uns32b len, struct md5_ctx *context, uns32b index )
 /*
  generatore di permutazioni pseudocasuali di Luby-Rackoff;
- len Ë la lunghezza in bit degli indici;
- context Ë la chiave, gi‡ suddivisa in 4 strutture md5_ctx;
- index Ë l'indice da rimappare;
+ len √® la lunghezza in bit degli indici;
+ context √® la chiave, gi√† suddivisa in 4 strutture md5_ctx;
+ index √® l'indice da rimappare;
  le strutture context non vengono modificate, quindi possono essere
  riutilizzate
  */
@@ -659,7 +659,7 @@ trp_obj_t *trp_gcry_permute( trp_obj_t *size, trp_obj_t *pass_phrase, trp_obj_t 
 /*
  dato l'indice index, rende l'indice ad esso associato dalla permutazione
  di Luby-Rackoff generata dalla chiave pass_phrase (una stringa di lunghezza arbitraria);
- size Ë la dimensione dello spazio degli indici
+ size √® la dimensione dello spazio degli indici
  */
 {
     uns32b ssize, iindex, l, m;
@@ -682,7 +682,7 @@ trp_obj_t *trp_gcry_permute_inv( trp_obj_t *size, trp_obj_t *pass_phrase, trp_ob
 /*
  dato l'indice index, rende l'indice ad esso associato dalla permutazione inversa
  di Luby-Rackoff generata dalla chiave pass_phrase (una stringa di lunghezza arbitraria);
- size Ë la dimensione dello spazio degli indici
+ size √® la dimensione dello spazio degli indici
  */
 {
     uns32b ssize, iindex, l, m;
@@ -943,7 +943,7 @@ uns8b trp_gcry_stego_destroy( trp_obj_t *obj, trp_obj_t *pass_phrase )
     len = ( k << 3 ) + 88;
     if ( ( len == 0 ) || ( k & 0xe0000000 ) || ( len > cnt_len ) ) {
         /*
-         si prova se Ë compatibile con il vecchio formato
+         si prova se √® compatibile con il vecchio formato
          */
         cnt_len -= 32;
         for ( j = 0, i = 0, m = 1 ; j < 32 ; j++, m <<= 1 )
@@ -953,7 +953,7 @@ uns8b trp_gcry_stego_destroy( trp_obj_t *obj, trp_obj_t *pass_phrase )
         if ( ( len == 0 ) || ( i & 0xe0000000 ) || ( len > cnt_len ) )
             return 1;
         /*
-         Ë compatibile
+         √® compatibile
          */
         pass_phrase = trp_sig64( 0x100000000LL );
         obj = trp_math_random( pass_phrase );

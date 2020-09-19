@@ -35,7 +35,7 @@ uns8b trp_gtk_init( int *argc, char ***argv )
     extern objfun_t _trp_nth_fun[];
     extern objfun_t _trp_width_fun[];
     extern objfun_t _trp_height_fun[];
-                                    
+
     if ( gtk_init_check( argc, argv ) == FALSE ) {
         fprintf( stderr, "Initialization of GTK failed\n" );
         return 1;

@@ -249,7 +249,7 @@
 
 (defnet path-content-is-valid-zip (path)
         (system "7z t " (pathquote path) " >/dev/null 2>/dev/null") )
- 
+
 (defnet path-content-is-valid-xz (path)
         (system "xz -t " (pathquote path) " >/dev/null 2>/dev/null") )
 

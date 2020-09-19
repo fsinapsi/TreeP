@@ -1,5 +1,5 @@
 /*
-   
+
    wn.h - header file needed to use WordNet Run Time Library
 
    $Id: wn.h,v 1.61 2006/11/14 20:58:30 wn Exp $
@@ -206,7 +206,7 @@ typedef struct ss {
 
     struct ss *nextss;		/* ptr to next synset containing searchword */
     struct ss *nextform;	/* ptr to list of synsets for alternate
-				   spelling of wordform */
+                                   spelling of wordform */
     int searchtype;		/* type of search performed */
     struct ss *ptrlist;		/* ptr to synset list result of search */
     char *headword;		/* if pos is "s", this is cluster head word */
@@ -225,7 +225,7 @@ typedef struct si {
 } SnsIndex;
 
 typedef SnsIndex *SnsIndexPtr;
-    
+
 typedef struct {
     int SenseCount[MAX_FORMS];	/* number of senses word form has */
     int OutSenseCount[MAX_FORMS]; /* number of senses printed for word form */
@@ -252,7 +252,7 @@ extern int wnsnsflag;		/* if set, print WN sense # for each word */
 /* File pointers for database files */
 
 extern int OpenDB;		/* if non-zero, database file are open */
-extern FILE *datafps[NUMPARTS + 1], 
+extern FILE *datafps[NUMPARTS + 1],
             *indexfps[NUMPARTS + 1],
             *sensefp,
             *cntlistfp,
@@ -261,7 +261,7 @@ extern FILE *datafps[NUMPARTS + 1],
 
 /* Method for interface to check for events while search is running */
 
-extern void (*interface_doevents_func)(void);  
+extern void (*interface_doevents_func)(void);
                         /* callback for interruptable searches in */
                         /* single-threaded interfaces */
 
@@ -282,27 +282,27 @@ extern "C" {
 /*** Search and database functions (search.c) ***/
 
 /* Primry search algorithm for use with user interfaces */
-extern char *findtheinfo(char *, int, int, int);	
+extern char *findtheinfo(char *, int, int, int);
 
 /* Primary search algorithm for use with programs (returns data structure) */
-extern SynsetPtr findtheinfo_ds(char *, int, int, int); 
+extern SynsetPtr findtheinfo_ds(char *, int, int, int);
 
 /* Set bit for each search type that is valid for the search word
    passed and return bit mask. */
-extern unsigned int is_defined(char *, int); 
+extern unsigned int is_defined(char *, int);
 
 /* Set bit for each POS that search word is in.  0 returned if
    word is not in WordNet. */
-extern unsigned int in_wn(char *, int);	
+extern unsigned int in_wn(char *, int);
 
 /* Find word in index file and return parsed entry in data structure.
    Input word must be exact match of string in database. */
-extern IndexPtr index_lookup(char *, int); 
+extern IndexPtr index_lookup(char *, int);
 
 /* 'smart' search of index file.  Find word in index file, trying different
    techniques - replace hyphens with underscores, replace underscores with
    hyphens, strip hyphens and underscores, strip periods. */
-extern IndexPtr getindex(char *, int);	
+extern IndexPtr getindex(char *, int);
 extern IndexPtr parse_index(long, int, char *);
 
 /* Read synset from data file at byte offset passed and return parsed
@@ -311,16 +311,16 @@ extern SynsetPtr read_synset(int, long, char *);
 
 /* Read synset at current byte offset in file and return parsed entry
    in data structure. */
-extern SynsetPtr parse_synset(FILE *, int, char *); 
+extern SynsetPtr parse_synset(FILE *, int, char *);
 
 /* Free a synset linked list allocated by findtheinfo_ds() */
-extern void free_syns(SynsetPtr);	
+extern void free_syns(SynsetPtr);
 
 /* Free a synset */
-extern void free_synset(SynsetPtr);	
+extern void free_synset(SynsetPtr);
 
 /* Free an index structure */
-extern void free_index(IndexPtr);	
+extern void free_index(IndexPtr);
 
 /* Recursive search algorithm to trace a pointer tree and return results
    in linked list of data structures. */
@@ -332,50 +332,50 @@ extern char *do_trace(SynsetPtr, int, int, int);
 /*** Morphology functions (morph.c) ***/
 
 /* Open exception list files */
-extern int morphinit();	
+extern int morphinit();
 
 /* Close exception list files and reopen */
-extern int re_morphinit();	
+extern int re_morphinit();
 
 /* Try to find baseform (lemma) of word or collocation in POS. */
-extern char *morphstr(char *, int);	
+extern char *morphstr(char *, int);
 
 /* Try to find baseform (lemma) of individual word in POS. */
-extern char *morphword(char *, int);	
+extern char *morphword(char *, int);
 
 /*** Utility functions (wnutil.c) ***/
 
 /* Top level function to open database files, initialize wn_filenames,
    and open exeception lists. */
-extern int wninit();		
+extern int wninit();
 
 /* Top level function to close and reopen database files, initialize
    wn_filenames and open exception lists. */
-extern int re_wninit();	
+extern int re_wninit();
 
 /* Count the number of underscore or space separated words in a string. */
-extern int cntwords(char *, char);		
+extern int cntwords(char *, char);
 
 /* Convert string to lower case remove trailing adjective marker if found */
-extern char *strtolower(char *);	
+extern char *strtolower(char *);
 
 /* Convert string passed to lower case */
-extern char *ToLowerCase(char *);	
+extern char *ToLowerCase(char *);
 
 /* Replace all occurrences of 'from' with 'to' in 'str' */
-extern char *strsubst(char *, char, char);	
+extern char *strsubst(char *, char, char);
 
 /* Return pointer code for pointer type characer passed. */
-extern int getptrtype(char *);	
+extern int getptrtype(char *);
 
 /* Return part of speech code for string passed */
-extern int getpos(char *);		
+extern int getpos(char *);
 
 /* Return synset type code for string passed. */
-extern int getsstype(char *);		
+extern int getsstype(char *);
 
 /* Reconstruct synset from synset pointer and return ptr to buffer */
-extern char *FmtSynset(SynsetPtr, int);	
+extern char *FmtSynset(SynsetPtr, int);
 
 /* Find string for 'searchstr' as it is in index file */
 extern char *GetWNStr(char *, int);

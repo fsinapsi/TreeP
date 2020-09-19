@@ -10,7 +10,7 @@
  *    Headerfile for loopfilter processing
  * \author
  *    Main contributors (see contributors.h for copyright, address and affiliation details)
- *     - Alexis Michael Tourapis         <alexismt@ieee.org> 
+ *     - Alexis Michael Tourapis         <alexismt@ieee.org>
 
  **************************************************************************
  */
@@ -31,7 +31,7 @@
 
 // The tables actually used have been "hand optimized" though (by Anthony Joch). So, the
 // table values might be a little different to formula-generated values. Also, the first
-// few values of both tables is set to zero to force the filter off at low qp’s
+// few values of both tables is set to zero to force the filter off at low qp's
 
 static const byte ALPHA_TABLE[52]  = {0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,4,4,5,6,  7,8,9,10,12,13,15,17,  20,22,25,28,32,36,40,45,  50,56,63,71,80,90,101,113,  127,144,162,182,203,226,255,255} ;
 static const byte  BETA_TABLE[52]  = {0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,2,2,2,3,  3,3,3, 4, 4, 4, 6, 6,   7, 7, 8, 8, 9, 9,10,10,  11,11,12,12,13,13, 14, 14,   15, 15, 16, 16, 17, 17, 18, 18} ;

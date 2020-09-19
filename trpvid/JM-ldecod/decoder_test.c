@@ -4,7 +4,7 @@
  *  \file
  *     decoder_test.c
  *  \brief
- *     H.264/AVC decoder test 
+ *     H.264/AVC decoder test
  *  \author
  *     Main contributors (see contributors.h for copyright, address and affiliation details)
  *     - Yuwen He       <yhe@dolby.com>
@@ -39,7 +39,7 @@ static void Configure(InputParameters *p_Inp, int ac, char *av[])
   strcpy(p_Inp->infile, BITSTREAM_FILENAME); //! set default bitstream name
   strcpy(p_Inp->outfile, DECRECON_FILENAME); //! set default output file name
   strcpy(p_Inp->reffile, ENCRECON_FILENAME); //! set default reference file name
-  
+
 #ifdef _LEAKYBUCKET_
   strcpy(p_Inp->LeakyBucketParamFile,"leakybucketparam.cfg");    // file where Leaky Bucket parameters (computed by encoder) are stored
 #endif
@@ -66,11 +66,11 @@ static void Configure(InputParameters *p_Inp, int ac, char *av[])
     fprintf(stdout,"--------------------------------------------------------------------------\n");
   #endif
   }
-  
+
 }
 
 /*********************************************************
-if bOutputAllFrames is 1, then output all valid frames to file onetime; 
+if bOutputAllFrames is 1, then output all valid frames to file onetime;
 else output the first valid frame and move the buffer to the end of list;
 *********************************************************/
 static int WriteOneFrame(DecodedPicList *pDecPic, int hFileOutput0, int hFileOutput1, int bOutputAllFrames)
@@ -81,7 +81,7 @@ static int WriteOneFrame(DecodedPicList *pDecPic, int hFileOutput0, int hFileOut
   if(pPic && (((pPic->iYUVStorageFormat==2) && pPic->bValid==3) || ((pPic->iYUVStorageFormat!=2) && pPic->bValid==1)) )
   {
     int i, iWidth, iHeight, iStride, iWidthUV, iHeightUV, iStrideUV;
-    byte *pbBuf;    
+    byte *pbBuf;
     int hFileOutput;
     int res;
 
@@ -98,7 +98,7 @@ static int WriteOneFrame(DecodedPicList *pDecPic, int hFileOutput0, int hFileOut
       iHeightUV = pPic->iHeight;
     iWidthUV *= ((pPic->iBitDepth+7)>>3);
     iStrideUV = pPic->iUVBufStride;
-    
+
     do
     {
       if(pPic->iYUVStorageFormat==2)

@@ -37,12 +37,12 @@ typedef struct quant_params {
 } QuantParameters;
 
 typedef struct quant_methods {
-  int   block_y; 
+  int   block_y;
   int   block_x;
-  int   qp; 
+  int   qp;
   int*  ACLevel;
   int*  ACRun;
-  int **fadjust; 
+  int **fadjust;
   LevelQuantParams **q_params;
   int *coeff_cost;
   const byte (*pos_scan)[2];

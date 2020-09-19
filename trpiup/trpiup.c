@@ -402,7 +402,7 @@ static struct cback _trp_iup_callbacks[ TRP_IUP_CALLBACKS ] = {
     { "VALUECHANGED_CB", 1, (Icallback)trp_iup_cback_valuechanged_cb },
     { "DRAGBEGIN_CB", 3, (Icallback)trp_iup_cback_dragbegin_cb },
     { "DROPDATA_CB", 3, (Icallback)trp_iup_cback_dropdata_cb }
-}; 
+};
 
 uns8b trp_iup_set_callback( trp_obj_t *ih, trp_obj_t *name, trp_obj_t *cback )
 {

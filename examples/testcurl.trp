@@ -40,7 +40,7 @@
                nl )
         (for url in (list "news.html"
                           "code/treep/index.html"
-                          "code/lescienze/index.html" 
+                          "code/lescienze/index.html"
                           "code/imdb/index.html"
                           "code/avinaptic/index.html" ) do
                 (curl-easy-setopt-url c (+ (url-base) url))

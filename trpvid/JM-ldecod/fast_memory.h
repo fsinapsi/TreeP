@@ -33,5 +33,5 @@ static inline void fast_memset_zero(void *dst, int width)
   memset(dst,0,width);
 }
 
-#endif 
+#endif
 

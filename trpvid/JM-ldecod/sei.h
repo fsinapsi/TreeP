@@ -78,7 +78,7 @@ typedef struct tone_mapping_struct_s
   unsigned char sei_bit_depth;
   unsigned int  model_id;
   unsigned int count;
-  
+
   imgpel lut[1<<MAX_CODED_BIT_DEPTH];                 //<! look up table for mapping the coded data value to output data value
 
   Bitstream *data;

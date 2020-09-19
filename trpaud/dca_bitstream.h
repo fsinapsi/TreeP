@@ -58,7 +58,7 @@ static inline uns32b bitstream_get (dca_state_t * state, uns32b num_bits)
 
     if (num_bits < state->bits_left) {
         result = (state->current_word << (32 - state->bits_left))
-				      >> (32 - num_bits);
+                                      >> (32 - num_bits);
 
         state->bits_left -= num_bits;
         return result;

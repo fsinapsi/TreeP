@@ -17,87 +17,87 @@
 #include "convert.h"
 
 #define CHANNEL_CLAMP(dst, tmp, lum, chrom) \
-	(tmp) = ((lum) + (chrom)) >> 8; \
-	if ((tmp) < 0) \
-		(tmp) = 0; \
-	if ((tmp) > 255) \
-		(tmp) = 255; \
-	(dst) = (tmp);
+        (tmp) = ((lum) + (chrom)) >> 8; \
+        if ((tmp) < 0) \
+                (tmp) = 0; \
+        if ((tmp) > 255) \
+                (tmp) = 255; \
+        (dst) = (tmp);
 
 void yuyv_to_rgb32(const uint8_t *src, int src_pitch,
-		   int w, int h,
-		   uint8_t *dst, int dst_pitch)
+                   int w, int h,
+                   uint8_t *dst, int dst_pitch)
 {
-	int y;
+        int y;
 
-	for (y = 0; y < h; y++) {
-		int x;
-		const uint8_t *srow = src + y * src_pitch;
-		uint8_t *drow = dst + y * dst_pitch;
+        for (y = 0; y < h; y++) {
+                int x;
+                const uint8_t *srow = src + y * src_pitch;
+                uint8_t *drow = dst + y * dst_pitch;
 
-		for (x = 0; x < w; x += 2) {
-			/* ITU-R colorspace assumed */
-			int y0 = (int)srow[0] * 256;
-			int y1 = (int)srow[2] * 256;
-			int cr = (int)srow[3] - 128;
-			int cb = (int)srow[1] - 128;
-			int r = cr * 359;
-			int g = -cb * 88 - 128 * cr;
-			int b = 454 * cb;
-			int z;
+                for (x = 0; x < w; x += 2) {
+                        /* ITU-R colorspace assumed */
+                        int y0 = (int)srow[0] * 256;
+                        int y1 = (int)srow[2] * 256;
+                        int cr = (int)srow[3] - 128;
+                        int cb = (int)srow[1] - 128;
+                        int r = cr * 359;
+                        int g = -cb * 88 - 128 * cr;
+                        int b = 454 * cb;
+                        int z;
 
-			CHANNEL_CLAMP(drow[0], z, y0, b);
-			CHANNEL_CLAMP(drow[1], z, y0, g);
-			CHANNEL_CLAMP(drow[2], z, y0, r);
-			CHANNEL_CLAMP(drow[4], z, y1, b);
-			CHANNEL_CLAMP(drow[5], z, y1, g);
-			CHANNEL_CLAMP(drow[6], z, y1, r);
+                        CHANNEL_CLAMP(drow[0], z, y0, b);
+                        CHANNEL_CLAMP(drow[1], z, y0, g);
+                        CHANNEL_CLAMP(drow[2], z, y0, r);
+                        CHANNEL_CLAMP(drow[4], z, y1, b);
+                        CHANNEL_CLAMP(drow[5], z, y1, g);
+                        CHANNEL_CLAMP(drow[6], z, y1, r);
 
-			srow += 4;
-			drow += 8;
-		}
-	}
+                        srow += 4;
+                        drow += 8;
+                }
+        }
 }
 
 void yuyv_to_luma(const uint8_t *src, int src_pitch,
-		  int w, int h,
-		  uint8_t *dst, int dst_pitch)
+                  int w, int h,
+                  uint8_t *dst, int dst_pitch)
 {
-	int y;
+        int y;
 
-	for (y = 0; y < h; y++) {
-		int x;
-		const uint8_t *srow = src + y * src_pitch;
-		uint8_t *drow = dst + y * dst_pitch;
+        for (y = 0; y < h; y++) {
+                int x;
+                const uint8_t *srow = src + y * src_pitch;
+                uint8_t *drow = dst + y * dst_pitch;
 
-		for (x = 0; x < w; x += 2) {
-			*(drow++) = srow[0];
-			*(drow++) = srow[2];
-			srow += 4;
-		}
-	}
+                for (x = 0; x < w; x += 2) {
+                        *(drow++) = srow[0];
+                        *(drow++) = srow[2];
+                        srow += 4;
+                }
+        }
 }
 
 void rgb32_to_luma(const uint8_t *src, int src_pitch,
-		   int w, int h,
-		   uint8_t *dst, int dst_pitch)
+                   int w, int h,
+                   uint8_t *dst, int dst_pitch)
 {
-	int y;
+        int y;
 
-	for (y = 0; y < h; y++) {
-		const uint8_t *rgb32 = src + src_pitch * y;
-		uint8_t *gray = dst + y * dst_pitch;
-		int i;
+        for (y = 0; y < h; y++) {
+                const uint8_t *rgb32 = src + src_pitch * y;
+                uint8_t *gray = dst + y * dst_pitch;
+                int i;
 
-		for (i = 0; i < w; i++) {
-			/* ITU-R colorspace assumed */
-			int r = (int)rgb32[2];
-			int g = (int)rgb32[1];
-			int b = (int)rgb32[0];
-			int sum = r * 59 + g * 150 + b * 29;
+                for (i = 0; i < w; i++) {
+                        /* ITU-R colorspace assumed */
+                        int r = (int)rgb32[2];
+                        int g = (int)rgb32[1];
+                        int b = (int)rgb32[0];
+                        int sum = r * 59 + g * 150 + b * 29;
 
-			*(gray++) = sum >> 8;
-			rgb32 += 4;
-		}
-	}
+                        *(gray++) = sum >> 8;
+                        rgb32 += 4;
+                }
+        }
 }

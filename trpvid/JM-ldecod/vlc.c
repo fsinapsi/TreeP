@@ -7,7 +7,7 @@
  *
  * \author
  *    Main contributors (see contributors.h for copyright, address and affiliation details)
- *    - Inge Lille-Langøy               <inge.lille-langoy@telenor.com>
+ *    - Inge Lille-LangÃ¸y               <inge.lille-langoy@telenor.com>
  *    - Detlev Marpe
  *    - Gabi Blaettermann
  ************************************************************************
@@ -320,7 +320,7 @@ void linfo_levrun_inter(int len, int info, int *level, int *irun)
     if ((info & 0x01) == 1)
       *level = -*level;
   }
-  
+
   if (len == 1) // EOB
     *level = 0;
 }
@@ -352,7 +352,7 @@ void linfo_levrun_c2x2(int len, int info, int *level, int *irun)
     if ((info & 0x01) == 1)
       *level = -*level;
   }
-  
+
   if (len == 1) // EOB
     *level = 0;
 }
@@ -432,7 +432,7 @@ int GetVLCSymbol_IntraMode (byte buffer[],int totbitoffset,int *info, int byteco
     return 1;
   }
 
-  if (byteoffset >= bytecount) 
+  if (byteoffset >= bytecount)
   {
     return -1;
   }
@@ -445,7 +445,7 @@ int GetVLCSymbol_IntraMode (byte buffer[],int totbitoffset,int *info, int byteco
 
     *info = inf;
     return 4;           // return absolute offset in bit from start of frame
-  } 
+  }
 }
 
 
@@ -468,7 +468,7 @@ int more_rbsp_data (byte buffer[],int totbitoffset,int bytecount)
 {
   long byteoffset = (totbitoffset >> 3);      // byte from start of buffer
   // there is more until we're in the last byte
-  if (byteoffset < (bytecount - 1)) 
+  if (byteoffset < (bytecount - 1))
     return TRUE;
   else
   {
@@ -477,11 +477,11 @@ int more_rbsp_data (byte buffer[],int totbitoffset,int bytecount)
     // read one bit
     int ctr_bit     = ctr_bit = ((*cur_byte)>> (bitoffset--)) & 0x01;      // control bit for current bit posision
 
-    //assert (byteoffset<bytecount);       
+    //assert (byteoffset<bytecount);
 
     // a stop bit has to be one
-    if (ctr_bit==0) 
-      return TRUE;  
+    if (ctr_bit==0)
+      return TRUE;
     else
     {
       int cnt = 0;
@@ -548,7 +548,7 @@ int GetVLCSymbol (byte buffer[],int totbitoffset,int *info, int bytecount)
     bitoffset--;
     bitoffset &= 0x07;
     cur_byte  += (bitoffset == 7);
-    byteoffset+= (bitoffset == 7);      
+    byteoffset+= (bitoffset == 7);
     ctr_bit    = ((*cur_byte) >> (bitoffset)) & 0x01;
   }
 
@@ -557,15 +557,15 @@ int GetVLCSymbol (byte buffer[],int totbitoffset,int *info, int bytecount)
   else
   {
     // make infoword
-    int inf = 0;                          // shortest possible code is 1, then info is always 0    
+    int inf = 0;                          // shortest possible code is 1, then info is always 0
 
     while (len--)
     {
-      bitoffset --;    
+      bitoffset --;
       bitoffset &= 0x07;
       cur_byte  += (bitoffset == 7);
       bitcounter++;
-      inf <<= 1;    
+      inf <<= 1;
       inf |= ((*cur_byte) >> (bitoffset)) & 0x01;
     }
 
@@ -593,16 +593,16 @@ static inline int ShowBitsThres (int inf, int numbits)
 {
   return ((inf) >> ((sizeof(byte) * 24) - (numbits)));
   /*
-  if ((numbits + 7) > bitcount) 
+  if ((numbits + 7) > bitcount)
   {
     return -1;
   }
-  else 
+  else
   {
     //Worst case scenario is that we will need to traverse 3 bytes
     inf >>= (sizeof(byte)*8)*3 - numbits;
   }
-  
+
   return inf; //Will be a small unsigned integer so will not need any conversion when returning as int
   */
 }
@@ -633,9 +633,9 @@ static int code_from_bitstream_2d(SyntaxElement *sym,
   unsigned int inf = ((*buf) << 16) + (*(buf + 1) << 8) + *(buf + 2); //Even at the end of a stream we will still be pulling out of allocated memory as alloc is done by MAX_CODED_FRAME_SIZE
   inf <<= (*frame_bitoffset & 0x07);                                  //Offset is constant so apply before extracting different numbers of bits
   inf  &= 0xFFFFFF;                                                   //Arithmetic shift so wipe any sign which may be extended inside ShowBitsThres
-  
+
   // this VLC decoding method is not optimized for speed
-  for (j = 0; j < tabheight; j++) 
+  for (j = 0; j < tabheight; j++)
   {
     for (i = 0; i < tabwidth; i++)
     {
@@ -648,10 +648,10 @@ static int code_from_bitstream_2d(SyntaxElement *sym,
       {
         sym->len = *len;
         *frame_bitoffset += *len; // move bitstream pointer
-        *code = *cod;             
+        *code = *cod;
         sym->value1 = i;
-        sym->value2 = j;        
-        return 0;                 // found code and return 
+        sym->value2 = j;
+        return 0;                 // found code and return
       }
     }
   }
@@ -668,7 +668,7 @@ static int code_from_bitstream_2d(SyntaxElement *sym,
 int readSyntaxElement_FLC(SyntaxElement *sym, Bitstream *currStream)
 {
   int BitstreamLengthInBits  = (currStream->bitstream_length << 3) + 7;
-  
+
   if ((GetBits(currStream->streamBuffer, currStream->frame_bitoffset, &(sym->inf), BitstreamLengthInBits, sym->len)) < 0)
     return -1;
 
@@ -691,7 +691,7 @@ int readSyntaxElement_FLC(SyntaxElement *sym, Bitstream *currStream)
  ************************************************************************
  */
 
-int readSyntaxElement_NumCoeffTrailingOnes(SyntaxElement *sym,  
+int readSyntaxElement_NumCoeffTrailingOnes(SyntaxElement *sym,
                                            Bitstream *currStream,
                                            char *type)
 {
@@ -770,7 +770,7 @@ int readSyntaxElement_NumCoeffTrailingOnes(SyntaxElement *sym,
   }
   else
   {
-    //retval = code_from_bitstream_2d(sym, currStream, &lentab[vlcnum][0][0], &codtab[vlcnum][0][0], 17, 4, &code);    
+    //retval = code_from_bitstream_2d(sym, currStream, &lentab[vlcnum][0][0], &codtab[vlcnum][0][0], 17, 4, &code);
     retval = code_from_bitstream_2d(sym, currStream, lentab[vlcnum][0], codtab[vlcnum][0], 17, 4, &code);
     if (retval)
     {
@@ -896,7 +896,7 @@ int readSyntaxElement_Level_VLC0(SyntaxElement *sym, Bitstream *currStream)
     len   -= 4;
     code   = ShowBits(buf, frame_bitoffset, BitstreamLengthInBits, len);
     sign   = (code & 0x01);
-    frame_bitoffset += len;    
+    frame_bitoffset += len;
     level = (code >> 1) + offset;
 
     code |= (1 << (len)); // for display purpose only
@@ -967,7 +967,7 @@ int readSyntaxElement_Level_VLCN(SyntaxElement *sym, int vlc, Bitstream *currStr
     len   += addbit;
 
     levabs = sb + offset;
-    
+
     // read 1 bit -> sign
     sign = ShowBits(buf, frame_bitoffset + len, BitstreamLengthInBits, 1);
 
@@ -1211,7 +1211,7 @@ int readSyntaxElement_Run(SyntaxElement *sym, Bitstream *currStream)
 int GetBits (byte buffer[],int totbitoffset,int *info, int bitcount,
              int numbits)
 {
-  if ((totbitoffset + numbits ) > bitcount) 
+  if ((totbitoffset + numbits ) > bitcount)
   {
     return -1;
   }
@@ -1225,9 +1225,9 @@ int GetBits (byte buffer[],int totbitoffset,int *info, int bitcount,
 
     while (numbits--)
     {
-      inf <<=1;    
-      inf |= ((*curbyte)>> (bitoffset--)) & 0x01;    
-      if (bitoffset == -1 ) 
+      inf <<=1;
+      inf |= ((*curbyte)>> (bitoffset--)) & 0x01;
+      if (bitoffset == -1 )
       { //Move onto next byte to get all of numbits
         curbyte++;
         bitoffset = 7;
@@ -1261,7 +1261,7 @@ int GetBits (byte buffer[],int totbitoffset,int *info, int bitcount,
 
 int ShowBits (byte buffer[],int totbitoffset,int bitcount, int numbits)
 {
-  if ((totbitoffset + numbits )  > bitcount) 
+  if ((totbitoffset + numbits )  > bitcount)
   {
     return -1;
   }
@@ -1274,10 +1274,10 @@ int ShowBits (byte buffer[],int totbitoffset,int bitcount, int numbits)
 
     while (numbits--)
     {
-      inf <<=1;    
+      inf <<=1;
       inf |= ((*curbyte)>> (bitoffset--)) & 0x01;
 
-      if (bitoffset == -1 ) 
+      if (bitoffset == -1 )
       { //Move onto next byte to get all of numbits
         curbyte++;
         bitoffset = 7;

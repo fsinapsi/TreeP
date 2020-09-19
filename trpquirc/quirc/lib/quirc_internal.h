@@ -40,55 +40,55 @@ typedef uint16_t quirc_pixel_t;
 #endif
 
 struct quirc_region {
-	struct quirc_point	seed;
-	int			count;
-	int			capstone;
+        struct quirc_point	seed;
+        int			count;
+        int			capstone;
 };
 
 struct quirc_capstone {
-	int			ring;
-	int			stone;
+        int			ring;
+        int			stone;
 
-	struct quirc_point	corners[4];
-	struct quirc_point	center;
-	double			c[QUIRC_PERSPECTIVE_PARAMS];
+        struct quirc_point	corners[4];
+        struct quirc_point	center;
+        double			c[QUIRC_PERSPECTIVE_PARAMS];
 
-	int			qr_grid;
+        int			qr_grid;
 };
 
 struct quirc_grid {
-	/* Capstone indices */
-	int			caps[3];
+        /* Capstone indices */
+        int			caps[3];
 
-	/* Alignment pattern region and corner */
-	int			align_region;
-	struct quirc_point	align;
+        /* Alignment pattern region and corner */
+        int			align_region;
+        struct quirc_point	align;
 
-	/* Timing pattern endpoints */
-	struct quirc_point	tpep[3];
-	int			hscan;
-	int			vscan;
+        /* Timing pattern endpoints */
+        struct quirc_point	tpep[3];
+        int			hscan;
+        int			vscan;
 
-	/* Grid size and perspective transform */
-	int			grid_size;
-	double			c[QUIRC_PERSPECTIVE_PARAMS];
+        /* Grid size and perspective transform */
+        int			grid_size;
+        double			c[QUIRC_PERSPECTIVE_PARAMS];
 };
 
 struct quirc {
-	uint8_t			*image;
-	quirc_pixel_t		*pixels;
-	int			*row_average; /* used by threshold() */
-	int			w;
-	int			h;
+        uint8_t			*image;
+        quirc_pixel_t		*pixels;
+        int			*row_average; /* used by threshold() */
+        int			w;
+        int			h;
 
-	int			num_regions;
-	struct quirc_region	regions[QUIRC_MAX_REGIONS];
+        int			num_regions;
+        struct quirc_region	regions[QUIRC_MAX_REGIONS];
 
-	int			num_capstones;
-	struct quirc_capstone	capstones[QUIRC_MAX_CAPSTONES];
+        int			num_capstones;
+        struct quirc_capstone	capstones[QUIRC_MAX_CAPSTONES];
 
-	int			num_grids;
-	struct quirc_grid	grids[QUIRC_MAX_GRIDS];
+        int			num_grids;
+        struct quirc_grid	grids[QUIRC_MAX_GRIDS];
 };
 
 /************************************************************************
@@ -99,15 +99,15 @@ struct quirc {
 #define QUIRC_MAX_ALIGNMENT   7
 
 struct quirc_rs_params {
-	int             bs; /* Small block size */
-	int             dw; /* Small data words */
-	int		ns; /* Number of small blocks */
+        int             bs; /* Small block size */
+        int             dw; /* Small data words */
+        int		ns; /* Number of small blocks */
 };
 
 struct quirc_version_info {
-	int				data_bytes;
-	int				apat[QUIRC_MAX_ALIGNMENT];
-	struct quirc_rs_params          ecc[4];
+        int				data_bytes;
+        int				apat[QUIRC_MAX_ALIGNMENT];
+        struct quirc_rs_params          ecc[4];
 };
 
 extern const struct quirc_version_info quirc_version_db[QUIRC_MAX_VERSION + 1];

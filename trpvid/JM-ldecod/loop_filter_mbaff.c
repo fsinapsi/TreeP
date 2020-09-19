@@ -56,14 +56,14 @@ Macroblock* get_non_aff_neighbor_luma(Macroblock *mb, int xN, int yN)
 
 Macroblock* get_non_aff_neighbor_chroma(Macroblock *mb, int xN, int yN, int block_width,int block_height)
 {
-  if (xN < 0) 
+  if (xN < 0)
   {
     if (yN < block_height)
       return(mb->mbleft);
     else
       return(NULL);
   }
-  else if (xN < block_width) 
+  else if (xN < block_width)
   {
     if (yN < 0)
       return(mb->mbup);
@@ -107,7 +107,7 @@ void get_strength_ver_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
       blkP = (short) ((pixP.y & 0xFFFC) + (pixP.x >> 2));
 
       MbP = &(p_Vid->mb_data[pixP.mb_addr]);
-      MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);    //currSlice->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);   
+      MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);    //currSlice->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);
 
       Strength[idx] = (edge == 0) ? 4 : 3;
     }
@@ -120,7 +120,7 @@ void get_strength_ver_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
     // Neighboring Frame MBs
     if ((MbQ->mb_field == FALSE && MbP->mb_field == FALSE))
     {
-      MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field); 
+      MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);
       if (MbQ->is_intra_block == TRUE || MbP->is_intra_block == TRUE)
       {
         //printf("idx %d %d %d %d %d\n", idx, pixP.x, pixP.y, pixP.pos_x, pixP.pos_y);
@@ -141,7 +141,7 @@ void get_strength_ver_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
           else if (edge && ((MbQ->mb_type == 1)  || (MbQ->mb_type == 2)))
             StrValue = 0; // if internal edge of certain types, we already know StrValue should be 0
           else // for everything else, if no coefs, but vector difference >= 1 set Strength=1
-          {                       
+          {
             int blk_y  = ((mb_y<<2) + (blkQ >> 2));
             int blk_x  = ((mb_x<<2) + (blkQ  & 3));
             int blk_y2 = (pixP.pos_y >> 2);
@@ -187,7 +187,7 @@ void get_strength_ver_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
             else
             {
               StrValue = 1;
-            }                      
+            }
           }
           Strength[idx] = StrValue;
           Strength[idx + 1] = StrValue;
@@ -207,7 +207,7 @@ void get_strength_ver_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
         blkP = (short) ((pixP.y & 0xFFFC) + (pixP.x >> 2));
 
         MbP = &(p_Vid->mb_data[pixP.mb_addr]);
-        MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field); 
+        MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);
 
         // Start with Strength=3. or Strength=4 for Mb-edge
         Strength[idx] = (edge == 0 && (((!p->mb_aff_frame_flag && (p->structure==FRAME)) ||
@@ -312,7 +312,7 @@ void get_strength_hor_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
   {
     for( idx = 0; idx < MB_BLOCK_SIZE; idx += BLOCK_SIZE)
     {
-      xQ = idx;    
+      xQ = idx;
       getAffNeighbour(MbQ, xQ, yQ - 1, p_Vid->mb_size[IS_LUMA], &pixP);
 
       blkQ = (short) ((yQ & 0xFFFC) + (xQ >> 2));
@@ -322,7 +322,7 @@ void get_strength_hor_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
       MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);
 
       StrValue = (edge == 0 && (!MbP->mb_field && !MbQ->mb_field)) ? 4 : 3;
-      
+
       Strength[idx] = StrValue;
       Strength[idx+1] = StrValue;
       Strength[idx+2] = StrValue;
@@ -333,11 +333,11 @@ void get_strength_hor_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
   {
     getAffNeighbour(MbQ, 0, yQ - 1, p_Vid->mb_size[IS_LUMA], &pixP);
     MbP = &(p_Vid->mb_data[pixP.mb_addr]);
-    MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field); 
+    MbQ->mixedModeEdgeFlag = (byte) (MbQ->mb_field != MbP->mb_field);
 
     // Set intra mode deblocking
     if (MbQ->is_intra_block == TRUE || MbP->is_intra_block == TRUE)
-    {      
+    {
       StrValue = (edge == 0 && (!MbP->mb_field && !MbQ->mb_field)) ? 4 : 3;
       for( i = 0; i < MB_BLOCK_SIZE; i ++ ) Strength[i] = StrValue;
     }
@@ -345,7 +345,7 @@ void get_strength_hor_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
     {
       for( idx = 0; idx < MB_BLOCK_SIZE; idx += BLOCK_SIZE )
       {
-        xQ = idx;    
+        xQ = idx;
         getAffNeighbour(MbQ, xQ, yQ - 1, p_Vid->mb_size[IS_LUMA], &pixP);
 
         blkQ = (short) ((yQ & 0xFFFC) + (xQ >> 2));
@@ -437,7 +437,7 @@ void get_strength_hor_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
 static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength, Macroblock *MbQ, int edge)
 {
   int      pel, Strng ;
-  imgpel   L2 = 0, L1, L0, R0, R1, R2 = 0;  
+  imgpel   L2 = 0, L1, L0, R0, R1, R2 = 0;
   int      Alpha = 0, Beta = 0 ;
   const byte* ClipTab = NULL;
   int      indexA, indexB;
@@ -451,14 +451,14 @@ static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
   int      max_imgpel_value = p_Vid->max_pel_value_comp[pl];
 
   int AlphaC0Offset = MbQ->DFAlphaC0Offset;
-  int BetaOffset = MbQ->DFBetaOffset;  
+  int BetaOffset = MbQ->DFBetaOffset;
 
   Macroblock *MbP;
   imgpel   *SrcPtrP, *SrcPtrQ;
 
   for( pel = 0 ; pel < MB_BLOCK_SIZE ; ++pel )
   {
-    getAffNeighbour(MbQ, edge - 1, pel, p_Vid->mb_size[IS_LUMA], &pixP);     
+    getAffNeighbour(MbQ, edge - 1, pel, p_Vid->mb_size[IS_LUMA], &pixP);
 
     if ( pixP.available || (MbQ->DFDisableIdc == 0))
     {
@@ -482,12 +482,12 @@ static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
         ClipTab = CLIP_TAB[indexA];
 
         L0  = SrcPtrP[ 0] ;
-        R0  = SrcPtrQ[ 0] ;      
+        R0  = SrcPtrQ[ 0] ;
 
         if( iabs( R0 - L0 ) < Alpha )
-        {          
+        {
           L1  = SrcPtrP[-1];
-          R1  = SrcPtrQ[ 1];                
+          R1  = SrcPtrQ[ 1];
 
           if ((iabs( R0 - R1) < Beta )   && (iabs(L0 - L1) < Beta ))
           {
@@ -497,7 +497,7 @@ static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
             {
               int RL0 = L0 + R0;
               int small_gap = (iabs( R0 - L0 ) < ((Alpha >> 2) + 2));
-              int aq  = ( iabs( R0 - R2) < Beta ) & small_gap;               
+              int aq  = ( iabs( R0 - R2) < Beta ) & small_gap;
               int ap  = ( iabs( L0 - L2) < Beta ) & small_gap;
 
               if (ap)
@@ -525,7 +525,7 @@ static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
               }
             }
             else   // normal filtering
-            {              
+            {
               int RL0 = (L0 + R0 + 1) >> 1;
               int aq  = (iabs( R0 - R2) < Beta);
               int ap  = (iabs( L0 - L2) < Beta);
@@ -545,7 +545,7 @@ static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
 
               if( aq  && (C0 != 0))
                 *(SrcPtrQ + 1) += iClip3( -C0,  C0, ( R2 + RL0 - (R1 << 1)) >> 1 ) ;
-            }            
+            }
           }
         }
       }
@@ -559,7 +559,7 @@ static void edge_loop_luma_ver_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
  *    Filters 16 pel block edge of Super MB Frame coded MBs
  *****************************************************************************************
  */
-static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength, Macroblock *MbQ, 
+static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength, Macroblock *MbQ,
               int edge, StorablePicture *p)
 {
   int      width = p->iLumaStride; //p->size_x;
@@ -574,7 +574,7 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
   int      bitdepth_scale = pl? p_Vid->bitdepth_scale[IS_CHROMA] : p_Vid->bitdepth_scale[IS_LUMA];
   int      max_imgpel_value = p_Vid->max_pel_value_comp[pl];
 
-  getAffNeighbour(MbQ, 0, yQ - 1, p_Vid->mb_size[IS_LUMA], &pixP);     
+  getAffNeighbour(MbQ, 0, yQ - 1, p_Vid->mb_size[IS_LUMA], &pixP);
 
   if (pixP.available || (MbQ->DFDisableIdc == 0))
   {
@@ -593,7 +593,7 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
     int indexB = iClip3(0, MAX_QP, QP + BetaOffset);
 
     int Alpha   = ALPHA_TABLE[indexA] * bitdepth_scale;
-    int Beta    = BETA_TABLE [indexB] * bitdepth_scale;    
+    int Beta    = BETA_TABLE [indexB] * bitdepth_scale;
 
     if ((Alpha | Beta )!= 0)
     {
@@ -613,7 +613,7 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
           if( iabs( R0 - L0 ) < Alpha )
           {
             imgpel L1  = SrcPtrP[-incP];
-            imgpel R1  = SrcPtrQ[ incQ];      
+            imgpel R1  = SrcPtrQ[ incQ];
 
             if ((iabs( R0 - R1) < Beta )   && (iabs(L0 - L1) < Beta ))
             {
@@ -623,7 +623,7 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
               {
                 int RL0 = L0 + R0;
                 int small_gap = (iabs( R0 - L0 ) < ((Alpha >> 2) + 2));
-                int aq  = ( iabs( R0 - R2) < Beta ) & small_gap;               
+                int aq  = ( iabs( R0 - R2) < Beta ) & small_gap;
                 int ap  = ( iabs( L0 - L2) < Beta ) & small_gap;
 
                 if (ap)
@@ -651,7 +651,7 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
                 }
               }
               else   // normal filtering
-              {              
+              {
                 int RL0 = (L0 + R0 + 1) >> 1;
                 int aq  = (iabs( R0 - R2) < Beta);
                 int ap  = (iabs( L0 - L2) < Beta);
@@ -671,10 +671,10 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
 
                 if( aq  && (C0 != 0))
                   *(SrcPtrQ + incQ) += iClip3( -C0,  C0, ( R2 + RL0 - (R1 << 1)) >> 1 ) ;
-              }            
+              }
             }
-          }        
-        }  
+          }
+        }
         pixP.pos_x++;
         pixQ.pos_x++;
       }
@@ -706,7 +706,7 @@ static void edge_loop_chroma_ver_MBAff(imgpel** Img, byte *Strength, Macroblock 
   PixelPos pixP, pixQ;
   int      bitdepth_scale = p_Vid->bitdepth_scale[IS_CHROMA];
   int      max_imgpel_value = p_Vid->max_pel_value_comp[uv + 1];
-  
+
   int      AlphaC0Offset = MbQ->DFAlphaC0Offset;
   int      BetaOffset    = MbQ->DFBetaOffset;
   Macroblock *MbP;
@@ -717,8 +717,8 @@ static void edge_loop_chroma_ver_MBAff(imgpel** Img, byte *Strength, Macroblock 
   {
     yQ = pel;
     getAffNeighbour(MbQ, xQ, yQ, p_Vid->mb_size[IS_CHROMA], &pixQ);
-    getAffNeighbour(MbQ, xQ - 1, yQ, p_Vid->mb_size[IS_CHROMA], &pixP);    
-    MbP = &(p_Vid->mb_data[pixP.mb_addr]);    
+    getAffNeighbour(MbQ, xQ - 1, yQ, p_Vid->mb_size[IS_CHROMA], &pixP);
+    MbP = &(p_Vid->mb_data[pixP.mb_addr]);
     StrengthIdx = (PelNum == 8) ? ((MbQ->mb_field && !MbP->mb_field) ? pel << 1 :((pel >> 1) << 2) + (pel & 0x01)) : pel;
 
     if (pixP.available || (MbQ->DFDisableIdc == 0))
@@ -744,7 +744,7 @@ static void edge_loop_chroma_ver_MBAff(imgpel** Img, byte *Strength, Macroblock 
         if( iabs( R0 - L0 ) < Alpha )
         {
           L1  = SrcPtrP[-1];
-          R1  = SrcPtrQ[ 1];      
+          R1  = SrcPtrQ[ 1];
           if( ((iabs( R0 - R1) - Beta < 0)  && (iabs(L0 - L1) - Beta < 0 ))  )
           {
             if( Strng == 4 )    // INTRA strong filtering
@@ -778,24 +778,24 @@ static void edge_loop_chroma_ver_MBAff(imgpel** Img, byte *Strength, Macroblock 
 *****************************************************************************************
  */
 static void edge_loop_chroma_hor_MBAff(imgpel** Img, byte *Strength, Macroblock *MbQ, int edge, int uv, StorablePicture *p)
-{  
+{
   VideoParameters *p_Vid = MbQ->p_Vid;
   int      PelNum = pelnum_cr[1][p->chroma_format_idc];
   int      yQ = (edge < MB_BLOCK_SIZE? edge : 1);
   PixelPos pixP, pixQ;
   int      bitdepth_scale = p_Vid->bitdepth_scale[IS_CHROMA];
   int      max_imgpel_value = p_Vid->max_pel_value_comp[uv + 1];
-  
+
   int      AlphaC0Offset = MbQ->DFAlphaC0Offset;
   int      BetaOffset    = MbQ->DFBetaOffset;
   int      width = p->iChromaStride; //p->size_x_cr;
 
-  getAffNeighbour(MbQ, 0, yQ - 1, p_Vid->mb_size[IS_CHROMA], &pixP);    
+  getAffNeighbour(MbQ, 0, yQ - 1, p_Vid->mb_size[IS_CHROMA], &pixP);
   getAffNeighbour(MbQ, 0, yQ, p_Vid->mb_size[IS_CHROMA], &pixQ);
 
   if (pixP.available || (MbQ->DFDisableIdc == 0))
   {
-    Macroblock *MbP = &(p_Vid->mb_data[pixP.mb_addr]);    
+    Macroblock *MbP = &(p_Vid->mb_data[pixP.mb_addr]);
 
     int incQ = ((MbP->mb_field && !MbQ->mb_field) ? 2 * width : width);
     int incP = ((MbQ->mb_field  && !MbP->mb_field) ? 2 * width : width);
@@ -807,12 +807,12 @@ static void edge_loop_chroma_hor_MBAff(imgpel** Img, byte *Strength, Macroblock 
     int indexB = iClip3(0, MAX_QP, QP + BetaOffset);
 
     int Alpha   = ALPHA_TABLE[indexA] * bitdepth_scale;
-    int Beta    = BETA_TABLE [indexB] * bitdepth_scale;    
+    int Beta    = BETA_TABLE [indexB] * bitdepth_scale;
 
     if ((Alpha | Beta )!= 0)
     {
       const byte* ClipTab = CLIP_TAB[indexA];
-      int      pel, Strng ; 
+      int      pel, Strng ;
       int      StrengthIdx;
       for( pel = 0 ; pel < PelNum ; ++pel )
       {
@@ -829,7 +829,7 @@ static void edge_loop_chroma_hor_MBAff(imgpel** Img, byte *Strength, Macroblock 
           if( iabs( R0 - L0 ) < Alpha )
           {
             imgpel L1  = SrcPtrP[-incP];
-            imgpel R1  = SrcPtrQ[ incQ];      
+            imgpel R1  = SrcPtrQ[ incQ];
             if( ((iabs( R0 - R1) - Beta < 0)  && (iabs(L0 - L1) - Beta < 0 ))  )
             {
               if( Strng == 4 )    // INTRA strong filtering
@@ -851,7 +851,7 @@ static void edge_loop_chroma_hor_MBAff(imgpel** Img, byte *Strength, Macroblock 
               }
             }
           }
-        }    
+        }
         pixP.pos_x++;
         pixQ.pos_x++;
       }
@@ -871,7 +871,7 @@ void get_db_strength_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAd
   Macroblock   *MbQ = &(p_Vid->mb_data[MbQAddr]) ; // current Mb
 
   // return, if filter is disabled
-  if (MbQ->DFDisableIdc == 1) 
+  if (MbQ->DFDisableIdc == 1)
   {
     MbQ->DeblockCall = 0;
   }
@@ -916,7 +916,7 @@ void get_db_strength_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAd
     CheckAvailabilityOfNeighborsMBAFF(MbQ);
 
     // Vertical deblocking
-    for (edge = 0; edge < 4 ; ++edge )    
+    for (edge = 0; edge < 4 ; ++edge )
     {
       // If cbp == 0 then deblocking for some macroblock types could be skipped
       if (MbQ->cbp == 0)
@@ -933,13 +933,13 @@ void get_db_strength_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAd
       }
 
       if( edge || filterLeftMbEdgeFlag )
-      {      
+      {
         // Strength for 4 blks in 1 stripe
         p_Vid->GetStrengthVer(MbQ, edge, mvlimit, p);
       }
     }//end edge
 
-    // horizontal deblocking  
+    // horizontal deblocking
     for( edge = 0; edge < 4 ; ++edge )
     {
       // If cbp == 0 then deblocking for some macroblock types could be skipped
@@ -960,7 +960,7 @@ void get_db_strength_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAd
       {
         p_Vid->GetStrengthHor(MbQ, edge, mvlimit, p);
       }
-    }//end edge  
+    }//end edge
 
     MbQ->DeblockCall = 0;
   }
@@ -978,7 +978,7 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
   Macroblock   *MbQ = &(p_Vid->mb_data[MbQAddr]) ; // current Mb
 
   // return, if filter is disabled
-  if (MbQ->DFDisableIdc == 1) 
+  if (MbQ->DFDisableIdc == 1)
   {
     MbQ->DeblockCall = 0;
   }
@@ -1026,7 +1026,7 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
     CheckAvailabilityOfNeighborsMBAFF(MbQ);
 
     // Vertical deblocking
-    for (edge = 0; edge < 4 ; ++edge )    
+    for (edge = 0; edge < 4 ; ++edge )
     {
       // If cbp == 0 then deblocking for some macroblock types could be skipped
       if (MbQ->cbp == 0)
@@ -1043,7 +1043,7 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
       }
 
       if( edge || filterLeftMbEdgeFlag )
-      {      
+      {
         byte *Strength = MbQ->strength_ver[edge];
 
         if ((*((int64 *) Strength)) || ((*(((int64 *) Strength) + 1)))) // only if one of the 16 Strength bytes is != 0
@@ -1066,11 +1066,11 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
               p_Vid->EdgeLoopChromaVer( imgUV[1], Strength, MbQ, edge_cr, 1, p);
             }
           }
-        }        
+        }
       }
     }//end edge
 
-    // horizontal deblocking  
+    // horizontal deblocking
     for( edge = 0; edge < 4 ; ++edge )
     {
       // If cbp == 0 then deblocking for some macroblock types could be skipped
@@ -1114,8 +1114,8 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
           }
         }
 
-        if (!edge && !MbQ->mb_field && MbQ->mixedModeEdgeFlag) //currSlice->mixedModeEdgeFlag) 
-        {          
+        if (!edge && !MbQ->mb_field && MbQ->mixedModeEdgeFlag) //currSlice->mixedModeEdgeFlag)
+        {
           // this is the extra horizontal edge between a frame macroblock pair and a field above it
           MbQ->DeblockCall = 2;
           p_Vid->GetStrengthHor(MbQ, 4, mvlimit, p); // Strength for 4 blks in 1 stripe
@@ -1132,7 +1132,7 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
                 p_Vid->EdgeLoopLumaHor(PLANE_V, imgUV[1], Strength, MbQ, MB_BLOCK_SIZE, p) ;
               }
             }
-            if (active_sps->chroma_format_idc==YUV420 || active_sps->chroma_format_idc==YUV422) 
+            if (active_sps->chroma_format_idc==YUV420 || active_sps->chroma_format_idc==YUV422)
             {
               edge_cr = chroma_edge[1][edge][p->chroma_format_idc];
               if( (imgUV != NULL) && (edge_cr >= 0))
@@ -1145,7 +1145,7 @@ void perform_db_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
           MbQ->DeblockCall = 1;
         }
       }
-    }//end edge  
+    }//end edge
 
     MbQ->DeblockCall = 0;
   }

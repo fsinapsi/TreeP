@@ -3,7 +3,7 @@
  * \file io_video.h
  *
  * \brief
- *    Video I/O 
+ *    Video I/O
  *
  * \author
  *     - Alexis Michael Tourapis         <alexismt@ieee.org>
@@ -37,7 +37,7 @@ typedef struct video_data_file
   char          fname[FILE_NAME_SIZE]; //!< video file name
   char          fhead[FILE_NAME_SIZE]; //!< header of video file
   char          ftail[FILE_NAME_SIZE]; //!< tail of video file
-  int           f_num;                 //!< video file number     
+  int           f_num;                 //!< video file number
   VideoFileType vdtype;                //!< File format
   FrameFormat   format;                //!< video format information
   int           is_concatenated;       //!< Single or multifile input?
@@ -56,7 +56,7 @@ typedef struct video_data_file
   int* avi;
   //avi_t* avi;
   //int    header;
-  //char   compressor[8];    
+  //char   compressor[8];
 } VideoDataFile;
 
 #endif

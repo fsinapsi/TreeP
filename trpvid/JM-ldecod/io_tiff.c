@@ -9,7 +9,7 @@
  *    Main contributors (see contributors.h for copyright, address and affiliation details)
  *     - Larry Luther                    <lzl@dolby.com>
  *     - Alexis Michael Tourapis         <alexismt@ieee.org>
- *     
+ *
  *************************************************************************************
  */
 #include "contributors.h"
@@ -33,7 +33,7 @@ typedef enum TiffType {
   T_UNDEFINED = 7,   //!< An 8-bit byte that may contain anything, depending on the definition of the field.
   T_SSHORT    = 8,   //!< A 16-bit (2-byte) signed (twos-complement) integer.
   T_SLONG     = 9,   //!< A 32-bit (4-byte) signed (twos-complement) integer.
-  T_SRATIONAL = 10,  //!< Two SLONG’s:  the first represents the numerator of a fraction, the second the denominator.
+  T_SRATIONAL = 10,  //!< Two SLONG's:  the first represents the numerator of a fraction, the second the denominator.
   T_FLOAT     = 11,  //!< Single precision (4-byte) IEEE format.
   T_DOUBLE    = 12   //!< Double precision (8-byte) IEEE format.
 } TiffType;
@@ -100,7 +100,7 @@ typedef enum VideoCode {
 } VideoCode;
 
 
-static const double Coef[VC_MAX+1][3] = {     
+static const double Coef[VC_MAX+1][3] = {
   {0.299   , 0.587   , 0.114},          //  0  unspecified
   {0.2126  , 0.7152  , 0.0722},         //  1  SMPTE RP-177 & 274M, ITU-R Rec. 709
   {0.299   , 0.587   , 0.114},          //  2  unspecified
@@ -149,7 +149,7 @@ typedef struct RGB_YUV {
  *
  ************************************************************************
  */
-void constructTiff (Tiff * t) 
+void constructTiff (Tiff * t)
 {
   t->fileInMemory = 0;
   t->img = 0;
@@ -164,10 +164,10 @@ void constructTiff (Tiff * t)
  *
  ************************************************************************
  */
-void destructTiff (Tiff * t) 
+void destructTiff (Tiff * t)
 {
   free_pointer( t->fileInMemory);
-  free_pointer( t->img);  
+  free_pointer( t->img);
 }
 
 
@@ -180,7 +180,7 @@ void destructTiff (Tiff * t)
  *
  ************************************************************************
  */
-static uint32 getU16 (Tiff * t) 
+static uint32 getU16 (Tiff * t)
 {
   union {
     uint8 in[2];
@@ -199,7 +199,7 @@ static uint32 getU16 (Tiff * t)
  *
  ************************************************************************
  */
-static uint32 getU32 (Tiff * t) 
+static uint32 getU32 (Tiff * t)
 {
   union {
     uint8 in[4];
@@ -222,7 +222,7 @@ static uint32 getU32 (Tiff * t)
  *
  ************************************************************************
  */
-static uint32 getSwappedU16 (Tiff * t) 
+static uint32 getSwappedU16 (Tiff * t)
 {
   union {
     uint8 in[2];
@@ -241,7 +241,7 @@ static uint32 getSwappedU16 (Tiff * t)
  *
  ************************************************************************
  */
-static uint32 getSwappedU32 (Tiff * t) 
+static uint32 getSwappedU32 (Tiff * t)
 {
   union {
     uint8 in[4];
@@ -262,28 +262,28 @@ static uint32 getSwappedU32 (Tiff * t)
  *
  ************************************************************************
  */
-static void getIntArray (Tiff * t, uint32 offset, TiffType type, uint32 a[], int n) 
+static void getIntArray (Tiff * t, uint32 offset, TiffType type, uint32 a[], int n)
 {
   int    i;
   uint8  *mp = t->mp;                           // save memory pointer
 
   t->mp = t->fileInMemory + offset;
-  switch (type) 
+  switch (type)
   {
   case T_SHORT:
-    for (i=0; i < n; ++i) 
+    for (i=0; i < n; ++i)
     {
       a[i] = getU16( t);
     }
     break;
   case T_LONG:
-    for (i=0; i < n; ++i) 
+    for (i=0; i < n; ++i)
     {
       a[i] = getU32( t);
     }
     break;
   case T_RATIONAL:
-    for (i=0; i < 2*n; ++i) 
+    for (i=0; i < 2*n; ++i)
     {
       a[i] = getU32( t);
     }
@@ -302,14 +302,14 @@ static void getIntArray (Tiff * t, uint32 offset, TiffType type, uint32 a[], int
  *
  ************************************************************************
  */
-static int readDirectoryEntry (Tiff * t) 
+static int readDirectoryEntry (Tiff * t)
 {
   uint32   tag    = t->getU16( t);
   TiffType type   = (TiffType) t->getU16( t);
   uint32   count  = t->getU32( t);
   uint32   offset = t->getU32( t);
 
-  switch (tag) 
+  switch (tag)
   {
   case 256:                           // ImageWidth  SHORT or LONG
     assert( count == 1);
@@ -320,26 +320,26 @@ static int readDirectoryEntry (Tiff * t)
     assert( count == 1);
     //printf( "257:  ImageLength         = %u\n", offset);
     t->ImageLength = offset;
-    if (offset > YRES) 
+    if (offset > YRES)
     {
       fprintf( stderr, "readDirectoryEntry:  ImageLength (%d) exceeds builtin maximum of %d\n", offset, YRES);
       return 1;
     }
     break;
   case 258:                           // BitsPerSample  SHORT 8,8,8
-    if (count != 3) 
+    if (count != 3)
     {
       fprintf( stderr, "BitsPerSample (only [3] supported)\n");
       return 1;
     }
     getIntArray( t, offset, type, t->BitsPerSample, 3);
     //printf( "258:  BitsPerSample[%d]    = %u,%u,%u\n", count, t->BitsPerSample[0], t->BitsPerSample[1], t->BitsPerSample[2]);
-    if (t->BitsPerSample[0] != t->BitsPerSample[1] || t->BitsPerSample[0] != t->BitsPerSample[2]) 
+    if (t->BitsPerSample[0] != t->BitsPerSample[1] || t->BitsPerSample[0] != t->BitsPerSample[2])
     {
       fprintf( stderr, "BitsPerSample must be the same for all samples\n");
       return 1;
     }
-    if (t->BitsPerSample[0] != 8 && t->BitsPerSample[0] != 16) 
+    if (t->BitsPerSample[0] != 8 && t->BitsPerSample[0] != 16)
     {
       fprintf( stderr, "Only 8 or 16 BitsPerSample is supported\n");
       return 1;
@@ -348,7 +348,7 @@ static int readDirectoryEntry (Tiff * t)
   case 259:                           // Compression SHORT 1 or 32773
     assert( count == 1);
     //printf( "259:  Compression         = %u\n", offset);
-    if (offset != 1) 
+    if (offset != 1)
     {
       fprintf( stderr, "Only uncompressed TIFF files supported\n");
       return 1;
@@ -368,7 +368,7 @@ static int readDirectoryEntry (Tiff * t)
     assert( count == 1);
     //printf( "274:  Orientation         = %u\n", offset);
     t->Orientation = (uint16) offset;
-    if (t->Orientation != 1) 
+    if (t->Orientation != 1)
     {
       fprintf( stderr, "Only Orientation 1 is supported\n");
       return 1;
@@ -414,7 +414,7 @@ static int readDirectoryEntry (Tiff * t)
   default:
     //printf( "%3d:  Unforseen           = %u\n", tag, offset);
     ;
-  }    
+  }
   return 0;
 }
 
@@ -428,7 +428,7 @@ static int readDirectoryEntry (Tiff * t)
  *   0 if successful
  ************************************************************************
  */
-static int readFileIntoMemory (Tiff * t, const char * path) 
+static int readFileIntoMemory (Tiff * t, const char * path)
 {
   long
     cnt, result;
@@ -443,7 +443,7 @@ static int readFileIntoMemory (Tiff * t, const char * path)
   assert( path);
 
   fd = open( path, OPENFLAGS_READ);
-  if (fd == -1) 
+  if (fd == -1)
   {
     fprintf( stderr, "Couldn't open to read:  %s\n", path);
     return 1;
@@ -457,14 +457,14 @@ static int readFileIntoMemory (Tiff * t, const char * path)
     return 1;
 
   t->fileInMemory = (uint8 *) realloc( t->fileInMemory, cnt);
-  if (t->fileInMemory == 0) 
+  if (t->fileInMemory == 0)
   {
     close( fd);
     return 1;
   }
 
   result = (long) read( fd, t->fileInMemory, cnt);
-  if (result != cnt) 
+  if (result != cnt)
   {
     close( fd);
     return 1;
@@ -473,7 +473,7 @@ static int readFileIntoMemory (Tiff * t, const char * path)
   close( fd);
 
   byteOrder = (t->fileInMemory[0] << 8) | t->fileInMemory[1];
-  switch (byteOrder) 
+  switch (byteOrder)
   {
     case 0x4949:                        // little endian file
       t->le = 1;
@@ -492,7 +492,7 @@ static int readFileIntoMemory (Tiff * t, const char * path)
   {
     t->getU16 = getU16;
     t->getU32 = getU32;
-  } 
+  }
   else                               // endianness of machine does not match file
   {
     t->getU16 = getSwappedU16;
@@ -509,7 +509,7 @@ static int readFileIntoMemory (Tiff * t, const char * path)
  *
  ************************************************************************
  */
-static int readImageData (Tiff * t) 
+static int readImageData (Tiff * t)
 {
   int     i, j, n;
   uint8  *mp, *s;
@@ -523,15 +523,15 @@ static int readImageData (Tiff * t)
   if (t->img == 0)
     return 1;
 
-  switch (t->BitsPerSample[0]) 
+  switch (t->BitsPerSample[0])
   {
   case 8:
     p = t->img;
-    for (i=0; i < t->nStrips; ++i) 
+    for (i=0; i < t->nStrips; ++i)
     {
       n = t->StripByteCounts[i];
       s = t->fileInMemory + t->StripOffsets[i];
-      for (j=0; j < n; ++j) 
+      for (j=0; j < n; ++j)
       {
         *p++ = *s++;
       }
@@ -540,11 +540,11 @@ static int readImageData (Tiff * t)
   case 16:
     mp = t->mp;                       // save memory pointer
     p = t->img;
-    for (i=0; i < t->nStrips; ++i) 
+    for (i=0; i < t->nStrips; ++i)
     {
       n = t->StripByteCounts[i] / 2;
       t->mp = t->fileInMemory + t->StripOffsets[i];
-      for (j=0; j < n; ++j) 
+      for (j=0; j < n; ++j)
       {
         *p++ = (uint16) getU16( t);
       }
@@ -560,15 +560,15 @@ static int readImageData (Tiff * t)
  *****************************************************************************
  * \brief
  *    Read the ImageFileDirectory.
- *    
+ *
  *****************************************************************************
 */
-static int readImageFileDirectory (Tiff * t) 
+static int readImageFileDirectory (Tiff * t)
 {
   uint32 i;
   uint32 nEntries = t->getU16( t);
 
-  for (i=0; i < nEntries; ++i) 
+  for (i=0; i < nEntries; ++i)
   {
     readDirectoryEntry( t);
   }
@@ -580,19 +580,19 @@ static int readImageFileDirectory (Tiff * t)
  *****************************************************************************
  * \brief
  *    Read the ImageFileHeader.
- *    
+ *
  *****************************************************************************
 */
-static int readImageFileHeader (Tiff * t) 
+static int readImageFileHeader (Tiff * t)
 {
   t->ifh.byteOrder = (uint16) getU16( t);
   t->ifh.arbitraryNumber = (uint16) getU16( t);
   t->ifh.offset = getU32( t);
-  if (t->ifh.arbitraryNumber != 42) 
+  if (t->ifh.arbitraryNumber != 42)
   {
     fprintf( stderr, "ImageFileHeader.arbitrary != 42\n");
     return 1;
-  }    
+  }
   t->mp = t->fileInMemory + t->ifh.offset;
   return 0;
 }
@@ -601,7 +601,7 @@ static int readImageFileHeader (Tiff * t)
  *****************************************************************************
  * \brief
  *    Read the TIFF file named 'path' into 't'.
- *    
+ *
  *****************************************************************************
 */
 static int readTiff (Tiff * t, char * path) {
@@ -610,7 +610,7 @@ static int readTiff (Tiff * t, char * path) {
 
   if (readFileIntoMemory( t, path))
     goto Error;
-  if (readImageFileHeader( t)) 
+  if (readImageFileHeader( t))
     goto Error;
   if (readImageFileDirectory( t))
     goto Error;
@@ -628,7 +628,7 @@ Error:
  *****************************************************************************
  * \brief
  *    Initialize RGB ==> YUV conversion factors
- *    
+ *
  *****************************************************************************
 */
 static int RGB_YUV_initialize (RGB_YUV * T,
@@ -639,7 +639,7 @@ static int RGB_YUV_initialize (RGB_YUV * T,
 {
   int i, pixScale;
 
-  switch (videoCode) 
+  switch (videoCode)
   {
     case VC_ITU_REC709:
     case VC_CCIR_601:
@@ -654,12 +654,12 @@ static int RGB_YUV_initialize (RGB_YUV * T,
 
   pixScale = (int)pixMax + ((int)pixMax & 1);
 
-  if (stdRange) 
+  if (stdRange)
   {
     T->offy = (int)(INTEGER_SCALE * (pixScale * 16 / 256.0 + 0.5));  // setup + rounding
     T->sy =   INTEGER_SCALE * stdScaleY  / 255.0;
     T->suv =  INTEGER_SCALE * stdScaleUV / 255.0;
-  } 
+  }
   else                             // full range
   {
     T->offy = (int)(INTEGER_SCALE * 0.5);  // rounding
@@ -674,17 +674,17 @@ static int RGB_YUV_initialize (RGB_YUV * T,
   T->vr = (int)(T->suv*0.5  +0.5);  T->vg = (int)(T->suv*CG*CV-0.5);  T->vb = (int)(T->suv*CB*CV-0.5);
 
   i = (unsigned int)(T->sy + 0.5);
-  if (T->yr+T->yg+T->yb != i) 
+  if (T->yr+T->yg+T->yb != i)
   {
     fprintf( stderr, "ERROR: RGB_YUV_initialize: yr+yg+yb=%d sy=%u\n", T->yr+T->yg+T->yb, i);
     return 1;
   }
-  if (T->ur+T->ug+T->ub) 
+  if (T->ur+T->ug+T->ub)
   {
     fprintf( stderr, "ERROR: RGB_YUV_initialize: ur+ug+ub=%d\n", T->ur+T->ug+T->ub);
     return 1;
   }
-  if (T->vr+T->vg+T->vb) 
+  if (T->vr+T->vg+T->vb)
   {
     fprintf( stderr, "ERROR: RGB_YUV_initialize: vr+vg+vb=%d\n", T->vr+T->vg+T->vb);
     return 1;
@@ -697,7 +697,7 @@ static int RGB_YUV_initialize (RGB_YUV * T,
  *****************************************************************************
  * \brief
  *    Convert interleaved/planar RGB components to interleaved/planar YUV components
- *    
+ *
  *****************************************************************************
 */
 static void RGB_YUV_rgb_to_yuv (RGB_YUV * T,
@@ -718,7 +718,7 @@ static void RGB_YUV_rgb_to_yuv (RGB_YUV * T,
 
   if (T->stdRange)                     // clipping not needed
   {
-    for (i=0; i < count; ++i) 
+    for (i=0; i < count; ++i)
     {
       T->r = (int) *rp;  rp += rgb_stride;
       T->g = (int) *gp;  gp += rgb_stride;
@@ -728,10 +728,10 @@ static void RGB_YUV_rgb_to_yuv (RGB_YUV * T,
       *up = (uint16)((T->ur*T->r + T->ug*T->g + T->ub*T->b + T->offuv) >> INTEGER_SHIFT);  up += yuv_stride;
       *vp = (uint16)((T->vr*T->r + T->vg*T->g + T->vb*T->b + T->offuv) >> INTEGER_SHIFT);  vp += yuv_stride;
     }
-  } 
+  }
   else                             // full range -- need to clip
   {
-    for (i=0; i < count; ++i) 
+    for (i=0; i < count; ++i)
     {
       T->r = (int) *rp;  rp += rgb_stride;
       T->g = (int) *gp;  gp += rgb_stride;
@@ -740,23 +740,23 @@ static void RGB_YUV_rgb_to_yuv (RGB_YUV * T,
       // convert to YUV
       // right shift of neg value is wrong, but will get clipped so o.k.
       T->y = (T->yr*T->r + T->yg*T->g + T->yb*T->b + T-> offy) >> INTEGER_SHIFT;
-      if (T->y < 0) 
+      if (T->y < 0)
         T->y = 0;
-      else if (T->y > T->pixMax) 
+      else if (T->y > T->pixMax)
         T->y = (int) T->pixMax;
       *yp = (uint16) T->y;  yp += yuv_stride;
 
       T->u = (T->ur*T->r + T->ug*T->g + T->ub*T->b + T->offuv) >> INTEGER_SHIFT;
-      if (T->u < 0) 
+      if (T->u < 0)
         T->u = 0;
-      else if (T->u > T->pixMax) 
+      else if (T->u > T->pixMax)
           T->u = (int) T->pixMax;
       *up = (uint16) T->u;  up += yuv_stride;
 
       T->v = (T->vr*T->r + T->vg*T->g + T->vb*T->b + T->offuv) >> INTEGER_SHIFT;
-      if (T->v < 0) 
+      if (T->v < 0)
         T->v = 0;
-      else if (T->v > T->pixMax) 
+      else if (T->v > T->pixMax)
         T->v = (int) T->pixMax;
       *vp = (uint16) T->v;  vp += yuv_stride;
     }
@@ -809,9 +809,9 @@ void horizontal_half_1chan_cosite (uint16  *srcPtr,
   uint16 *src = srcPtr;
   uint16 *dst = dstPtr;
 
-  for (y=0; y < yres; y++) 
+  for (y=0; y < yres; y++)
   {
-    for (x=0; x < 8; x+=2) 
+    for (x=0; x < 8; x+=2)
     {
       n1 = (x >= 1) ? 1 : x;
       n3 = (x >= 3) ? 3 : x;
@@ -822,9 +822,9 @@ void horizontal_half_1chan_cosite (uint16  *srcPtr,
         -  262*( *(src-n3*srcZres) + *(src+3*srcZres) )
         +   47*( *(src-n5*srcZres) + *(src+5*srcZres) )
         +   11*( *(src-n7*srcZres) + *(src+7*srcZres) )+2048) / 4096;
-      if (result < 0) 
+      if (result < 0)
         result = 0;
-      else if (result > pixMax) 
+      else if (result > pixMax)
         result = pixMax;
       *dst = (uint16) result;
       dst += dstZres;
@@ -832,16 +832,16 @@ void horizontal_half_1chan_cosite (uint16  *srcPtr,
     }
 
     limit = srcXres - 8;
-    for (x=8; x < limit; x+=2) 
+    for (x=8; x < limit; x+=2)
     {
       result = (  2048*  *(src)
         + 1228*( *(src-  srcZres) + *(src+  srcZres) )
         -  262*( *(src-3*srcZres) + *(src+3*srcZres) )
         +   47*( *(src-5*srcZres) + *(src+5*srcZres) )
         +   11*( *(src-7*srcZres) + *(src+7*srcZres) )+2048) / 4096;
-      if (result < 0) 
+      if (result < 0)
         result = 0;
-      else if (result > pixMax) 
+      else if (result > pixMax)
         result = pixMax;
       *dst = (uint16) result;
       dst += dstZres;
@@ -849,7 +849,7 @@ void horizontal_half_1chan_cosite (uint16  *srcPtr,
     }
 
     limit = srcXres - (srcXres & 1);  // must round down to not exceed dst
-    for (; x < limit; x+=2) 
+    for (; x < limit; x+=2)
     {
       n1 = (x < srcXres-1) ? 1 : 0;
       n3 = (x < srcXres-3) ? 3 : (srcXres-1-x);
@@ -860,9 +860,9 @@ void horizontal_half_1chan_cosite (uint16  *srcPtr,
         -  262*( *(src-3*srcZres) + *(src+n3*srcZres) )
         +   47*( *(src-5*srcZres) + *(src+n5*srcZres) )
         +   11*( *(src-7*srcZres) + *(src+n7*srcZres) )+2048) / 4096;
-      if (result < 0) 
+      if (result < 0)
         result = 0;
-      else if (result > pixMax) 
+      else if (result > pixMax)
         result = pixMax;
       *dst = (uint16) result;
       dst += dstZres;
@@ -895,14 +895,14 @@ void vertical_half_1chan (uint16  *srcPtr,
   uint16 *src = srcPtr;
   uint16 *dst = dstPtr;
 
-  for (y=0; y < 6; y+=2) 
+  for (y=0; y < 6; y+=2)
   {
     n1 = (y >= 1) ? 1 : y;
     n2 = (y >= 2) ? 2 : y;
     n3 = (y >= 3) ? 3 : y;
     n4 = (y >= 4) ? 4 : y;
     /*n5 = (y >= 5) ? 5 : y;*/
-    for (x=0; x < xres; x++) 
+    for (x=0; x < xres; x++)
     {
       result = (225*( *(src               ) + *(src+  srcRowCount) )
         +69*( *(src-n1*srcRowCount) + *(src+2*srcRowCount) )
@@ -910,9 +910,9 @@ void vertical_half_1chan (uint16  *srcPtr,
         -16*( *(src-n3*srcRowCount) + *(src+4*srcRowCount) )
         + 6*( *(src-n4*srcRowCount) + *(src+5*srcRowCount) )
         + 2*( *(src- y*srcRowCount) + *(src+6*srcRowCount) )+256) / 512;
-      if (result < 0) 
+      if (result < 0)
         result = 0;
-      else if (result > pixMax) 
+      else if (result > pixMax)
         result = pixMax;
       *dst = (uint16) result;
       dst += dstZres;
@@ -922,9 +922,9 @@ void vertical_half_1chan (uint16  *srcPtr,
   }
 
   limit = srcYres - 6;
-  for (y=6; y < limit; y+=2) 
+  for (y=6; y < limit; y+=2)
   {
-    for (x=0; x < xres; x++) 
+    for (x=0; x < xres; x++)
     {
       result = (225*( *(src              ) + *(src+  srcRowCount) )
         +69*( *(src-  srcRowCount) + *(src+2*srcRowCount) )
@@ -932,9 +932,9 @@ void vertical_half_1chan (uint16  *srcPtr,
         -16*( *(src-3*srcRowCount) + *(src+4*srcRowCount) )
         + 6*( *(src-4*srcRowCount) + *(src+5*srcRowCount) )
         + 2*( *(src-5*srcRowCount) + *(src+6*srcRowCount) )+256) / 512;
-      if (result < 0) 
+      if (result < 0)
         result = 0;
-      else if (result > pixMax) 
+      else if (result > pixMax)
         result = pixMax;
       *dst = (uint16) result;
       dst += dstZres;
@@ -944,7 +944,7 @@ void vertical_half_1chan (uint16  *srcPtr,
   }
 
   limit = srcYres - (srcYres & 1);    // must round down to not exceed dst
-  for (; y < limit; y+=2) 
+  for (; y < limit; y+=2)
   {
     n1 = (y < srcYres-1) ? 1 : 0;
     n2 = (y < srcYres-2) ? 2 : (srcYres-1-y);
@@ -952,7 +952,7 @@ void vertical_half_1chan (uint16  *srcPtr,
     n4 = (y < srcYres-4) ? 4 : (srcYres-1-y);
     n5 = (y < srcYres-5) ? 5 : (srcYres-1-y);
     n6 = (y < srcYres-6) ? 6 : (srcYres-1-y);
-    for (x=0; x < xres; x++) 
+    for (x=0; x < xres; x++)
     {
       result = (225*( *(src              ) + *(src+n1*srcRowCount) )
         +69*( *(src-  srcRowCount) + *(src+n2*srcRowCount) )
@@ -960,9 +960,9 @@ void vertical_half_1chan (uint16  *srcPtr,
         -16*( *(src-3*srcRowCount) + *(src+n4*srcRowCount) )
         + 6*( *(src-4*srcRowCount) + *(src+n5*srcRowCount) )
         + 2*( *(src-5*srcRowCount) + *(src+n6*srcRowCount) )+256) / 512;
-      if (result < 0) 
+      if (result < 0)
         result = 0;
-      else if (result > pixMax) 
+      else if (result > pixMax)
         result = pixMax;
       *dst = (uint16) result;
       dst += dstZres;
@@ -983,7 +983,7 @@ void vertical_half_1chan (uint16  *srcPtr,
  * \param FrameNoInFile
  *    [in] Frame number in the source file
  * \param source
- *    [in] source file (on disk) information 
+ *    [in] source file (on disk) information
  * \param buf
  *    [out] memory buffer where image will be stored
  * \return
@@ -991,7 +991,7 @@ void vertical_half_1chan (uint16  *srcPtr,
  *    0, failure
  *****************************************************************************
  */
-int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameNoInFile, FrameFormat *source, unsigned char *buf) 
+int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameNoInFile, FrameFormat *source, unsigned char *buf)
 {
   static   Tiff t;                          // Declaring it static allows it to "remember" memory allocations; ATOUR: Not a good idea since this affects reentrancy
   char     path[FILE_NAME_SIZE];
@@ -1010,45 +1010,45 @@ int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameN
   height = source->height[0];
   assert( (width & 1) == 0 && (height & 1) == 0);  // width & height must be even.
 
-  if (source->color_model == CM_RGB && !input_file->is_interleaved) 
+  if (source->color_model == CM_RGB && !input_file->is_interleaved)
   {
     fprintf( stderr, "ReadTIFFImage:  RGB input file has not been declared as interleaved but only interleaved is supported\n");
     goto Error;
   }
 
   frameNumberInFile = FrameNoInFile + p_Inp->start_frame;
-  if (input_file->num_digits > 0) 
+  if (input_file->num_digits > 0)
   {
-    if (input_file->zero_pad) 
+    if (input_file->zero_pad)
     {
       n = snprintf( path, sizeof(path), "%s%0*d%s", input_file->fhead, input_file->num_digits, frameNumberInFile, input_file->ftail);
-    } 
-    else 
+    }
+    else
     {
       n = snprintf( path, sizeof(path), "%s%*d%s", input_file->fhead, input_file->num_digits, frameNumberInFile, input_file->ftail);
     }
-    if (n == FILE_NAME_SIZE || n == -1) 
+    if (n == FILE_NAME_SIZE || n == -1)
     {
       fprintf( stderr, "ReadTIFFImage:  file name is too large\n");
       return 0;
     }
-  } 
-  else 
+  }
+  else
   {
-    strcpy( path, input_file->fname);    
+    strcpy( path, input_file->fname);
   }
 
-  if (readTiff( &t, path)) 
+  if (readTiff( &t, path))
   {
     goto Error;
   }
 
-  if ((int) t.ImageLength != height) 
+  if ((int) t.ImageLength != height)
   {
     fprintf( stderr, "ReadTIFFImage:  Tiff height (%u) different from encoder input height (%d) . Exiting...\n", t.ImageLength, height);
     goto Error;
   }
-  if ((int) t.ImageWidth != width) 
+  if ((int) t.ImageWidth != width)
   {
     fprintf( stderr, "ReadTIFFImage:  Tiff width (%u) different from encoder input width (%d) . Exiting...\n", t.ImageWidth, width);
     goto Error;
@@ -1064,13 +1064,13 @@ int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameN
   img = t.img;                          // default setting points at TIFF image data.
   nComponents = width * height * 3;     // for RGB, which will be overridden by YUV420 etc.
 
-  if (source->color_model == CM_YUV) 
+  if (source->color_model == CM_YUV)
   {
     if (RGB_YUV_initialize( &rgb_yuv, (VideoCode) p_Inp->videoCode, p_Inp->stdRange, 65535))
       goto Error;
 
     RGB_YUV_rgb_to_yuv( &rgb_yuv, img, img+1, img+2, width, height, 3, img, img+1, img+2, 3);
-    switch (source->yuv_format) 
+    switch (source->yuv_format)
     {
     case YUV420:
       // allocate planar buffer
@@ -1080,7 +1080,7 @@ int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameN
       vp = up + width * height / 4;
       // Y
       p = img;
-      for (i=0; i < width*height; ++i) 
+      for (i=0; i < width*height; ++i)
       {
         yp[i] = *p;  p += 3;
       }
@@ -1103,7 +1103,7 @@ int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameN
       vp = yp + width*height/2;
       // Y
       p = img;
-      for (i=0; i < width*height; ++i) 
+      for (i=0; i < width*height; ++i)
       {
         yp[i] = *p;  p += 3;
       }
@@ -1122,16 +1122,16 @@ int ReadTIFFImage (InputParameters *p_Inp, VideoDataFile *input_file, int FrameN
     }
   }
 
-  switch (source->pic_unit_size_shift3) 
+  switch (source->pic_unit_size_shift3)
   {
   case 1:
-    for (i=0; i < nComponents; ++i) 
+    for (i=0; i < nComponents; ++i)
     {
       buf[i] = (uint8)(img[i] >> 8);
     }
     break;
   case 2:
-    for (i=0; i < nComponents; ++i) 
+    for (i=0; i < nComponents; ++i)
     {
       ((uint16 *) buf)[i] = img[i];
     }

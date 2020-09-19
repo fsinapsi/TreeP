@@ -364,13 +364,13 @@ int TestParams(Mapping *Map, int bitdepth_qp_scale[3])
     }
     else if (Map[i].param_limits == 3) // Only used for QPs
     {
-      
+
       if (Map[i].Type == 0)
       {
         int cur_qp = * (int *) (Map[i].Place);
         int min_qp = (int) (Map[i].min_limit - (bitdepth_qp_scale? bitdepth_qp_scale[0]: 0));
         int max_qp = (int) Map[i].max_limit;
-        
+
         if (( cur_qp < min_qp ) || ( cur_qp > max_qp ))
         {
           snprintf(errortext, ET_SIZE, "Error in input parameter %s. Check configuration file. Value should be in [%d, %d] range.", Map[i].TokenName, min_qp, max_qp );

@@ -16,7 +16,7 @@ static char *Id = "$Id: binsrch.c,v 1.15 2005/02/01 16:46:43 wn Rel $";
 #define KEY_LEN		(1024)
 #define LINE_LEN	(1024*25)
 
-static char line[LINE_LEN]; 
+static char line[LINE_LEN];
 long last_bin_search_offset = 0;
 
 /* General purpose binary search function to search for key as first
@@ -52,30 +52,30 @@ char *bin_search(char *searchkey, FILE *fp)
     mid = (bot - top) / 2;
 
     do {
-	fseek(fp, mid - 1, 0);
-	if(mid != 1)
-	    while((c = getc(fp)) != '\n' && c != EOF);
+        fseek(fp, mid - 1, 0);
+        if(mid != 1)
+            while((c = getc(fp)) != '\n' && c != EOF);
         last_bin_search_offset = ftell( fp );
-	fgets(linep, LINE_LEN, fp);
-	length = (int)(strchr(linep, ' ') - linep);
-	strncpy(key, linep, length);
-	key[length] = '\0';
-	if(strcmp(key, searchkey) < 0) {
-	    top = mid;
-	    diff = (bot - top) / 2;
-	    mid = top + diff;
-	}
-	if(strcmp(key, searchkey) > 0) {
-	    bot = mid;
-	    diff = (bot - top) / 2;
-	    mid = top + diff;
-	}
+        fgets(linep, LINE_LEN, fp);
+        length = (int)(strchr(linep, ' ') - linep);
+        strncpy(key, linep, length);
+        key[length] = '\0';
+        if(strcmp(key, searchkey) < 0) {
+            top = mid;
+            diff = (bot - top) / 2;
+            mid = top + diff;
+        }
+        if(strcmp(key, searchkey) > 0) {
+            bot = mid;
+            diff = (bot - top) / 2;
+            mid = top + diff;
+        }
     } while((strcmp(key, searchkey)) && (diff != 0));
-    
+
     if(!strcmp(key, searchkey))
-	return(line);
+        return(line);
     else
-	return(NULL);
+        return(NULL);
 }
 
 static long offset;
@@ -97,8 +97,8 @@ static int bin_search_key(char *searchkey, FILE *fp)
     top = 0;
     bot = ftell(fp);
     if (bot == 0) {
-	offset = 0;
-	return(0);		/* empty file */
+        offset = 0;
+        return(0);		/* empty file */
     }
     mid = (bot - top) / 2;
 
@@ -107,57 +107,57 @@ static int bin_search_key(char *searchkey, FILE *fp)
     length = 0;
     rewind(fp);
     while((c = getc(fp)) != '\n' && c != EOF)
-	line[length++] =  c;
+        line[length++] =  c;
     if (getc(fp) == EOF) {	/* only 1 line in file */
-	length = (int)(strchr(linep, ' ') - linep);
-	strncpy(key, linep, length);
-	key[length] = '\0';
-	if(strcmp(key, searchkey) > 0) {
-	    offset = 0;
-	    return(0);		/* line with key is not found */
-	} else if (strcmp(key, searchkey) < 0) {
-	    offset = ftell(fp);
-	    return(0);		/* line with key is not found */
-	} else {
-	    offset = 0;
-	    return(1);		/* line with key is found */
-	}
+        length = (int)(strchr(linep, ' ') - linep);
+        strncpy(key, linep, length);
+        key[length] = '\0';
+        if(strcmp(key, searchkey) > 0) {
+            offset = 0;
+            return(0);		/* line with key is not found */
+        } else if (strcmp(key, searchkey) < 0) {
+            offset = ftell(fp);
+            return(0);		/* line with key is not found */
+        } else {
+            offset = 0;
+            return(1);		/* line with key is found */
+        }
     }
 
     do {
-	fseek(fp, mid - 1, 0);
-	if(mid != 1)
-	    while((c = getc(fp)) != '\n' && c != EOF);
-	offset1 = ftell(fp);	/* offset at start of line */
-	if (fgets(linep, LINE_LEN, fp) != NULL) {
-  	    offset2 = ftell(fp); /* offset at start of next line */
-	    length = (int)(strchr(linep, ' ') - linep);
-	    strncpy(key, linep, length);
-	    key[length] = '\0';
-	    if(strcmp(key, searchkey) < 0) {	/* further in file */
-		top = mid;
-		diff = (bot - top) / 2;
-		mid = top + diff;
-		offset = offset2;
-	    }
-	    if(strcmp(key, searchkey) > 0) {	/* earlier in file */
-		bot = mid;
-		diff = (bot - top) / 2;
-		mid = top + diff;
-		offset = offset1;
-	    }
-	} else {
-	    bot = mid;
-	    diff = (bot - top) / 2;
-	    mid = top + diff;
-	}
+        fseek(fp, mid - 1, 0);
+        if(mid != 1)
+            while((c = getc(fp)) != '\n' && c != EOF);
+        offset1 = ftell(fp);	/* offset at start of line */
+        if (fgets(linep, LINE_LEN, fp) != NULL) {
+            offset2 = ftell(fp); /* offset at start of next line */
+            length = (int)(strchr(linep, ' ') - linep);
+            strncpy(key, linep, length);
+            key[length] = '\0';
+            if(strcmp(key, searchkey) < 0) {	/* further in file */
+                top = mid;
+                diff = (bot - top) / 2;
+                mid = top + diff;
+                offset = offset2;
+            }
+            if(strcmp(key, searchkey) > 0) {	/* earlier in file */
+                bot = mid;
+                diff = (bot - top) / 2;
+                mid = top + diff;
+                offset = offset1;
+            }
+        } else {
+            bot = mid;
+            diff = (bot - top) / 2;
+            mid = top + diff;
+        }
     } while((strcmp(key, searchkey)) && (diff != 0));
 
     if(!strcmp(key, searchkey)) {
-	offset = offset1;	/* get to start of current line */
-	return(1);		/* line with key is found */
+        offset = offset1;	/* get to start of current line */
+        return(1);		/* line with key is found */
     } else
-	return(0);		/* line with key is not found */
+        return(0);		/* line with key is not found */
 }
 
 /* Copy contents from one file to another. */
@@ -167,7 +167,7 @@ void copyfile(FILE *fromfp, FILE *tofp)
     int c;
 
     while ((c = getc(fromfp)) != EOF)
-	putc(c, tofp);
+        putc(c, tofp);
 }
 
 /* Function to replace a line in a file.  Returns the original line,
@@ -178,15 +178,15 @@ char *replace_line(char *new_line, char *searchkey, FILE *fp)
     FILE *tfp;			/* temporary file pointer */
 
     if (!bin_search_key(searchkey, fp))
-	return(NULL);		/* line with key not found */
+        return(NULL);		/* line with key not found */
 
     if ((tfp = tmpfile()) == NULL)
-	return(NULL);		/* could not create temp file */
+        return(NULL);		/* could not create temp file */
     fseek(fp, offset, 0);
     fgets(line, LINE_LEN, fp);	/* read original */
     copyfile(fp, tfp);
     if (fseek(fp, offset, 0) == -1)
-	return(NULL);		/* could not seek to offset */
+        return(NULL);		/* could not seek to offset */
     fprintf(fp, "%s", new_line);	/* write line */
     rewind(tfp);
     copyfile(tfp, fp);
@@ -205,15 +205,15 @@ char *insert_line(char *new_line, char *searchkey, FILE *fp)
     FILE *tfp;
 
     if (bin_search_key(searchkey, fp))
-	return(NULL);
-    
+        return(NULL);
+
     if ((tfp = tmpfile()) == NULL)
-	return(NULL);		/* could not create temp file */
+        return(NULL);		/* could not create temp file */
     if (fseek(fp, offset, 0) == -1)
-	return(NULL);		/* could not seek to offset */
+        return(NULL);		/* could not seek to offset */
     copyfile(fp, tfp);
     if (fseek(fp, offset, 0) == -1)
-	return(NULL);		/* could not seek to offset */
+        return(NULL);		/* could not seek to offset */
     fprintf(fp, "%s", new_line);	/* write line */
     rewind(tfp);
     copyfile(tfp, fp);

@@ -30,14 +30,14 @@
 #define DTHASH_MAX_CODES	32
 
 struct dthash_code {
-	uint32_t		hash;
-	time_t			when;
+        uint32_t		hash;
+        time_t			when;
 };
 
 struct dthash {
-	struct dthash_code	codes[DTHASH_MAX_CODES];
-	int			count;
-	int			timeout;
+        struct dthash_code	codes[DTHASH_MAX_CODES];
+        int			count;
+        int			timeout;
 };
 
 /* Initialise a detector hash with the given timeout. */

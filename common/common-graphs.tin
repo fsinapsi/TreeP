@@ -142,7 +142,7 @@
         (dgraph-mkedge-low g name1 name2 val false) )
 
 ;;;
-;;; crea un nuovo arco purché tale creazione non introduca un ciclo
+;;; crea un nuovo arco purchÃ© tale creazione non introduca un ciclo
 ;;;
 
 (defnet dgraph-mkedge-acyclic (g name1 name2 val)
@@ -262,7 +262,7 @@
         (for i in ai do
                 (set <ao (car i)> (cdr i)) ))
 
-; rende una copia del più grande sottografo connesso
+; rende una copia del piÃ¹ grande sottografo connesso
 ; contenente un nodo
 
 (defun dgraph-clone-sub (g name) net dgraph-clone-sub)
@@ -296,7 +296,7 @@
                 (set name (queue-get q))
                 (set a <g name>) ))
 
-; simile al precedente però fa in modo che ogni nodo
+; simile al precedente perÃ² fa in modo che ogni nodo
 ; contenuto nel sottografo sia raggiungibile da name
 ; (o viceversa)
 
@@ -360,7 +360,7 @@
                         (dgraph-rmnode g (car i)) )))
 
 ;;;
-;;; booleano: true sse il grafo è connesso
+;;; booleano: true sse il grafo Ã¨ connesso
 ;;;
 
 (defun dgraph-is-connected (g) net dgraph-is-connected)
@@ -374,8 +374,8 @@
         else    (set @ris (= (length (dgraph-clone-sub g (assoc-root g))) l)) ))
 
 ;;;
-;;; rende la radice se il grafo è un albero, altrimenti undef
-;;; FIXME forse si può fare meglio
+;;; rende la radice se il grafo Ã¨ un albero, altrimenti undef
+;;; FIXME forse si puÃ² fare meglio
 ;;;
 
 (defun dgraph-root-if-is-tree (g) net dgraph-root-if-is-tree)
@@ -395,7 +395,7 @@
 ;;; input: g (digrafo non vuoto), p (nodo di g);
 ;;; i valori degli archi di g devono essere razionali positivi;
 ;;; output: albero contenente tutti i nodi raggiungibili da p in un cammino
-;;; di costo minimo (il costo del cammino da p al nodo è nell`unico arco
+;;; di costo minimo (il costo del cammino da p al nodo Ã¨ nell`unico arco
 ;;; entrante nel nodo)
 ;;;
 
@@ -439,7 +439,7 @@
 ;;; input: g (digrafo non vuoto), p (nodo di g);
 ;;; i valori degli archi di g devono essere razionali (anche negativi);
 ;;; output: albero contenente tutti i nodi raggiungibili da p in un cammino
-;;; di costo minimo (il costo del cammino da p al nodo è nell`unico arco
+;;; di costo minimo (il costo del cammino da p al nodo Ã¨ nell`unico arco
 ;;; entrante nel nodo)
 ;;;
 

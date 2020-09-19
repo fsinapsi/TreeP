@@ -147,7 +147,7 @@ int InterpretSPS (VideoParameters *p_Vid, DataPartition *p, seq_parameter_set_rb
     sps->lossless_qpprime_flag                  = read_u_1  ("SPS: lossless_qpprime_y_zero_flag"            , s, &p_Dec->UsedBits);
 
     sps->seq_scaling_matrix_present_flag        = read_u_1  (   "SPS: seq_scaling_matrix_present_flag"       , s, &p_Dec->UsedBits);
-    
+
     if(sps->seq_scaling_matrix_present_flag)
     {
       n_ScalingList = (sps->chroma_format_idc != YUV444) ? 8 : 12;
@@ -241,7 +241,7 @@ static int InterpretSubsetSPS (VideoParameters *p_Vid, DataPartition *p, int *cu
   {
     printf("\nScalable profile is not supported yet!\n");
   }
-  else*/ 
+  else*/
   if( is_MVC_profile(subset_sps->sps.profile_idc))
   {
     subset_sps->bit_equal_to_one = read_u_1("bit_equal_to_one", s, &p_Dec->UsedBits);
@@ -560,7 +560,7 @@ void MakeSPSavailable (VideoParameters *p_Vid, int id, seq_parameter_set_rbsp_t 
 
 
 void ProcessSPS (VideoParameters *p_Vid, NALU_t *nalu)
-{  
+{
   DataPartition *dp = AllocPartition(1);
   seq_parameter_set_rbsp_t *sps = AllocSPS();
 
@@ -659,7 +659,7 @@ void ProcessSubsetSPS (VideoParameters *p_Vid, NALU_t *nalu)
     }
   }
 
-  FreePartition (dp, 1);  
+  FreePartition (dp, 1);
 }
 #endif
 
@@ -800,7 +800,7 @@ void reset_format_info(seq_parameter_set_rbsp_t *sps, VideoParameters *p_Vid, Fr
 
   output->bit_depth[0] = source->bit_depth[0] = p_Vid->bitdepth_luma;
   output->bit_depth[1] = source->bit_depth[1] = p_Vid->bitdepth_chroma;
-  output->bit_depth[2] = source->bit_depth[2] = p_Vid->bitdepth_chroma;  
+  output->bit_depth[2] = source->bit_depth[2] = p_Vid->bitdepth_chroma;
   output->pic_unit_size_on_disk = (imax(output->bit_depth[0], output->bit_depth[1]) > 8) ? 16 : 8;
   output->pic_unit_size_shift3 = output->pic_unit_size_on_disk >> 3;
 
@@ -909,7 +909,7 @@ static void set_coding_par(seq_parameter_set_rbsp_t *sps, CodingParameters *cps)
   }
 
   cps->width = cps->PicWidthInMbs * MB_BLOCK_SIZE;
-  cps->height = cps->FrameHeightInMbs * MB_BLOCK_SIZE;  
+  cps->height = cps->FrameHeightInMbs * MB_BLOCK_SIZE;
 
   cps->iLumaPadX = MCBUF_LUMA_PAD_X;
   cps->iLumaPadY = MCBUF_LUMA_PAD_Y;
@@ -1003,7 +1003,7 @@ static void set_coding_par(seq_parameter_set_rbsp_t *sps, CodingParameters *cps)
  */
 void activate_sps (VideoParameters *p_Vid, seq_parameter_set_rbsp_t *sps)
 {
-  InputParameters *p_Inp = p_Vid->p_Inp;  
+  InputParameters *p_Inp = p_Vid->p_Inp;
 
   if (p_Vid->active_sps != sps)
   {
@@ -1068,7 +1068,7 @@ void activate_sps (VideoParameters *p_Vid, seq_parameter_set_rbsp_t *sps)
     }
     //p_Vid->p_Dpb_layer[0]->num_ref_frames = p_Vid->active_sps->num_ref_frames;
     //p_Vid->p_Dpb_layer[1]->num_ref_frames = p_Vid->active_sps->num_ref_frames;
-    p_Vid->last_pic_width_in_mbs_minus1 = p_Vid->active_sps->pic_width_in_mbs_minus1;  
+    p_Vid->last_pic_width_in_mbs_minus1 = p_Vid->active_sps->pic_width_in_mbs_minus1;
     p_Vid->last_pic_height_in_map_units_minus1 = p_Vid->active_sps->pic_height_in_map_units_minus1;
     p_Vid->last_max_dec_frame_buffering = GetMaxDecFrameBuffering(p_Vid);
     p_Vid->last_profile_idc = p_Vid->active_sps->profile_idc;
@@ -1097,12 +1097,12 @@ void activate_sps (VideoParameters *p_Vid, seq_parameter_set_rbsp_t *sps)
     }
 #endif
   }
-  
+
   reset_format_info(sps, p_Vid, &p_Inp->source, &p_Inp->output);
 }
 
 void activate_pps(VideoParameters *p_Vid, pic_parameter_set_rbsp_t *pps)
-{  
+{
   if (p_Vid->active_pps != pps)
   {
     if (p_Vid->dec_picture) // && p_Vid->num_dec_mb == p_Vid->pi)
@@ -1118,7 +1118,7 @@ void activate_pps(VideoParameters *p_Vid, pic_parameter_set_rbsp_t *pps)
 void UseParameterSet (Slice *currSlice)
 {
   VideoParameters *p_Vid = currSlice->p_Vid;
-  int PicParsetId = currSlice->pic_parameter_set_id;  
+  int PicParsetId = currSlice->pic_parameter_set_id;
   pic_parameter_set_rbsp_t *pps = &p_Vid->PicParSet[PicParsetId];
   seq_parameter_set_rbsp_t *sps = &p_Vid->SeqParSet[pps->seq_parameter_set_id];
   int i;
@@ -1129,7 +1129,7 @@ void UseParameterSet (Slice *currSlice)
   if (currSlice->svc_extension_flag == -1)
   {
     if (sps->Valid != TRUE)
-      printf ("PicParset %d references an invalid (uninitialized) Sequence Parameter Set with ID %d, expect the unexpected...\n", 
+      printf ("PicParset %d references an invalid (uninitialized) Sequence Parameter Set with ID %d, expect the unexpected...\n",
       PicParsetId, (int) pps->seq_parameter_set_id);
   }
   else
@@ -1138,12 +1138,12 @@ void UseParameterSet (Slice *currSlice)
     p_Vid->active_subset_sps = p_Vid->SubsetSeqParSet + pps->seq_parameter_set_id;
     sps = &(p_Vid->active_subset_sps->sps);
     if (p_Vid->SubsetSeqParSet[pps->seq_parameter_set_id].Valid != TRUE)
-      printf ("PicParset %d references an invalid (uninitialized) Subset Sequence Parameter Set with ID %d, expect the unexpected...\n", 
+      printf ("PicParset %d references an invalid (uninitialized) Subset Sequence Parameter Set with ID %d, expect the unexpected...\n",
       PicParsetId, (int) pps->seq_parameter_set_id);
   }
 #else
   if (sps->Valid != TRUE)
-    printf ("PicParset %d references an invalid (uninitialized) Sequence Parameter Set with ID %d, expect the unexpected...\n", 
+    printf ("PicParset %d references an invalid (uninitialized) Sequence Parameter Set with ID %d, expect the unexpected...\n",
     PicParsetId, (int) pps->seq_parameter_set_id);
 #endif
 
@@ -1176,7 +1176,7 @@ void UseParameterSet (Slice *currSlice)
     currSlice->nal_startcode_follows = uvlc_startcode_follows;
     for (i=0; i<3; i++)
     {
-      currSlice->partArr[i].readSyntaxElement = readSyntaxElement_UVLC;      
+      currSlice->partArr[i].readSyntaxElement = readSyntaxElement_UVLC;
     }
   }
   else
@@ -1373,8 +1373,8 @@ void mvc_vui_parameters_extension(MVCVUI_t *pMVCVUI, Bitstream *s)
       pMVCVUI->timing_info_present_flag[i] = (char) read_u_1("vui_mvc_timing_info_present_flag", s, &p_Dec->UsedBits);
       if(pMVCVUI->timing_info_present_flag[i])
       {
-        pMVCVUI->num_units_in_tick[i]     = read_u_v(32, "vui_mvc_num_units_in_tick", s, &p_Dec->UsedBits); 
-        pMVCVUI->time_scale[i]            = read_u_v(32, "vui_mvc_time_scale"          , s, &p_Dec->UsedBits); 
+        pMVCVUI->num_units_in_tick[i]     = read_u_v(32, "vui_mvc_num_units_in_tick", s, &p_Dec->UsedBits);
+        pMVCVUI->time_scale[i]            = read_u_v(32, "vui_mvc_time_scale"          , s, &p_Dec->UsedBits);
         pMVCVUI->fixed_frame_rate_flag[i] = (char) read_u_1("vui_mvc_fixed_frame_rate_flag", s, &p_Dec->UsedBits);
       }
       pMVCVUI->nal_hrd_parameters_present_flag[i] = (char) read_u_1("vui_mvc_nal_hrd_parameters_present_flag", s, &p_Dec->UsedBits);
@@ -1449,7 +1449,7 @@ void reset_subset_sps(subset_seq_parameter_set_rbsp_t *subset_sps)
       free_pointer(subset_sps->applicable_op_target_view_id);
       free_pointer(subset_sps->applicable_op_temporal_id);
       free_pointer(subset_sps->applicable_op_num_target_views_minus1);
-      free_pointer(subset_sps->applicable_op_num_views_minus1);      
+      free_pointer(subset_sps->applicable_op_num_views_minus1);
       free_pointer(subset_sps->num_applicable_ops_minus1);
 
       subset_sps->num_level_values_signalled_minus1 = -1;

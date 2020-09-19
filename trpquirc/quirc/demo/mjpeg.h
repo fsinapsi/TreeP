@@ -23,11 +23,11 @@
 #include <setjmp.h>
 
 struct mjpeg_decoder {
-	/* The error manager must be the first item in this struct */
-	struct jpeg_error_mgr			err;
-	struct jpeg_decompress_struct		dinfo;
-	struct jpeg_source_mgr			src;
-	jmp_buf					env;
+        /* The error manager must be the first item in this struct */
+        struct jpeg_error_mgr			err;
+        struct jpeg_decompress_struct		dinfo;
+        struct jpeg_source_mgr			src;
+        jmp_buf					env;
 };
 
 /* Construct an MJPEG decoder. */
@@ -41,14 +41,14 @@ void mjpeg_free(struct mjpeg_decoder *mj);
  * big for buffer).
  */
 int mjpeg_decode_rgb32(struct mjpeg_decoder *mj,
-		       const uint8_t *data, int datalen,
-		       uint8_t *out, int pitch, int max_w, int max_h);
+                       const uint8_t *data, int datalen,
+                       uint8_t *out, int pitch, int max_w, int max_h);
 
 /* Decode a single MJPEG image to the buffer given in 8-bit grayscale.
  * Returns 0 on success, -1 if an error occurs.
  */
 int mjpeg_decode_gray(struct mjpeg_decoder *mj,
-		      const uint8_t *data, int datalen,
-		      uint8_t *out, int pitch, int max_w, int max_h);
+                      const uint8_t *data, int datalen,
+                      uint8_t *out, int pitch, int max_w, int max_h);
 
 #endif
