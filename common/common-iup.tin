@@ -463,11 +463,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet iup-info (self msg) (iup-info-low self "Info" (pix-load-static "48x48/dialog-information-2.png") msg))
-(defnet iup-warning (self msg) (iup-info-low self $"Warning" (pix-load-static "48x48/dialog-important-2.png") msg))
-(defnet iup-error (self msg) (iup-info-low self $"Error" (pix-load-static "48x48/dialog-error-4.png") msg))
+(defnet iup-info (self msg) (iup-info-low self "Info" (pix-load-static "48x48/dialog-information-2.png") msg 0))
+(defnet iup-warning (self msg) (iup-info-low self $"Warning" (pix-load-static "48x48/dialog-important-2.png") msg 0))
+(defnet iup-error (self msg) (iup-info-low self $"Error" (pix-load-static "48x48/dialog-error-4.png") msg 0))
 
-(defnet iup-info-low (self title pix msg)
+(defnet iup-info60 (self msg) (iup-info-low self "Info" (pix-load-static "48x48/dialog-information-2.png") msg 60))
+(defnet iup-warning60 (self msg) (iup-info-low self $"Warning" (pix-load-static "48x48/dialog-important-2.png") msg 60))
+(defnet iup-error60 (self msg) (iup-info-low self $"Error" (pix-load-static "48x48/dialog-error-4.png") msg 60))
+
+(defnet iup-info-low (self title pix msg maxlen)
         (deflocal q img hbox butbox dlg i)
 
         (set q (queue))
@@ -479,6 +483,8 @@
 
         (set msg (utf8-validate0 msg))
         (rtrim msg ' ' '\t' '\n' '\r')
+        (if (> maxlen 0)
+        then    (set msg (str-split msg maxlen)) )
         (inc msg nl)
         (set msg (iup-label msg))
 
@@ -516,7 +522,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet iup-confirm (self text)
+(defnet iup-confirm (self msg) (iup-confirm-low self msg 0))
+
+(defnet iup-confirm60 (self msg) (iup-confirm-low self msg 60))
+
+(defnet iup-confirm-low (self msg maxlen)
         (deflocal q img hbox butbox dlg i)
 
         (set q (queue))
@@ -526,12 +536,14 @@
         (iup-set-attribute-handle i "IMAGE" img)
         (queue-put q img)
 
-        (set text (utf8-validate0 text))
-        (rtrim text ' ' '\t' '\n' '\r')
-        (inc text nl)
-        (set text (iup-label text))
+        (set msg (utf8-validate0 msg))
+        (rtrim msg ' ' '\t' '\n' '\r')
+        (if (> maxlen 0)
+        then    (set msg (str-split msg maxlen)) )
+        (inc msg nl)
+        (set msg (iup-label msg))
 
-        (set hbox (iup-hbox i text))
+        (set hbox (iup-hbox i msg))
         (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
         (iup-set-int hbox "GAP" 14)
 

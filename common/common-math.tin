@@ -33,7 +33,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun approxx (x n) (if (rationalp x) (approxr x n) (+ (approxr (re x) n) (* (approxr (im x) n) (sqrt -1)))))
+(defun approxx (x n)
+        (if (rationalp x)
+                (approxr x n)
+        (if (complexp x)
+                (+ (approxr (re x) n) (* (approxr (im x) n) (sqrt -1)))
+        undef )))
 (defun approxr (x n) (/ (rint (* x n)) n))
 (defun approx0 (x)  (approxx x 1))
 (defun approx1 (x)  (approxx x 10))
@@ -232,6 +237,7 @@
 (defnet format-num (x @s)
         (deflocal minus y)
 
+        (rationalp x)
         (if (< x 0)
         then    (set x -x)
                 (set minus true)

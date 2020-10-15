@@ -8,21 +8,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet av-seek (av framecnt)
-        (deflocal n done pos i)
+(defun av-approximated-number-of-frames (fmt) net av-approximated-number-of-frames)
+(defnet av-approximated-number-of-frames (fmt @n)
+    (deflocal v n1 n2)
 
-        (set n (av-index-entries av))
-        (integerp n)
-        (< framecnt n)
-        (for i in 1 .. n do
-                (if (av-index-keyframe av (for-pos))
-                then    (if (<= (for-pos) framecnt)
-                        then    (set pos (for-pos)) )
-                        (set done (>= (for-pos) framecnt)) )
-                until done )
-        (integerp pos)
-        (av-seek-frame av pos)
-        (av-skip-frame av (- framecnt pos)) )
+    (set v (av-video-stream-idx fmt))
+    (set n1 (av-nb-index-entries fmt v))
+    (set n2 (rint (* (av-r-frame-rate fmt v) (av-duration fmt) (av-time-base fmt))))
+    (alt    (seq    (integerp n1)
+                    (> n1 0)
+                    ; talvolta può differire da (av-nb-frames fmt v)
+                    ; prendo (av-nb-index-entries fmt v) per
+                    ; retro-compatibilità...
+                    ;(= @n (av-nb-frames fmt v))
+                    (or (not (and (integerp n2) (> n2 0)))
+                        (<= (abs (- n1 n2)) 2) )
+                    (set @n n1) )
+            (seq    (integerp n2)
+                    (> n2 0)
+                    (set @n n2) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun av-codec-type-str (fmt streamno) net av-codec-type-str)
+(defnet av-codec-type-str (fmt streamno @s)
+        (case (av-codec-type fmt streamno) of
+                (cmacro AVMEDIA_TYPE_VIDEO)     (set @s "AVMEDIA_TYPE_VIDEO")
+                (cmacro AVMEDIA_TYPE_AUDIO)     (set @s "AVMEDIA_TYPE_AUDIO")
+                (cmacro AVMEDIA_TYPE_DATA)      (set @s "AVMEDIA_TYPE_DATA")
+                (cmacro AVMEDIA_TYPE_SUBTITLE)  (set @s "AVMEDIA_TYPE_SUBTITLE")
+                (cmacro AVMEDIA_TYPE_ATTACHMENT)(set @s "AVMEDIA_TYPE_ATTACHMENT")
+                (cmacro AVMEDIA_TYPE_NB)        (set @s "AVMEDIA_TYPE_NB")
+                default                         (set @s "AVMEDIA_TYPE_UNKNOWN") ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
