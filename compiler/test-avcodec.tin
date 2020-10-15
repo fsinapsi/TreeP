@@ -20,7 +20,7 @@
 
 (defun test-avcodec-table ()
         [ [ "sws-scale" 3 3 ]
-          [ "read-frame" 2 2 ]
+          [ "read-frame" 2 3 ]
           [ "skip-frame" 1 2 ]
           [ "seek-frame" 2 2 ]
         ] )
