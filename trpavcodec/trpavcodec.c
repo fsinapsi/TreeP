@@ -53,6 +53,7 @@ struct AVDictionary {
 };
 
 #define TRP_AV_FRAMENO_UNDEF 0xffffffff
+#define trp_av_stream2framerate(stream) ((stream)->avg_frame_rate.den ? &( (stream)->avg_frame_rate ) : &( (stream)->r_frame_rate ))
 
 static void trp_av_log_default_callback( void *ptr, int level, const char *fmt, va_list vl );
 static uns8b trp_av_print( trp_print_t *p, trp_avcodec_t *obj );
@@ -474,7 +475,7 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
     AVCodecContext *avctx;
-    AVStream *vstream;
+    AVStream *stream;
     AVFrame *frame;
     AVPacket *packet;
     uns32b video_stream_idx, fframeno, wo, ho;
@@ -485,7 +486,7 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno )
     if ( ((trp_pix_t *)pix)->map.p == NULL )
         return 1;
     video_stream_idx = ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx;
-    vstream = fmt_ctx->streams[ video_stream_idx ];
+    stream = fmt_ctx->streams[ video_stream_idx ];
     avctx = ((trp_avcodec_t *)fmtctx)->fmt.avctx;
     frame = ((trp_avcodec_t *)fmtctx)->fmt.frame;
     packet = ((trp_avcodec_t *)fmtctx)->fmt.packet;
@@ -498,8 +499,8 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno )
         if ( trp_cast_uns32b( frameno, &prev_fframeno ) )
             return 1;
         first_ts = ((trp_avcodec_t *)fmtctx)->fmt.first_ts;
-        fr = &( vstream->r_frame_rate );
-        tb = &( vstream->time_base );
+        fr = trp_av_stream2framerate( stream );
+        tb = &( stream->time_base );
         i = (sig64b)( fr->num ) * (sig64b)( tb->num );
         if ( i == 0 )
             return 1;
@@ -560,7 +561,7 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno )
     wo = ((trp_pix_t *)pix)->w;
     ho = ((trp_pix_t *)pix)->h;
 
-//    printf( "### ...: %d\n", vstream->codecpar->frame_offset );
+//    printf( "### ...: %d\n", stream->codecpar->frame_offset );
 
     {
         AVFrame *frameo;
@@ -840,7 +841,7 @@ trp_obj_t *trp_av_frameno2ts( trp_obj_t *fmtctx, trp_obj_t *frameno )
     if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( frameno, &n ) )
         return UNDEF;
     stream = fmt_ctx->streams[ ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx ];
-    fr = &( stream->r_frame_rate );
+    fr = trp_av_stream2framerate( stream );
     tb = &( stream->time_base );
     i = (sig64b)( fr->num ) * (sig64b)( tb->num );
     if ( i == 0 )
@@ -901,7 +902,7 @@ trp_obj_t *trp_av_is_frame_recoverable( trp_obj_t *fmtctx )
     target_ts = ((trp_avcodec_t *)fmtctx)->fmt.frame->pts;
     first_ts = ((trp_avcodec_t *)fmtctx)->fmt.first_ts;
     stream = fmt_ctx->streams[ ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx ];
-    fr = &( stream->r_frame_rate );
+    fr = trp_av_stream2framerate( stream );
     tb = &( stream->time_base );
     i = (sig64b)( fr->num ) * (sig64b)( tb->num );
     if ( i == 0 )

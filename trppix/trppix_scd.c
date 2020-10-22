@@ -132,35 +132,36 @@ trp_obj_t *trp_pix_scd( trp_obj_t *pix, trp_obj_t *ref, trp_obj_t *dimblock, trp
 
 #define trp_pix_hist_val(c) ((19595*(uns32b)((c)->red)+38470*(uns32b)((c)->green)+7471*(uns32b)((c)->blue))>>18)
 
-trp_obj_t *trp_pix_scd_histogram( trp_obj_t *pix, trp_obj_t *ref )
+trp_obj_t *trp_pix_scd_histogram( trp_obj_t *pix1, trp_obj_t *pix2 )
 {
-    trp_pix_color_t *c, *r;
-    uns32b i, j, nc, nr, hc[ 64 ], hr[ 64 ];
+    trp_pix_color_t *c1, *c2;
+    uns32b n1, n2, i;
+    uns32b h1[ 64 ], h2[ 64 ];
 
-    if ( ( pix->tipo != TRP_PIX ) || ( ref->tipo != TRP_PIX ) )
+    if ( ( pix1->tipo != TRP_PIX ) || ( pix2->tipo != TRP_PIX ) )
         return UNDEF;
-    if ( ( ( c = ((trp_pix_t *)pix)->map.c ) == NULL ) ||
-         ( ( r = ((trp_pix_t *)ref)->map.c ) == NULL ) )
+    if ( ( ( c1 = ((trp_pix_t *)pix1)->map.c ) == NULL ) ||
+         ( ( c2 = ((trp_pix_t *)pix2)->map.c ) == NULL ) )
         return UNDEF;
-    nc = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h;
-    nr = ((trp_pix_t *)ref)->w * ((trp_pix_t *)ref)->h;
-    memset( hc, 0, sizeof( hc ) );
-    memset( hr, 0, sizeof( hr ) );
-    if ( nc == nr ) {
-        for ( i = nc ; i ; i--, c++, r++ ) {
-            hc[ trp_pix_hist_val( c ) ]++;
-            hr[ trp_pix_hist_val( r ) ]++;
+    n1 = ((trp_pix_t *)pix1)->w * ((trp_pix_t *)pix1)->h;
+    n2 = ((trp_pix_t *)pix2)->w * ((trp_pix_t *)pix2)->h;
+    memset( h1, 0, sizeof( h1 ) );
+    memset( h2, 0, sizeof( h2 ) );
+    if ( n1 == n2 ) {
+        for ( i = n1 ; i ; i--, c1++, c2++ ) {
+            h1[ trp_pix_hist_val( c1 ) ]++;
+            h2[ trp_pix_hist_val( c2 ) ]++;
         }
     } else {
-        for ( i = nc ; i ; i--, c++ )
-            hc[ trp_pix_hist_val( c ) ]++;
-        for ( i = nr ; i ; i--, r++ )
-            hr[ trp_pix_hist_val( r ) ]++;
+        for ( i = n1 ; i ; i--, c1++ )
+            h1[ trp_pix_hist_val( c1 ) ]++;
+        for ( i = n2 ; i ; i--, c2++ )
+            h2[ trp_pix_hist_val( c2 ) ]++;
     }
-    for ( i = 0, j = 0 ; i < 64 ; i++ )
-        j += trp_pix_dist( hc[ i ], hr[ i ] );
-    return trp_math_ratio( trp_sig64( j ), trp_sig64( nc + nr ), NULL );
+    n2 += n1;
+    n1 = 0;
+    for ( i = 0 ; i < 64 ; i++ )
+        n1 += trp_pix_dist( h1[ i ], h2[ i ] );
+    return trp_math_ratio( trp_sig64( n1 ), trp_sig64( n2 ), NULL );
 }
-
-
 

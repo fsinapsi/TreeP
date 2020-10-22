@@ -25,10 +25,10 @@ ifeq ($(TARGET), Linux)
 CFLAGS+= `pkg-config --cflags gtk+-2.0`
 endif
 ifeq ($(TARGET), i686-w64-mingw32)
-CFLAGS+= `i686-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/32/lib/pkgconfig/gtk+-2.0.pc`
+CFLAGS+= `i686-w64-mingw32-pkg-config --cflags gtk+-2.0`
 endif
 ifeq ($(TARGET), x86_64-w64-mingw32)
-CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/64/lib/pkgconfig/gtk+-2.0.pc`
+CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags gtk+-2.0`
 endif
 LDFLAGS= `cat ../.ldflags`
 
