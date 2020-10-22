@@ -10,23 +10,16 @@
 
 (defun av-approximated-number-of-frames (fmt) net av-approximated-number-of-frames)
 (defnet av-approximated-number-of-frames (fmt @n)
-    (deflocal v n1 n2)
+    (deflocal v)
 
     (set v (av-video-stream-idx fmt))
-    (set n1 (av-nb-index-entries fmt v))
-    (set n2 (rint (* (av-r-frame-rate fmt v) (av-duration fmt) (av-time-base fmt))))
-    (alt    (seq    (integerp n1)
-                    (> n1 0)
-                    ; talvolta può differire da (av-nb-frames fmt v)
-                    ; prendo (av-nb-index-entries fmt v) per
-                    ; retro-compatibilità...
-                    ;(= @n (av-nb-frames fmt v))
-                    (or (not (and (integerp n2) (> n2 0)))
-                        (<= (abs (- n1 n2)) 2) )
-                    (set @n n1) )
-            (seq    (integerp n2)
-                    (> n2 0)
-                    (set @n n2) )))
+    (set @n (rint (* (if (rationalp (av-avg-frame-rate fmt v))
+                        (av-avg-frame-rate fmt v)
+                        (av-r-frame-rate fmt v) )
+                     (av-duration fmt)
+                     (av-time-base fmt) )))
+    (integerp @n)
+    (> @n 0) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
