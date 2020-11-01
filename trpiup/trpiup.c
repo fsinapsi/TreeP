@@ -58,6 +58,7 @@ uns8b trp_iup_init( int *argc, char ***argv )
     }
 //    IupImageLibOpen();
     IupSetGlobal( "UTF8MODE", "YES" );
+    IupSetGlobal( "UTF8MODE_FILE", "YES" );
     _trp_close_fun[ TRP_IUP ] = trp_iup_close;
     _trp_equal_fun[ TRP_IUP ] = trp_iup_equal;
     _trp_length_fun[ TRP_IUP ] = trp_iup_length;
