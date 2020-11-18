@@ -15,7 +15,7 @@
         (for i in (test-pix-table) do
                 until (= <i 0> func) )
         (= <i 0> func)
-        (if (in func [ "rotate" "scale" ])
+        (if (in func [ "rotate" "scale" "color-transfer" ])
         then    (inc func "_test") )
         (exprseq-ext <i 1> <i 2> (+ "  if(trp_pix_" (dash->underscore func) "(") "))")
         (flag-true "pix") )
@@ -59,6 +59,7 @@
           [ "draw-dashed-line"          7 8 ]
           [ "draw-circle"               4 5 ]
           [ "draw-grid"                 2 3 ]
+          [ "color-transfer"            2 2 ]
           [ "avn-graph-qscale"          3 3 ]
           [ "avn-graph-size"            5 5 ]
           [ "avn-graph-vbvfill"         7 7 ]

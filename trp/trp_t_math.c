@@ -1736,6 +1736,16 @@ trp_obj_t *trp_math_pow( trp_obj_t *n, trp_obj_t *m )
             return trp_math_sqrt( n );
         if ( mpq_cmp_si( ((trp_ratio_t *)m)->val, -1, 2 ) == 0 )
             return trp_math_ratio( UNO, trp_math_sqrt( n ), NULL );
+        /*
+         * FIXME
+         */
+        {
+            double nn, mm;
+
+            if ( trp_cast_double( n, &nn ) || trp_cast_double( m, &mm ) )
+                return UNDEF;
+            return trp_double( pow( nn, mm ) );
+        }
     }
     if ( m->tipo != TRP_SIG64 ) {
         /* FIXME */

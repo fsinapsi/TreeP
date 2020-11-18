@@ -99,6 +99,9 @@ trp_obj_t *trp_pix_box_stat( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj
 trp_obj_t *trp_pix_is_empty( trp_obj_t *pix, trp_obj_t *threshold );
 trp_obj_t *trp_pix_trim( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *threshold );
 trp_obj_t *trp_pix_trim_values( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *threshold );
+trp_obj_t *trp_pix_color_transfer( trp_obj_t *pixs, trp_obj_t *pixt );
+uns8b trp_pix_color_transfer_test( trp_obj_t *pixs, trp_obj_t *pixt );
+trp_obj_t *trp_pix_lab_distance( trp_obj_t *pix1, trp_obj_t *pix2 );
 /*
 uns8b trp_pix_draw_text( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *text, ... );
 */
