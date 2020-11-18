@@ -11,6 +11,7 @@
 (include "common-lang.tin")
 (include "common-paths.tin")
 (include "common-math.tin")
+(include "common-matrix.tin")
 (include "common-date.tin")
 (include "common-graphs.tin")
 (include "common-pix.tin")

@@ -1,0 +1,227 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun matrix-row (mx) (length mx))
+(defun matrix-col (mx) (length <mx 0>))
+
+(defun matrix-ident (n) net matrix-ident)
+(defnet matrix-ident (n @mx)
+        (deflocal i)
+
+        (integerp n)
+        (> n 0)
+        (set @mx (array default 0 n n))
+        (for i in 0 .. (- n 1) do
+                (set <@mx i i> 1) ))
+
+(defun matrix-transpose (mx) net matrix-transpose)
+(defnet matrix-transpose (mx @mx)
+        (deflocal m n i j)
+
+        (set m (matrix-row mx))
+        (set n (matrix-col mx))
+        (set @mx (array n m))
+        (for i in 0 .. (- m 1) do
+                (for j in 0 .. (- n 1) do
+                        (set <@mx j i> <mx i j>) )))
+
+(defun matrix-conjugate-transpose (mx) net matrix-conjugate-transpose)
+(defnet matrix-conjugate-transpose (mx @mx)
+        (deflocal m n i j)
+
+        (set m (matrix-row mx))
+        (set n (matrix-col mx))
+        (set @mx (array n m))
+        (for i in 0 .. (- m 1) do
+                (for j in 0 .. (- n 1) do
+                        (set <@mx j i> (conjugate <mx i j>)) )))
+
+(defun matrix-mult (mx1 mx2) net matrix-mult)
+(defnet matrix-mult (mx1 mx2 @mx)
+        (deflocal m n o i j k)
+
+        (set m (matrix-row mx1))
+        (set n (matrix-col mx1))
+        (= n (matrix-row mx2))
+        (set o (matrix-col mx2))
+        (set @mx (array default 0 m o))
+        (for i in 0 .. (- m 1) do
+                (for j in 0 .. (- o 1) do
+                        (for k in 0 .. (- n 1) do
+                                (inc <@mx i j> (* <mx1 i k> <mx2 k j>)) ))))
+
+(defun matrix-crop (mx i j row col) net matrix-crop)
+(defnet matrix-crop (mx i j row col @mx)
+        (deflocal m n)
+
+        (set m (matrix-row mx))
+        (set n (matrix-col mx))
+        (integerp i)
+        (integerp j)
+        (in i 0 .. (- m 1))
+        (in j 0 .. (- n 1))
+        (integerp row)
+        (integerp col)
+        (> row 0)
+        (> col 0)
+        (set row (min (- m i) row))
+        (set col (min (- n j) col))
+        (set @mx (array row col))
+        (for m in 0 .. (- row 1) do
+                (for n in 0 .. (- col 1) do
+                        (set <@mx m n> <mx (+ m i) (+ n j)>) )))
+
+(defun matrix-clone (mx) (matrix-crop mx 0 0 (maxint) (maxint)))
+
+(defun matrix-random (m n min max) net matrix-random)
+(defnet matrix-random (m n min max @mx)
+        (deflocal i j)
+
+        (integerp m)
+        (integerp n)
+        (> m 0)
+        (> n 0)
+        (integerp min)
+        (integerp max)
+        (<= min max)
+        (inc max 1 -min)
+        (set @mx (array m n))
+        (for i in 0 .. (- m 1) do
+                (for j in 0 .. (- n 1) do
+                        (set <@mx i j> (+ min (random max))) )))
+
+(defun matrix-normalize (mx) net matrix-normalize)
+(defnet matrix-normalize (mx @mx)
+        (deflocal mi)
+        (matrix-normalize-low mx @mx mi) )
+
+(defun matrix-inverse (mx) net matrix-inverse)
+(defnet matrix-inverse (mx @mx)
+        (deflocal mm)
+        (matrix-normalize-low mx mm @mx) )
+
+(defnet matrix-normalize-low (mx @mx @mi)
+        (deflocal m n i j k r)
+
+        (set m (matrix-row mx))
+        (set n (matrix-col mx))
+        (>= n m)
+        (set @mx (matrix-clone mx))
+        (set @mi (matrix-ident m))
+        (for j in 0 .. (- m 1) do
+                (for i in j .. (- m 1) do
+                        (set k <@mx i j>)
+                        until (<> k 0) )
+                (<> k 0)
+                (set r <@mx i>)
+                (set <@mx i> <@mx j>)
+                (set <@mx j> r)
+                (set r <@mi i>)
+                (set <@mi i> <@mi j>)
+                (set <@mi j> r)
+                (for i in 0 .. (- m 1) do
+                        (set <@mx j i> (/ <@mx j i> k))
+                        (set <@mi j i> (/ <@mi j i> k)) )
+                (for i in m .. (- n 1) do
+                        (set <@mx j i> (/ <@mx j i> k)) )
+                (for i in 0 .. (- m 1) do
+                        (if (<> i j)
+                        then    (set k <@mx i j>)
+                                (for r in 0 .. (- m 1) do
+                                        (dec <@mx i r> (* <@mx j r> k))
+                                        (dec <@mi i r> (* <@mi j r> k)) )
+                                (for r in m .. (- n 1) do
+                                        (dec <@mx i r> (* <@mx j r> k)) )))))
+
+(defun matrix-det (mx) net matrix-det)
+(defnet matrix-det (mx @det)
+        (deflocal n mc i j k l r)
+
+        (set n (matrix-row mx))
+        (= n (matrix-col mx))
+        (set mc (matrix-clone mx))
+        (set @det 1)
+        (for j in 0 .. (- n 1) do
+                (for i in j .. (- n 1) do
+                        (set k <mc i j>)
+                        until (<> k 0) )
+                (set @det (* @det k))
+                until (= k 0)
+                (if (> i j)
+                then    (set @det -@det)
+                        (set r <mc i>)
+                        (set <mc i> <mc j>)
+                        (set <mc j> r) )
+                (for i in (+ j 1) .. (- n 1) do
+                        (set l (/ <mc i j> k))
+                        (for r in j .. (- n 1) do
+                                (dec <mc i r> (* <mc j r> l)) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet matrix-print (mx)
+        (matrix-print-low mx 4) )
+
+(defnet matrix-print-low (mx cifre)
+        (deflocal l)
+
+        (if (= mx undef)
+        then    (print "indefinita" nl)
+        else    (for l in (matrix-sprint mx cifre) do
+                        (print " " l nl) )))
+
+(defun matrix-sprint (mx cifre) net matrix-sprint)
+(defnet matrix-sprint (mx cifre @a)
+        (deflocal m n i j s l a b1 b2)
+
+        (set m (matrix-row mx))
+        (set n (matrix-col mx))
+        (set @a (array default "" m))
+        (set a (array m))
+        (dec m)
+        (for j in 0 .. (- n 1) do
+                (set l -1)
+                (for i in 0 .. m do
+                        (set s (sprint (approx <mx i j> cifre)))
+                        (set l (max l (length s)))
+                        (set <a i> s) )
+                (for i in 0 .. m do
+                        (inc <@a i> (if (= j 0) "" ' ') (tile (- l (length <a i>))) <a i>) ))
+        (for i in 0 .. m do
+                (if (= m 0)
+                then    (set b1 "[")
+                        (set b2 "]")
+                else    (case (for-pos) of
+                                0       (seq    (set b1 "⎡")
+                                                (set b2 "⎤") )
+                                m       (seq    (set b1 "⎣")
+                                                (set b2 "⎦") )
+                                default (seq    (set b1 "⎢")
+                                                (set b2 "⎥") )))
+                (set <@a i> (+ b1 <@a i> b2)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
