@@ -216,5 +216,3 @@ trp_obj_t *trp_pix_save_jpg_memory( trp_obj_t *pix, trp_obj_t *quality )
     return pix;
 }
 
-
-

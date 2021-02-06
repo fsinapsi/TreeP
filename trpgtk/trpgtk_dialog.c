@@ -29,5 +29,3 @@ trp_obj_t *trp_gtk_dialog_run( trp_obj_t *obj )
     return res;
 }
 
-
-

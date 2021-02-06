@@ -89,8 +89,6 @@ static void weighted_mc_prediction(imgpel **mb_pred,
   }
 }
 
-
-
 /*!
  ************************************************************************
  * \brief
@@ -122,8 +120,6 @@ static void bi_prediction(imgpel **mb_pred,
     b1  += row_inc;
   }
 }
-
-
 
 /*!
  ************************************************************************
@@ -181,7 +177,6 @@ static void get_block_00(imgpel *block, imgpel *cur_img, int span, int block_siz
     cur_img += span;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -320,7 +315,6 @@ static void get_luma_01(imgpel **block, imgpel **cur_imgY, int block_size_y, int
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -352,7 +346,6 @@ static void get_luma_02(imgpel **block, imgpel **cur_imgY, int block_size_y, int
     p0 = p1 - block_size_x;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -612,7 +605,6 @@ static void get_luma_12(imgpel **block, imgpel **cur_imgY, int **tmp_res, int bl
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -721,8 +713,6 @@ static void get_luma_33(imgpel **block, imgpel **cur_imgY, int block_size_y, int
     p0 = p1 - block_size_x ;
   }
 }
-
-
 
 /*!
  ************************************************************************
@@ -973,7 +963,6 @@ void get_block_luma(StorablePicture *curr_ref, int x_pos, int y_pos, int block_s
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -984,7 +973,6 @@ static void get_chroma_0X(imgpel *block, imgpel *cur_img, int span, int block_si
 {
   imgpel *cur_row = cur_img;
   imgpel *nxt_row = cur_img + span;
-
 
   imgpel *cur_line, *cur_line_p1;
   imgpel *blk_line;
@@ -1006,7 +994,6 @@ static void get_chroma_0X(imgpel *block, imgpel *cur_img, int span, int block_si
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1016,7 +1003,6 @@ static void get_chroma_0X(imgpel *block, imgpel *cur_img, int span, int block_si
 static void get_chroma_X0(imgpel *block, imgpel *cur_img, int span, int block_size_y, int block_size_x, int w00, int w10, int total_scale)
 {
   imgpel *cur_row = cur_img;
-
 
     imgpel *cur_line, *cur_line_p1;
     imgpel *blk_line;
@@ -1048,7 +1034,6 @@ static void get_chroma_XY(imgpel *block, imgpel *cur_img, int span, int block_si
 {
   imgpel *cur_row = cur_img;
   imgpel *nxt_row = cur_img + span;
-
 
   {
     imgpel *cur_line, *cur_line_p1;
@@ -1225,7 +1210,6 @@ static inline void set_direct_references(const PixelPos *mb, char *l0_rFrame, ch
   }
 }
 
-
 static void set_direct_references_mb_field(const PixelPos *mb, char *l0_rFrame, char *l1_rFrame, PicMotionParams **mv_info, Macroblock *mb_data)
 {
   if (mb->available)
@@ -1387,7 +1371,6 @@ static void perform_mc_single_wp(Macroblock *currMB, ColorPlane pl, StorablePict
   else
     get_block_luma(list, vec1_x, vec1_y, block_size_x, block_size_y, tmp_block_l0,shift_x,maxold_x,maxold_y,tmp_res,max_imgpel_value,no_ref_value, currMB);
 
-
   {
     int alpha_l0, wp_offset, wp_denom;
     if (currMB->mb_field && ((p_Vid->active_pps->weighted_pred_flag&&(type==P_SLICE|| type == SP_SLICE))||(p_Vid->active_pps->weighted_bipred_idc==1 && (type==B_SLICE))))
@@ -1436,7 +1419,6 @@ static void perform_mc_single_wp(Macroblock *currMB, ColorPlane pl, StorablePict
     }
   }
 }
-
 
 static void perform_mc_single(Macroblock *currMB, ColorPlane pl, StorablePicture *dec_picture, int pred_dir, int i, int j, int block_size_x, int block_size_y)
 {
@@ -1545,7 +1527,6 @@ static void perform_mc_bi_wp(Macroblock *currMB, ColorPlane pl, StorablePicture 
   int l0_ref_idx  = (currMB->mb_field && weighted_bipred_idc == 1) ? l0_refframe >> 1: l0_refframe;
   int l1_ref_idx  = (currMB->mb_field && weighted_bipred_idc == 1) ? l1_refframe >> 1: l1_refframe;
 
-
   /// WP Parameters
   int wt_list_offset = (weighted_bipred_idc==2)? list_offset : 0;
   int *weight0 = currSlice->wbp_weight[LIST_0 + wt_list_offset][l0_ref_idx][l1_ref_idx];
@@ -1598,7 +1579,6 @@ static void perform_mc_bi_wp(Macroblock *currMB, ColorPlane pl, StorablePicture 
   }
   else
     get_block_luma(list1, vec2_x, vec2_y, block_size_x, block_size_y, tmp_block_l1,shift_x,maxold_x,maxold_y,tmp_res,max_imgpel_value,no_ref_value, currMB);
-
 
   wp_offset = ((offset0[pl] + offset1[pl] + 1) >>1);
   wp_denom  = pl > 0 ? currSlice->chroma_log2_weight_denom : currSlice->luma_log2_weight_denom;
@@ -1770,7 +1750,6 @@ static void perform_mc_bi(Macroblock *currMB, ColorPlane pl, StorablePicture *de
   }
 }
 
-
 void perform_mc(Macroblock *currMB, ColorPlane pl, StorablePicture *dec_picture, int pred_dir, int i, int j, int block_size_x, int block_size_y)
 {
   Slice *currSlice = currMB->p_Slice;
@@ -1790,5 +1769,4 @@ void perform_mc(Macroblock *currMB, ColorPlane pl, StorablePicture *dec_picture,
       perform_mc_bi(currMB, pl, dec_picture, i, j, block_size_x, block_size_y);
   }
 }
-
 

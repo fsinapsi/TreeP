@@ -108,5 +108,3 @@ trp_obj_t *trp_int2char( trp_obj_t *obj )
     return trp_char( (uns8b)( ((trp_sig64_t *)obj)->val ) );
 }
 
-
-

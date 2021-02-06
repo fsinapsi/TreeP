@@ -293,7 +293,6 @@
         (if (and (not conly) (pathexists exepath))
         then    (error (+ exepath " exists, please remove it")) )
 
-
         (set _f (fopenro tpath))
         (<> _f undef)
         (push _fnames (realpath tpath))

@@ -17,7 +17,6 @@
  * ************************************************************************
  */
 
-
 #ifndef _ERC_API_H_
 #define _ERC_API_H_
 
@@ -38,7 +37,6 @@ threshold, concealByCopy is used, otherwise concealByTrial is used. */
 #define ERC_BLOCK_CONCEALED         2
 #define ERC_BLOCK_CORRUPTED         1
 #define ERC_BLOCK_EMPTY             0
-
 
 /*
 * Functions to convert MBNum representation to blockNum
@@ -61,7 +59,6 @@ threshold, concealByCopy is used, otherwise concealByTrial is used. */
 
 #define MBNum2YBlock(currMBNum,comp,picSizeX) \
 MBxy2YBlock(xPosMB((currMBNum),(picSizeX)),yPosMB((currMBNum),(picSizeX)),(comp),(picSizeX))
-
 
 /*
 * typedefs
@@ -127,7 +124,6 @@ int ercConcealIntraFrame( VideoParameters *p_Vid, frame *recfr, int picSizeX, in
 int ercConcealInterFrame( frame *recfr, objectBuffer_t *object_list,
                           int picSizeX, int picSizeY, ercVariables_t *errorVar, int chroma_format_idc );
 
-
 /* Thomson APIs for concealing entire frame loss */
 
 #include "mbuffer.h"
@@ -152,7 +148,6 @@ extern void write_lost_non_ref_pic       (DecodedPictureBuffer *p_Dpb, int poc, 
 extern void write_lost_ref_after_idr     (DecodedPictureBuffer *p_Dpb, int pos);
 
 extern int comp(const void *, const void *);
-
 
 #endif
 

@@ -229,7 +229,6 @@ static void read_comp_coeff_4x4_CABAC (Macroblock *currMB, SyntaxElement *currSE
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -262,7 +261,6 @@ static void read_comp_coeff_4x4_CABAC_ls (Macroblock *currMB, SyntaxElement *cur
     }
   }
 }
-
 
 /*!
 ************************************************************************
@@ -476,7 +474,6 @@ static void readCompCoeff8x8_CABAC_lossless (Macroblock *currMB, SyntaxElement *
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -493,7 +490,6 @@ static void read_comp_coeff_8x8_MB_CABAC (Macroblock *currMB, SyntaxElement *cur
   readCompCoeff8x8_CABAC (currMB, currSE, pl, 3);
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -509,7 +505,6 @@ static void read_comp_coeff_8x8_MB_CABAC_ls (Macroblock *currMB, SyntaxElement *
   readCompCoeff8x8_CABAC_lossless (currMB, currSE, pl, 2);
   readCompCoeff8x8_CABAC_lossless (currMB, currSE, pl, 3);
 }
-
 
 /*!
  ************************************************************************
@@ -784,7 +779,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_420(Macroblock *currMB)
         }
       }
 
-
       if (smb || (currMB->is_lossless == TRUE)) // check to see if MB type is SPred or SIntra4x4
       {
         currSlice->cof[uv + 1][0][0] = currSlice->cofu[0];
@@ -924,7 +918,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_420(Macroblock *currMB)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -955,7 +948,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_400(Macroblock *currMB)
   const byte (*pos_scan4x4)[2] = ((currSlice->structure == FRAME) && (!currMB->mb_field)) ? SNGL_SCAN : FIELD_SCAN;
   const byte *pos_scan_4x4 = pos_scan4x4[0];
 
-
   // read CBP if not new intra mode
   if (!IS_I16MB (currMB))
   {
@@ -981,7 +973,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_400(Macroblock *currMB)
     TRACE_STRING("coded_block_pattern");
     dP->readSyntaxElement(currMB, &currSE, dP);
     currMB->cbp = cbp = currSE.value1;
-
 
     //============= Transform size flag for INTER MBs =============
     //-------------------------------------------------------------
@@ -1156,7 +1147,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_444(Macroblock *currMB)
 
   int intra = (currMB->is_intra_block == TRUE);
 
-
   int need_transform_size_flag;
 
   int (*InvLevelScale4x4)[4] = NULL;
@@ -1171,7 +1161,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_444(Macroblock *currMB)
     qp_per_uv[i] = p_Vid->qp_per_matrix[ currMB->qp_scaled[i + 1] ];
     qp_rem_uv[i] = p_Vid->qp_rem_matrix[ currMB->qp_scaled[i + 1] ];
   }
-
 
   // read CBP if not new intra mode
   if (!IS_I16MB (currMB))
@@ -1198,7 +1187,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_444(Macroblock *currMB)
     TRACE_STRING("coded_block_pattern");
     dP->readSyntaxElement(currMB, &currSE, dP);
     currMB->cbp = cbp = currSE.value1;
-
 
     //============= Transform size flag for INTER MBs =============
     //-------------------------------------------------------------
@@ -1336,7 +1324,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_444(Macroblock *currMB)
     qp_per_uv[i] = p_Vid->qp_per_matrix[ currMB->qp_scaled[i + 1] ];
     qp_rem_uv[i] = p_Vid->qp_rem_matrix[ currMB->qp_scaled[i + 1] ];
   }
-
 
   InvLevelScale4x4 = intra? currSlice->InvLevelScale4x4_Intra[currSlice->colour_plane_id][qp_rem] : currSlice->InvLevelScale4x4_Inter[currSlice->colour_plane_id][qp_rem];
 
@@ -1516,7 +1503,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_422(Macroblock *currMB)
     dP->readSyntaxElement(currMB, &currSE, dP);
     currMB->cbp = cbp = currSE.value1;
 
-
     //============= Transform size flag for INTER MBs =============
     //-------------------------------------------------------------
     need_transform_size_flag = (((currMB->mb_type >= 1 && currMB->mb_type <= 3)||
@@ -1693,7 +1679,6 @@ static void read_CBP_and_coeffs_from_NAL_CABAC_422(Macroblock *currMB)
           InvLevelScale4x4 = currSlice->InvLevelScale4x4_Intra[uv + 1][qp_rem_uv_dc];
         else
           InvLevelScale4x4 = currSlice->InvLevelScale4x4_Inter[uv + 1][qp_rem_uv_dc];
-
 
         //===================== CHROMA DC YUV422 ======================
         {
@@ -1919,7 +1904,6 @@ void set_read_CBP_and_coeffs_cabac(Slice *currSlice)
     break;
   }
 }
-
 
 /*!
 ************************************************************************

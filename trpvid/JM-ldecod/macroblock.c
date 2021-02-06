@@ -45,7 +45,6 @@
 #include "fast_memory.h"
 #include "filehandle.h"
 
-
 #if TRACE
 #define TRACE_STRING(s) strncpy(currSE.tracestring, s, TRACESTRING_SIZE)
 #define TRACE_DECBITS(i) dectracebitcnt(1)
@@ -60,7 +59,6 @@
 
 //! look up tables for FRExt_chroma support
 void dectracebitcnt(int count);
-
 
 extern void setup_read_macroblock              (Slice *currSlice);
 extern void set_read_CBP_and_coeffs_cabac      (Slice *currSlice);
@@ -244,7 +242,6 @@ static void readMBRefPictureIdx (SyntaxElement *currSE, DataPartition *dP, Macro
     {
       int j, i;
       char refframe;
-
 
       currMB->subblock_x = 0;
       currMB->subblock_y = 0;
@@ -905,7 +902,6 @@ static void interpret_mb_mode_SI(Macroblock *currMB)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -997,7 +993,6 @@ void setup_slice_methods(Slice *currSlice)
     break;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -1105,7 +1100,6 @@ static void read_motion_info_from_NAL_p_slice (Macroblock *currMB)
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -1176,7 +1170,6 @@ static void read_motion_info_from_NAL_b_slice (Macroblock *currMB)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1205,7 +1198,6 @@ void check_dp_neighbors (Macroblock *currMB)
     }
   }
 }
-
 
 /*!
  ************************************************************************
@@ -1262,7 +1254,6 @@ static int decode_one_component_p_slice(Macroblock *currMB, ColorPlane curr_plan
   return 1;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1295,8 +1286,6 @@ static int decode_one_component_sp_slice(Macroblock *currMB, ColorPlane curr_pla
 
   return 1;
 }
-
-
 
 /*!
  ************************************************************************
@@ -1391,7 +1380,6 @@ static void init_cur_imgy(VideoParameters *p_Vid,Slice *currSlice,int pl)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1432,7 +1420,6 @@ int decode_one_macroblock(Macroblock *currMB, StorablePicture *dec_picture)
 
   return 0;
 }
-
 
 /*!
  ************************************************************************
@@ -1492,5 +1479,4 @@ void make_frame_picture_JV(VideoParameters *p_Vid)
     free_storable_picture(p_Vid->dec_picture_JV[uv+1]);
   }
 }
-
 

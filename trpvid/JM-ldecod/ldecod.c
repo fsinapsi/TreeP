@@ -170,7 +170,6 @@ static void alloc_video_params( VideoParameters **p_Vid)
   (*p_Vid)->first_sps = TRUE;
 }
 
-
 /*!
  ***********************************************************************
  * \brief
@@ -366,12 +365,10 @@ static void init(VideoParameters *p_Vid)  //!< video parameters
   p_Vid->LastAccessUnitExists  = 0;
   p_Vid->NALUCount = 0;
 
-
   p_Vid->out_buffer = NULL;
   p_Vid->pending_output = NULL;
   p_Vid->pending_output_state = FRAME;
   p_Vid->recovery_flag = 0;
-
 
 #if (ENABLE_OUTPUT_TONEMAPPING)
   init_tone_mapping_sei(p_Vid->seiToneMapping);
@@ -682,9 +679,6 @@ DataPartition *AllocPartition(int n)
   return partArr;
 }
 
-
-
-
 /*!
  ************************************************************************
  * \brief
@@ -714,7 +708,6 @@ void FreePartition (DataPartition *dp, int n)
   }
   free (dp);
 }
-
 
 /*!
  ************************************************************************
@@ -784,7 +777,6 @@ Slice *malloc_slice(InputParameters *p_Inp, VideoParameters *p_Vid)
 
   return currSlice;
 }
-
 
 /*!
  ************************************************************************
@@ -905,7 +897,6 @@ int init_global_buffers(VideoParameters *p_Vid, int layer_id)
     if(((cps->intra_block) = (char*) calloc(cps->FrameSizeInMbs, sizeof(char))) == NULL)
       no_mem_exit("init_global_buffers: cps->intra_block");
   }
-
 
   //memory_size += get_mem2Dint(&PicPos,p_Vid->FrameSizeInMbs + 1,2);  //! Helper array to access macroblock positions. We add 1 to also consider last MB.
   if(((cps->PicPos) = (BlockPos*) calloc(cps->FrameSizeInMbs + 1, sizeof(BlockPos))) == NULL)
@@ -1042,7 +1033,6 @@ void free_layer_buffers(VideoParameters *p_Vid, int layer_id)
   }
 
   free_qp_matrices(cps);
-
 
   p_Vid->global_init_done[layer_id] = 0;
 }
@@ -1191,7 +1181,6 @@ int OpenDecoder(InputParameters *p_Inp)
   }
 #endif
 
-
   if(strlen(pDecoder->p_Inp->reffile)>0 && strcmp(pDecoder->p_Inp->reffile, "\"\""))
   {
    if ((pDecoder->p_Vid->p_ref = open(pDecoder->p_Inp->reffile, OPENFLAGS_READ))==-1)
@@ -1229,7 +1218,6 @@ int OpenDecoder(InputParameters *p_Inp)
   pDecoder->p_Vid->active_subset_sps = NULL;
   init_subset_sps_list(pDecoder->p_Vid->SubsetSeqParSet, MAXSPS);
 #endif
-
 
 #if _FLTDBG_
   pDecoder->p_Vid->fpDbg = fopen("c:/fltdbg.txt", "a");
@@ -1350,7 +1338,6 @@ int CloseDecoder()
 
   for(i=0; i<MAX_NUM_DPB_LAYERS; i++)
    free_dpb(pDecoder->p_Vid->p_Dpb_layer[i]);
-
 
   uninit_out_buffer(pDecoder->p_Vid);
 #if _FLTDBG_

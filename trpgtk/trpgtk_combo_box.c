@@ -42,5 +42,3 @@ void trp_gtk_combo_box_set_active( trp_obj_t *obj, trp_obj_t *idx )
             gtk_combo_box_set_active( (GtkComboBox *)o, ((trp_sig64_t *)idx)->val );
 }
 
-
-

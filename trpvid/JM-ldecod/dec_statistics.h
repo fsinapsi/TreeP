@@ -29,5 +29,4 @@ typedef struct dec_stat_parameters
 extern void init_dec_stats  (DecStatParameters *stats);
 extern void delete_dec_stats(DecStatParameters *stats);
 
-
 #endif

@@ -63,5 +63,3 @@
         (pix-save-jpg pix "thumbnails.jpg" 90)
         (close pix) )
 
-
-

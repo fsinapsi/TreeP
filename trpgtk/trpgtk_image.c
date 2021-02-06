@@ -264,5 +264,3 @@ trp_obj_t *trp_gtk_image_get_image( trp_obj_t *obj )
     return res;
 }
 
-
-

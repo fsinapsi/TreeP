@@ -319,5 +319,3 @@ static void trp_gtk_graph_internal( int tipo, trp_vid_t *vid, trp_obj_t *im, trp
         gdk_window_invalidate_rect( wim->window, NULL, FALSE );
 }
 
-
-

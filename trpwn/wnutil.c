@@ -659,7 +659,6 @@ char *GetOffsetForKey(unsigned int key)
     return(NULL);
 }
 
-
 unsigned int GetKeyForOffset(char *loc)
 {
     unsigned int key;

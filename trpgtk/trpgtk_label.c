@@ -94,5 +94,3 @@ void trp_gtk_label_set_pattern( trp_obj_t *label, trp_obj_t *pattern )
         }
 }
 
-
-

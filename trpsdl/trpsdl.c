@@ -175,5 +175,3 @@ uns8b trp_sdl_playwav_memory( trp_obj_t *raw, trp_obj_t *volume )
     return 0;
 }
 
-
-

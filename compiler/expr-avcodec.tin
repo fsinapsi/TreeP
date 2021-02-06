@@ -30,6 +30,7 @@
           [ "nb-streams"                1 1 ]
           [ "video-stream-idx"          1 1 ]
           [ "nb-frames"                 2 2 ]
+          [ "sample-aspect-ratio"       2 2 ]
           [ "avg-frame-rate"            2 2 ]
           [ "r-frame-rate"              2 2 ]
           [ "codec-type"                2 2 ]

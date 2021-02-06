@@ -658,5 +658,3 @@ static uns8b trp_array_mergesort_internal( trp_array_t *a, objfun_t cmp )
     return 0;
 }
 
-
-

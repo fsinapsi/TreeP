@@ -230,5 +230,3 @@ uns8b trp_queue_swap( trp_obj_t *obj,  trp_obj_t *i,  trp_obj_t *j )
     return 0;
 }
 
-
-

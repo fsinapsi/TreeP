@@ -218,7 +218,6 @@ measured counter-clockwise.
  </tr>
 </table>
 
-
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  -->
 @section sift-intro-extensions Extensions
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  -->
@@ -601,7 +600,6 @@ where we defined the product of the two spatial binning functions
  w_{ij}(\hat{\mathbf{x}}) = w(\hat x - \hat x_i) w(\hat y - \hat y_j)
 @f]
 
-
 In the actual implementation, this integral is computed by visiting a
 rectangular area of the image that fully contains the keypoint grid
 (along with half a bin border to fully include the bin windowing
@@ -650,8 +648,6 @@ Gaussian window size is set to have standard deviation
  = \nabla (g_{\sigma} * I)(\mathbf{x})
  = \nabla I_{\sigma} (\mathbf{x}).
 @f}
-
-
 
 **/
 
@@ -1430,7 +1426,6 @@ vl_sift_detect (VlSiftFilt * f)
   f-> nkeys = (int)(k - f->keys) ;
 }
 
-
 /** ------------------------------------------------------------------
  ** @internal
  ** @brief Update gradients to current GSS octave
@@ -1619,7 +1614,6 @@ vl_sift_calc_keypoint_orientations (VlSiftFilt *f,
     for(xs  = VL_MAX (- W,       - xi) ;
         xs <= VL_MIN (+ W, w - 1 - xi) ; ++xs) {
 
-
       double dx = (double)(xi + xs) - x;
       double dy = (double)(yi + ys) - y;
       double r2 = dx*dx + dy*dy ;
@@ -1690,7 +1684,6 @@ vl_sift_calc_keypoint_orientations (VlSiftFilt *f,
  enough_angles:
   return nangles ;
 }
-
 
 /** ------------------------------------------------------------------
  ** @internal

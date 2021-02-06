@@ -61,5 +61,3 @@ trp_obj_t *trp_gtk_color_selection_dialog_new( trp_obj_t *title, trp_obj_t *pare
     return res;
 }
 
-
-

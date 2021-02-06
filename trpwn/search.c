@@ -237,7 +237,6 @@ IndexPtr getindex(char *searchstr, int dbase)
                 offsets[i] = index_lookup(strings[i], dbase);
     }
 
-
     for (i = offset; i < MAX_FORMS; i++)
         if (offsets[i]) {
             offset = i + 1;
@@ -979,7 +978,6 @@ static void traceadjant(SynsetPtr synptr)
             free_synset(newsynptr);
     }
 }
-
 
 /* Fetch the given example sentence from the example file and print it out */
 
@@ -1864,7 +1862,6 @@ unsigned int is_defined(char *searchstr, int dbase)
                  index->ptruse[i] <= CLASSIF_END) {
                 retval |= bit(CLASSIFICATION);
             }
-
 
             if (index->ptruse[i] >= CLASS_START &&
                  index->ptruse[i] <= CLASS_END) {

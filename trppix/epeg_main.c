@@ -1261,7 +1261,6 @@ _jpeg_decompress_error_exit(j_common_ptr cinfo)
 {
 }
 
-
 METHODDEF(void)
 _jpeg_init_source(j_decompress_ptr cinfo)
 {
@@ -1279,7 +1278,6 @@ _jpeg_fill_input_buffer(j_decompress_ptr cinfo)
    return TRUE;
 }
 
-
 METHODDEF(void)
 _jpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
@@ -1294,7 +1292,6 @@ METHODDEF(void)
 _jpeg_term_source(j_decompress_ptr cinfo)
 {
 }
-
 
 /* destination manager methods */
 METHODDEF(void)

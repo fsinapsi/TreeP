@@ -65,5 +65,3 @@ trp_obj_t *trp_gtk_file_chooser_dialog_new( trp_obj_t *title, trp_obj_t *action,
     return res;
 }
 
-
-

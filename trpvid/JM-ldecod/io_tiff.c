@@ -16,7 +16,6 @@
 #include "report.h"
 #include "io_tiff.h"
 
-
 // Maximum number of rows in image
 #define YRES 1080
 
@@ -38,7 +37,6 @@ typedef enum TiffType {
   T_DOUBLE    = 12   //!< Double precision (8-byte) IEEE format.
 } TiffType;
 
-
 typedef struct TiffDirectoryEntry {
   uint16  tag;                                //!< The tag that identifies the field.
   uint16  type;                               //!< The field type.
@@ -46,20 +44,17 @@ typedef struct TiffDirectoryEntry {
   uint32  offset;                             //!< Value or offset.
 } TiffDirectoryEntry;
 
-
 //! TIFF Image File Directory
 typedef struct TiffIFD {
   uint16             nEntries;
   TiffDirectoryEntry *directoryEntry;
 } TiffIFD;
 
-
 typedef struct TiffImageFileHeader {
   uint16 byteOrder;                          //!< "II" (4949H) or "MM" (4D4DH)
   uint16 arbitraryNumber;                    //!< 42
   uint32 offset;                             //!< Offset of the 0th IFD
 } TiffImageFileHeader;
-
 
 //! TIFF file data
 typedef struct Tiff {
@@ -99,7 +94,6 @@ typedef enum VideoCode {
   VC_MAX              = 8
 } VideoCode;
 
-
 static const double Coef[VC_MAX+1][3] = {
   {0.299   , 0.587   , 0.114},          //  0  unspecified
   {0.2126  , 0.7152  , 0.0722},         //  1  SMPTE RP-177 & 274M, ITU-R Rec. 709
@@ -118,13 +112,11 @@ static const double Coef[VC_MAX+1][3] = {
 #define CU (0.5/(CB-1.0))
 #define CV (0.5/(CR-1.0))
 
-
 #define stdScaleY   219.0  // nominal range: 16..235
 #define stdScaleUV  224.0  // nominal range: 16..240
 
 #define INTEGER_SCALE 16384
 #define INTEGER_SHIFT    14
-
 
 //! Parameters for RGB ==> YUV conversions.
 typedef struct RGB_YUV {
@@ -156,7 +148,6 @@ void constructTiff (Tiff * t)
   t->mp = 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -169,7 +160,6 @@ void destructTiff (Tiff * t)
   free_pointer( t->fileInMemory);
   free_pointer( t->img);
 }
-
 
 // No swap versions
 
@@ -191,7 +181,6 @@ static uint32 getU16 (Tiff * t)
   return u.out;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -211,7 +200,6 @@ static uint32 getU32 (Tiff * t)
   u.in[3] = *t->mp++;
   return u.out;
 }
-
 
 // Swap versions
 
@@ -233,7 +221,6 @@ static uint32 getSwappedU16 (Tiff * t)
   return u.out;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -253,7 +240,6 @@ static uint32 getSwappedU32 (Tiff * t)
   u.in[0] = *t->mp++;
   return u.out;
 }
-
 
 /*!
  ************************************************************************
@@ -293,7 +279,6 @@ static void getIntArray (Tiff * t, uint32 offset, TiffType type, uint32 a[], int
   }
   t->mp = mp;                           // restore memory pointer
 }
-
 
 /*!
  ************************************************************************
@@ -417,7 +402,6 @@ static int readDirectoryEntry (Tiff * t)
   }
   return 0;
 }
-
 
 /*!
  ************************************************************************
@@ -555,7 +539,6 @@ static int readImageData (Tiff * t)
   return 0;
 }
 
-
 /*!
  *****************************************************************************
  * \brief
@@ -574,7 +557,6 @@ static int readImageFileDirectory (Tiff * t)
   }
   return 0;
 }
-
 
 /*!
  *****************************************************************************
@@ -763,7 +745,6 @@ static void RGB_YUV_rgb_to_yuv (RGB_YUV * T,
   }                                   // clipping
 }
 
-
 /*!
  *****************************************************************************
  *  \brief FIR horizontal filter and 2:1 subsampling (with no phase shift)
@@ -871,7 +852,6 @@ void horizontal_half_1chan_cosite (uint16  *srcPtr,
   }
 }                                     // horizontal_half_1chan_cosite
 
-
 /*!
  *****************************************************************************
  * \brief
@@ -971,7 +951,6 @@ void vertical_half_1chan (uint16  *srcPtr,
     src += srcRowCount;
   }
 }                                     // vertical_half_1chan
-
 
 /*!
  *****************************************************************************

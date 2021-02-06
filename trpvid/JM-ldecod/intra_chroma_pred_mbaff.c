@@ -72,7 +72,6 @@ void intrapred_chroma_ver_mbaff(Macroblock *currMB)
   }
 }
 
-
 static void intra_chroma_DC_all_mbaff(imgpel **curr_img, int up_avail, int left_avail, PixelPos up, PixelPos left[17], int blk_x, int blk_y, int *pred )
 {
   int i;
@@ -93,7 +92,6 @@ static void intra_chroma_DC_all_mbaff(imgpel **curr_img, int up_avail, int left_
   else if (left_avail)
     *pred = (s1 + 2) >> 2;
 }
-
 
 /*!
  ************************************************************************

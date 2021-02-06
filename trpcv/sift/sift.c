@@ -64,9 +64,7 @@ static int feature_cmp( void*, void*, void* );
 static void release_descr_hist( double****, int );
 static void release_pyr( IplImage****, int, int );
 
-
 /*********************** Functions prototyped in sift.h **********************/
-
 
 /**
    Finds SIFT features in an image using default parameter values.  All
@@ -84,8 +82,6 @@ int sift_features( IplImage* img, struct feature** feat )
                          SIFT_CURV_THR, SIFT_IMG_DBL, SIFT_DESCR_WIDTH,
                          SIFT_DESCR_HIST_BINS );
 }
-
-
 
 /**
    Finds SIFT features in an image using user-specified parameter values.  All
@@ -161,7 +157,6 @@ int _sift_features( IplImage* img, struct feature** feat, int intvls,
   return n;
 }
 
-
 /************************ Functions prototyped here **************************/
 
 /*
@@ -196,8 +191,6 @@ static IplImage* create_init_img( IplImage* img, int img_dbl, double sigma )
     }
 }
 
-
-
 /*
   Converts an image to 32-bit grayscale
 
@@ -222,8 +215,6 @@ static IplImage* convert_to_gray32( IplImage* img )
   cvReleaseImage( &gray8 );
   return gray32;
 }
-
-
 
 /*
   Builds Gaussian scale space pyramid from an image
@@ -285,8 +276,6 @@ static IplImage*** build_gauss_pyr( IplImage* base, int octvs,
   return gauss_pyr;
 }
 
-
-
 /*
   Downsamples an image to a quarter of its size (half in each dimension)
   using nearest-neighbor interpolation
@@ -303,8 +292,6 @@ static IplImage* downsample( IplImage* img )
 
   return smaller;
 }
-
-
 
 /*
   Builds a difference of Gaussians scale space pyramid by subtracting adjacent
@@ -336,8 +323,6 @@ static IplImage*** build_dog_pyr( IplImage*** gauss_pyr, int octvs, int intvls )
 
   return dog_pyr;
 }
-
-
 
 /*
   Detects features at extrema in DoG scale space.  Bad features are discarded
@@ -390,8 +375,6 @@ static CvSeq* scale_space_extrema( IplImage*** dog_pyr, int octvs, int intvls,
   return features;
 }
 
-
-
 /*
   Determines whether a pixel is a scale-space extremum by comparing it to it's
   3x3x3 pixel neighborhood.
@@ -432,8 +415,6 @@ static int is_extremum( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
 
   return 1;
 }
-
-
 
 /*
   Interpolates a scale-space extremum's location and scale to subpixel
@@ -506,8 +487,6 @@ static struct feature* interp_extremum( IplImage*** dog_pyr, int octv,
   return feat;
 }
 
-
-
 /*
   Performs one step of extremum interpolation.  Based on Eqn. (3) in Lowe's
   paper.
@@ -544,8 +523,6 @@ static void interp_step( IplImage*** dog_pyr, int octv, int intvl, int r, int c,
   *xc = x[0];
 }
 
-
-
 /*
   Computes the partial derivatives in x, y, and scale of a pixel in the DoG
   scale space pyramid.
@@ -578,8 +555,6 @@ static CvMat* deriv_3D( IplImage*** dog_pyr, int octv, int intvl, int r, int c )
 
   return dI;
 }
-
-
 
 /*
   Computes the 3D Hessian matrix for a pixel in the DoG scale space pyramid.
@@ -636,8 +611,6 @@ static CvMat* hessian_3D( IplImage*** dog_pyr, int octv, int intvl, int r,
   return H;
 }
 
-
-
 /*
   Calculates interpolated pixel contrast.  Based on Eqn. (3) in Lowe's
   paper.
@@ -668,8 +641,6 @@ static double interp_contr( IplImage*** dog_pyr, int octv, int intvl, int r,
   return pixval32f( dog_pyr[octv][intvl], r, c ) + t[0] * 0.5;
 }
 
-
-
 /*
   Allocates and initializes a new feature
 
@@ -689,8 +660,6 @@ static struct feature* new_feature( void )
 
   return feat;
 }
-
-
 
 /*
   Determines whether a feature is too edge like to be stable by computing the
@@ -727,8 +696,6 @@ static int is_too_edge_like( IplImage* dog_img, int r, int c, int curv_thr )
   return 1;
 }
 
-
-
 /*
   Calculates characteristic scale for each feature in an array.
 
@@ -754,8 +721,6 @@ static void calc_feature_scales( CvSeq* features, double sigma, int intvls )
     }
 }
 
-
-
 /*
   Halves feature coordinates and scale in case the input image was doubled
   prior to scale space construction.
@@ -778,8 +743,6 @@ static void adjust_for_img_dbl( CvSeq* features )
       feat->img_pt.y /= 2.0;
     }
 }
-
-
 
 /*
   Computes a canonical orientation for each image feature in an array.  Based
@@ -817,8 +780,6 @@ static void calc_feature_oris( CvSeq* features, IplImage*** gauss_pyr )
     }
 }
 
-
-
 /*
   Computes a gradient orientation histogram at a specified pixel.
 
@@ -854,8 +815,6 @@ static double* ori_hist( IplImage* img, int r, int c, int n, int rad,
   return hist;
 }
 
-
-
 /*
   Calculates the gradient magnitude and orientation at a given pixel.
 
@@ -886,8 +845,6 @@ static int calc_grad_mag_ori( IplImage* img, int r, int c, double* mag,
     return 0;
 }
 
-
-
 /*
   Gaussian smooths an orientation histogram.
 
@@ -908,8 +865,6 @@ static void smooth_ori_hist( double* hist, int n )
       prev = tmp;
     }
 }
-
-
 
 /*
   Finds the magnitude of the dominant orientation in a histogram
@@ -935,14 +890,10 @@ static double dominant_ori( double* hist, int n )
   return omax;
 }
 
-
-
 /*
   Interpolates a histogram peak from left, center, and right values
 */
 #define interp_hist_peak( l, c, r ) ( 0.5 * ((l)-(r)) / ((l) - 2.0*(c) + (r)) )
-
-
 
 /*
   Adds features to an array for every orientation in a histogram greater than
@@ -978,8 +929,6 @@ static void add_good_ori_features( CvSeq* features, double* hist, int n,
     }
 }
 
-
-
 /*
   Makes a deep copy of a feature
 
@@ -1000,8 +949,6 @@ static struct feature* clone_feature( struct feature* feat )
 
   return new_feat;
 }
-
-
 
 /*
   Computes feature descriptors for features in an array.  Based on Section 6
@@ -1030,8 +977,6 @@ static void compute_descriptors( CvSeq* features, IplImage*** gauss_pyr, int d,
       release_descr_hist( &hist, d );
     }
 }
-
-
 
 /*
   Computes the 2D array of orientation histograms that form the feature
@@ -1100,8 +1045,6 @@ static double*** descr_hist( IplImage* img, int r, int c, double ori,
   return hist;
 }
 
-
-
 /*
   Interpolates an entry into the array of orientation histograms that form
   the feature descriptor.
@@ -1159,8 +1102,6 @@ static void interp_hist_entry( double*** hist, double rbin, double cbin,
     }
 }
 
-
-
 /*
   Converts the 2D array of orientation histograms into a feature's descriptor
   vector.
@@ -1194,8 +1135,6 @@ static void hist_to_descr( double*** hist, int d, int n, struct feature* feat )
     }
 }
 
-
-
 /*
   Normalizes a feature's descriptor vector to unitl length
 
@@ -1215,8 +1154,6 @@ static void normalize_descr( struct feature* feat )
   for( i = 0; i < d; i++ )
     feat->descr[i] *= len_inv;
 }
-
-
 
 /*
   Compares features for a decreasing-scale ordering.  Intended for use with
@@ -1241,8 +1178,6 @@ static int feature_cmp( void* feat1, void* feat2, void* param )
   return 0;
 }
 
-
-
 /*
   De-allocates memory held by a descriptor histogram
 
@@ -1262,7 +1197,6 @@ static void release_descr_hist( double**** hist, int d )
   free( *hist );
   *hist = NULL;
 }
-
 
 /*
   De-allocates memory held by a scale space pyramid

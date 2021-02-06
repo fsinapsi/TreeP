@@ -19,10 +19,8 @@
 #include "mb_access.h"
 #include "image.h"
 
-
 extern void intra_pred_chroma      (Macroblock *currMB);
 extern void intra_pred_chroma_mbaff(Macroblock *currMB);
-
 
 void set_intra_prediction_modes(Slice *currSlice)
 {

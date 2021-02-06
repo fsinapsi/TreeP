@@ -39,7 +39,6 @@ static void GetMotionVectorPredictorMBAFF (Macroblock *currMB,
 
   mvPredType = MVPRED_MEDIAN;
 
-
   if (currMB->mb_field)
   {
     rFrameL  = block[0].available
@@ -70,7 +69,6 @@ static void GetMotionVectorPredictorMBAFF (Macroblock *currMB,
       ? mv_info[block[2].pos_y][block[2].pos_x].ref_idx[list] >>1
       : mv_info[block[2].pos_y][block[2].pos_x].ref_idx[list]) : -1;
   }
-
 
   /* Prediction if only one of the neighbors uses the reference frame
   *  we are checking

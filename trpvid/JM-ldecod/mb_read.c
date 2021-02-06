@@ -170,7 +170,6 @@ static void read_ipred_8x8_modes(Macroblock *currMB)
   for(b8 = 0; b8 < 4; ++b8)  //loop 8x8 blocks
   {
 
-
     by = (b8 & 0x02);
     bj = currMB->block_y + by;
 
@@ -300,7 +299,6 @@ static void read_ipred_4x4_modes_mbaff(Macroblock *currMB)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -392,7 +390,6 @@ static void read_ipred_4x4_modes(Macroblock *currMB)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -445,7 +442,6 @@ static void read_ipred_modes(Macroblock *currMB)
     }
   }
 }
-
 
 static inline void reset_mv_info(PicMotionParams *mv_info, int slice_no)
 {
@@ -511,7 +507,6 @@ static void init_macroblock_direct(Macroblock *currMB)
     (*(mv_info++)+i+3)->slice_no = slice_no;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -733,7 +728,6 @@ static inline void field_flag_inference(Macroblock *currMB)
   }
 }
 
-
 void skip_macroblock(Macroblock *currMB)
 {
   MotionVector pred_mv;
@@ -900,7 +894,6 @@ static void read_intra_macroblock(Macroblock *currMB)
   currMB->p_Slice->read_CBP_and_coeffs_from_NAL (currMB);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1002,7 +995,6 @@ static void read_intra4x4_macroblock_cabac(Macroblock *currMB, const byte *partM
   // read CBP and Coeffs  ***************************************************************
   currSlice->read_CBP_and_coeffs_from_NAL (currMB);
 }
-
 
 /*!
  ************************************************************************
@@ -1506,7 +1498,6 @@ static void read_one_macroblock_p_slice_cavlc(Macroblock *currMB)
     {
       read_inter_macroblock(currMB);
     }
-
 
   return;
 }
@@ -2078,7 +2069,6 @@ static void read_one_macroblock_b_slice_cabac(Macroblock *currMB)
         currMB->ei_flag = 0;
     }
 
-
     motion->mb_field[mb_nr] = (byte) currMB->mb_field;
 
     currMB->block_y_aff = (currMB->mb_field) ? (mb_nr&0x01) ? (currMB->block_y - 4)>>1 : currMB->block_y >> 1 : currMB->block_y;
@@ -2155,7 +2145,6 @@ static void read_one_macroblock_b_slice_cabac(Macroblock *currMB)
 
   return;
 }
-
 
 void setup_read_macroblock(Slice *currSlice)
 {

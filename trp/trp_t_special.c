@@ -110,5 +110,3 @@ trp_obj_t *trp_false()
     return (trp_obj_t *)( &( _trp_special[ 3 ] ) );
 }
 
-
-

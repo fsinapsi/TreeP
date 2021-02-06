@@ -241,5 +241,3 @@ trp_obj_t *trp_gtk_get_real_name()
     return res;
 }
 
-
-

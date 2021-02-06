@@ -86,7 +86,6 @@ MotionInfoContexts* create_contexts_MotionInfo(void)
   return deco_ctx;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -105,7 +104,6 @@ TextureInfoContexts* create_contexts_TextureInfo(void)
   return deco_ctx;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -120,7 +118,6 @@ void delete_contexts_MotionInfo(MotionInfoContexts *deco_ctx)
 
   free( deco_ctx );
 }
-
 
 /*!
  ************************************************************************
@@ -155,7 +152,6 @@ void readFieldModeInfo_CABAC(Macroblock *currMB,
   fflush(p_Dec->p_trace);
 #endif
 }
-
 
 int check_next_mb_and_get_field_mode_CABAC_p_slice( Slice *currSlice,
                                            SyntaxElement *se,
@@ -394,7 +390,6 @@ void read_MVD_CABAC( Macroblock *currMB,
 #endif
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -473,7 +468,6 @@ void read_mvd_CABAC_mbaff( Macroblock *currMB,
 #endif
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -511,7 +505,6 @@ void readB8_typeInfo_CABAC_p_slice (Macroblock *currMB,
   fflush(p_Dec->p_trace);
 #endif
 }
-
 
 /*!
  ************************************************************************
@@ -810,7 +803,6 @@ void readMB_typeInfo_CABAC_i_slice(Macroblock *currMB,
 #endif
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -902,7 +894,6 @@ void readMB_typeInfo_CABAC_p_slice(Macroblock *currMB,
 #endif
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -981,7 +972,6 @@ void readMB_typeInfo_CABAC_b_slice(Macroblock *currMB,
   {
     act_sym = 0;
   }
-
 
   if (act_sym <= 23)
   {
@@ -1135,7 +1125,6 @@ void readRefFrame_CABAC(Macroblock *currMB,
 #endif
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1278,7 +1267,6 @@ void read_CBP_CABAC(Macroblock *currMB,
           b = 2;
       }
 
-
       a = 0;
       neighborMB = currMB->mb_left;
       if (neighborMB != NULL)
@@ -1339,7 +1327,6 @@ void readCIPredMode_CABAC(Macroblock *currMB,
 #endif
 
 }
-
 
 /*!
  ************************************************************************
@@ -1427,7 +1414,6 @@ static int read_and_store_CBP_block_bit_444 (Macroblock              *currMB,
           left_bit = get_bit(mb_data[block_a.mb_addr].s_cbp[0].bits, bit + bit_pos_a);
       }
 
-
       ctx = 2 * upper_bit + left_bit;
       //===== encode symbol =====
       cbp_bit = biari_decode_symbol (dep_dp, tex_ctx->bcbp_contexts[type2ctx_bcbp[type]] + ctx);
@@ -1446,7 +1432,6 @@ static int read_and_store_CBP_block_bit_444 (Macroblock              *currMB,
           upper_bit = get_bit(mb_data[block_b.mb_addr].s_cbp[0].bits,bit+bit_pos_b);
       }
 
-
       if (block_a.available)
       {
         if(mb_data[block_a.mb_addr].mb_type==IPCM)
@@ -1454,7 +1439,6 @@ static int read_and_store_CBP_block_bit_444 (Macroblock              *currMB,
         else
           left_bit = get_bit(mb_data[block_a.mb_addr].s_cbp[0].bits,bit+bit_pos_a);
       }
-
 
       ctx = 2 * upper_bit + left_bit;
       //===== encode symbol =====
@@ -1490,7 +1474,6 @@ static int read_and_store_CBP_block_bit_444 (Macroblock              *currMB,
           upper_bit = get_bit(mb_data[block_b.mb_addr].s_cbp[0].bits,bit+bit_pos_b);
       }
     }
-
 
     if (block_a.available)
     {
@@ -1589,7 +1572,6 @@ static int read_and_store_CBP_block_bit_444 (Macroblock              *currMB,
   }
   return cbp_bit;
 }
-
 
 static inline int set_cbp_bit(Macroblock *neighbor_mb)
 {
@@ -1915,7 +1897,6 @@ static int read_and_store_CBP_block_bit_normal (Macroblock              *currMB,
   return cbp_bit;
 }
 
-
 void set_read_and_store_CBP(Macroblock **currMB, int chroma_format_idc)
 {
   if (chroma_format_idc == YUV444)
@@ -1923,9 +1904,6 @@ void set_read_and_store_CBP(Macroblock **currMB, int chroma_format_idc)
   else
     (*currMB)->read_and_store_CBP_block_bit = read_and_store_CBP_block_bit_normal;
 }
-
-
-
 
 //===== position -> ctx for MAP =====
 //--- zig-zag scan ----
@@ -1982,8 +1960,6 @@ static const byte* pos2ctx_last    [] = {pos2ctx_last4x4, pos2ctx_last4x4, pos2c
                                          pos2ctx_last4x4, pos2ctx_last4x4, pos2ctx_last8x8,pos2ctx_last8x4,
                                          pos2ctx_last8x4, pos2ctx_last4x4};
 
-
-
 /*!
  ************************************************************************
  * \brief
@@ -2007,7 +1983,6 @@ static int read_significance_map (Macroblock              *currMB,
   int   coeff_ctr = 0;
   int   i0        = 0;
   int   i1        = maxpos[type];
-
 
   if (!c1isdc[type])
   {
@@ -2043,8 +2018,6 @@ static int read_significance_map (Macroblock              *currMB,
 
   return coeff_ctr;
 }
-
-
 
 /*!
  ************************************************************************
@@ -2090,7 +2063,6 @@ static void read_significant_coefficients (DecodingEnvironmentPtr  dep_dp,
     cof--;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -2166,7 +2138,6 @@ int readSyntaxElement_CABAC(Macroblock *currMB, SyntaxElement *se, DataPartition
   return (se->len);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2202,7 +2173,6 @@ static unsigned int unary_bin_max_decode(DecodingEnvironmentPtr dep_dp,
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2232,7 +2202,6 @@ static unsigned int unary_bin_decode(DecodingEnvironmentPtr dep_dp,
     return symbol;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -2302,7 +2271,6 @@ static unsigned int exp_golomb_decode_eq_prob( DecodingEnvironmentPtr dep_dp,
   return (unsigned int) (symbol + binary_symbol);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2335,9 +2303,6 @@ static unsigned int unary_exp_golomb_level_decode( DecodingEnvironmentPtr dep_dp
     return symbol;
   }
 }
-
-
-
 
 /*!
  ************************************************************************
@@ -2377,7 +2342,6 @@ static unsigned int unary_exp_golomb_mv_decode(DecodingEnvironmentPtr dep_dp,
     return symbol;
   }
 }
-
 
 /*!
  ************************************************************************

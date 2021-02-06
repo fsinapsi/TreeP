@@ -146,5 +146,3 @@ uns8b trp_regexec_test( trp_obj_t *re, trp_obj_t *txt )
     return res ? 1 : 0;
 }
 
-
-

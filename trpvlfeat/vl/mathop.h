@@ -309,7 +309,6 @@ vl_sqrt_f (float x)
 #endif
 }
 
-
 /** @brief Check whether a floating point value is NaN
  ** @param x argument.
  ** @return true if @a x is NaN.
@@ -674,7 +673,6 @@ vl_get_vector_3_comparison_function_f (VlVectorComparisonType type) ;
 VL_EXPORT VlDoubleVector3ComparisonFunction
 vl_get_vector_3_comparison_function_d (VlVectorComparisonType type) ;
 
-
 VL_EXPORT void
 vl_eval_vector_comparison_on_all_pairs_f (float * result, vl_size dimension,
                                           float const * X, vl_size numDataX,
@@ -704,7 +702,6 @@ vl_lapack_dlasv2 (double *smin,
                   double f,
                   double g,
                   double h) ;
-
 
 VL_EXPORT int
 vl_solve_linear_system_3 (double * x, double const * A, double const *b) ;

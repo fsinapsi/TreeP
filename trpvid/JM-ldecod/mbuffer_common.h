@@ -75,7 +75,6 @@ static inline int compare_fs_by_frame_num_desc( const void *arg1, const void *ar
     return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -95,7 +94,6 @@ static inline int compare_fs_by_lt_pic_idx_asc( const void *arg1, const void *ar
   else
     return 0;
 }
-
 
 /*!
  ************************************************************************
@@ -117,7 +115,6 @@ static inline int compare_pic_by_poc_asc( const void *arg1, const void *arg2 )
     return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -138,7 +135,6 @@ static inline int compare_pic_by_poc_desc( const void *arg1, const void *arg2 )
     return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -158,7 +154,6 @@ static inline int compare_fs_by_poc_asc( const void *arg1, const void *arg2 )
   else
     return 0;
 }
-
 
 /*!
  ************************************************************************
@@ -192,7 +187,6 @@ static inline int is_short_ref(StorablePicture *s)
   return ((s->used_for_reference) && (!(s->is_long_term)));
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -204,7 +198,6 @@ static inline int is_long_ref(StorablePicture *s)
 {
   return ((s->used_for_reference) && (s->is_long_term));
 }
-
 
 extern void gen_pic_list_from_frame_list(PictureStructure currStructure, FrameStore **fs_list, int list_idx, StorablePicture **list, char *list_size, int long_term);
 extern StorablePicture*  get_long_term_pic(Slice *currSlice, DecodedPictureBuffer *p_Dpb, int LongtermPicNum);

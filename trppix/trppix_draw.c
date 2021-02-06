@@ -512,5 +512,3 @@ uns8b trp_pix_draw_text( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *
 
 */
 
-
-

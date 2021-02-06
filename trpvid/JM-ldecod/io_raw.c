@@ -82,7 +82,6 @@ static inline int ReadDataV210 (int vfile, int framesize_in_bytes, unsigned char
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief

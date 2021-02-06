@@ -484,5 +484,3 @@ trp_obj_t *trp_pix_ssim_gaussian( trp_obj_t *pix1, trp_obj_t *pix2 )
     return trp_pix_ssim_index_basic( pix1, pix2, &s );
 }
 
-
-

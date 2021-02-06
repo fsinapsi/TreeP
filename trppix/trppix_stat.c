@@ -202,5 +202,3 @@ static uns8b trp_pix_trim_low( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *thre
     return 0;
 }
 
-
-

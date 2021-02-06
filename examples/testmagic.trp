@@ -20,5 +20,3 @@
         (for i in 1 .. (- (argc) 1) do
                 (print (argv i) ": " (magic-file (argv i)) nl) ))
 
-
-

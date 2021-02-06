@@ -247,5 +247,3 @@ trp_obj_t *trp_list_reverse( trp_obj_t *obj )
     return t;
 }
 
-
-

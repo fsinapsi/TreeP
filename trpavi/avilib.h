@@ -60,9 +60,7 @@ typedef struct
    trp_off_t tot;
 } audio_index_entry;
 
-
 // Index types
-
 
 #define AVI_INDEX_OF_INDEXES 0x00             // when each entry in aIndex
                                               // array points to an index chunk
@@ -74,8 +72,6 @@ typedef struct
 //
 #define AVI_INDEX_2FIELD     0x01             // when fields within frames
                                               // are also indexed
-
-
 
 typedef struct _avisuperindex_entry {
     uns64b qwOffset;           // absolute file offset
@@ -102,7 +98,6 @@ typedef struct _avistdindex_chunk {
     avistdindex_entry *aIndex;
 } avistdindex_chunk;
 
-
 // Base Index Form 'indx'
 typedef struct _avisuperindex_chunk {
     char           fcc[4];
@@ -117,8 +112,6 @@ typedef struct _avisuperindex_chunk {
     avisuperindex_entry *aIndex;           // where are the ix## chunks
     avistdindex_chunk **stdindex;          // the ix## chunks itself (array)
 } avisuperindex_chunk;
-
-
 
 typedef struct track_s
 {
@@ -390,7 +383,6 @@ struct riff_struct
     uns32b len;
     uns8b wave_id[4]; /* WAVE */
 };
-
 
 struct chunk_struct
 {

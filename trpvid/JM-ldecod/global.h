@@ -119,7 +119,6 @@ typedef struct
 
 typedef BiContextType *BiContextTypePtr;
 
-
 /**********************************************************************
  * C O N T E X T S   F O R   T M L   S Y N T A X   E L E M E N T S
  **********************************************************************
@@ -169,7 +168,6 @@ typedef struct
   BiContextType  one_contexts [NUM_BLOCK_TYPES][NUM_ONE_CTX];
   BiContextType  abs_contexts [NUM_BLOCK_TYPES][NUM_ABS_CTX];
 } TextureInfoContexts;
-
 
 //*********************** end of data type definition for CABAC *******************
 
@@ -263,7 +261,6 @@ typedef struct macroblock_dec
   byte strength_ver[4][4];
   byte strength_hor[4][16];
 
-
   Boolean       luma_transform_size_8x8_flag;
   Boolean       NoMbPartLessThan8x8Flag;
 
@@ -305,7 +302,6 @@ typedef struct syntaxelement_dec
   //! used for CABAC: refers to actual coding method of each individual syntax element type
   void  (*reading)(struct macroblock_dec *currMB, struct syntaxelement_dec *, DecodingEnvironmentPtr);
 } SyntaxElement;
-
 
 //! Bitstream
 struct bit_stream_dec
@@ -512,7 +508,6 @@ typedef struct slice
   int  coeff[64]; // one more for EOB
   int  coeff_ctr;
   int  pos;
-
 
   //weighted prediction
   unsigned short weighted_pred_flag;
@@ -798,7 +793,6 @@ typedef struct video_par
   ImageData imgData5;
   ImageData imgData6;
 
-
   // Redundant slices. Should be moved to another structure and allocated only if extended profile
   unsigned int previous_frame_num; //!< frame number of previous slice
   //!< non-zero: i-th previous frame is correct
@@ -952,7 +946,6 @@ typedef struct video_par
   struct dec_stat_parameters *dec_stats;
 } VideoParameters;
 
-
 // signal to noise ratio parameters
 typedef struct snr_par
 {
@@ -1002,7 +995,6 @@ typedef struct inp_par
   int conceal_mode;
   int ref_poc_gap;
   int poc_gap;
-
 
   // dummy for encoder
   int start_frame;

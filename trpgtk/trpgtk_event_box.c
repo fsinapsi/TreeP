@@ -23,5 +23,3 @@ trp_obj_t *trp_gtk_event_box_new()
     return trp_gtk_widget( gtk_event_box_new() );
 }
 
-
-

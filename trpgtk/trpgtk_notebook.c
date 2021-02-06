@@ -129,5 +129,3 @@ void trp_gtk_notebook_set_current_page( trp_obj_t *nb, trp_obj_t *idx )
                                            (gint)( ((trp_sig64_t *)idx)->val ) );
 }
 
-
-

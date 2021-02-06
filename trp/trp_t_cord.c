@@ -2331,5 +2331,3 @@ trp_obj_t *trp_cord_overlap_alignment( trp_obj_t *s1, trp_obj_t *s2, trp_obj_t *
                      NULL );
 }
 
-
-

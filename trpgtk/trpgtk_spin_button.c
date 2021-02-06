@@ -98,7 +98,6 @@ void trp_gtk_spin_button_set_range( trp_obj_t *obj, trp_obj_t *min, trp_obj_t *m
     GtkWidget *oo = trp_gtk_get_widget( obj );
     double dmin, dmax;
 
-
     if ( oo && ( !trp_cast_double( min, &dmin ) ) && ( !trp_cast_double( max, &dmax ) ) )
         if ( GTK_IS_SPIN_BUTTON( oo ) )
             gtk_spin_button_set_range( (GtkSpinButton *)oo, dmin, dmax );
@@ -111,6 +110,4 @@ void trp_gtk_spin_button_update( trp_obj_t *obj )
         if ( GTK_IS_SPIN_BUTTON( oo ) )
             gtk_spin_button_update( (GtkSpinButton *)oo );
 }
-
-
 

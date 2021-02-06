@@ -21,11 +21,9 @@ static int export_lowe_features( char*, struct feature*, int );
 static void draw_lowe_features( IplImage*, struct feature*, int );
 static void draw_lowe_feature( IplImage*, struct feature*, CvScalar );
 
-
 /*
   Reads image features from file.  The file should be formatted as from
   the code provided by the Visual Geometry Group at Oxford:
-
 
   @param filename location of a file containing image features
   @param type determines how features are input.  If \a type is FEATURE_OXFD,
@@ -65,8 +63,6 @@ int import_features( char* filename, int type, struct feature** feat )
              " %s, line %d\n", filename, __FILE__, __LINE__ );
   return n;
 }
-
-
 
 /*
   Exports a feature set to a file formatted depending on the type of
@@ -109,7 +105,6 @@ int export_features( char* filename, struct feature* feat, int n )
   return r;
 }
 
-
 /*
   Draws a set of features on an image
 
@@ -143,8 +138,6 @@ void draw_features( IplImage* img, struct feature* feat, int n )
     }
 }
 
-
-
 /*
   Calculates the squared Euclidian distance between two feature descriptors.
 
@@ -174,10 +167,7 @@ double descr_dist_sq( struct feature* f1, struct feature* f2 )
   return dsq;
 }
 
-
-
 /***************************** Local Functions *******************************/
-
 
 /*
   Reads image features from file.  The file should be formatted as from
@@ -219,7 +209,6 @@ static int import_oxfd_features( char* filename, struct feature** features )
                __FILE__, __LINE__ );
       return -1;
     }
-
 
   f = calloc( n, sizeof(struct feature) );
   for( i = 0; i < n; i++ )
@@ -272,9 +261,6 @@ static int import_oxfd_features( char* filename, struct feature** features )
   return n;
 }
 
-
-
-
 /*
   Exports a feature set to a file formatted as one from the code provided
   by the Visual Geometry Group at Oxford:
@@ -325,8 +311,6 @@ static int export_oxfd_features( char* filename, struct feature* feat, int n )
   return 0;
 }
 
-
-
 /*
   Draws Oxford-type affine features
 
@@ -344,8 +328,6 @@ static void draw_oxfd_features( IplImage* img, struct feature* feat, int n )
   for( i = 0; i < n; i++ )
     draw_oxfd_feature( img, feat + i, color );
 }
-
-
 
 /*
   Draws a single Oxford-type feature
@@ -382,8 +364,6 @@ static void draw_oxfd_feature( IplImage* img, struct feature* feat,
   cvLine( img, cvPoint( feat->x, feat->y+2 ), cvPoint( feat->x, feat->y-2 ),
           color, 1, 8, 0 );
 }
-
-
 
 /*
   Reads image features from file.  The file should be formatted as from
@@ -476,8 +456,6 @@ static int import_lowe_features( char* filename, struct feature** features )
   return n;
 }
 
-
-
 /*
   Exports a feature set to a file formatted as one from the code provided
   by David Lowe:
@@ -533,7 +511,6 @@ static int export_lowe_features( char* filename, struct feature* feat, int n )
   return 0;
 }
 
-
 /*
   Draws Lowe-type features
 
@@ -551,8 +528,6 @@ static void draw_lowe_features( IplImage* img, struct feature* feat, int n )
   for( i = 0; i < n; i++ )
     draw_lowe_feature( img, feat + i, color );
 }
-
-
 
 /*
   Draws a single Lowe-type feature
@@ -593,5 +568,4 @@ static void draw_lowe_feature( IplImage* img, struct feature* feat,
   cvLine( img, end, h1, color, 1, 8, 0 );
   cvLine( img, end, h2, color, 1, 8, 0 );
 }
-
 

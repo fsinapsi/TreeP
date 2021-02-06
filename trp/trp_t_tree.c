@@ -225,5 +225,3 @@ trp_obj_t *trp_tree_swap( trp_obj_t *obj,  trp_obj_t *i,  trp_obj_t *j )
     return trp_tree_list( ((trp_tree_t *)obj)->root, children );
 }
 
-
-

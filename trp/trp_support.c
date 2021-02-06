@@ -495,5 +495,3 @@ trp_obj_t *trp_for_pos( trp_obj_t *fst )
     return trp_sig64( ((trp_for_t *)fst)->pos );
 }
 
-
-

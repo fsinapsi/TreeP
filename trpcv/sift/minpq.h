@@ -6,12 +6,10 @@
    @version 1.1.2-20100521
 */
 
-
 #ifndef MINPQ_H
 #define MINPQ_H
 
 #include <stdlib.h>
-
 
 /******************************* Defs and macros *****************************/
 
@@ -27,7 +25,6 @@ struct pq_node
   int key;
 };
 
-
 /** a minimizing priority queue */
 struct min_pq
 {
@@ -36,14 +33,12 @@ struct min_pq
   int n;                       /**< number of elements in pq */
 };
 
-
 /*************************** Function Prototypes *****************************/
 
 /**
    Creates a new minimizing priority queue.
 */
 extern struct min_pq* minpq_init();
-
 
 /**
   Inserts an element into a minimizing priority queue.
@@ -56,7 +51,6 @@ extern struct min_pq* minpq_init();
 */
 extern int minpq_insert( struct min_pq* min_pq, void* data, int key );
 
-
 /**
    Returns the element of a minimizing priority queue with the smallest key
    without removing it from the queue.
@@ -67,7 +61,6 @@ extern int minpq_insert( struct min_pq* min_pq, void* data, int key );
      if \a min_pq is empty
 */
 extern void* minpq_get_min( struct min_pq* min_pq );
-
 
 /**
    Removes and returns the element of a minimizing priority queue with the
@@ -80,13 +73,11 @@ extern void* minpq_get_min( struct min_pq* min_pq );
 */
 extern void* minpq_extract_min( struct min_pq* min_pq );
 
-
 /**
    De-allocates the memory held by a minimizing priorioty queue
 
    @param min_pq pointer to a minimizing priority queue
 */
 extern void minpq_release( struct min_pq** min_pq );
-
 
 #endif

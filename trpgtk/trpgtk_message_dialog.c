@@ -70,5 +70,3 @@ trp_obj_t *trp_gtk_message_dialog_new( trp_obj_t *parent, trp_obj_t *flags, trp_
     return res;
 }
 
-
-

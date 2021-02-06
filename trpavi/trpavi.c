@@ -533,5 +533,3 @@ trp_obj_t *trp_avi_parse_junk( trp_obj_t *obj, trp_obj_t *size )
     return res;
 }
 
-
-

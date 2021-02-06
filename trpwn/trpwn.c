@@ -123,5 +123,3 @@ trp_obj_t *trp_wn_license()
     return trp_uncompress( (trp_obj_t *)( &raw ) );
 }
 
-
-

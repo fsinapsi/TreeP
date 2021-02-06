@@ -701,5 +701,3 @@ trp_obj_t *trp_date_cal( time_t t )
                               trp_date_timezone_internal() );
 }
 
-
-

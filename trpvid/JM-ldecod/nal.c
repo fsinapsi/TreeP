@@ -67,7 +67,6 @@ int RBSPtoSODB(byte *streamBuffer, int last_byte_pos)
 
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -79,7 +78,6 @@ int RBSPtoSODB(byte *streamBuffer, int last_byte_pos)
 * \param begin_bytepos
 *    Position after beginning
 ************************************************************************/
-
 
 int EBSPtoRBSP(byte *streamBuffer, int end_bytepos, int begin_bytepos)
 {

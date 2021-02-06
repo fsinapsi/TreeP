@@ -888,5 +888,3 @@ trp_obj_t *trp_booleanp( trp_obj_t *obj )
              ( obj == TRP_FALSE ) ) ? TRP_TRUE : TRP_FALSE;
 }
 
-
-

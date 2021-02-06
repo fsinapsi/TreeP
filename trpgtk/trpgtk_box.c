@@ -72,5 +72,3 @@ void trp_gtk_box_pack_end( trp_obj_t *box, trp_obj_t *obj, trp_obj_t *expand, tr
         }
 }
 
-
-

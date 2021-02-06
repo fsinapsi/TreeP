@@ -33,7 +33,6 @@
 //  W  a7 b7 c7 d7 e7 f7 g7 h7
 //  X  a8 b8 c8 d8 e8 f8 g8 h8
 
-
 // Predictor array index definitions
 #define P_Z (PredPel[0])
 #define P_A (PredPel[1])
@@ -98,7 +97,6 @@ static inline void LowPassForIntra8x8Pred(imgpel *PredPel, int block_up_left, in
     else
       LoopArray[1] = (imgpel) ((PredPel[1] + (PredPel[1]<<1) + PredPel[2] + 2)>>2);
 
-
     for(i = 2; i <16; i++)
     {
       LoopArray[i] = (imgpel) ((PredPel[i-1] + (PredPel[i]<<1) + PredPel[i+1] + 2)>>2);
@@ -160,14 +158,12 @@ static inline void LowPassForIntra8x8PredHor(imgpel *PredPel, int block_up_left,
     else
       LoopArray[1] = (imgpel) ((PredPel[1] + (PredPel[1]<<1) + PredPel[2] + 2)>>2);
 
-
     for(i = 2; i <16; i++)
     {
       LoopArray[i] = (imgpel) ((PredPel[i-1] + (PredPel[i]<<1) + PredPel[i+1] + 2)>>2);
     }
     LoopArray[16] = (imgpel) ((P_P + (P_P<<1) + P_O + 2)>>2);
   }
-
 
   memcpy(&PredPel[0], &LoopArray[0], 17 * sizeof(imgpel));
 }
@@ -218,7 +214,6 @@ static inline void LowPassForIntra8x8PredVer(imgpel *PredPel, int block_up_left,
 
   memcpy(&PredPel[0], &LoopArray[0], 25 * sizeof(imgpel));
 }
-
 
 /*!
  ***********************************************************************
@@ -395,7 +390,6 @@ static inline int intra8x8_vert_pred(Macroblock *currMB,    //!< current macrobl
   int block_available_up_left;
   int block_available_up_right;
 
-
   imgpel **mpr = currSlice->mb_pred[pl];
   int *mb_size = p_Vid->mb_size[IS_LUMA];
 
@@ -489,7 +483,6 @@ static inline int intra8x8_hor_pred(Macroblock *currMB,    //!< current macroblo
 {
   Slice *currSlice = currMB->p_Slice;
   VideoParameters *p_Vid = currMB->p_Vid;
-
 
   int j;
   imgpel PredPel[25];  // array of predictor pels
@@ -1032,7 +1025,6 @@ static inline int intra8x8_vert_right_pred(Macroblock *currMB,    //!< current m
   return DECODING_OK;
 }
 
-
 /*!
  ***********************************************************************
  * \brief
@@ -1560,5 +1552,4 @@ int intra_pred_8x8_normal(Macroblock *currMB,    //!< Current Macroblock
     break;
   }
 }
-
 

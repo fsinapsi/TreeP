@@ -12,7 +12,6 @@
  ************************************************************************
  */
 
-
 /*!
 
   A quick guide to the basics of the RTP decoder implementation
@@ -119,7 +118,6 @@ void OpenRTPFile (char *fn, int *p_BitStreamFile)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -134,7 +132,6 @@ void CloseRTPFile(int *p_BitStreamFile)
     (*p_BitStreamFile) = - 1;
   }
 }
-
 
 /*!
  ************************************************************************
@@ -208,8 +205,6 @@ int GetRTPNALU (VideoParameters *p_Vid, NALU_t *nalu, int BitStreamFile)
     // error code
     return ret;
 }
-
-
 
 /*!
  *****************************************************************************
@@ -316,7 +311,6 @@ void DumpRTPHeader (RTPpacket_t *p)
   printf ("Timestamp: %d\n", (int) p->timestamp);
   printf ("SSRC: %d\n", (int) p->ssrc);
 }
-
 
 /*!
  *****************************************************************************

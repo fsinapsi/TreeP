@@ -269,7 +269,6 @@ static void update_direct_mv_info_temporal(Macroblock *currMB)
   }
 }
 
-
 static inline void update_neighbor_mvs(PicMotionParams **motion, const PicMotionParams *mv_info, int i4)
 {
   (*motion++)[i4 + 1] = *mv_info;
@@ -377,7 +376,6 @@ int get_colocated_info_8x8(Macroblock *currMB, StorablePicture *list1, int i, in
     }
   }
 }
-
 
 static void update_direct_mv_info_spatial_8x8(Macroblock *currMB)
 {
@@ -694,7 +692,6 @@ static void update_direct_mv_info_spatial_4x4(Macroblock *currMB)
     }
   }
 }
-
 
 void update_direct_types(Slice *currSlice)
 {

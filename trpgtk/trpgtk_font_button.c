@@ -96,5 +96,3 @@ void trp_gtk_font_button_set_title( trp_obj_t *obj, trp_obj_t *title )
         }
 }
 
-
-

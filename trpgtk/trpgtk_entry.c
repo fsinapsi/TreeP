@@ -68,5 +68,3 @@ void trp_gtk_entry_set_visibility( trp_obj_t *obj, trp_obj_t *on_off )
             gtk_entry_set_visibility( (GtkEntry *)e, BOOLVAL( on_off ) );
 }
 
-
-

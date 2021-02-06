@@ -63,7 +63,6 @@ static trp_obj_t *trp_arg_internal( uns8b flags, uns32b argc, char *argv[] )
     static uns32b n = 0;
     static trp_cord_t *arg = NULL;
 
-
     if ( flags & 1 ) {
         if ( arg == NULL ) {
             LPWSTR *szArglist;
@@ -125,6 +124,4 @@ trp_obj_t *trp_argv( trp_obj_t *obj )
         return UNDEF;
     return trp_arg_internal( 4, n, NULL );
 }
-
-
 

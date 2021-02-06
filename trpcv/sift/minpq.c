@@ -16,7 +16,6 @@
 static void restore_minpq_order( struct pq_node*, int, int );
 static void decrease_pq_node_key( struct pq_node*, int, int );
 
-
 /************************** Local Inline Functions ***************************/
 
 /* returns the array index of element i's parent */
@@ -25,13 +24,11 @@ static inline int parent( int i )
   return ( i - 1 ) / 2;
 }
 
-
 /* returns the array index of element i's right child */
 static inline int right( int i )
 {
   return 2 * i + 2;
 }
-
 
 /* returns the array index of element i's left child */
 static inline int left( int i )
@@ -39,9 +36,7 @@ static inline int left( int i )
   return 2 * i + 1;
 }
 
-
 /********************** Functions prototyped in minpq.h **********************/
-
 
 /*
   Creates a new minimizing priority queue.
@@ -57,8 +52,6 @@ struct min_pq* minpq_init()
 
   return min_pq;
 }
-
-
 
 /**
   Inserts an element into a minimizing priority queue.
@@ -95,8 +88,6 @@ int minpq_insert( struct min_pq* min_pq, void* data, int key )
   return 0;
 }
 
-
-
 /*
   Returns the element of a minimizing priority queue with the smallest key
   without removing it from the queue.
@@ -115,8 +106,6 @@ void* minpq_get_min( struct min_pq* min_pq )
     }
   return min_pq->pq_array[0].data;
 }
-
-
 
 /*
   Removes and returns the element of a minimizing priority queue with the
@@ -144,7 +133,6 @@ void* minpq_extract_min( struct min_pq* min_pq )
   return data;
 }
 
-
 /*
   De-allocates the memory held by a minimizing priorioty queue
 
@@ -165,7 +153,6 @@ void minpq_release( struct min_pq** min_pq )
       *min_pq = NULL;
     }
 }
-
 
 /************************ Functions prototyped here **************************/
 
@@ -193,8 +180,6 @@ static void decrease_pq_node_key( struct pq_node* pq_array, int i, int key )
       i = parent(i);
     }
 }
-
-
 
 /*
   Recursively restores correct priority queue order to a minimizing pq array

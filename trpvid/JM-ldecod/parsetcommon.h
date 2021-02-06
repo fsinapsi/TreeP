@@ -13,8 +13,6 @@
  ***************************************************************************************
  */
 
-
-
 // In the MPEG-4 AVC/H.264 syntax, frequently flags are used that indicate the presence of
 // certain pieces of information in the NALU.  Here, these flags are also
 // present.  In the encoder, those bits indicate that the values signaled to
@@ -48,7 +46,6 @@ typedef struct
   unsigned int dpb_output_delay_length_minus1;                   // u(5)
   unsigned int time_offset_length;                               // u(5)
 } hrd_parameters_t;
-
 
 typedef struct
 {
@@ -88,7 +85,6 @@ typedef struct
   unsigned int num_reorder_frames;                               // ue(v)
   unsigned int max_dec_frame_buffering;                          // ue(v)
 } vui_seq_parameters_t;
-
 
 #define MAXnum_slice_groups_minus1  8
 typedef struct
@@ -139,7 +135,6 @@ typedef struct
   Boolean   redundant_pic_cnt_present_flag;                   // u(1)
   Boolean   vui_pic_parameters_flag;                          // u(1)
 } pic_parameter_set_rbsp_t;
-
 
 #define MAXnum_ref_frames_in_pic_order_cnt_cycle  256
 typedef struct

@@ -604,5 +604,3 @@ static uns32b trp_vid_bitsused( uns32b val )
     return res;
 }
 
-
-

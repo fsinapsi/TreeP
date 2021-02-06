@@ -342,5 +342,3 @@ void trp_skip( trp_obj_t *obj )
     return;
 }
 
-
-

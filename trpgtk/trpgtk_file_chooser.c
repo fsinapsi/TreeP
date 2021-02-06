@@ -104,5 +104,3 @@ void trp_gtk_file_chooser_set_create_folders( trp_obj_t *obj, trp_obj_t *on_off 
             gtk_file_chooser_set_create_folders( (GtkFileChooser *)o, BOOLVAL( on_off ) );
 }
 
-
-

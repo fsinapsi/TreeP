@@ -61,5 +61,3 @@
         (pix-save-png pix "sift-match.png")
         (close pix) )
 
-
-

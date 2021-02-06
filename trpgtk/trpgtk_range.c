@@ -61,5 +61,3 @@ trp_obj_t *trp_gtk_range_get_upper_stepper_sensitivity( trp_obj_t *obj )
     return res;
 }
 
-
-

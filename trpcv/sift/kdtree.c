@@ -44,9 +44,7 @@ static struct kd_node* explore_to_leaf( struct kd_node*, struct feature*,
 static int insert_into_nbr_array( struct feature*, struct feature**, int, int );
 static int within_rect( CvPoint2D64f, CvRect );
 
-
 /******************** Functions prototyped in keyptdb.h **********************/
-
 
 /*
   A function to build a k-d tree database from keypoints in an array.
@@ -73,8 +71,6 @@ struct kd_node* kdtree_build( struct feature* features, int n )
 
   return kd_root;
 }
-
-
 
 /*
   Finds an image feature's approximate k nearest neighbors in a kd tree using
@@ -168,8 +164,6 @@ int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat, int k,
   return -1;
 }
 
-
-
 /*
   Finds an image feature's approximate k nearest neighbors within a specified
   spatial region in a kd tree using Best Bin First search.
@@ -218,8 +212,6 @@ int kdtree_bbf_spatial_knn( struct kd_node* kd_root, struct feature* feat,
   return t;
 }
 
-
-
 /*
   De-allocates memory held by a kd tree
 
@@ -234,9 +226,7 @@ void kdtree_release( struct kd_node* kd_root )
   free( kd_root );
 }
 
-
 /************************ Functions prototyped here **************************/
-
 
 /*
   Initializes a kd tree node with a set of features.  The node is not
@@ -259,8 +249,6 @@ static struct kd_node* kd_node_init( struct feature* features, int n )
 
   return kd_node;
 }
-
-
 
 /*
   Recursively expands a specified kd tree node into a tree whose leaves
@@ -285,8 +273,6 @@ static void expand_kd_node_subtree( struct kd_node* kd_node )
   if( kd_node->kd_right )
     expand_kd_node_subtree( kd_node->kd_right );
 }
-
-
 
 /*
   Determines the descriptor index at which and the value with which to
@@ -337,8 +323,6 @@ static void assign_part_key( struct kd_node* kd_node )
   kd_node->kv = kv;
 }
 
-
-
 /*
   Finds the median value of an array.  The array's elements are re-ordered
   by this function.
@@ -352,8 +336,6 @@ static double median_select( double* array, int n )
 {
   return rank_select( array, n, (n - 1) / 2 );
 }
-
-
 
 /*
   Finds the element of a specified rank in an array using the linear time
@@ -409,8 +391,6 @@ static double rank_select( double* array, int n, int r )
     }
 }
 
-
-
 /*
   Sorts an array in place into increasing order using insertion sort.
 
@@ -434,8 +414,6 @@ static void insertion_sort( double* array, int n )
       array[j+1] = k;
     }
 }
-
-
 
 /*
   Partitions an array around a specified value.
@@ -466,8 +444,6 @@ static int partition_array( double* array, int n, double pivot )
 
   return i;
 }
-
-
 
 /*
   Partitions the features at a specified kd tree node to create its two
@@ -508,8 +484,6 @@ static void partition_features( struct kd_node* kd_node )
   kd_node->kd_left = kd_node_init( features, j + 1 );
   kd_node->kd_right = kd_node_init( features + ( j + 1 ), ( n - j - 1 ) );
 }
-
-
 
 /*
   Explores a kd tree from a given node to a leaf.  Branching decisions are
@@ -566,8 +540,6 @@ static struct kd_node* explore_to_leaf( struct kd_node* kd_node,
 
   return expl;
 }
-
-
 
 /*
   Inserts a feature into the nearest-neighbor array so that the array remains
@@ -639,8 +611,6 @@ static int insert_into_nbr_array( struct feature* feat, struct feature** nbrs,
 
   return ret;
 }
-
-
 
 /*
   Determines whether a given point lies within a specified rectangular region

@@ -106,7 +106,6 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 Any feedback is very welcome.
 http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
 email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
@@ -214,7 +213,6 @@ vl_rand_permute_indexes (VlRand *self, vl_index *array, vl_size size)
     tmp = array[i] ; array[i] = array[j] ; array[j] = tmp ;
   }
 }
-
 
 /** @brief Generate a random UINT32
  ** @param self random number generator.

@@ -44,5 +44,3 @@ trp_obj_t *trp_exif_file( trp_obj_t *path )
     return UNDEF;
 }
 
-
-

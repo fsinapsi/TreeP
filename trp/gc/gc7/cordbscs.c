@@ -98,7 +98,6 @@ typedef union {
 #define SHORT_LIMIT (sizeof(CordRep) - 1)
         /* Cords shorter than this are C strings */
 
-
 /* Dump the internal representation of x to stdout, with initial 	*/
 /* indentation level n.							*/
 void CORD_dump_inner(CORD x, unsigned n)
@@ -227,7 +226,6 @@ CORD CORD_cat_char_star(CORD x, const char * y, size_t leny)
     }
 }
 
-
 CORD CORD_cat(CORD x, CORD y)
 {
     register size_t result_len;
@@ -267,8 +265,6 @@ CORD CORD_cat(CORD x, CORD y)
         }
     }
 }
-
-
 
 CORD CORD_from_fn(CORD_fn fn, void * client_data, size_t len)
 {
@@ -481,7 +477,6 @@ int CORD_iter5(CORD x, size_t i, CORD_iter_fn f1,
         register struct Concatenation * conc
                         = &(((CordRep *)x) -> concatenation);
 
-
         if (i > 0) {
             register size_t left_len = LEFT_LEN(conc);
 
@@ -612,7 +607,6 @@ void CORD_init_min_len()
     min_len_init = 1;
 }
 
-
 void CORD_init_forest(ForestElement * forest, size_t max_len)
 {
     register int i;
@@ -704,7 +698,6 @@ void CORD_balance_insert(CORD x, size_t len, ForestElement * forest)
     }
 }
 
-
 CORD CORD_balance(CORD x)
 {
     Forest forest;
@@ -718,7 +711,6 @@ CORD CORD_balance(CORD x)
     CORD_balance_insert(x, len, forest);
     return(CORD_concat_forest(forest, len));
 }
-
 
 /* Position primitives	*/
 

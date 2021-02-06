@@ -20,7 +20,6 @@
 #ifndef _BIARIDECOD_H_
 #define _BIARIDECOD_H_
 
-
 /************************************************************************
  * D e f i n i t i o n s
  ***********************************************************************
@@ -95,7 +94,6 @@ static const byte rLPS_table_64x4[64][4]=
   {   2,   2,   2,   2}
 };
 
-
 static const byte AC_next_state_MPS_64[64] =
 {
   1,2,3,4,5,6,7,8,9,10,
@@ -106,7 +104,6 @@ static const byte AC_next_state_MPS_64[64] =
   51,52,53,54,55,56,57,58,59,60,
   61,62,62,63
 };
-
 
 static const byte AC_next_state_LPS_64[64] =
 {
@@ -120,7 +117,6 @@ static const byte AC_next_state_LPS_64[64] =
 };
 
 static const byte renorm_table_32[32]={6,5,4,4,3,3,3,3,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
-
 
 extern void arideco_start_decoding(DecodingEnvironmentPtr eep, unsigned char *code_buffer, int firstbyte, int *code_len);
 extern int  arideco_bits_read(DecodingEnvironmentPtr dep);

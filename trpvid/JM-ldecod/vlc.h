@@ -46,7 +46,6 @@ static const byte LEVRUN1[16]=
   4,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,
 };
 
-
 static const byte NTAB2[4][8][2] =
 {
   {{1,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}},
@@ -106,7 +105,6 @@ extern int GetBits  (byte buffer[],int totbitoffset,int *info, int bitcount, int
 extern int ShowBits (byte buffer[],int totbitoffset,int bitcount, int numbits);
 
 extern int more_rbsp_data (byte buffer[],int totbitoffset,int bytecount);
-
 
 #endif
 

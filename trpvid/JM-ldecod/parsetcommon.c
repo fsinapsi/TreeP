@@ -36,7 +36,6 @@ pic_parameter_set_rbsp_t *AllocPPS ()
    return p;
  }
 
-
 /*!
  *************************************************************************************
  * \brief
@@ -56,7 +55,6 @@ seq_parameter_set_rbsp_t *AllocSPS ()
    return p;
  }
 
-
 /*!
  *************************************************************************************
  * \brief
@@ -75,7 +73,6 @@ seq_parameter_set_rbsp_t *AllocSPS ()
    free (pps);
  }
 
-
  /*!
  *************************************************************************************
  * \brief
@@ -91,7 +88,6 @@ seq_parameter_set_rbsp_t *AllocSPS ()
    assert (sps != NULL);
    free (sps);
  }
-
 
 int sps_is_equal(seq_parameter_set_rbsp_t *sps1, seq_parameter_set_rbsp_t *sps2)
 {

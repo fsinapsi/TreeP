@@ -576,7 +576,6 @@ vl_kdforest_build (VlKDForest * self, vl_size numData, void const * data)
   self -> maxNumNodes = maxNumNodes;
 }
 
-
 /** ------------------------------------------------------------------
  ** @internal @brief
  **/
@@ -669,7 +668,6 @@ vl_kdforest_query_recursively (VlKDForestSearcher * searcher,
         }
       }
     } /* next data point */
-
 
     return nodeIndex ;
   }

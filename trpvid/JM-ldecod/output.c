@@ -27,7 +27,6 @@ static void img2buf_byte   (imgpel** imgX, unsigned char* buf, int size_x, int s
 static void img2buf_normal (imgpel** imgX, unsigned char* buf, int size_x, int size_y, int symbol_size_in_bytes, int crop_left, int crop_right, int crop_top, int crop_bottom, int iOutStride);
 static void img2buf_endian (imgpel** imgX, unsigned char* buf, int size_x, int size_y, int symbol_size_in_bytes, int crop_left, int crop_right, int crop_top, int crop_bottom, int iOutStride);
 
-
 /*!
  ************************************************************************
  * \brief
@@ -258,7 +257,6 @@ static void img2buf_endian (imgpel** imgX, unsigned char* buf, int size_x, int s
   }
 }
 
-
 #if (PAIR_FIELDS_IN_OUTPUT)
 
 void clear_picture(VideoParameters *p_Vid, StorablePicture *p);
@@ -291,7 +289,6 @@ void flush_pending_output(VideoParameters *p_Vid, int p_out)
 
   p_Vid->pending_output_state = FRAME;
 }
-
 
 /*!
  ************************************************************************
@@ -431,7 +428,6 @@ void write_picture(VideoParameters *p_Vid, StorablePicture *p, int p_out, int re
   write_out_picture(p_Vid, p, p_out);
 }
 
-
 #endif
 
 static void allocate_p_dec_pic(VideoParameters *p_Vid, DecodedPicList *pDecPic, StorablePicture *p, int iLumaSize, int iFrameSize, int iLumaSizeX, int iLumaSizeY, int iChromaSizeX, int iChromaSizeY)
@@ -526,8 +522,6 @@ static void write_out_picture(VideoParameters *p_Vid, StorablePicture *p, int p_
   if (p_out == -1)
     return;
 
-
-
   // KS: this buffer should actually be allocated only once, but this is still much faster than the previous version
   pDecPic = get_one_avail_dec_pic_from_list(p_Vid->pDecOuputPic, 0, 0);
   if( (pDecPic->pY == NULL)
@@ -549,7 +543,6 @@ static void write_out_picture(VideoParameters *p_Vid, StorablePicture *p, int p_
   {
     no_mem_exit("write_out_picture: buf");
   }
-
 
   if(rgb_output)
   {
@@ -816,7 +809,6 @@ void flush_direct_output(VideoParameters *p_Vid, int p_out)
   p_Vid->out_buffer->bottom_field = NULL;
   p_Vid->out_buffer->is_used = 0;
 }
-
 
 /*!
  ************************************************************************

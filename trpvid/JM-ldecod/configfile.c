@@ -99,7 +99,6 @@ void JMDecHelpExit (void)
   exit(-1);
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -250,7 +249,6 @@ void ParseCommand(InputParameters *p_Inp, int ac, char *av[])
         ContentLen += (int) strlen (av[NumberParams++]);        // Space for all the strings
       ContentLen += 1000;                     // Additional 1000 bytes for spaces and \0s
 
-
       if ((content = malloc (ContentLen))==NULL) no_mem_exit("Configure: content");;
       content[0] = '\0';
 
@@ -293,7 +291,6 @@ void ParseCommand(InputParameters *p_Inp, int ac, char *av[])
   if (p_Inp->bDisplayDecParams)
     DisplayParams(Map, "Decoder Parameters");
 }
-
 
 /*!
  ***********************************************************************

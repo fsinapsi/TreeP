@@ -39,5 +39,3 @@ void trp_gtk_button_clicked( trp_obj_t *obj )
             gtk_button_clicked( (GtkButton *)oo );
 }
 
-
-

@@ -128,7 +128,6 @@ static int predict_nnz(Macroblock *currMB, int block_type, int i,int j)
   return pred_nnz;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -715,7 +714,6 @@ static void read_comp_coeff_4x4_CAVLC (Macroblock *currMB, ColorPlane pl, int (*
       cur_context = CR;
   }
 
-
   for (block_y = 0; block_y < 4; block_y += 2) /* all modes */
   {
     block_y4 = block_y << 2;
@@ -1059,7 +1057,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_400(Macroblock *currMB)
   const byte (*pos_scan4x4)[2] = ((p_Vid->structure == FRAME) && (!currMB->mb_field)) ? SNGL_SCAN : FIELD_SCAN;
   const byte *pos_scan_4x4 = pos_scan4x4[0];
 
-
   // read CBP if not new intra mode
   if (!IS_I16MB (currMB))
   {
@@ -1078,7 +1075,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_400(Macroblock *currMB)
     TRACE_STRING("coded_block_pattern");
     dP->readSyntaxElement(currMB, &currSE, dP);
     currMB->cbp = cbp = currSE.value1;
-
 
     //============= Transform size flag for INTER MBs =============
     //-------------------------------------------------------------
@@ -1169,7 +1165,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_400(Macroblock *currMB)
           //currSlice->fcf[0][j0][i0] = levarr[k];// add new intra DC coeff
         }
       }
-
 
       if(currMB->is_lossless == FALSE)
         itrans_2(currMB, (ColorPlane) currSlice->colour_plane_id);// transform new intra DC
@@ -1243,7 +1238,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_422(Macroblock *currMB)
   const byte (*pos_scan4x4)[2] = ((p_Vid->structure == FRAME) && (!currMB->mb_field)) ? SNGL_SCAN : FIELD_SCAN;
   const byte *pos_scan_4x4 = pos_scan4x4[0];
 
-
   // read CBP if not new intra mode
   if (!IS_I16MB (currMB))
   {
@@ -1262,7 +1256,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_422(Macroblock *currMB)
     TRACE_STRING("coded_block_pattern");
     dP->readSyntaxElement(currMB, &currSE, dP);
     currMB->cbp = cbp = currSE.value1;
-
 
     //============= Transform size flag for INTER MBs =============
     //-------------------------------------------------------------
@@ -1354,7 +1347,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_422(Macroblock *currMB)
         }
       }
 
-
       if(currMB->is_lossless == FALSE)
         itrans_2(currMB, (ColorPlane) currSlice->colour_plane_id);// transform new intra DC
     }
@@ -1411,7 +1403,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_422(Macroblock *currMB)
           InvLevelScale4x4 = currSlice->InvLevelScale4x4_Intra[PLANE_U + uv][qp_rem_uv_dc];
         else
           InvLevelScale4x4 = currSlice->InvLevelScale4x4_Inter[PLANE_U + uv][qp_rem_uv_dc];
-
 
         //===================== CHROMA DC YUV422 ======================
         currSlice->read_coeff_4x4_CAVLC(currMB, CHROMA_DC, 0, 0, levarr, runarr, &numcoeff);
@@ -1606,7 +1597,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_444(Macroblock *currMB)
     dP->readSyntaxElement(currMB, &currSE, dP);
     currMB->cbp = cbp = currSE.value1;
 
-
     //============= Transform size flag for INTER MBs =============
     //-------------------------------------------------------------
     need_transform_size_flag = (((currMB->mb_type >= 1 && currMB->mb_type <= 3)||
@@ -1696,7 +1686,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_444(Macroblock *currMB)
           //currSlice->fcf[0][j0][i0] = levarr[k];// add new intra DC coeff
         }
       }
-
 
       if(currMB->is_lossless == FALSE)
         itrans_2(currMB, (ColorPlane) currSlice->colour_plane_id);// transform new intra DC
@@ -1936,7 +1925,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_420(Macroblock *currMB)
         }
       }
 
-
       if(currMB->is_lossless == FALSE)
         itrans_2(currMB, (ColorPlane) currSlice->colour_plane_id);// transform new intra DC
     }
@@ -2000,7 +1988,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_420(Macroblock *currMB)
           currSlice->cofu[coef_ctr]=levarr[k];
         }
       }
-
 
       if (smb || (currMB->is_lossless == TRUE)) // check to see if MB type is SPred or SIntra4x4
       {
@@ -2103,7 +2090,6 @@ static void read_CBP_and_coeffs_from_NAL_CAVLC_420(Macroblock *currMB)
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -2124,7 +2110,6 @@ void set_read_comp_coeff_cavlc(Macroblock *currMB)
     currMB->read_comp_coeff_8x8_CAVLC = read_comp_coeff_8x8_CAVLC_ls;
   }
 }
-
 
 void set_read_CBP_and_coeffs_cavlc(Slice *currSlice)
 {

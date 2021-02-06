@@ -1316,7 +1316,6 @@ vl_malloc (size_t n)
   //return (memalign)(32,n) ;
 }
 
-
 /** @brief Reallocate a memory block
  ** @param ptr pointer to a memory block previously allocated.
  ** @param n size in bytes of the new block.

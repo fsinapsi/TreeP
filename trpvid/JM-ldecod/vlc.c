@@ -18,7 +18,6 @@
 #include "vlc.h"
 #include "elements.h"
 
-
 // A little trick to avoid those horrible #if TRACE all over the source code
 #if TRACE
 #define SYMTRACESTRING(s) strncpy(symbol.tracestring,s,TRACESTRING_SIZE)
@@ -58,7 +57,6 @@ int read_ue_v (char *tracestring, Bitstream *bitstream, int *used_bits)
   return symbol.value1;
 }
 
-
 /*!
  *************************************************************************************
  * \brief
@@ -88,7 +86,6 @@ int read_se_v (char *tracestring, Bitstream *bitstream, int *used_bits)
   *used_bits+=symbol.len;
   return symbol.value1;
 }
-
 
 /*!
  *************************************************************************************
@@ -165,7 +162,6 @@ int read_i_v (int LenInBits, char*tracestring, Bitstream *bitstream, int *used_b
   return symbol.inf;
 }
 
-
 /*!
  *************************************************************************************
  * \brief
@@ -187,8 +183,6 @@ Boolean read_u_1 (char *tracestring, Bitstream *bitstream, int *used_bits)
 {
   return (Boolean) read_u_v (1, tracestring, bitstream, used_bits);
 }
-
-
 
 /*!
  ************************************************************************
@@ -225,7 +219,6 @@ void linfo_se(int len,  int info, int *value1, int *dummy)
     *value1 = -*value1;
 }
 
-
 /*!
  ************************************************************************
  * \par Input:
@@ -241,7 +234,6 @@ void linfo_cbp_intra_normal(int len,int info,int *cbp, int *dummy)
   linfo_ue(len, info, &cbp_idx, dummy);
   *cbp=NCBP[1][cbp_idx][0];
 }
-
 
 /*!
  ************************************************************************
@@ -325,7 +317,6 @@ void linfo_levrun_inter(int len, int info, int *level, int *irun)
     *level = 0;
 }
 
-
 /*!
  ************************************************************************
  * \par Input:
@@ -380,7 +371,6 @@ int readSyntaxElement_VLC(SyntaxElement *sym, Bitstream *currStream)
 
   return 1;
 }
-
 
 /*!
  ************************************************************************
@@ -448,7 +438,6 @@ int GetVLCSymbol_IntraMode (byte buffer[],int totbitoffset,int *info, int byteco
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -496,7 +485,6 @@ int more_rbsp_data (byte buffer[],int totbitoffset,int bytecount)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -512,8 +500,6 @@ int uvlc_startcode_follows(Slice *currSlice, int dummy)
 
   return (!(more_rbsp_data(buf, currStream->frame_bitoffset,currStream->bitstream_length)));
 }
-
-
 
 /*!
  ************************************************************************
@@ -574,7 +560,6 @@ int GetVLCSymbol (byte buffer[],int totbitoffset,int *info, int bytecount)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -606,7 +591,6 @@ static inline int ShowBitsThres (int inf, int numbits)
   return inf; //Will be a small unsigned integer so will not need any conversion when returning as int
   */
 }
-
 
 /*!
  ************************************************************************
@@ -658,7 +642,6 @@ static int code_from_bitstream_2d(SyntaxElement *sym,
   return -1;  // failed to find code
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -681,8 +664,6 @@ int readSyntaxElement_FLC(SyntaxElement *sym, Bitstream *currStream)
 
   return 1;
 }
-
-
 
 /*!
  ************************************************************************
@@ -787,7 +768,6 @@ int readSyntaxElement_NumCoeffTrailingOnes(SyntaxElement *sym,
 
   return retval;
 }
-
 
 /*!
  ************************************************************************
@@ -1142,7 +1122,6 @@ int readSyntaxElement_TotalZerosChromaDC(VideoParameters *p_Vid, SyntaxElement *
   return retval;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1188,7 +1167,6 @@ int readSyntaxElement_Run(SyntaxElement *sym, Bitstream *currStream)
 
   return retval;
 }
-
 
 /*!
  ************************************************************************

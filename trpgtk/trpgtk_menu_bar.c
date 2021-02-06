@@ -23,5 +23,3 @@ trp_obj_t *trp_gtk_menu_bar_new()
     return trp_gtk_widget( gtk_menu_bar_new() );
 }
 
-
-

@@ -38,7 +38,6 @@ Boolean mb_is_available(int mbAddr, Macroblock *currMB)
   return TRUE;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -74,7 +73,6 @@ void CheckAvailabilityOfNeighbors(Macroblock *currMB)
     currMB->mbAddrB = currMB->mbAddrD + 1;
     currMB->mbAddrC = currMB->mbAddrB + 1;
 
-
     currMB->mbAvailA = (Boolean) (mb_is_available(currMB->mbAddrA, currMB) && ((p_pic_pos->x)!=0));
     currMB->mbAvailD = (Boolean) (mb_is_available(currMB->mbAddrD, currMB) && ((p_pic_pos->x)!=0));
     currMB->mbAvailC = (Boolean) (mb_is_available(currMB->mbAddrC, currMB) && (((p_pic_pos + 1)->x)!=0));
@@ -105,12 +103,10 @@ void CheckAvailabilityOfNeighborsNormal(Macroblock *currMB)
   currMB->mbAddrB = currMB->mbAddrD + 1;
   currMB->mbAddrC = currMB->mbAddrB + 1;
 
-
   currMB->mbAvailA = (Boolean) (mb_is_available(currMB->mbAddrA, currMB) && ((p_pic_pos->x)!=0));
   currMB->mbAvailD = (Boolean) (mb_is_available(currMB->mbAddrD, currMB) && ((p_pic_pos->x)!=0));
   currMB->mbAvailC = (Boolean) (mb_is_available(currMB->mbAddrC, currMB) && (((p_pic_pos + 1)->x)!=0));
   currMB->mbAvailB = (Boolean) (mb_is_available(currMB->mbAddrB, currMB));
-
 
   currMB->mb_left = (currMB->mbAvailA) ? &(currSlice->mb_data[currMB->mbAddrA]) : NULL;
   currMB->mb_up   = (currMB->mbAvailB) ? &(currSlice->mb_data[currMB->mbAddrB]) : NULL;
@@ -144,7 +140,6 @@ void CheckAvailabilityOfNeighborsMBAFF(Macroblock *currMB)
   currMB->mb_left = (currMB->mbAvailA) ? &(currSlice->mb_data[currMB->mbAddrA]) : NULL;
   currMB->mb_up   = (currMB->mbAvailB) ? &(currSlice->mb_data[currMB->mbAddrB]) : NULL;
 }
-
 
 /*!
  ************************************************************************
@@ -186,7 +181,6 @@ void get_mb_pos (VideoParameters *p_Vid, int mb_addr, int mb_size[2], short *x, 
   (*x) = (short) ((*x) * mb_size[0]);
   (*y) = (short) ((*y) * mb_size[1]);
 }
-
 
 /*!
  ************************************************************************
@@ -607,7 +601,6 @@ void getAffNeighbour(Macroblock *currMB, int xN, int yN, int mb_size[2], PixelPo
     pix->pos_y = pix->pos_y + pix->y;
   }
 }
-
 
 /*!
  ************************************************************************

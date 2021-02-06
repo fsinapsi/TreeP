@@ -146,5 +146,3 @@ trp_obj_t *trp_id3tag_file( trp_obj_t *path )
     return res;
 }
 
-
-

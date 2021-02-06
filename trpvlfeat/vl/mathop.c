@@ -598,7 +598,6 @@ VL_XCAT(vl_eval_vector_comparison_on_all_pairs_, SFX)
 /* VL_MATHOP_INSTANTIATING */
 #endif
 
-
 /* ---------------------------------------------------------------- */
 /*                                               Numerical analysis */
 /* ---------------------------------------------------------------- */
@@ -825,7 +824,6 @@ vl_lapack_dlasv2 (double *smin,
   *smin = isign(tsign * sign(f) * sign(h)) * (*smin) ;
 }
 
-
 /** @brief Solve a 3x3 linear system
  ** @param x result.
  ** @param A system matrix.
@@ -1021,7 +1019,6 @@ vl_gaussian_elimination (double * A, vl_size numRows, vl_size numColumns)
     VL_PRINTF("\n") ;
   }
 #endif
-
 
   return VL_ERR_OK ;
 }

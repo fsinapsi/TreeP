@@ -516,7 +516,6 @@ static int intra4x4_vert_right_pred(Macroblock *currMB,    //!< current macroblo
   return DECODING_OK;
 }
 
-
 /*!
  ***********************************************************************
  * \brief
@@ -555,7 +554,6 @@ static int intra4x4_vert_left_pred(Macroblock *currMB,    //!< current macrobloc
     block_available_up       = pix_b.available;
     block_available_up_right = pix_c.available;
   }
-
 
   if (!block_available_up)
     printf ("warning: Intra_4x4_Vertical_Left prediction mode not allowed at mb %d\n", (int) currSlice->current_mb_nr);
@@ -757,7 +755,6 @@ static int intra4x4_hor_down_pred(Macroblock *currMB,    //!< current macroblock
 
   return DECODING_OK;
 }
-
 
 /*!
  ***********************************************************************

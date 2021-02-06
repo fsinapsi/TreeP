@@ -29,5 +29,4 @@ extern void get_mb_pos              (VideoParameters *p_Vid, int mb_addr, int mb
 extern void get_mb_block_pos_normal (BlockPos *PicPos, int mb_addr, short *x, short *y);
 extern void get_mb_block_pos_mbaff  (BlockPos *PicPos, int mb_addr, short *x, short *y);
 
-
 #endif

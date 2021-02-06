@@ -26,7 +26,6 @@
 #include "mc_prediction.h"
 #include "macroblock.h"
 
-
 // static function declarations
 static int concealByCopy(frame *recfr, int currMBNum, objectBuffer_t *object_list, int picSizeX);
 static int concealByTrial(frame *recfr, imgpel *predMB,
@@ -607,7 +606,6 @@ static void buildPredRegionYUV(VideoParameters *p_Vid, int *mv, int x, int y, im
     }
   }
 
-
   for (j = 0; j < 16; j++)
   {
     for (i = 0; i < 16; i++)
@@ -901,7 +899,6 @@ static void buildPredblockRegionYUV(VideoParameters *p_Vid, int *mv,
     for(ii=0;ii<BLOCK_SIZE;ii++)
       currSlice->mb_pred[LumaComp][jj][ii]=tmp_block[jj][ii];
 
-
   for (j = 0; j < 4; j++)
   {
     for (i = 0; i < 4; i++)
@@ -1027,7 +1024,6 @@ static inline int compare_pic_by_poc_asc( const void *arg1, const void *arg2 )
   else
     return 0;
 }
-
 
 /*!
 ************************************************************************
@@ -1269,7 +1265,6 @@ copy_prev_pic_to_concealed_pic(StorablePicture *picture, DecodedPictureBuffer *p
   p_Vid->conceal_slice_type = P_SLICE;
   copy_to_conceal(ref_pic, picture, p_Vid);
 }
-
 
 /*!
 ************************************************************************
@@ -1525,7 +1520,6 @@ void init_lists_for_non_reference_loss(DecodedPictureBuffer *p_Dpb, int currSlic
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -1611,7 +1605,6 @@ void print_node( struct concealment_node *ptr )
   printf("Missing POC=%d\n", ptr->missingpocs );
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -1637,7 +1630,6 @@ void print_list( struct concealment_node *ptr )
 ************************************************************************
 */
 
-
 static void add_node( VideoParameters *p_Vid, struct concealment_node *concealment_new )
 {
   if( p_Vid->concealment_head == NULL )
@@ -1649,7 +1641,6 @@ static void add_node( VideoParameters *p_Vid, struct concealment_node *concealme
   p_Vid->concealment_end = concealment_new;
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -1657,7 +1648,6 @@ static void add_node( VideoParameters *p_Vid, struct concealment_node *concealme
 *
 ************************************************************************
 */
-
 
 static void delete_node( VideoParameters *p_Vid, struct concealment_node *ptr )
 {
@@ -1795,7 +1785,6 @@ void sliding_window_poc_management(DecodedPictureBuffer *p_Dpb, StorablePicture 
       p_Vid->pocs_in_dpb[i] = p_Vid->pocs_in_dpb[i+1];
   }
 }
-
 
 /*!
 ************************************************************************

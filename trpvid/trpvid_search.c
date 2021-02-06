@@ -133,5 +133,3 @@ static trp_obj_t *trp_vid_search_internal( int verso, trp_obj_t *obj, trp_obj_t 
     return obj;
 }
 
-
-

@@ -67,5 +67,3 @@ void trp_gtk_progress_bar_set_pulse_step( trp_obj_t *obj, trp_obj_t *percent )
             gtk_progress_bar_set_pulse_step( (GtkProgressBar *)oo, p );
 }
 
-
-

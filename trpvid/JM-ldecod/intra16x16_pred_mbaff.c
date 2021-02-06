@@ -97,8 +97,6 @@ static int intra16x16_dc_pred_mbaff(Macroblock *currMB, ColorPlane pl)
   return DECODING_OK;
 }
 
-
-
 /*!
  ***********************************************************************
  * \brief
@@ -150,7 +148,6 @@ static int intra16x16_vert_pred_mbaff(Macroblock *currMB, ColorPlane pl)
 
   return DECODING_OK;
 }
-
 
 /*!
  ***********************************************************************

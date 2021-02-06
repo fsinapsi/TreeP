@@ -685,5 +685,3 @@ trp_obj_t *trp_vid_transform_8x8_mode_flag( trp_obj_t *obj, trp_obj_t *idx )
     return vid->pps[ i ]->transform_8x8_mode_flag ? TRP_TRUE : TRP_FALSE;
 }
 
-
-

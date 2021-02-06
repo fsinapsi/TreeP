@@ -33,8 +33,6 @@
 #include "global.h"
 #include "elements.h"
 
-
-
 /*!
  ***********************************************************************
  * \brief
@@ -135,7 +133,6 @@ void reset_ec_flags(VideoParameters *p_Vid)
   for (i=0; i<SE_MAX_ELEMENTS; i++)
     p_Vid->ec_flag[i] = NO_EC;
 }
-
 
 /*!
  ***********************************************************************

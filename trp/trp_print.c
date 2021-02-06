@@ -287,5 +287,3 @@ static uns8b trp_print_flush( trp_print_t *p )
     return 0;
 }
 
-
-

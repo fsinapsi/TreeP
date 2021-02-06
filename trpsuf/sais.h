@@ -47,7 +47,6 @@ sais_bwt(const unsigned char *T, unsigned char *U, int *A, int n);
 int
 sais_int_bwt(const int *T, int *U, int *A, int n, int k);
 
-
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

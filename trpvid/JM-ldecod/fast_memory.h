@@ -17,7 +17,6 @@
 
 #include "typedefs.h"
 
-
 static inline void fast_memset(void *dst,int value,int width)
 {
   memset(dst,value,width);

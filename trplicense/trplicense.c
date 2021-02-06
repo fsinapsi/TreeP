@@ -5979,5 +5979,3 @@ trp_obj_t *trp_license_lgpl3()
     return trp_license_internal( _trp_lgpl3, 2639, 7644 );
 }
 
-
-

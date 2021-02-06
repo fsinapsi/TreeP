@@ -180,6 +180,5 @@ VL_EXPORT VlKDForest * vl_kdforest_searcher_get_forest (VlKDForestSearcher const
 VL_EXPORT VlKDForestSearcher * vl_kdforest_get_searcher (VlKDForest const * self, vl_uindex pos) ;
 /** @} */
 
-
 /* VL_KDTREE_H */
 #endif

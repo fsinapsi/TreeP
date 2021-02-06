@@ -414,7 +414,6 @@ static int intra4x4_diag_down_left_pred(Macroblock *currMB,    //!< current macr
     // P_A through P_D
     memcpy(&PredPel[1], pred_pel, BLOCK_SIZE * sizeof(imgpel));
 
-
     // P_E through P_H
     if (block_available_up_right)
     {
@@ -502,7 +501,6 @@ static int intra4x4_vert_right_pred(Macroblock *currMB,    //!< current macroblo
     // P_A through P_D
     memcpy(&PredPel[1], pred_pel, BLOCK_SIZE * sizeof(imgpel));
 
-
     P_I = *(*(img_pred++) + pix_x);
     P_J = *(*(img_pred++) + pix_x);
     P_K = *(*(img_pred++) + pix_x);
@@ -529,7 +527,6 @@ static int intra4x4_vert_right_pred(Macroblock *currMB,    //!< current macroblo
 
   return DECODING_OK;
 }
-
 
 /*!
  ***********************************************************************
@@ -570,7 +567,6 @@ static int intra4x4_vert_left_pred(Macroblock *currMB,    //!< current macrobloc
     block_available_up_right = pix_c.available;
   }
 
-
   if (!block_available_up)
     printf ("warning: Intra_4x4_Vertical_Left prediction mode not allowed at mb %d\n", (int) currSlice->current_mb_nr);
   else
@@ -584,7 +580,6 @@ static int intra4x4_vert_left_pred(Macroblock *currMB,    //!< current macrobloc
     // form predictor pels
     // P_A through P_D
     memcpy(&PredPel[1], pred_pel, BLOCK_SIZE * sizeof(imgpel));
-
 
     // P_E through P_H
     if (block_available_up_right)
@@ -748,7 +743,6 @@ static int intra4x4_hor_down_pred(Macroblock *currMB,    //!< current macroblock
     // P_A through P_D
     memcpy(&PredPel[1], pred_pel, BLOCK_SIZE * sizeof(imgpel));
 
-
     P_I = *(*(img_pred++) + pix_x);
     P_J = *(*(img_pred++) + pix_x);
     P_K = *(*(img_pred++) + pix_x);
@@ -775,7 +769,6 @@ static int intra4x4_hor_down_pred(Macroblock *currMB,    //!< current macroblock
 
   return DECODING_OK;
 }
-
 
 /*!
  ***********************************************************************

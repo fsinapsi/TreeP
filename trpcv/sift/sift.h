@@ -37,7 +37,6 @@ struct detection_data
 
 struct feature;
 
-
 /******************************* Defs and macros *****************************/
 
 /** default number of sampled intervals per octave */
@@ -97,7 +96,6 @@ struct feature;
 /* returns a feature's detection data */
 #define feat_detection_data(f) ( (struct detection_data*)(f->feature_data) )
 
-
 /*************************** Function Prototypes *****************************/
 
 /**
@@ -113,8 +111,6 @@ struct feature;
    @see _sift_features()
 */
 extern int sift_features( IplImage* img, struct feature** feat );
-
-
 
 /**
    Finda SIFT features in an image using user-specified parameter values.  All

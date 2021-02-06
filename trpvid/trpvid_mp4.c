@@ -233,5 +233,3 @@ trp_obj_t *trp_vid_mp4_sample_offset( trp_obj_t *obj, trp_obj_t *spl )
     return trp_sig64( res );
 }
 
-
-

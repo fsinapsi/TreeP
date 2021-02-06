@@ -564,5 +564,3 @@ trp_obj_t *trp_assoc_root( trp_obj_t *obj )
     return trp_cord( (((trp_assoc_t *)obj)->t.root)->name );
 }
 
-
-

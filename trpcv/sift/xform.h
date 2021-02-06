@@ -11,7 +11,6 @@
 
 #include <cxcore.h>
 
-
 /********************************** Structures *******************************/
 
 struct feature;
@@ -37,7 +36,6 @@ struct ransac_data
 /* extracts a feature's RANSAC data */
 #define feat_ransac_data( feat ) ( (struct ransac_data*) (feat)->feature_data )
 
-
 /**
    Prototype for transformation functions passed to ransac_xform().  Functions
    of this type should compute a transformation matrix given a set of point
@@ -54,7 +52,6 @@ struct ransac_data
 typedef CvMat* (*ransac_xform_fn)( CvPoint2D64f* pts, CvPoint2D64f* mpts,
                                    int n );
 
-
 /**
    Prototype for error functions passed to ransac_xform().  For a given
    point, its correspondence, and a transform, functions of this type should
@@ -70,9 +67,7 @@ typedef CvMat* (*ransac_xform_fn)( CvPoint2D64f* pts, CvPoint2D64f* mpts,
 */
 typedef double (*ransac_err_fn)( CvPoint2D64f pt, CvPoint2D64f mpt, CvMat* T );
 
-
 /***************************** Function Prototypes ***************************/
-
 
 /**
    Calculates a best-fit image transform from image feature correspondences
@@ -118,7 +113,6 @@ extern CvMat* ransac_xform( struct feature* features, int n, int mtype,
                             double err_tol, struct feature*** inliers,
                             int* n_in );
 
-
 /**
    Calculates a planar homography from point correspondeces using the direct
    linear transform.  Intended for use as a ransac_xform_fn.
@@ -133,7 +127,6 @@ extern CvMat* ransac_xform( struct feature* features, int n, int mtype,
      or NULL if fewer than 4 correspondences were provided
 */
 extern CvMat* dlt_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n );
-
 
 /**
    Calculates a least-squares planar homography from point correspondeces.
@@ -150,7 +143,6 @@ extern CvMat* dlt_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n );
 */
 extern CvMat* lsq_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n );
 
-
 /**
    Calculates the transfer error between a point and its correspondence for
    a given homography, i.e. for a point \f$x\f$, it's correspondence \f$x'\f$,
@@ -164,7 +156,6 @@ extern CvMat* lsq_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n );
    @return Returns the transfer error between \a pt and \a mpt given \a H
 */
 extern double homog_xfer_err( CvPoint2D64f pt, CvPoint2D64f mpt, CvMat* H );
-
 
 /**
    Performs a perspective transformation on a single point.  That is, for a
@@ -185,6 +176,5 @@ extern double homog_xfer_err( CvPoint2D64f pt, CvPoint2D64f mpt, CvMat* H );
    @return Returns the point \f$(u, v)\f$ as above.
 */
 extern CvPoint2D64f persp_xform_pt( CvPoint2D64f pt, CvMat* T );
-
 
 #endif

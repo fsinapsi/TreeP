@@ -42,7 +42,6 @@ struct sha1_ctx
   uint32_t buffer[32];
 };
 
-
 /* Initialize structure containing state of computation. */
 extern void sha1_init_ctx (struct sha1_ctx *ctx);
 
@@ -66,12 +65,10 @@ extern void sha1_process_bytes (const void *buffer, size_t len,
    ASCII representation of the message digest.  */
 extern void *sha1_finish_ctx (struct sha1_ctx *ctx, void *resbuf);
 
-
 /* Put result from CTX in first 20 bytes following RESBUF.  The result is
    always in little endian byte order, so that a byte-wise output yields
    to the wanted ASCII representation of the message digest.  */
 extern void *sha1_read_ctx (const struct sha1_ctx *ctx, void *resbuf);
-
 
 /* Compute SHA1 message digest for bytes read from STREAM.  The
    resulting message digest number will be written into the 20 bytes

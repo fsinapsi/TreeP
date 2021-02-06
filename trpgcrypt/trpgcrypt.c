@@ -1110,5 +1110,3 @@ trp_obj_t *trp_gcry_md_hash_file( trp_obj_t *algo, trp_obj_t *path )
     return path;
 }
 
-
-

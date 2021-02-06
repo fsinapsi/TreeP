@@ -65,7 +65,6 @@ static const unsigned char subblk_offset_x[3][8][4] =
   }
 };
 
-
 static const unsigned char subblk_offset_y[3][8][4] =
 {
   {

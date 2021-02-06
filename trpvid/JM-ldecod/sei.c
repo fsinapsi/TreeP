@@ -189,7 +189,6 @@ void InterpretSEIMessage(byte* msg, int size, VideoParameters *p_Vid, Slice *pSl
   assert( offset+1 == size );
 }
 
-
 /*!
 ************************************************************************
 *  \brief
@@ -386,7 +385,6 @@ void interpret_spare_pic( byte* payload, int size, VideoParameters *p_Vid )
             }
           }
 
-
         }
       break;
     default:
@@ -443,7 +441,6 @@ void interpret_spare_pic( byte* payload, int size, VideoParameters *p_Vid )
 
   free(buf);
 }
-
 
 /*!
  ************************************************************************
@@ -550,7 +547,6 @@ void interpret_subsequence_layer_characteristics_info( byte* payload, int size, 
   free (buf);
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -642,7 +638,6 @@ void interpret_subsequence_characteristics_info( byte* payload, int size, VideoP
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -690,7 +685,6 @@ void interpret_scene_information( byte* payload, int size, VideoParameters *p_Vi
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -716,7 +710,6 @@ void interpret_filler_payload_info( byte* payload, int size, VideoParameters *p_
     }
   }
 
-
 #ifdef PRINT_FILLER_PAYLOAD_INFO
   printf("Filler payload SEI message\n");
   if (payload_cnt==size)
@@ -733,7 +726,6 @@ void interpret_filler_payload_info( byte* payload, int size, VideoParameters *p_
 #undef PRINT_FILLER_PAYLOAD_INFO
 #endif
 }
-
 
 /*!
  ************************************************************************
@@ -783,7 +775,6 @@ void interpret_user_data_unregistered_info( byte* payload, int size, VideoParame
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -828,7 +819,6 @@ void interpret_user_data_registered_itu_t_t35_info( byte* payload, int size, Vid
 #undef PRINT_USER_DATA_REGISTERED_ITU_T_T35_INFO
 #endif
 }
-
 
 /*!
  ************************************************************************
@@ -890,7 +880,6 @@ void interpret_pan_scan_rect_info( byte* payload, int size, VideoParameters *p_V
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -908,9 +897,7 @@ void interpret_recovery_point_info( byte* payload, int size, VideoParameters *p_
 {
   int recovery_frame_cnt, exact_match_flag, broken_link_flag, changing_slice_group_idc;
 
-
   Bitstream* buf;
-
 
   buf = malloc(sizeof(Bitstream));
   buf->bitstream_length = size;
@@ -939,7 +926,6 @@ void interpret_recovery_point_info( byte* payload, int size, VideoParameters *p_
 #undef PRINT_RECOVERY_POINT
 #endif
 }
-
 
 /*!
  ************************************************************************
@@ -1109,7 +1095,6 @@ void interpret_full_frame_freeze_info( byte* payload, int size, VideoParameters 
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -1216,7 +1201,6 @@ void interpret_progressive_refinement_start_info( byte* payload, int size, Video
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -1254,7 +1238,6 @@ void interpret_progressive_refinement_end_info( byte* payload, int size, VideoPa
 #undef PRINT_PROGRESSIVE_REFINEMENT_END_INFO
 #endif
 }
-
 
 /*!
  ************************************************************************
@@ -1579,7 +1562,6 @@ void interpret_reserved_info( byte* payload, int size, VideoParameters *p_Vid )
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -1658,7 +1640,6 @@ void interpret_buffering_period_info( byte* payload, int size, VideoParameters *
 #endif
 }
 
-
 /*!
  ************************************************************************
  *  \brief
@@ -1702,7 +1683,6 @@ void interpret_picture_timing_info( byte* payload, int size, VideoParameters *p_
   buf->frame_bitoffset = 0;
 
   p_Dec->UsedBits = 0;
-
 
 #ifdef PRINT_PICTURE_TIMING_INFO
   printf("Picture timing SEI message\n");
@@ -2244,7 +2224,6 @@ void interpret_post_filter_hints_info( byte* payload, int size, VideoParameters 
   free_mem3Dint (filter_hint);
   free( buf );
 }
-
 
 void interpret_green_metadata_info(byte* payload, int size, VideoParameters *p_Vid )
 {

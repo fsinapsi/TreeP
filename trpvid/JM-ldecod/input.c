@@ -52,7 +52,6 @@ void initInput(VideoParameters *p_Vid, FrameFormat *source, FrameFormat *output)
     p_Vid->buf2img = buf2img_bitshift;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -548,7 +547,6 @@ void buf2img_bitshift ( imgpel** imgX,            //!< Pointer to image plane
     }
   }
 }
-
 
 /*!
  ************************************************************************

@@ -34,5 +34,3 @@ trp_obj_t *trp_gtk_check_button_new( trp_obj_t *label )
     return trp_gtk_widget( w );
 }
 
-
-

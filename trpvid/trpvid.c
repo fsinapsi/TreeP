@@ -384,5 +384,3 @@ static uns8b trp_vid_parse_internal( trp_vid_t *vid, trp_obj_t *size, trp_raw_t 
     return res;
 }
 
-
-

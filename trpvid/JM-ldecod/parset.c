@@ -280,7 +280,6 @@ void InitVUI(seq_parameter_set_rbsp_t *sps)
   sps->vui_seq_parameters.matrix_coefficients = 2;
 }
 
-
 int ReadVUI(DataPartition *p, seq_parameter_set_rbsp_t *sps)
 {
   Bitstream *s = p->bitstream;
@@ -360,7 +359,6 @@ int ReadVUI(DataPartition *p, seq_parameter_set_rbsp_t *sps)
   return 0;
 }
 
-
 int ReadHRDParameters(DataPartition *p, hrd_parameters_t *hrd)
 {
   Bitstream *s = p->bitstream;
@@ -384,7 +382,6 @@ int ReadHRDParameters(DataPartition *p, hrd_parameters_t *hrd)
 
   return 0;
 }
-
 
 int InterpretPPS (VideoParameters *p_Vid, DataPartition *p, pic_parameter_set_rbsp_t *pps)
 {
@@ -504,7 +501,6 @@ int InterpretPPS (VideoParameters *p_Vid, DataPartition *p, pic_parameter_set_rb
   return p_Dec->UsedBits;
 }
 
-
 void PPSConsistencyCheck (pic_parameter_set_rbsp_t *pps)
 {
   printf ("Consistency checking a picture parset, to be implemented\n");
@@ -551,13 +547,11 @@ void CleanUpPPS(VideoParameters *p_Vid)
   }
 }
 
-
 void MakeSPSavailable (VideoParameters *p_Vid, int id, seq_parameter_set_rbsp_t *sps)
 {
   assert (sps->Valid == TRUE);
   memcpy (&p_Vid->SeqParSet[id], sps, sizeof (seq_parameter_set_rbsp_t));
 }
-
 
 void ProcessSPS (VideoParameters *p_Vid, NALU_t *nalu)
 {
@@ -796,7 +790,6 @@ void reset_format_info(seq_parameter_set_rbsp_t *sps, VideoParameters *p_Vid, Fr
   output->size        = output->size_cmp[0] + output->size_cmp[1] + output->size_cmp[2];
   output->mb_width    = output->width[0]  / MB_BLOCK_SIZE;
   output->mb_height   = output->height[0] / MB_BLOCK_SIZE;
-
 
   output->bit_depth[0] = source->bit_depth[0] = p_Vid->bitdepth_luma;
   output->bit_depth[1] = source->bit_depth[1] = p_Vid->bitdepth_chroma;

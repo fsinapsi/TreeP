@@ -83,5 +83,3 @@
                 (set cnt (- cnt (raw-write r fdst (raw-read r fsrc (min (length r) cnt))))) )
         (close r) )
 
-
-

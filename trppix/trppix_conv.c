@@ -192,5 +192,3 @@ uns8b *trp_pix_pix2yuv( trp_obj_t *pix )
     return buf;
 }
 
-
-

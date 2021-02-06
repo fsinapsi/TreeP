@@ -185,5 +185,3 @@ void trp_gtk_widget_set_tooltip_text( trp_obj_t *obj, trp_obj_t *text )
         }
 }
 
-
-

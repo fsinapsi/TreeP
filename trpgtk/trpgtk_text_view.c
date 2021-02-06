@@ -67,5 +67,3 @@ void trp_gtk_text_view_set_overwrite( trp_obj_t *obj, trp_obj_t *on_off )
             gtk_text_view_set_overwrite( (GtkTextView *)o, BOOLVAL( on_off ) );
 }
 
-
-

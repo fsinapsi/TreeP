@@ -32,7 +32,6 @@ void malloc_annex_b(VideoParameters *p_Vid, ANNEXB_t **p_annex_b)
   }
 }
 
-
 void init_annex_b(ANNEXB_t *annex_b)
 {
   annex_b->BitStreamFile = -1;
@@ -122,7 +121,6 @@ static inline int FindStartCode (unsigned char *Buf, int zeros_in_startcode)
 
   return 1;
 }
-
 
 /*!
  ************************************************************************
@@ -281,7 +279,6 @@ int get_annex_b_NALU (VideoParameters *p_Vid, NALU_t *nalu, ANNEXB_t *annex_b)
   nalu->nal_unit_type     = (NaluType) ((*(nalu->buf)) & 0x1f);
   nalu->lost_packets = 0;
 
-
   //printf ("get_annex_b_NALU, regular case: pos %d nalu->len %d, nalu->reference_idc %d, nal_unit_type %d \n", pos, nalu->len, nalu->nal_reference_idc, nalu->nal_unit_type);
 #if TRACE
   fprintf (p_Dec->p_trace, "\n\nAnnex B NALU w/ %s startcode, len %d, forbidden_bit %d, nal_reference_idc %d, nal_unit_type %d\n\n",
@@ -292,8 +289,6 @@ int get_annex_b_NALU (VideoParameters *p_Vid, NALU_t *nalu, ANNEXB_t *annex_b)
   return (pos);
 
 }
-
-
 
 /*!
  ************************************************************************
@@ -325,7 +320,6 @@ void open_annex_b (char *fn, ANNEXB_t *annex_b)
   getChunk(annex_b);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -342,7 +336,6 @@ void close_annex_b(ANNEXB_t *annex_b)
   free (annex_b->iobuffer);
   annex_b->iobuffer = NULL;
 }
-
 
 void reset_annex_b(ANNEXB_t *annex_b)
 {

@@ -52,11 +52,9 @@ enum {
   ME_YUV_FP_SP = 2
 };
 
-
 enum {
   DISTORTION_MSE = 0
 };
-
 
 //! Data Partitioning Modes
 typedef enum
@@ -64,7 +62,6 @@ typedef enum
   PAR_DP_1,   //!< no data partitioning is supported
   PAR_DP_3    //!< data partitioning with 3 partitions
 } PAR_DP_TYPE;
-
 
 //! Output File Types
 typedef enum
@@ -81,7 +78,6 @@ typedef enum
   ADAPTIVE_CODING      = 2,
   FRAME_MB_PAIR_CODING = 3
 } CodingType;
-
 
 //! definition of H.264 syntax elements
 typedef enum
@@ -107,7 +103,6 @@ typedef enum
   SE_MAX_ELEMENTS = 20 //!< number of maximum syntax elements
 } SE_type;             // substituting the definitions in elements.h
 
-
 typedef enum
 {
   NO_SLICES,
@@ -115,7 +110,6 @@ typedef enum
   FIXED_RATE,
   CALL_BACK
 } SliceMode;
-
 
 typedef enum
 {
@@ -131,7 +125,6 @@ typedef enum
   UM_HEX_SIMPLE    =  2,
   EPZS             =  3
 } SearchType;
-
 
 typedef enum
 {
@@ -177,7 +170,6 @@ typedef enum
   RC_MODE_2 = 2,
   RC_MODE_3 = 3
 } RCModeType;
-
 
 typedef enum {
   SSE              = 0,

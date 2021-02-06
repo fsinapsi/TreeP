@@ -188,5 +188,3 @@
         then    (png-save pix pmpath)
                 (close pix) ))
 
-
-

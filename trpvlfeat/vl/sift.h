@@ -349,8 +349,6 @@ vl_sift_get_window_size (VlSiftFilt const *f)
   return f -> windowSize ;
 }
 
-
-
 /** ------------------------------------------------------------------
  ** @brief Set peaks threshold
  ** @param f SIFT filter.

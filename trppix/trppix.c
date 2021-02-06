@@ -863,5 +863,3 @@ trp_obj_t *trp_pix_get_contrast( trp_obj_t *pix )
                                           NULL ) );
 }
 
-
-

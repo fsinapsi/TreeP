@@ -28,5 +28,3 @@ trp_obj_t *trp_gtk_vseparator_new()
     return trp_gtk_widget( gtk_vseparator_new() );
 }
 
-
-

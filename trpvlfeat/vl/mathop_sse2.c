@@ -71,8 +71,6 @@ VL_XCAT(_vl_vhsum_sse2_, SFX)(VTYPE x)
   return acc ;
 }
 
-
-
 VL_EXPORT T
 VL_XCAT(_vl_dot_sse2_, SFX)
 (vl_size dimension, T const * X, T const * Y)
@@ -216,8 +214,6 @@ VL_XCAT(_vl_distance_mahalanobis_sq_sse2_, SFX)
   return acc ;
 }
 
-
-
 VL_EXPORT T
 VL_XCAT(_vl_distance_l1_sse2_, SFX)
 (vl_size dimension, T const * X, T const * Y)
@@ -314,7 +310,6 @@ VL_XCAT(_vl_distance_chi2_sse2_, SFX)
   }
   return acc ;
 }
-
 
 VL_EXPORT T
 VL_XCAT(_vl_kernel_l2_sse2_, SFX)
@@ -502,7 +497,6 @@ VL_XCAT(_vl_weighted_sigma_sse2_, SFX)
       S += VSIZE ;
     }
   }
-
 
   while (X < X_end) {
     T a = *X++ ;

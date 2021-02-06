@@ -155,5 +155,3 @@ void trp_gtk_text_buffer_select_all( trp_obj_t *obj )
     }
 }
 
-
-

@@ -69,7 +69,6 @@ static int is_short_term_reference(FrameStore* fs)
   return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -124,7 +123,6 @@ void gen_pic_list_from_frame_list(PictureStructure currStructure, FrameStore **f
   int bot_idx = 0;
 
   int (*is_ref)(StorablePicture *s) = (long_term) ? is_long_ref : is_short_ref;
-
 
   if (currStructure == TOP_FIELD)
   {
@@ -254,8 +252,6 @@ void update_ref_list(DecodedPictureBuffer *p_Dpb)
   }
 }
 
-
-
 /*!
  ************************************************************************
  * \brief
@@ -360,7 +356,6 @@ void mm_unmark_short_term_for_reference(DecodedPictureBuffer *p_Dpb, StorablePic
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -420,7 +415,6 @@ void mm_unmark_long_term_for_reference(DecodedPictureBuffer *p_Dpb, StorablePict
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -436,8 +430,6 @@ static void unmark_long_term_frame_for_reference_by_frame_idx(DecodedPictureBuff
       unmark_for_long_term_reference(p_Dpb->fs_ltref[i]);
   }
 }
-
-
 
 /*!
  ************************************************************************
@@ -544,7 +536,6 @@ static void mark_pic_long_term(DecodedPictureBuffer *p_Dpb, StorablePicture* p, 
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -617,7 +608,6 @@ void mm_update_max_long_term_frame_idx(DecodedPictureBuffer *p_Dpb, int max_long
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -645,7 +635,6 @@ void mm_unmark_all_short_term_for_reference (DecodedPictureBuffer *p_Dpb)
   update_ref_list(p_Dpb);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -667,7 +656,6 @@ void mm_mark_current_picture_long_term(DecodedPictureBuffer *p_Dpb, StorablePict
   p->is_long_term = 1;
   p->long_term_frame_idx = long_term_frame_idx;
 }
-
 
 /*!
  ************************************************************************
@@ -858,6 +846,4 @@ static void unmark_long_term_field_for_reference_by_frame_idx(DecodedPictureBuff
     }
   }
 }
-
-
 

@@ -291,5 +291,3 @@ void dca_frame (dca_state_t * state, uns8b * buf)
     state->dialog_norm = bitstream_get (state, 4);
 }
 
-
-

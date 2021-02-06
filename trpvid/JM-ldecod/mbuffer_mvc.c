@@ -61,7 +61,6 @@ void reorder_short_term(Slice *currSlice, int cur_list, int num_ref_idx_lX_activ
     }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -170,7 +169,6 @@ static void gen_pic_list_from_frame_interview_list(PictureStructure currStructur
     }
   }
 }
-
 
 /*!
 ************************************************************************
@@ -618,7 +616,6 @@ void init_lists_b_slice_mvc(Slice *currSlice)
   }
 #endif
 }
-
 
 /*!
  ************************************************************************

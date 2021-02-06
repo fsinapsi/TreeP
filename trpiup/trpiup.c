@@ -1295,5 +1295,3 @@ uns8b trp_iup_post_call( trp_obj_t *cback )
     return 0;
 }
 
-
-

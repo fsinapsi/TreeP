@@ -14,12 +14,10 @@
    @version 1.1.2-20100521
 */
 
-
 #ifndef KDTREE_H
 #define KDTREE_H
 
 #include "cxcore.h"
-
 
 /********************************* Structures ********************************/
 
@@ -37,7 +35,6 @@ struct kd_node
   struct kd_node* kd_right;    /**< right child */
 };
 
-
 /*************************** Function Prototypes *****************************/
 
 /**
@@ -52,8 +49,6 @@ struct kd_node
    @return Returns the root of a kd tree built from \a features.
 */
 extern struct kd_node* kdtree_build( struct feature* features, int n );
-
-
 
 /**
    Finds an image feature's approximate k nearest neighbors in a kd tree using
@@ -73,7 +68,6 @@ extern struct kd_node* kdtree_build( struct feature* features, int n );
 */
 extern int kdtree_bbf_knn( struct kd_node* kd_root, struct feature* feat,
                            int k, struct feature*** nbrs, int max_nn_chks );
-
 
 /**
    Finds an image feature's approximate k nearest neighbors within a specified
@@ -100,13 +94,11 @@ extern int kdtree_bbf_spatial_knn( struct kd_node* kd_root,
                                    struct feature*** nbrs, int max_nn_chks,
                                    CvRect rect, int model );
 
-
 /**
    De-allocates memory held by a kd tree
 
    @param kd_root pointer to the root of a kd tree
 */
 extern void kdtree_release( struct kd_node* kd_root );
-
 
 #endif

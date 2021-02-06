@@ -85,5 +85,3 @@ uns8b trp_pix_save_yuv4mpeg2( trp_obj_t *pix, trp_obj_t *f )
     return 0;
 }
 
-
-

@@ -38,7 +38,6 @@
 extern int  get_colocated_info_8x8 (Macroblock *currMB, StorablePicture *list1, int i, int j);
 extern int  get_colocated_info_4x4 (Macroblock *currMB, StorablePicture *list1, int i, int j);
 
-
 int mb_pred_intra4x4(Macroblock *currMB, ColorPlane curr_plane, imgpel **currImg, StorablePicture *dec_picture)
 {
   Slice *currSlice = currMB->p_Slice;
@@ -85,7 +84,6 @@ int mb_pred_intra4x4(Macroblock *currMB, ColorPlane curr_plane, imgpel **currImg
     currSlice->is_reset_coeff = FALSE;
   return 1;
 }
-
 
 int mb_pred_intra16x16(Macroblock *currMB, ColorPlane curr_plane, StorablePicture *dec_picture)
 {
@@ -140,7 +138,6 @@ int mb_pred_intra8x8(Macroblock *currMB, ColorPlane curr_plane, imgpel **currImg
     currSlice->is_reset_coeff = FALSE;
   return 1;
 }
-
 
 static void set_chroma_vector(Macroblock *currMB)
 {
@@ -430,7 +427,6 @@ int mb_pred_b_d8x8temporal(Macroblock *currMB, ColorPlane curr_plane, imgpel **c
         }
       }
 
-
       assert (pred_dir<=2);
 
       refList = (colocated->ref_idx[LIST_0]== -1 ? LIST_1 : LIST_0);
@@ -683,7 +679,6 @@ int mb_pred_b_d4x4temporal(Macroblock *currMB, ColorPlane curr_plane, imgpel **c
   return 1;
 }
 
-
 int mb_pred_b_d8x8spatial(Macroblock *currMB, ColorPlane curr_plane, imgpel **currImg, StorablePicture *dec_picture)
 {
   char l0_rFrame = -1, l1_rFrame = -1;
@@ -907,7 +902,6 @@ int mb_pred_b_d8x8spatial(Macroblock *currMB, ColorPlane curr_plane, imgpel **cu
 
   return 1;
 }
-
 
 int mb_pred_b_d4x4spatial(Macroblock *currMB, ColorPlane curr_plane, imgpel **currImg, StorablePicture *dec_picture)
 {

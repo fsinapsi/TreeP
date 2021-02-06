@@ -303,7 +303,6 @@ void CalculateQuant4x4Param(Slice *currSlice)
   int  (*InvLevelScale4x4_Inter_1)[4][4] = currSlice->InvLevelScale4x4_Inter[1];
   int  (*InvLevelScale4x4_Inter_2)[4][4] = currSlice->InvLevelScale4x4_Inter[2];
 
-
   for(k=0; k<6; k++)
   {
     set_dequant4x4(*InvLevelScale4x4_Intra_0++, *p_dequant_coef  , currSlice->qmatrix[0]);

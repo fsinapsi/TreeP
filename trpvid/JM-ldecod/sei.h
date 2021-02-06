@@ -109,7 +109,6 @@ typedef struct
   Boolean       frame_packing_arrangement_extension_flag;
 } frame_packing_arrangement_information_struct;
 
-
 //! Green metada Information
 typedef struct
 {
@@ -124,7 +123,6 @@ typedef struct
   unsigned char xsd_metric_type;
   unsigned short xsd_metric_value;
 } Green_metadata_information_struct;
-
 
 void InterpretSEIMessage                                ( byte* payload, int size, VideoParameters *p_Vid, Slice *pSlice );
 void interpret_spare_pic                                ( byte* payload, int size, VideoParameters *p_Vid );

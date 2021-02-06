@@ -65,5 +65,3 @@
                 (receive n2 from (if (= mitt mitt1) mitt2 mitt1))
                 (send (* n1 n2) to dest) ))
 
-
-

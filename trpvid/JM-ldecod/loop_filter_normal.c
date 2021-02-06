@@ -33,7 +33,6 @@ static void edge_loop_luma_hor       (ColorPlane pl, imgpel** Img, byte *Strengt
 static void edge_loop_chroma_ver     (imgpel** Img, byte *Strength, Macroblock *MbQ, int edge, int uv, StorablePicture *p);
 static void edge_loop_chroma_hor     (imgpel** Img, byte *Strength, Macroblock *MbQ, int edge, int uv, StorablePicture *p);
 
-
 void set_loop_filter_functions_normal(VideoParameters *p_Vid)
 {
   p_Vid->GetStrengthVer    = get_strength_ver;
@@ -43,7 +42,6 @@ void set_loop_filter_functions_normal(VideoParameters *p_Vid)
   p_Vid->EdgeLoopChromaVer = edge_loop_chroma_ver;
   p_Vid->EdgeLoopChromaHor = edge_loop_chroma_hor;
 }
-
 
 static Macroblock* get_non_aff_neighbor_luma(Macroblock *mb, int xN, int yN)
 {
@@ -755,7 +753,6 @@ static void edge_loop_luma_hor(ColorPlane pl, imgpel** Img, byte *Strength, Macr
   }
 }
 
-
 /*!
  *****************************************************************************************
  * \brief
@@ -842,7 +839,6 @@ static void edge_loop_chroma_ver(imgpel** Img, byte *Strength, Macroblock *MbQ, 
     }
   }
 }
-
 
 /*!
  *****************************************************************************************
@@ -1559,7 +1555,6 @@ static void get_db_strength_normal(VideoParameters *p_Vid, StorablePicture *p, i
     MbQ->DeblockCall = 0;
   }
 }
-
 
 void deblock_normal(VideoParameters *p_Vid, StorablePicture *p)
 {

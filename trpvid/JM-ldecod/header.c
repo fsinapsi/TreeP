@@ -19,7 +19,6 @@
 
 #include "ctx_tables.h"
 
-
 #if TRACE
 #define SYMTRACESTRING(s) strncpy(sym.tracestring,s,TRACESTRING_SIZE)
 #else
@@ -31,7 +30,6 @@ static void pred_weight_table(Slice *currSlice);
 #if (MVC_EXTENSION_ENABLE)
 static void ref_pic_list_mvc_modification(Slice *currSlice);
 #endif
-
 
 /*!
  ************************************************************************
@@ -319,7 +317,6 @@ int RestOfSliceHeader(Slice *currSlice)
     currSlice->DFAlphaC0Offset = currSlice->DFBetaOffset = 0;
   }
 
-
   if (p_Vid->active_pps->num_slice_groups_minus1>0 && p_Vid->active_pps->slice_group_map_type>=3 &&
       p_Vid->active_pps->slice_group_map_type<=5)
   {
@@ -339,7 +336,6 @@ int RestOfSliceHeader(Slice *currSlice)
 
   return p_Dec->UsedBits;
 }
-
 
 /*!
  ************************************************************************
@@ -625,7 +621,6 @@ static void pred_weight_table(Slice *currSlice)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -865,7 +860,6 @@ void decode_poc(VideoParameters *p_Vid, Slice *pSlice)
 
     break;
 
-
   case 2: // POC MODE 2
     if(pSlice->idr_flag) // IDR picture
     {
@@ -886,7 +880,6 @@ void decode_poc(VideoParameters *p_Vid, Slice *pSlice)
       else
         p_Vid->FrameNumOffset = p_Vid->PreviousFrameNumOffset;
 
-
       pSlice->AbsFrameNum = p_Vid->FrameNumOffset+pSlice->frame_num;
       if(!pSlice->nal_reference_idc)
         pSlice->ThisPOC = (2*pSlice->AbsFrameNum - 1);
@@ -904,7 +897,6 @@ void decode_poc(VideoParameters *p_Vid, Slice *pSlice)
     p_Vid->PreviousFrameNum=pSlice->frame_num;
     p_Vid->PreviousFrameNumOffset=p_Vid->FrameNumOffset;
     break;
-
 
   default:
     //error must occurs

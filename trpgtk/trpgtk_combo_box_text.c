@@ -72,5 +72,3 @@ void trp_gtk_combo_box_text_remove( trp_obj_t *obj, trp_obj_t *pos )
 
 #endif
 
-
-

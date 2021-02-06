@@ -43,7 +43,6 @@ void set_loop_filter_functions_mbaff(VideoParameters *p_Vid)
   p_Vid->EdgeLoopChromaHor = edge_loop_chroma_hor_MBAff;
 }
 
-
 Macroblock* get_non_aff_neighbor_luma(Macroblock *mb, int xN, int yN)
 {
   if (xN < 0)
@@ -75,7 +74,6 @@ Macroblock* get_non_aff_neighbor_chroma(Macroblock *mb, int xN, int yN, int bloc
   else
     return(NULL);
 }
-
 
 /*!
  *********************************************************************************************
@@ -427,7 +425,6 @@ void get_strength_hor_MBAff(byte *Strength, Macroblock *MbQ, int edge, int mvlim
   }
 }
 
-
 /*!
  *****************************************************************************************
  * \brief
@@ -682,8 +679,6 @@ static void edge_loop_luma_hor_MBAff(ColorPlane pl, imgpel** Img, byte *Strength
   }
 }
 
-
-
 /*!
 *****************************************************************************************
 * \brief
@@ -711,7 +706,6 @@ static void edge_loop_chroma_ver_MBAff(imgpel** Img, byte *Strength, Macroblock 
   int      BetaOffset    = MbQ->DFBetaOffset;
   Macroblock *MbP;
   imgpel   *SrcPtrP, *SrcPtrQ;
-
 
   for( pel = 0 ; pel < PelNum ; ++pel )
   {
@@ -859,7 +853,6 @@ static void edge_loop_chroma_hor_MBAff(imgpel** Img, byte *Strength, Macroblock 
   }
 }
 
-
 /*!
  *****************************************************************************************
  * \brief
@@ -965,7 +958,6 @@ void get_db_strength_mbaff(VideoParameters *p_Vid, StorablePicture *p, int MbQAd
     MbQ->DeblockCall = 0;
   }
 }
-
 
 /*!
  *****************************************************************************************

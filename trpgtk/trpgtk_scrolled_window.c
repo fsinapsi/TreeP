@@ -117,5 +117,3 @@ trp_obj_t *trp_gtk_scrolled_window_get_vscrollbar( trp_obj_t *obj )
     return res;
 }
 
-
-

@@ -20,7 +20,6 @@
 #include "biaridecod.h"
 #include "ctx_tables.h"
 
-
 #define IBIARI_CTX_INIT2(ii,jj,ctx,tab,num, qp) \
 { \
   for (i=0; i<ii; ++i) \
@@ -39,7 +38,6 @@
   } \
 }
 
-
 #define IBIARI_CTX_INIT1(jj,ctx,tab,num, qp) \
 { \
   for (j=0; j<jj; ++j) \
@@ -47,7 +45,6 @@
   biari_init_context (qp, &(ctx[j]), tab ## _I[num][0][j]); \
   } \
 }
-
 
 #define PBIARI_CTX_INIT1(jj,ctx,tab,num, qp) \
 { \

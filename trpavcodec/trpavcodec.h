@@ -41,6 +41,7 @@ uns8b trp_av_seek_frame( trp_obj_t *fmtctx, trp_obj_t *ts );
 trp_obj_t *trp_av_nb_streams( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_video_stream_idx( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_nb_frames( trp_obj_t *fmtctx, trp_obj_t *streamno );
+trp_obj_t *trp_av_sample_aspect_ratio( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_avg_frame_rate( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_r_frame_rate( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_codec_type( trp_obj_t *fmtctx, trp_obj_t *streamno );

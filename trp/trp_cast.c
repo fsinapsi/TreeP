@@ -130,5 +130,3 @@ uns8b trp_cast_double_range( trp_obj_t *obj, double *val, double min, double max
     return ( ( *val >= min ) && ( *val <= max ) ) ? 0 : 1;
 }
 
-
-

@@ -93,7 +93,6 @@ typedef enum {
 # define NUM_BLOCK_TYPES 10
 #endif
 
-
 //#define _LEAKYBUCKET_
 
 #define BLOCK_SHIFT            2
@@ -187,7 +186,6 @@ typedef enum {
 #define DQ_BITS          6
 #define Q_BITS_8        16
 #define DQ_BITS_8        6
-
 
 #define IS_I16MB(MB)    ((MB)->mb_type==I16MB  || (MB)->mb_type==IPCM)
 #define IS_DIRECT(MB)   ((MB)->mb_type==0     && (currSlice->slice_type == B_SLICE ))

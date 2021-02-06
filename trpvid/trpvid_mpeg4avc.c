@@ -861,23 +861,15 @@ static uns8b decode_slice( trp_vid_t *vid, uns8b *buf, uns32b size, int nal_ref_
     if ( slice_cnt == 0 )
         trp_vid_update_qscale( vid, 3, type, qp );
 
-
-
 #if 0
     printf( "frame di tipo %d, frame num = %d, structure = %d, qp = %d\n",
             type, frame_num, (int)structure, qp );
 #endif
 
-
-
     /*
      FIXME da finire...
      */
 
-
-
     return 0;
 }
-
-
 

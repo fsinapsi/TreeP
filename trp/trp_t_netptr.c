@@ -206,5 +206,3 @@ uns8b trp_netptr_call( trp_obj_t *nptr, ... )
     return res;
 }
 
-
-

@@ -197,11 +197,11 @@
         (for j in 0 .. (- n 1) do
                 (set l -1)
                 (for i in 0 .. m do
-                        (set s (sprint (approx <mx i j> cifre)))
-                        (set l (max l (length s)))
+                        (set s (matrix-sprint-val <mx i j> cifre))
+                        (set l (max l (utf8-length s)))
                         (set <a i> s) )
                 (for i in 0 .. m do
-                        (inc <@a i> (if (= j 0) "" ' ') (tile (- l (length <a i>))) <a i>) ))
+                        (inc <@a i> (if (= j 0) "" ' ') (tile (- l (utf8-length <a i>))) <a i>) ))
         (for i in 0 .. m do
                 (if (= m 0)
                 then    (set b1 "[")
@@ -214,6 +214,21 @@
                                 default (seq    (set b1 "⎢")
                                                 (set b2 "⎥") )))
                 (set <@a i> (+ b1 <@a i> b2)) ))
+
+; FIXME
+; estendere ai numeri complessi
+
+(defun matrix-sprint-val (val cifre) net matrix-sprint-val)
+(defnet matrix-sprint-val (val cifre @a)
+        (if (< val 0)
+        then    (set @a "-")
+                (set val -val)
+        else    (set @a "") )
+        (case val of
+                (/ 1 2)     (inc @a "½")
+                (/ 1 3)     (inc @a "⅓")
+                (/ 2 3)     (inc @a "⅔")
+                default     (inc @a (approx val cifre)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

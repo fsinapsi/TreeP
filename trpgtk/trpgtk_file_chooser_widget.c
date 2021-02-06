@@ -25,5 +25,3 @@ trp_obj_t *trp_gtk_file_chooser_widget_new( trp_obj_t *action )
     return trp_gtk_widget( gtk_file_chooser_widget_new( (GtkFileChooserAction)( ((trp_sig64_t *)action)->val ) ) );
 }
 
-
-

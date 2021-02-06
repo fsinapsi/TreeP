@@ -605,5 +605,3 @@ trp_obj_t *trp_cv_sift_match( trp_obj_t *o1, trp_obj_t *o2, trp_obj_t *thr )
     return res;
 }
 
-
-

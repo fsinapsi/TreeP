@@ -16,7 +16,6 @@
 #ifndef _ERC_DO_H_
 #define _ERC_DO_H_
 
-
 #include "erc_api.h"
 
 void ercPixConcealIMB    (VideoParameters *p_Vid, imgpel *currFrame, int row, int column, int predBlocks[], int frameWidth, int mbWidthInBlocks);

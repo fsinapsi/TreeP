@@ -20,7 +20,6 @@
 
 #include "global.h"
 
-
 #define GROUP_SIZE  1
 
 /*********************************************************************************************************/
@@ -58,7 +57,6 @@ static const char chroma_edge[2][4][4] = //[dir][edge][yuv_format]
     {-4,-4, 12, 12}}};
 
 static const int pelnum_cr[2][4] =  {{0,8,16,16}, {0,8, 8,16}};  //[dir:0=vert, 1=hor.][yuv_format]
-
 
 static inline int compare_mvs(const MotionVector *mv0, const MotionVector *mv1, int mvlimit)
 {

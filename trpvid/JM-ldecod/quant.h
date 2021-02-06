@@ -79,7 +79,6 @@ static const int dequant_coef8[6][8][8] =
   }
 };
 
-
 //! Dequantization coefficients
 static const int dequant_coef[6][4][4] = {
   {

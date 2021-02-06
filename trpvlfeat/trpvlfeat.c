@@ -488,5 +488,3 @@ trp_obj_t *trp_vl_sift_match( trp_obj_t *f1, trp_obj_t *f2, trp_obj_t *cmp, trp_
     return res;
 }
 
-
-

@@ -150,7 +150,6 @@ static inline void FilterImageSep(ImageData *imgOut, ImageData *imgIn)
   free_mem2Dint(temp_data);
 }
 
-
 // to be modified
 static inline void MuxImages(ImageData *imgOut, ImageData *imgIn0, ImageData *imgIn1, ImageData *Map)
 {
@@ -236,6 +235,4 @@ void process_image( VideoParameters *p_Vid, InputParameters *p_Inp )
     break;
   }
 }
-
-
 

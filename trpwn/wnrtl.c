@@ -73,5 +73,4 @@ int (*display_message)(char *) = default_display_message;
    Revision 1.1  1997/09/02 16:31:18  wn
    Initial revision
 
-
 */

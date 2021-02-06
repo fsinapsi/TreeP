@@ -169,5 +169,3 @@ void trp_gtk_window_move( trp_obj_t *w, trp_obj_t *x, trp_obj_t *y )
             gtk_window_move( (GtkWindow *)win, ((trp_sig64_t *)x)->val, ((trp_sig64_t *)y)->val );
 }
 
-
-

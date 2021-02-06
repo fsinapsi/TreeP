@@ -26,5 +26,3 @@ void trp_gtk_editable_set_editable( trp_obj_t *obj, trp_obj_t *on_off )
             gtk_editable_set_editable( (GtkEditable *)e, BOOLVAL( on_off ) );
 }
 
-
-

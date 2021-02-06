@@ -969,5 +969,3 @@ uns8b trp_curl_easy_setopt_low_speed( trp_obj_t *curl, trp_obj_t *speed_limit, t
     return curl_easy_setopt( c, CURLOPT_LOW_SPEED_TIME, (long)time ) ? 1 : 0;
 }
 
-
-

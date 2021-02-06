@@ -91,5 +91,3 @@ trp_obj_t *trp_gtk_toggle_button_get_inconsistent( trp_obj_t *obj )
     return res;
 }
 
-
-

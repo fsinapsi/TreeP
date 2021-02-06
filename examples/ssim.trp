@@ -46,5 +46,3 @@
         (print "mse: " (approx5 v) " (" (* t 1000) " ms)" nl)
         (close pix1 pix2) )
 
-
-

@@ -665,5 +665,3 @@ trp_obj_t *trp_lept_pix_count_conn_comp( trp_obj_t *pix, trp_obj_t *connectivity
     return trp_sig64( res );
 }
 
-
-

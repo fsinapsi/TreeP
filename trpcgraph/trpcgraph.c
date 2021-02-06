@@ -100,5 +100,3 @@ trp_obj_t *trp_ag_dot2pix_transparent( trp_obj_t *s )
     return trp_ag_dot2pix_low( 1, s );
 }
 
-
-

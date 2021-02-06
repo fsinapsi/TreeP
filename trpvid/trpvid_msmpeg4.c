@@ -47,5 +47,3 @@ uns8b trp_vid_parse_msmpeg4( trp_vid_t *vid )
     return 0;
 }
 
-
-

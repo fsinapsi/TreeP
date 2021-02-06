@@ -661,6 +661,18 @@ trp_obj_t *trp_av_nb_frames( trp_obj_t *fmtctx, trp_obj_t *streamno )
     return trp_sig64( fmt_ctx->streams[ n ]->nb_frames );
 }
 
+trp_obj_t *trp_av_sample_aspect_ratio( trp_obj_t *fmtctx, trp_obj_t *streamno )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    uns32b n;
+
+    if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( streamno, &n ) )
+        return UNDEF;
+    if ( n >= fmt_ctx->nb_streams )
+        return UNDEF;
+    return trp_av_rational( &( fmt_ctx->streams[ n ]->sample_aspect_ratio ) );
+}
+
 trp_obj_t *trp_av_avg_frame_rate( trp_obj_t *fmtctx, trp_obj_t *streamno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );

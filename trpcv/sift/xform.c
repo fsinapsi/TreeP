@@ -32,7 +32,6 @@ static inline void release_mem( CvPoint2D64f*, CvPoint2D64f*,
 
 /********************** Functions prototyped in model.h **********************/
 
-
 /*
   Calculates a best-fit image transform from image feature correspondences
   using RANSAC.
@@ -159,8 +158,6 @@ CvMat* ransac_xform( struct feature* features, int n, int mtype,
   return M;
 }
 
-
-
 /*
   Calculates a planar homography from point correspondeces using the direct
   linear transform.  Intended for use as a ransac_xform_fn.
@@ -218,8 +215,6 @@ CvMat* dlt_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n )
   return H;
 }
 
-
-
 /*
   Calculates a least-squares planar homography from point correspondeces.
 
@@ -276,8 +271,6 @@ CvMat* lsq_homog( CvPoint2D64f* pts, CvPoint2D64f* mpts, int n )
   return H;
 }
 
-
-
 /*
   Calculates the transfer error between a point and its correspondence for
   a given homography, i.e. for a point x, it's correspondence x', and
@@ -295,8 +288,6 @@ double homog_xfer_err( CvPoint2D64f pt, CvPoint2D64f mpt, CvMat* H )
 
   return sqrt( dist_sq_2D( xpt, mpt ) );
 }
-
-
 
 /*
   Performs a perspective transformation on a single point.  That is, for a
@@ -330,7 +321,6 @@ CvPoint2D64f persp_xform_pt( CvPoint2D64f pt, CvMat* T )
   return rslt;
 }
 
-
 /************************ Local funciton definitions *************************/
 
 /*
@@ -352,8 +342,6 @@ static inline struct feature* get_match( struct feature* feat, int mtype )
     return feat->fwd_match;
   return NULL;
 }
-
-
 
 /*
   Finds all features with a match of a specified type and stores pointers
@@ -389,8 +377,6 @@ static int get_matched_features( struct feature* features, int n, int mtype,
   *matched = _matched;
   return m;
 }
-
-
 
 /*
   Calculates the minimum number of inliers as a function of the number of
@@ -433,8 +419,6 @@ static int calc_min_inliers( int n, int m, double p_badsupp, double p_badxform )
   return j;
 }
 
-
-
 /*
   Calculates the natural log of the factorial of a number
 
@@ -452,7 +436,6 @@ static inline double log_factorial( int n )
 
   return f;
 }
-
 
 /*
   Draws a RANSAC sample from a set of features.
@@ -493,8 +476,6 @@ static struct feature** draw_ransac_sample( struct feature** features, int n,
 
   return sample;
 }
-
-
 
 /*
   Extrancs raw point correspondence locations from a set of features
@@ -543,8 +524,6 @@ static void extract_corresp_pts( struct feature** features, int n, int mtype,
   *pts = _pts;
   *mpts = _mpts;
 }
-
-
 
 /*
   For a given model and error function, finds a consensus from a set of
@@ -608,8 +587,6 @@ static int find_consensus( struct feature** features, int n, int mtype,
   *consensus = _consensus;
   return in;
 }
-
-
 
 /*
   Releases memory and reduces code size above

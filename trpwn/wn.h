@@ -271,7 +271,6 @@ extern void (*interface_doevents_func)(void);
 extern int default_display_message(char *);
 extern int (*display_message)(char *);
 
-
 /* Make all the functions compatible with c++ files */
 #ifdef __cplusplus
 extern "C" {

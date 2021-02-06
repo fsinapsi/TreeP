@@ -229,5 +229,3 @@ trp_obj_t *trp_magic_buffer( trp_obj_t *raw, trp_obj_t *cnt )
     return res;
 }
 
-
-

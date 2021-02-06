@@ -55,5 +55,3 @@ void trp_gtk_menu_item_set_submenu( trp_obj_t *obj, trp_obj_t *child )
             }
 }
 
-
-

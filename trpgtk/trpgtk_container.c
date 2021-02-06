@@ -76,5 +76,3 @@ void trp_gtk_container_set_border_width( trp_obj_t *cont, trp_obj_t *obj )
         }
 }
 
-
-

@@ -18,10 +18,8 @@
 
 #ifdef CONTEXT_INI_C
 
-
 #define NUM_CTX_MODELS_I     1
 #define NUM_CTX_MODELS_P     3
-
 
 static const char INIT_MB_TYPE_I[1][3][11][2] =
 {
@@ -137,7 +135,6 @@ static const char INIT_REF_NO_P[3][2][6][2] =
     {  CTX_UNUSED ,  CTX_UNUSED ,  CTX_UNUSED ,  CTX_UNUSED ,  CTX_UNUSED ,  CTX_UNUSED }
   }
 };
-
 
 static const char INIT_TRANSFORM_SIZE_I[1][1][3][2]=
 {
@@ -873,8 +870,6 @@ static const char INIT_ABS_P[3][22][5][2] =
   }
 };
 
-
-
 #if ENABLE_FIELD_CTX
 static const char INIT_FLD_MAP_I[1][22][15][2] =
 {
@@ -1108,7 +1103,6 @@ static const char INIT_FLD_LAST_P[3][22][15][2] =
   }
 };
 #endif
-
 
 #endif
 

@@ -323,7 +323,6 @@ static int intra4x4_diag_down_right_pred_mbaff(Macroblock *currMB,    //!< curre
     // P_A through P_D
     memcpy(&PredPel[1], pred_pel, BLOCK_SIZE * sizeof(imgpel));
 
-
     P_I = imgY[pix_a[0].pos_y][pix_a[0].pos_x];
     P_J = imgY[pix_a[1].pos_y][pix_a[1].pos_x];
     P_K = imgY[pix_a[2].pos_y][pix_a[2].pos_x];
@@ -491,7 +490,6 @@ static int intra4x4_vert_right_pred_mbaff(Macroblock *currMB,    //!< current ma
     // P_A through P_D
     memcpy(&PredPel[1], pred_pel, BLOCK_SIZE * sizeof(imgpel));
 
-
     P_I = imgY[pix_a[0].pos_y][pix_a[0].pos_x];
     P_J = imgY[pix_a[1].pos_y][pix_a[1].pos_x];
     P_K = imgY[pix_a[2].pos_y][pix_a[2].pos_x];
@@ -518,7 +516,6 @@ static int intra4x4_vert_right_pred_mbaff(Macroblock *currMB,    //!< current ma
 
   return DECODING_OK;
 }
-
 
 /*!
  ***********************************************************************
@@ -558,7 +555,6 @@ static int intra4x4_vert_left_pred_mbaff(Macroblock *currMB,    //!< current mac
     block_available_up       = pix_b.available;
     block_available_up_right = pix_c.available;
   }
-
 
   if (!block_available_up)
     printf ("warning: Intra_4x4_Vertical_Left prediction mode not allowed at mb %d\n", (int) currSlice->current_mb_nr);
@@ -767,7 +763,6 @@ static int intra4x4_hor_down_pred_mbaff(Macroblock *currMB,    //!< current macr
 
   return DECODING_OK;
 }
-
 
 /*!
  ***********************************************************************

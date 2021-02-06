@@ -830,7 +830,6 @@ VL_XCAT(vl_imgradient_, SFX)
 /* VL_TYPE_FLOAT, VL_TYPE_DOUBLE */
 #endif
 
-
 /** @fn vl_imgradient_polar_d(double*,double*,vl_size,vl_size,double const*,vl_size,vl_size,vl_size)
  ** @brief Compute gradient mangitudes and directions of an image.
  ** @param amplitudeGradient Pointer to amplitude gradient plane

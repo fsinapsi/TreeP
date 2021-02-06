@@ -1361,5 +1361,3 @@ trp_obj_t *trp_aud_splitted( trp_obj_t *aud )
     return ((trp_aud_t *)aud)->splitted ? TRP_TRUE : TRP_FALSE;
 }
 
-
-

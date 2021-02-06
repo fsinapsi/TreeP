@@ -613,8 +613,6 @@ static void fill_wp_params(Slice *currSlice)
   }
 }
 
-
-
 static void init_picture_decoding(VideoParameters *p_Vid)
 {
   Slice *pSlice = p_Vid->ppSliceList[0];
@@ -751,7 +749,6 @@ void decode_slice(Slice *currSlice, int current_header)
 
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -794,8 +791,6 @@ static void CopyPOC(Slice *pSlice0, Slice *currSlice)
   currSlice->bottompoc = pSlice0->bottompoc;
   currSlice->ThisPOC   = pSlice0->ThisPOC;
 }
-
-
 
 /*!
  ***********************************************************************
@@ -1068,7 +1063,6 @@ void buffer2img (imgpel** imgX, unsigned char* buf, int size_x, int size_y, int 
   }
 }
 
-
 /*!
  ***********************************************************************
  * \brief
@@ -1112,7 +1106,6 @@ void calculate_frame_no(VideoParameters *p_Vid, StorablePicture *p)
 
   p_Vid->frame_no = p_Vid->idr_psnr_number + psnrPOC;
 }
-
 
 /*!
 ************************************************************************
@@ -1236,7 +1229,6 @@ void find_snr(VideoParameters *p_Vid,
   }
 }
 
-
 void reorder_lists(Slice *currSlice)
 {
   VideoParameters *p_Vid = currSlice->p_Vid;
@@ -1330,7 +1322,6 @@ void reorder_lists(Slice *currSlice)
 #endif
   }
 }
-
 
 /*!
  ************************************************************************
@@ -1599,7 +1590,6 @@ process_nalu:
 
       assign_quant_params (currSlice);
 
-
       if(is_new_picture(p_Vid->dec_picture, currSlice, p_Vid->old_slice))
       {
         if(p_Vid->iSliceNumOfCurrPic==0)
@@ -1863,7 +1853,6 @@ void pad_dec_picture(VideoParameters *p_Vid, StorablePicture *dec_picture)
     pad_buf(*dec_picture->imgUV[1], iWidth, iHeight, iStride, iPadX, iPadY);
   }
 }
-
 
 /*!
  ************************************************************************
@@ -2224,7 +2213,6 @@ void init_old_slice(OldSliceParams *p_old_slice)
   p_old_slice->delta_pic_order_cnt[1] = INT_MAX;
 }
 
-
 void copy_slice_info(Slice *currSlice, OldSliceParams *p_old_slice)
 {
   VideoParameters *p_Vid = currSlice->p_Vid;
@@ -2349,8 +2337,6 @@ void field_postprocessing(VideoParameters *p_Vid)
   p_Vid->number /= 2;
 }
 
-
-
 /*!
  ************************************************************************
  * \brief
@@ -2416,7 +2402,6 @@ void copy_dec_picture_JV( VideoParameters *p_Vid, StorablePicture *dst, Storable
 #endif
 }
 
-
 // this is intended to make get_block_luma faster by doing this at a more appropriate level
 // i.e. per slice rather than per MB
 static void init_cur_imgy(Slice *currSlice, VideoParameters *p_Vid)
@@ -2468,8 +2453,6 @@ static void init_cur_imgy(Slice *currSlice, VideoParameters *p_Vid)
     }
   }
 }
-
-
 
 /*!
  ************************************************************************

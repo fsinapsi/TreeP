@@ -97,5 +97,3 @@ trp_obj_t *trp_quirc_encode( trp_obj_t *s, trp_obj_t *level )
     return s;
 }
 
-
-

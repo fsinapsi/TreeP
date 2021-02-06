@@ -308,5 +308,3 @@ static uns8b trp_pix_avn_graph_low( int tipo, trp_vid_t *vid, trp_obj_t *pix, tr
     return 0;
 }
 
-
-

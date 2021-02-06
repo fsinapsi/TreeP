@@ -30,5 +30,3 @@ void trp_gtk_menu_shell_append( trp_obj_t *obj, trp_obj_t *child )
         }
 }
 
-
-

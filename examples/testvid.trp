@@ -120,5 +120,3 @@
         (close avi vid f)
         (print "free bytes/heap size: " (free-bytes) '/' (heap-size) nl) )
 
-
-

@@ -190,5 +190,3 @@ trp_obj_t *trp_funptr_call( trp_obj_t *fptr, ... )
     return res;
 }
 
-
-

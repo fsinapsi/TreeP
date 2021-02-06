@@ -994,5 +994,3 @@ trp_obj_t *trp_thread_case( trp_obj_t *obj, ... )
     return obj;
 }
 
-
-

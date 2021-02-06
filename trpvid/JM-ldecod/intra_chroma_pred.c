@@ -17,7 +17,6 @@
 #include "mb_access.h"
 #include "image.h"
 
-
 static void intra_chroma_DC_single(imgpel **curr_img, int up_avail, int left_avail, PixelPos up, PixelPos left, int blk_x, int blk_y, int *pred, int direction )
 {
   int i;
@@ -39,7 +38,6 @@ static void intra_chroma_DC_single(imgpel **curr_img, int up_avail, int left_ava
     *pred = (s0 + 2) >> 2;
   }
 }
-
 
 static void intra_chroma_DC_all(imgpel **curr_img, int up_avail, int left_avail, PixelPos up, PixelPos left, int blk_x, int blk_y, int *pred )
 {
@@ -92,7 +90,6 @@ static void intrapred_chroma_dc(Macroblock *currMB)
   imgpel **imgUV1 = dec_picture->imgUV[1];
   imgpel **mb_pred0 = currSlice->mb_pred[0 + 1];
   imgpel **mb_pred1 = currSlice->mb_pred[1 + 1];
-
 
   getNonAffNeighbour(currMB, -1,  0, p_Vid->mb_size[IS_CHROMA], &left);
   getNonAffNeighbour(currMB,  0, -1, p_Vid->mb_size[IS_CHROMA], &up);

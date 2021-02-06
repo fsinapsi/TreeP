@@ -85,5 +85,3 @@ uns8b trp_pix_save_pnm_noalpha( trp_obj_t *pix, trp_obj_t *path )
     return 0;
 }
 
-
-

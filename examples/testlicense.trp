@@ -25,5 +25,3 @@
         (save "lgpl-2.1.txt" (license-lgpl2-1))
         (save "lgpl-3.txt" (license-lgpl3)) )
 
-
-

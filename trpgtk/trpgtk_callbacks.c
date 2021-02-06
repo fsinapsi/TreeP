@@ -335,5 +335,3 @@ void trp_gtk_signal_emit_by_name( trp_obj_t *obj, trp_obj_t *name )
     }
 }
 
-
-

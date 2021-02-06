@@ -73,7 +73,6 @@ typedef struct storable_picture
   int         iLumaPadY, iLumaPadX;
   int         iChromaPadY, iChromaPadX;
 
-
   imgpel **     imgY;         //!< Y picture component
   imgpel ***    imgUV;        //!< U and V picture components
 
@@ -168,7 +167,6 @@ typedef struct frame_store
   int       layer_id;
 } FrameStore;
 
-
 //! Decoded Picture Buffer
 typedef struct decoded_picture_buffer
 {
@@ -188,7 +186,6 @@ typedef struct decoded_picture_buffer
 #endif
   int           max_long_term_pic_idx;
 
-
   int           init_done;
   int           num_ref_frames;
 
@@ -199,7 +196,6 @@ typedef struct decoded_picture_buffer
   //DPB related function;
 
 } DecodedPictureBuffer;
-
 
 extern void              init_dpb(VideoParameters *p_Vid, DecodedPictureBuffer *p_Dpb, int type);
 extern void              re_init_dpb(VideoParameters *p_Vid, DecodedPictureBuffer *p_Dpb, int type);
@@ -244,7 +240,6 @@ extern void             free_ref_pic_list_reordering_buffer(Slice *currSlice);
 extern void             fill_frame_num_gap(VideoParameters *p_Vid, Slice *pSlice);
 
 extern void compute_colocated (Slice *currSlice, StorablePicture **listX[6]);
-
 
 extern int init_img_data(VideoParameters *p_Vid, ImageData *p_ImgData, seq_parameter_set_rbsp_t *sps);
 extern void free_img_data(VideoParameters *p_Vid, ImageData *p_ImgData);

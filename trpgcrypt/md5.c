@@ -68,7 +68,6 @@
    64-byte boundary.  (RFC 1321, 3.1: Step 1)  */
 static const unsigned char fillbuf[64] = { 0x80, 0 /* , 0, 0, ...  */ };
 
-
 /* Initialize structure containing state of computation.
    (RFC 1321, 3.3: Step 3)  */
 void
@@ -217,7 +216,6 @@ md5_buffer (const char *buffer, size_t len, void *resblock)
   return md5_finish_ctx (&ctx, resblock);
 }
 
-
 void
 md5_process_bytes (const void *buffer, size_t len, struct md5_ctx *ctx)
 {
@@ -284,7 +282,6 @@ md5_process_bytes (const void *buffer, size_t len, struct md5_ctx *ctx)
       ctx->buflen = left_over;
     }
 }
-
 
 /* These are the four functions used in the four steps of the MD5 algorithm
    and defined in the RFC 1321.  The first function is a little bit optimized

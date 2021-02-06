@@ -2038,5 +2038,3 @@ trp_obj_t *trp_sift_analyze( trp_obj_t *m )
                      NULL );
 }
 
-
-

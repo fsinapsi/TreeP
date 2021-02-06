@@ -981,5 +981,3 @@ trp_obj_t *trp_ipv4_address()
 #endif
 }
 
-
-

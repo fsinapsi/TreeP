@@ -133,5 +133,3 @@ trp_obj_t *trp_not( trp_obj_t *obj )
     return ( obj == TRP_FALSE ) ? TRP_TRUE : TRP_FALSE;
 }
 
-
-

@@ -60,7 +60,6 @@ void free_top_bot_planes(imgpel **imgTopField, imgpel **imgBotField)
   mem_free (imgBotField);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -341,7 +340,6 @@ int get_mem5Dquant(LevelQuantParams ******array5D, int dim0, int dim1, int dim2,
   return mem_size;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -413,7 +411,6 @@ void free_mem2Dquant(LevelQuantParams **array2D)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -473,7 +470,6 @@ void free_mem5Dquant(LevelQuantParams *****array5D)
     error ("free_mem5Dquant: trying to free unused memory",100);
   }
 }
-
 
 /*!
  ************************************************************************
@@ -665,7 +661,6 @@ int get_mem7Dmv(MotionVector ********array7D, int dim0, int dim1, int dim2, int 
   return mem_size;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -690,7 +685,6 @@ void free_mem2D_spp(StorablePicturePtr **array2D)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -710,7 +704,6 @@ void free_mem3D_spp(StorablePicturePtr ***array3D)
     error ("free_mem3D_spp: trying to free unused memory",100);
   }
 }
-
 
 /*!
  ************************************************************************
@@ -735,7 +728,6 @@ void free_mem2Dmv(MotionVector **array2D)
     error ("free_mem2Dmv: trying to free unused memory",100);
   }
 }
-
 
 /*!
  ************************************************************************
@@ -903,7 +895,6 @@ int get_mem2Dpel_pad(imgpel ***array2D, int dim0, int dim1, int iPadY, int iPadX
   return iHeight * (sizeof(imgpel*) + iWidth * sizeof(imgpel));
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -941,7 +932,6 @@ int get_mem3Dpel_pad(imgpel ****array3D, int dim0, int dim1, int dim2, int iPadY
   return mem_size;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -965,7 +955,6 @@ int get_mem4Dpel(imgpel *****array4D, int dim0, int dim1, int dim2, int dim3)
 
   return mem_size;
 }
-
 
 int get_mem4Dpel_pad(imgpel *****array4D, int dim0, int dim1, int dim2, int dim3, int iPadY, int iPadX)
 {
@@ -1236,7 +1225,6 @@ int get_mem2D(byte ***array2D, int dim0, int dim1)
 
   return dim0 * (sizeof(byte*) + dim1 * sizeof(byte));
 }
-
 
 /*!
  ************************************************************************
@@ -1539,7 +1527,6 @@ int get_mem5Dint(int ******array5D, int dim0, int dim1, int dim2, int dim3, int 
   return mem_size;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1628,7 +1615,6 @@ void free_mem2Dint64(int64 **array2D)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1688,7 +1674,6 @@ void free_mem3Dint(int ***array3D)
     error ("free_mem3Dint: trying to free unused memory",100);
   }
 }
-
 
 /*!
  ************************************************************************
@@ -1799,7 +1784,6 @@ void no_mem_exit(char *where)
    error (errortext, 100);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -1873,7 +1857,6 @@ int get_mem3Duint16(uint16 ****array3D,int dim0, int dim1, int dim2)
 
   return mem_size;
 }
-
 
 /*!
  ************************************************************************
@@ -1956,7 +1939,6 @@ int get_mem3Dshort(short ****array3D,int dim0, int dim1, int dim2)
 
   return mem_size;
 }
-
 
 /*!
  ************************************************************************
@@ -2344,7 +2326,6 @@ int get_mem3Dodouble(double ****array3D, int dim0, int dim1, int dim2, int offse
   return dim0*( sizeof(double**) + dim1 * ( sizeof(double*) + dim2 * sizeof(double)));
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2436,7 +2417,6 @@ int get_mem2Doint(int ***array2D, int dim0, int dim1, int offset)
   return dim0 * (sizeof(int*) + dim1 * sizeof(int));
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2481,7 +2461,6 @@ void free_mem1Dodouble(double *array1D, int offset)
     error ("free_mem1Dodouble: trying to free unused memory",100);
   }
 }
-
 
 /*!
 ************************************************************************
@@ -2577,7 +2556,6 @@ void free_mem3Doint(int ***array3D, int dim0, int dim1, int offset)
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -2650,7 +2628,6 @@ void free_mem3Ddouble(double ***array3D)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2677,7 +2654,6 @@ int get_mem2Dolm(LambdaParams ***array2D, int dim0, int dim1, int offset)
 
   return dim0 * (sizeof(LambdaParams*) + dim1 * sizeof(LambdaParams));
 }
-
 
 /*!
 ************************************************************************

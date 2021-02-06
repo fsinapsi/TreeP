@@ -23,9 +23,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-
 /*************************** Function Definitions ****************************/
-
 
 /*
   Prints an error message and aborts the program.  The error message is
@@ -46,8 +44,6 @@ void fatal_error(char* format, ...)
   fprintf( stderr, "\n" );
   abort();
 }
-
-
 
 /*
   Doubles the size of an array with error checking
@@ -76,8 +72,6 @@ int array_double( void** array, int n, int size )
   *array = tmp;
   return n*2;
 }
-
-
 
 /*
   Calculates the squared distance between two points.

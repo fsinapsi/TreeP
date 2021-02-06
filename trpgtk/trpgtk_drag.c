@@ -67,5 +67,3 @@ void trp_gtk_drag_dest_unset( trp_obj_t *obj )
             gtk_drag_dest_unset( (GtkWidget *)o );
 }
 
-
-

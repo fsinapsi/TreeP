@@ -14,7 +14,6 @@
 
 #include "global.h"
 
-
 #ifdef _WIN32
 
 static LARGE_INTEGER freq;

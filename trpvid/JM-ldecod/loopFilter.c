@@ -157,7 +157,6 @@ static void init_neighbors(VideoParameters *p_Vid)
   }
 }
 
-
 void  init_Deblock(VideoParameters *p_Vid, int mb_aff_frame_flag)
 {
   if(p_Vid->yuv_format == YUV444 && p_Vid->separate_colour_plane_flag)
@@ -483,7 +482,6 @@ static void get_db_strength(VideoParameters *p_Vid, StorablePicture *p, int MbQA
     MbQ->DeblockCall = 0;
   }
 }
-
 
 static void perform_db(VideoParameters *p_Vid, StorablePicture *p, int MbQAddr)
 {

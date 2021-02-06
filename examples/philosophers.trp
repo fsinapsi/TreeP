@@ -205,5 +205,3 @@
                         (aggiorna-libere libere
                                 (pos-sinistra j n) -1 ))))
 
-
-

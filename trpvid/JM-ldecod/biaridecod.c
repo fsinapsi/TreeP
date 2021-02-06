@@ -22,7 +22,6 @@
 #include "memalloc.h"
 #include "biaridecod.h"
 
-
 #define B_BITS    10      // Number of bits to represent the whole coding interval
 #define HALF      0x01FE  //(1 << (B_BITS-1)) - 2
 #define QUARTER   0x0100  //(1 << (B_BITS-2))
@@ -43,7 +42,6 @@ DecodingEnvironmentPtr arideco_create_decoding_environment()
     no_mem_exit("arideco_create_decoding_environment: dep");
   return dep;
 }
-
 
 /*!
  ***********************************************************************
@@ -132,7 +130,6 @@ void arideco_start_decoding(DecodingEnvironmentPtr dep, unsigned char *code_buff
 #endif
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -149,7 +146,6 @@ int arideco_bits_read(DecodingEnvironmentPtr dep)
  return (((*dep->Dcodestrm_len) << 3) - dep->DbitsLeft);
 #endif
 }
-
 
 /*!
 ************************************************************************
@@ -212,7 +208,6 @@ unsigned int biari_decode_symbol(DecodingEnvironment *dep, BiContextType *bi_ct 
     return (bit);
   }
 }
-
 
 /*!
  ************************************************************************

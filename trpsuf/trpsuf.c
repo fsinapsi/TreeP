@@ -232,11 +232,6 @@ static uns32b *trp_suf_get_lcp_array( trp_suf_t *suf )
     return suf->LCP;
 }
 
-
-
-
-
-
 static sig32b _compare( const uns8b *T, sig32b Tsize,
                         const uns8b *P, sig32b Psize,
                         sig32b suf, sig32b *match )
@@ -330,11 +325,6 @@ static sig32b sa_search( sig32b Tsize, const uns8b *T,
     if (idx) { *idx = (0 < (k - j)) ? j : i; }
     return k - j;
 }
-
-
-
-
-
 
 trp_obj_t *trp_suf_sais( trp_obj_t *s )
 {
@@ -807,6 +797,4 @@ trp_obj_t *trp_suf_lcs_k_alt( trp_obj_t *k, trp_obj_t *s, ... )
     va_end( args3 );
     return s;
 }
-
-
 

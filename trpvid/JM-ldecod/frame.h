@@ -37,7 +37,6 @@ typedef enum {
   V210       =  4      //!< Video Clarity 422 format (10 bits)
 } PixelFormat;
 
-
 typedef struct frame_format
 {
   ColorFormat yuv_format;                    //!< YUV format (0=4:0:0, 1=4:2:0, 2=4:2:2, 3=4:4:4)

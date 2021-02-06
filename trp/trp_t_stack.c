@@ -176,5 +176,3 @@ trp_obj_t *trp_stack_pop( trp_obj_t *stack )
     return res;
 }
 
-
-

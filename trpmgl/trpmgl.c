@@ -419,5 +419,3 @@ uns8b trp_mgl_surf( trp_obj_t *mgl, trp_obj_t *mgd, trp_obj_t *sch )
     return 0;
 }
 
-
-

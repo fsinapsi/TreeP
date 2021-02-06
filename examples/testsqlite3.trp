@@ -62,5 +62,3 @@
         (close db)
         (print db nl) )
 
-
-

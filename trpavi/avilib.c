@@ -62,18 +62,15 @@ enum {
 #define AVI_MAX_LEN (UINT_MAX-(1<<20)*16-HEADERBYTES)
 #define PAD_EVEN(x) ( ((x)+1) & ~1 )
 
-
 /*************************************************************************/
 /* forward declarations                                                  */
 
 static int avi_parse_input_file(avi_t *AVI, int getIndex);
 
-
 /*************************************************************************/
 
 /* The following variable indicates the kind of error */
 static long AVI_errno = 0;
-
 
 /*************************************************************************/
 
@@ -112,7 +109,6 @@ static uns32b str2ulong_len (unsigned char *str)
 {
    return str2ulong(str) & 0x7fffffff;
 }
-
 
 // if bit 31 is 0, its a keyframe
 static uns32b str2ulong_key (unsigned char *str)
@@ -389,8 +385,6 @@ static uns8b *avi_build_audio_superindex(avisuperindex_chunk *si, uns8b *a)
     return a;
 }
 
-
-
 static int avi_parse_input_file(avi_t *AVI, int getIndex)
 {
   long i, rate, scale, idx_type;
@@ -488,7 +482,6 @@ static int avi_parse_input_file(avi_t *AVI, int getIndex)
 
       n = str2ulong(hdrl_data+i+4);
       n = PAD_EVEN(n);
-
 
       /* Interpret the tag and its args */
 
@@ -670,7 +663,6 @@ static int avi_parse_input_file(avi_t *AVI, int getIndex)
 #endif
             }
 
-
 #ifdef DEBUG_ODML
             printf("FOURCC \"%c%c%c%c\"\n", AVI->video_superindex->fcc[0], AVI->video_superindex->fcc[1],
                                             AVI->video_superindex->fcc[2], AVI->video_superindex->fcc[3]);
@@ -776,7 +768,6 @@ static int avi_parse_input_file(avi_t *AVI, int getIndex)
       }
       /* idx_type remains 0 if neither of the two tests above succeeds */
    }
-
 
    if(idx_type == 0 && !AVI->is_opendml && !AVI->total_frames)
    {
@@ -1028,7 +1019,6 @@ multiple_riff:
          if( plat_read(AVI->fdes,data,8) != 8 ) break;
          n = str2ulong((unsigned char *)data+4);
 
-
          j=0;
 
          if (aud_chunks - nai[j] -1 <= 0) {
@@ -1068,7 +1058,6 @@ multiple_riff:
                  (data[2]=='w' || data[2]=='W') &&
              (data[3]=='b' || data[3]=='B') ) {
 
-
                 AVI->track[j].audio_index[nai[j]].pos = ftello(AVI->fdes);
                 AVI->track[j].audio_index[nai[j]].len = n;
                 AVI->track[j].audio_index[nai[j]].tot = tot[j];
@@ -1087,7 +1076,6 @@ multiple_riff:
                         "Uh? Some frames seems missing (%ld/%d)",
                         nvi,  AVI->total_frames);
       }
-
 
       AVI->video_frames = nvi;
       AVI->track[0].audio_chunks = nai[0];
@@ -1120,7 +1108,6 @@ multiple_riff:
 
    AVI->video_frames = nvi;
    for(j=0; j<AVI->anum; ++j) AVI->track[j].audio_chunks = nai[j];
-
 
    if(AVI->video_frames==0) ERR_EXIT(AVI_ERR_NO_VIDS);
    AVI->video_index = plat_malloc(nvi*sizeof(video_index_entry));
@@ -1161,7 +1148,6 @@ multiple_riff:
        }
      }
    }
-
 
    for(j=0; j<AVI->anum; ++j) AVI->track[j].audio_bytes = tot[j];
 
@@ -1324,7 +1310,6 @@ long AVI_get_video_position(avi_t *AVI, long frame)
    return(AVI->video_index[frame].pos);
 }
 
-
 int AVI_seek_start(avi_t *AVI)
 {
    if(AVI->mode==AVI_MODE_WRITE) { AVI_errno = AVI_ERR_NOT_PERM; return -1; }
@@ -1438,7 +1423,6 @@ int AVI_set_audio_position_index(avi_t *AVI, long indexpos)
 
    return 0;
 }
-
 
 int AVI_set_audio_position(avi_t *AVI, long byte)
 {

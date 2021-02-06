@@ -183,7 +183,6 @@ extern int  malloc_mem3Dpel_2SLayers(imgpel ****buf0, int imgtype0, imgpel ****b
 extern void free_mem2Dpel_2SLayers(imgpel ***buf0, imgpel ***buf1);
 extern void free_mem3Dpel_2SLayers(imgpel ****buf0, imgpel ****buf1);
 
-
 static inline void* mem_malloc(size_t nitems)
 {
   void *d;

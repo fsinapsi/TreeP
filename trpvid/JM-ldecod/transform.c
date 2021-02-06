@@ -16,7 +16,6 @@
 #include "global.h"
 #include "transform.h"
 
-
 void forward4x4(int **block, int **tblock, int pos_y, int pos_x)
 {
   int i, ii;
@@ -117,7 +116,6 @@ void inverse4x4(int **tblock, int **block, int pos_y, int pos_x)
   }
 }
 
-
 void hadamard4x4(int **block, int **tblock)
 {
   int i;
@@ -166,7 +164,6 @@ void hadamard4x4(int **block, int **tblock)
     tblock[3][i] = (t3 - t2) >> 1;
   }
 }
-
 
 void ihadamard4x4(int **tblock, int **block)
 {
@@ -349,7 +346,6 @@ void ihadamard2x2(int tblock[4], int block[4])
 
 */
 
-
 void forward8x8(int **block, int **tblock, int pos_y, int pos_x)
 {
   int i, ii;
@@ -484,7 +480,6 @@ void inverse8x8(int **tblock, int **block, int pos_x)
     a2 = -p1 + p7 + p5 + (p5 >> 1);
     a3 =  p3 + p5 + p1 + (p1 >> 1);
 
-
     b1 =  a0 + (a3>>2);
     b3 =  a1 + (a2>>2);
     b5 =  a2 - (a1>>2);
@@ -527,7 +522,6 @@ void inverse8x8(int **tblock, int **block, int pos_x)
     a1 =  p1 + p7 - p3 - (p3 >> 1);
     a2 = -p1 + p7 + p5 + (p5 >> 1);
     a3 =  p3 + p5 + p1 + (p1 >> 1);
-
 
     b1 =  a0 + (a3 >> 2);
     b7 =  a3 - (a0 >> 2);

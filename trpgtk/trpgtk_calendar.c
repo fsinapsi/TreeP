@@ -56,5 +56,3 @@ trp_obj_t *trp_gtk_calendar_get_date( trp_obj_t *obj )
     return res;
 }
 
-
-

@@ -15,7 +15,6 @@
 #include "global.h"
 #include "mbuffer.h"
 
-
 #if TRACE
 
 /*!

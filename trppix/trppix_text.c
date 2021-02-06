@@ -177,5 +177,3 @@ trp_obj_t *trp_pix_text( trp_obj_t *s, ... )
     return res;
 }
 
-
-

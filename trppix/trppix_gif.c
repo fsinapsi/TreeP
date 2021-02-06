@@ -187,5 +187,3 @@ uns8b trp_pix_save_gif( trp_obj_t *pix, trp_obj_t *path, trp_obj_t *transp, trp_
     return 1;
 }
 
-
-

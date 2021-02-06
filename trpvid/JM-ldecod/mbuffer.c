@@ -219,7 +219,6 @@ void check_num_ref(DecodedPictureBuffer *p_Dpb)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -466,7 +465,6 @@ void free_dpb(DecodedPictureBuffer *p_Dpb)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -676,7 +674,6 @@ void free_pic_motion(PicMotionParamsOld *motion)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -723,7 +720,6 @@ void free_storable_picture(StorablePicture* p)
       free_mem3Dpel_pad(p->imgUV, 2, p->iChromaPadY, p->iChromaPadX);
       p->imgUV=NULL;
     }
-
 
     if (p->seiHasTone_mapping)
       free(p->tone_mapping_lut);
@@ -798,7 +794,6 @@ void unmark_for_reference(FrameStore* fs)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -840,8 +835,6 @@ void unmark_for_long_term_reference(FrameStore* fs)
   fs->is_reference = 0;
   fs->is_long_term = 0;
 }
-
-
 
 void update_pic_num(Slice *currSlice)
 {
@@ -1050,7 +1043,6 @@ void init_lists_p_slice(Slice *currSlice)
   }
   currSlice->listXsize[1] = 0;
 
-
   // set max size
   currSlice->listXsize[0] = (char) imin (currSlice->listXsize[0], currSlice->num_ref_idx_active[LIST_0]);
   currSlice->listXsize[1] = (char) imin (currSlice->listXsize[1], currSlice->num_ref_idx_active[LIST_1]);
@@ -1083,7 +1075,6 @@ void init_lists_p_slice(Slice *currSlice)
 #endif
 #endif
 }
-
 
 /*!
  ************************************************************************
@@ -1396,8 +1387,6 @@ StorablePicture*  get_short_term_pic(Slice *currSlice, DecodedPictureBuffer *p_D
   return currSlice->p_Vid->no_reference_picture;
 }
 
-
-
 #if (!MVC_EXTENSION_ENABLE)
 /*!
  ************************************************************************
@@ -1429,7 +1418,6 @@ static void reorder_short_term(Slice *currSlice, int cur_list, int num_ref_idx_l
         RefPicListX[ nIdx++ ] = RefPicListX[ cIdx ];
   }
 }
-
 
 /*!
  ************************************************************************
@@ -1545,9 +1533,6 @@ void reorder_ref_pic_list(Slice *currSlice, int cur_list)
   currSlice->listXsize[cur_list] = (char) (num_ref_idx_lX_active_minus1 + 1);
 }
 
-
-
-
 /*!
  ************************************************************************
  * \brief
@@ -1635,7 +1620,6 @@ static void sliding_window_memory_management(DecodedPictureBuffer *p_Dpb, Storab
 
   p->is_long_term = 0;
 }
-
 
 /*!
  ************************************************************************
@@ -1743,7 +1727,6 @@ static void adaptive_memory_management(DecodedPictureBuffer *p_Dpb, StorablePict
 #endif
   }
 }
-
 
 /*!
  ************************************************************************
@@ -1909,7 +1892,6 @@ void store_picture_in_dpb(DecodedPictureBuffer *p_Dpb, StorablePicture* p)
   dump_dpb(p_Dpb);
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2029,7 +2011,6 @@ static void insert_picture_in_dpb(VideoParameters *p_Vid, FrameStore* fs, Storab
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2081,9 +2062,6 @@ void remove_frame_from_dpb(DecodedPictureBuffer *p_Dpb, int pos)
   p_Dpb->fs[p_Dpb->used_size-1] = tmp;
   p_Dpb->used_size--;
 }
-
-
-
 
 /*!
  ************************************************************************
@@ -2152,8 +2130,6 @@ static int output_one_frame_from_dpb(DecodedPictureBuffer *p_Dpb)
   }
   return 1;
 }
-
-
 
 /*!
  ************************************************************************
@@ -2474,7 +2450,6 @@ void dpb_split_field(VideoParameters *p_Vid, FrameStore *fs)
   }
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2546,7 +2521,6 @@ void dpb_combine_field_yuv(VideoParameters *p_Vid, FrameStore *fs)
 
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2601,7 +2575,6 @@ void dpb_combine_field(VideoParameters *p_Vid, FrameStore *fs)
     }
   }
 }
-
 
 /*!
  ************************************************************************
@@ -2659,7 +2632,6 @@ void alloc_ref_pic_list_reordering_buffer(Slice *currSlice)
 #endif
   }
 }
-
 
 /*!
  ************************************************************************
@@ -2764,7 +2736,6 @@ void fill_frame_num_gap(VideoParameters *p_Vid, Slice *currSlice)
   currSlice->frame_num = CurrFrameNum;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -2814,7 +2785,6 @@ void compute_colocated (Slice *currSlice, StorablePicture **listX[6])
     }
   }
 }
-
 
 #if (MVC_EXTENSION_ENABLE)
 int GetMaxDecFrameBuffering(VideoParameters *p_Vid)
@@ -2899,7 +2869,6 @@ void append_interview_list(DecodedPictureBuffer *p_Dpb,
   int fld_idx;
   int num_ref_views, *ref_view_id;
   FrameStore *fs = p_Dpb->fs_ilref[0];
-
 
   if(iVOIdx <0)
     printf("Error: iVOIdx: %d is not less than 0\n", iVOIdx);
@@ -3364,5 +3333,4 @@ StorablePicture * clone_storable_picture( VideoParameters *p_Vid, StorablePictur
   return p_stored_pic;
 }
 #endif
-
 

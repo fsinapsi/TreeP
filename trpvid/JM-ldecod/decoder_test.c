@@ -30,7 +30,6 @@
 #define DECOUTPUT_VIEW0_FILENAME  "H264_Decoder_Output_View0.yuv"
 #define DECOUTPUT_VIEW1_FILENAME  "H264_Decoder_Output_View1.yuv"
 
-
 static void Configure(InputParameters *p_Inp, int ac, char *av[])
 {
   //char *config_filename=NULL;
@@ -273,5 +272,4 @@ int main(int argc, char **argv)
   printf("%d frames are decoded.\n", iFramesDecoded);
   return 0;
 }
-
 

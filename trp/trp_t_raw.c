@@ -523,5 +523,3 @@ trp_obj_t *trp_raw_load( trp_obj_t *path )
     return res;
 }
 
-
-

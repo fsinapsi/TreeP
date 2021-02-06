@@ -656,5 +656,3 @@ trp_obj_t *trp_read_float_be( trp_obj_t *stream, trp_obj_t *cnt )
     return trp_double( (double)d64 );
 }
 
-
-

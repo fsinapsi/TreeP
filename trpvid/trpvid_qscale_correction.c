@@ -195,5 +195,3 @@ trp_obj_t *trp_vid_qscale_correction_b( trp_obj_t *obj )
     return trp_sig64( res );
 }
 
-
-

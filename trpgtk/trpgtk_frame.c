@@ -42,5 +42,3 @@ void trp_gtk_frame_set_label( trp_obj_t *obj, trp_obj_t *label )
         }
 }
 
-
-

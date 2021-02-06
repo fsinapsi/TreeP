@@ -225,8 +225,6 @@ void Inv_Residual_trans_8x8(Macroblock *currMB, ColorPlane pl, int ioff,int joff
   }
 }
 
-
-
 /*!
 ************************************************************************
 * \brief
@@ -291,7 +289,6 @@ void Inv_Residual_trans_16x16(Macroblock *currMB,   //!< current macroblock
   }
 }
 
-
 /*!
 ************************************************************************
 * \brief
@@ -343,7 +340,6 @@ void Inv_Residual_trans_Chroma(Macroblock *currMB, int uv)
   }
 }
 
-
 /*!
  ***********************************************************************
  * \brief
@@ -390,7 +386,6 @@ void itrans_2(Macroblock *currMB,    //!< current macroblock
 
   free_mem2Dint(M4);
 }
-
 
 void itrans_sp(Macroblock *currMB,   //!< current macroblock
                ColorPlane pl,        //!< used color plane
@@ -478,7 +473,6 @@ void itrans_sp(Macroblock *currMB,   //!< current macroblock
 
   free_mem2Dint(PBlock);
 }
-
 
 void itrans_sp_cr(Macroblock *currMB, int uv)
 {
@@ -871,7 +865,6 @@ void copy_image_data_8x8(imgpel  **imgBuf1, imgpel  **imgBuf2, int off1, int off
   }
 }
 
-
 /*!
  *************************************************************************************
  * \brief
@@ -898,7 +891,6 @@ int CheckVertMV(Macroblock *currMB, int vec1_y, int block_size_y)
   else
     return 0;
 }
-
 
 /*!
  *************************************************************************************

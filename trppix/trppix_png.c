@@ -355,5 +355,3 @@ uns8b trp_pix_save_png( trp_obj_t *pix, trp_obj_t *path )
     return 0;
 }
 
-
-

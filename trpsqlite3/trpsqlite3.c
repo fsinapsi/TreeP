@@ -696,5 +696,3 @@ trp_obj_t *trp_sqlite3_total_changes( trp_obj_t *obj )
     return trp_sig64( sqlite3_total_changes( s ) );
 }
 
-
-

@@ -260,7 +260,6 @@ char CORD_fetch(CORD x, size_t i)
     return(CORD_pos_fetch(xpos));
 }
 
-
 int CORD_put_proc(char c, void * client_data)
 {
     register FILE * f = (FILE *)client_data;
@@ -274,7 +273,6 @@ int CORD_batched_put_proc(const char * s, void * client_data)
 
     return(fputs(s, f) == EOF);
 }
-
 
 int CORD_put(CORD x, FILE * f)
 {
@@ -431,7 +429,6 @@ char CORD_nul_func(size_t i, void * client_data)
 {
     return((char)(unsigned long)client_data);
 }
-
 
 CORD CORD_chars(char c, size_t i)
 {

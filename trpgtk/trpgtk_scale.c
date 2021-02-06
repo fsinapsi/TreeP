@@ -78,5 +78,3 @@ void trp_gtk_scale_set_draw_value( trp_obj_t *obj, trp_obj_t *on_off )
             gtk_scale_set_draw_value( (GtkScale *)o, BOOLVAL( on_off ) );
 }
 
-
-

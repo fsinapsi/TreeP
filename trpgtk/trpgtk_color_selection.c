@@ -69,5 +69,3 @@ void trp_gtk_color_selection_set_has_opacity_control( trp_obj_t *obj, trp_obj_t 
     }
 }
 
-
-

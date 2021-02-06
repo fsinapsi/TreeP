@@ -26,14 +26,12 @@ enum feature_match_type
     FEATURE_MDL_MATCH,
   };
 
-
 /* colors in which to display different feature types */
 #define FEATURE_OXFD_COLOR CV_RGB(255,255,0)
 #define FEATURE_LOWE_COLOR CV_RGB(255,0,255)
 
 /** max feature descriptor length */
 #define FEATURE_MAX_D 128
-
 
 /**
    Structure to represent an affine invariant image feature.  The fields
@@ -62,12 +60,10 @@ struct feature
   void* feature_data;            /**< user-definable data */
 };
 
-
 /**
    Reads image features from file.  The file should be formatted either as
    from the code provided by the Visual Geometry Group at Oxford or from
    the code provided by David Lowe.
-
 
    @param filename location of a file containing image features
    @param type determines how features are input.  If \a type is FEATURE_OXFD,
@@ -84,7 +80,6 @@ struct feature
 */
 extern int import_features( char* filename, int type, struct feature** feat );
 
-
 /**
    Exports a feature set to a file formatted depending on the type of
    features, as specified in the feature struct's type field.
@@ -97,7 +92,6 @@ extern int import_features( char* filename, int type, struct feature** feat );
 */
 extern int export_features( char* filename, struct feature* feat, int n );
 
-
 /**
    Displays a set of features on an image
 
@@ -106,7 +100,6 @@ extern int export_features( char* filename, struct feature* feat, int n );
    @param n number of features
 */
 extern void draw_features( IplImage* img, struct feature* feat, int n );
-
 
 /**
    Calculates the squared Euclidian distance between two feature descriptors.
@@ -118,6 +111,5 @@ extern void draw_features( IplImage* img, struct feature* feat, int n );
      \a f1 and \a f2.
 */
 extern double descr_dist_sq( struct feature* f1, struct feature* f2 );
-
 
 #endif

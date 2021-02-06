@@ -372,5 +372,3 @@ int aks (const mpz_t n)
     return PRIME;
 }
 
-
-

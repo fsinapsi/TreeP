@@ -63,7 +63,6 @@
 
 static int  ParameterNameToMapIndex (Mapping *Map, char *s);
 
-
 #define MAX_ITEMS_TO_PARSE  10000
 
 /*!
@@ -118,11 +117,9 @@ char *GetConfigFileContent (char *Filename)
   FileSize = (long) fread (buf, 1, FileSize, f);
   buf[FileSize] = '\0';
 
-
   fclose (f);
   return buf;
 }
-
 
 /*!
  ***********************************************************************
@@ -383,8 +380,6 @@ int TestParams(Mapping *Map, int bitdepth_qp_scale[3])
   }
   return -1;
 }
-
-
 
 /*!
  ***********************************************************************

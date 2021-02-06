@@ -50,7 +50,6 @@ static const byte SNGL_SCAN8x8[64][2] = {
   {2,7}, {3,7}, {4,6}, {5,5}, {6,4}, {7,3}, {7,4}, {6,5}, {5,6}, {4,7}, {5,7}, {6,6}, {7,5}, {7,6}, {6,7}, {7,7}
 };
 
-
 //! field scan pattern
 static const byte FIELD_SCAN8x8[64][2] = {   // 8x8
   {0,0}, {0,1}, {0,2}, {1,0}, {1,1}, {0,3}, {0,4}, {1,2}, {2,0}, {1,3}, {0,5}, {0,6}, {0,7}, {1,4}, {2,1}, {3,0},
@@ -146,7 +145,6 @@ extern void start_macroblock     (Slice *currSlice, Macroblock **currMB);
 extern int  decode_one_macroblock(Macroblock *currMB, StorablePicture *dec_picture);
 extern Boolean  exit_macroblock  (Slice *currSlice, int eos_bit);
 extern void update_qp            (Macroblock *currMB, int qp);
-
 
 #endif
 

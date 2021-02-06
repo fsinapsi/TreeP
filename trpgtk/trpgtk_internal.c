@@ -139,5 +139,3 @@ uns8b trp_gtk_list_find_by_widget( trp_obj_t **list, GtkWidget *w, pthread_mutex
     return res;
 }
 
-
-

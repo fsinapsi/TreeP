@@ -987,5 +987,3 @@ trp_obj_t *trp_pix_gray_histogram( trp_obj_t *pix )
     return (trp_obj_t *)obj;
 }
 
-
-

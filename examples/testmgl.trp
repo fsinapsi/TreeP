@@ -53,5 +53,3 @@
         (mgl-write-png gr "z-pippo.png")
         (close gr) )
 
-
-

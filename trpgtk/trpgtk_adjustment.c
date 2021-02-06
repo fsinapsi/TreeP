@@ -85,5 +85,3 @@ trp_obj_t *trp_gtk_adjustment_get_upper( trp_obj_t *obj )
     return res;
 }
 
-
-

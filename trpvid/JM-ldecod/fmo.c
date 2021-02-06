@@ -31,7 +31,6 @@ static void FmoGenerateType4MapUnitMap (VideoParameters *p_Vid, unsigned PicSize
 static void FmoGenerateType5MapUnitMap (VideoParameters *p_Vid, unsigned PicSizeInMapUnits, Slice *currSlice );
 static void FmoGenerateType6MapUnitMap (VideoParameters *p_Vid, unsigned PicSizeInMapUnits );
 
-
 /*!
  ************************************************************************
  * \brief
@@ -105,7 +104,6 @@ static int FmoGenerateMapUnitToSliceGroupMap (VideoParameters *p_Vid, Slice *cur
   return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -131,7 +129,6 @@ static int FmoGenerateMbToSliceGroupMap (VideoParameters *p_Vid, Slice *pSlice)
     printf ("cannot allocate %d bytes for p_Vid->MbToSliceGroupMap, exit\n", (int) ((p_Vid->PicSizeInMbs) * sizeof (int)));
     exit (-1);
   }
-
 
   if ((sps->frame_mbs_only_flag)|| pSlice->field_pic_flag)
   {
@@ -159,7 +156,6 @@ static int FmoGenerateMbToSliceGroupMap (VideoParameters *p_Vid, Slice *pSlice)
     }
   return 0;
 }
-
 
 /*!
  ************************************************************************
@@ -213,7 +209,6 @@ int fmo_init(VideoParameters *p_Vid, Slice *pSlice)
   return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -235,7 +230,6 @@ int FmoFinit(VideoParameters *p_Vid)
   return 0;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -249,7 +243,6 @@ int FmoGetNumberOfSliceGroup(VideoParameters *p_Vid)
 {
   return p_Vid->NumberOfSliceGroups;
 }
-
 
 /*!
  ************************************************************************
@@ -267,7 +260,6 @@ int FmoGetLastMBOfPicture(VideoParameters *p_Vid)
 {
   return FmoGetLastMBInSliceGroup (p_Vid, FmoGetNumberOfSliceGroup(p_Vid)-1);
 }
-
 
 /*!
  ************************************************************************
@@ -290,7 +282,6 @@ int FmoGetLastMBInSliceGroup (VideoParameters *p_Vid, int SliceGroup)
 
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -308,7 +299,6 @@ int FmoGetSliceGroupId (VideoParameters *p_Vid, int mb)
   assert (p_Vid->MbToSliceGroupMap != NULL);
   return p_Vid->MbToSliceGroupMap[mb];
 }
-
 
 /*!
  ************************************************************************
@@ -335,7 +325,6 @@ int FmoGetNextMBNr (VideoParameters *p_Vid, int CurrentMbNr)
     return CurrentMbNr;
 }
 
-
 /*!
  ************************************************************************
  * \brief
@@ -360,7 +349,6 @@ static void FmoGenerateType0MapUnitMap (VideoParameters *p_Vid, unsigned PicSize
   }
   while( i < PicSizeInMapUnits );
 }
-
 
 /*!
  ************************************************************************
@@ -408,7 +396,6 @@ static void FmoGenerateType2MapUnitMap (VideoParameters *p_Vid, unsigned PicSize
         p_Vid->MapUnitToSliceGroupMap[ y * p_Vid->PicWidthInMbs + x ] = iGroup;
  }
 }
-
 
 /*!
  ************************************************************************
