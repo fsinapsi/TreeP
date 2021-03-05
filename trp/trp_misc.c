@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2020 Frank Sinapsi
+    Copyright (C) 2008-2021 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -481,6 +481,17 @@ trp_obj_t *trp_pathexists( trp_obj_t *path )
     wchar_t *wp;
     struct _stati64 st;
 
+    {
+        uns32b l = strlen( cpath );
+
+        while ( l > 1 ) {
+            l--;
+            if ( ( cpath[ l ] != '/' ) && ( cpath[ l ] != '\\' ) ) {
+                cpath[ l + 1 ] = 0;
+                break;
+            }
+        }
+    }
     wp = trp_utf8_to_wc( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL ) {
