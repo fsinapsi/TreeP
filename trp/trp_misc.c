@@ -68,6 +68,20 @@ wchar_t *trp_utf8_to_wc( const uns8b *p )
     return wp;
 }
 
+static wchar_t *trp_utf8_to_wc_path( uns8b *cpath )
+{
+    uns32b l = strlen( cpath );
+
+    while ( l > 1 ) {
+        l--;
+        if ( ( cpath[ l ] != '/' ) && ( cpath[ l ] != '\\' ) ) {
+            cpath[ l + 1 ] = 0;
+            break;
+        }
+    }
+    return trp_utf8_to_wc( cpath );
+}
+
 uns8b *trp_wc_to_utf8( const wchar_t *wp )
 {
     uns8b *p;
@@ -106,7 +120,7 @@ uns8b *trp_get_short_path_name( uns8b *path )
     uns8b *p;
     uns32b l;
 
-    if ( ( wp = trp_utf8_to_wc( path ) ) == NULL )
+    if ( ( wp = trp_utf8_to_wc_path( path ) ) == NULL )
         return path;
     if ( ( l = GetShortPathNameW( wp, NULL, 0 ) ) == 0 ) {
         trp_gc_free( wp );
@@ -242,7 +256,7 @@ trp_obj_t *trp_realpath( trp_obj_t *obj )
     wchar_t *wp, *wq;
     uns32b l;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL )
         return UNDEF;
@@ -320,7 +334,7 @@ uns8b trp_chdir( trp_obj_t *path )
     uns8b *cpath = trp_csprint( path ), res;
     wchar_t *wp;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL )
         return 1;
@@ -352,7 +366,7 @@ uns8b trp_mkdir( trp_obj_t *path )
     uns8b *cpath = trp_csprint( path ), res;
     wchar_t *wp;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL )
         return 1;
@@ -397,7 +411,7 @@ uns8b trp_remove( trp_obj_t *path )
     uns8b *cpath = trp_csprint( path ), res;
     wchar_t *wp;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL )
         return 1;
@@ -429,8 +443,8 @@ uns8b trp_rename( trp_obj_t *oldp, trp_obj_t *newp )
     uns8b *opath = trp_csprint( oldp ), *npath = trp_csprint( newp ), res;
     wchar_t *wo, *wn;
 
-    wo = trp_utf8_to_wc( opath );
-    wn = trp_utf8_to_wc( npath );
+    wo = trp_utf8_to_wc_path( opath );
+    wn = trp_utf8_to_wc_path( npath );
     trp_csprint_free( npath );
     trp_csprint_free( opath );
     if ( ( wo == NULL ) || ( wn == NULL ) ) {
@@ -481,18 +495,7 @@ trp_obj_t *trp_pathexists( trp_obj_t *path )
     wchar_t *wp;
     struct _stati64 st;
 
-    {
-        uns32b l = strlen( cpath );
-
-        while ( l > 1 ) {
-            l--;
-            if ( ( cpath[ l ] != '/' ) && ( cpath[ l ] != '\\' ) ) {
-                cpath[ l + 1 ] = 0;
-                break;
-            }
-        }
-    }
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL ) {
         trp_gc_free( wp );
@@ -526,7 +529,7 @@ trp_obj_t *trp_ftime( trp_obj_t *path )
     wchar_t *wp;
     struct _stati64 st;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL ) {
         trp_gc_free( wp );
@@ -565,7 +568,7 @@ trp_obj_t *trp_fsize( trp_obj_t *path )
     wchar_t *wp;
     struct _stati64 st;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL ) {
         trp_gc_free( wp );
@@ -627,7 +630,7 @@ uns8b trp_utime( trp_obj_t *path, trp_obj_t *actime, trp_obj_t *modtime )
     res =  utime( cpath, &timebuf ) ? 1 : 0;
 #else
     {
-        wchar_t *wp = trp_utf8_to_wc( cpath );
+        wchar_t *wp = trp_utf8_to_wc_path( cpath );
 
         if ( wp == NULL ) {
             trp_csprint_free( cpath );
@@ -683,7 +686,7 @@ trp_obj_t *trp_directory( trp_obj_t *obj )
     if ( obj ) {
         uns8b *cpath = trp_csprint( obj );
 
-        if ( ( wp = trp_utf8_to_wc( cpath ) ) == NULL ) {
+        if ( ( wp = trp_utf8_to_wc_path( cpath ) ) == NULL ) {
             trp_csprint_free( cpath );
             return UNDEF;
         }
@@ -799,7 +802,7 @@ static uns8b trp_path_mode( trp_obj_t *path, mode_t *mode )
     wchar_t *wp;
     struct _stati64 st;
 
-    wp = trp_utf8_to_wc( cpath );
+    wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL ) {
         trp_gc_free( wp );
