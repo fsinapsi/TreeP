@@ -59,6 +59,9 @@
         (booleanp val)
         (iup-set-str-attribute wid attribute (if val "YES" "NO")) )
 
+(defun iup-get-bool (wid attribute)
+        (= (iup-get-str-attribute wid attribute) "ON") )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                      ;;;;
@@ -94,6 +97,26 @@
 
         (for wid in q do
                 (close wid) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-horizontal-separator () net iup-horizontal-separator)
+(defnet iup-horizontal-separator (@wid)
+        (set @wid (iup-label))
+        (iup-set-str-attribute @wid "SEPARATOR" "HORIZONTAL") )
+
+(defun iup-vertical-separator () net iup-vertical-separator)
+(defnet iup-vertical-separator (@wid)
+        (set @wid (iup-label))
+        (iup-set-str-attribute @wid "SEPARATOR" "VERTICAL") )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -144,13 +167,10 @@
 
 (defun iup-box-ok (cback q) net iup-box-ok)
 (defnet iup-box-ok (cback q @wid)
-        (deflocal pre sep btn-ok hbox)
+        (deflocal pre btn-ok hbox)
 
         (set pre (iup-hbox))
         (iup-set-str-attribute pre "MARGIN" "0x3")
-
-        (set sep (iup-label))
-        (iup-set-str-attribute sep "SEPARATOR" "HORIZONTAL")
 
         (set btn-ok (iup-button-icon-ok cback q))
         (iup-set-str-attribute btn-ok "CANFOCUS" (if (cmingw) "YES" "NO"))
@@ -160,7 +180,7 @@
                 btn-ok
                 (iup-fill) ))
 
-        (set @wid (iup-vbox pre sep hbox))
+        (set @wid (iup-vbox pre (iup-horizontal-separator) hbox))
         (iup-set-str-attribute @wid "MARGIN" "6x6")
         (iup-set-int @wid "GAP" 4) )
 
@@ -754,11 +774,123 @@
 (defun iup-text-spin (vmin vmax vcur) net iup-text-spin)
 (defnet iup-text-spin (vmin vmax vcur @wid)
         (set @wid (iup-text))
-        (iup-set-str-attribute @wid "MASK" "/d+")
+        (iup-set-str-attribute @wid "MASK"
+                (if (< vmin 0) "[+/-]?/d+" "/d+") )
         (iup-set-bool @wid "SPIN" true)
         (iup-set-int @wid "SPINMIN" vmin)
         (iup-set-int @wid "SPINMAX" vmax)
         (iup-set-int @wid "SPINVALUE" vcur) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-text-spin-ratio (vmin vmax vcur vinc) net iup-text-spin-ratio)
+(defnet iup-text-spin-ratio (vmin vmax vcur vinc @wid)
+        (deflocal spinmax)
+
+        (set spinmax (rint (/ (- vmax vmin) vinc)))
+        (set @wid (iup-text))
+        (iup-set-str-attribute @wid "MASK"
+                (if (< vmin 0) "[+/-]?(/d+/.?/d*|/./d+)" "(/d+/.?/d*|/./d+)") )
+        (iup-set-bool @wid "SPIN" true)
+        (iup-set-bool @wid "SPINAUTO" false)
+        (iup-set-int @wid "SPINMAX" spinmax)
+        (iup-set-int @wid "SPINVALUE" (rint (/ (* spinmax (- vcur vmin)) (- vmax vmin))))
+        (iup-set-str-attribute @wid "TRPVMIN" (approx3 vmin))
+        (iup-set-str-attribute @wid "TRPVMAX" (approx3 (/ (- vmax vmin) spinmax)))
+        (iup-set-str-attribute @wid "VALUE" (approx3 vcur))
+        (iup-set-callback @wid "SPIN_CB" (netptr iup-text-spin-ratio-cb))
+        (iup-set-callback @wid "VALUECHANGED_CB" (netptr iup-text-spin-ratio-changed-cb)) )
+
+(defnet iup-text-spin-ratio-cb (spin v)
+        (iup-set-str-attribute spin "VALUE" (approx3
+                (+ (str->num (iup-get-str-attribute spin "TRPVMIN"))
+                   (* v (str->num (iup-get-str-attribute spin "TRPVMAX"))) ))))
+
+(defnet iup-text-spin-ratio-changed-cb (spin)
+        (deflocal v vmin vmax smax)
+
+        (opt    (set v (str->num (iup-get-str-attribute spin "VALUE")))
+                (rationalp v)
+                (set v (rint (/ (- v (str->num (iup-get-str-attribute spin "TRPVMIN")))
+                                (str->num (iup-get-str-attribute spin "TRPVMAX")) )))
+                (in v 0 .. (iup-get-int spin "SPINMAX"))
+                (iup-set-int spin "SPINVALUE" v) ))
+
+(defun iup-text-spin-ratio-val (spin) net iup-text-spin-ratio-val)
+(defnet iup-text-spin-ratio-val (spin @v)
+        (deflocal vmin vmax smax)
+
+        (set @v (str->num (iup-get-str-attribute spin "VALUE")))
+        (set vmin (str->num (iup-get-str-attribute spin "TRPVMIN")))
+        (set vmax (str->num (iup-get-str-attribute spin "TRPVMAX")))
+        (alt    (seq    (rationalp @v)
+                        (if (< @v vmin)
+                        then    (iup-set-int spin "SPINVALUE" 0)
+                                (fail) )
+                        (set smax (iup-get-int spin "SPINMAX"))
+                        (if (> @v (+ vmin (* vmax smax)))
+                        then    (iup-set-int spin "SPINVALUE" smax)
+                                (fail) ))
+                (set @v (+ vmin (* (iup-get-int spin "SPINVALUE") vmax))) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet iup-text-append-and-go-home (wid msg)
+        (iup-text-append-low wid undef msg true true) )
+
+(defnet iup-text-append-and-go-end (wid msg)
+        (iup-text-append-low wid undef msg true false) )
+
+(defnet iup-text-append-and-go-home-color (wid color msg)
+        (iup-text-append-low wid color msg true true) )
+
+(defnet iup-text-append-and-go-end-color (wid color msg)
+        (iup-text-append-low wid color msg true false) )
+
+(defnet iup-text-set-and-go-home (wid msg)
+        (iup-text-append-low wid undef msg false true) )
+
+(defnet iup-text-set-and-go-end (wid msg)
+        (iup-text-append-low wid undef msg false false) )
+
+(defnet iup-text-set-and-go-home-color (wid color msg)
+        (iup-text-append-low wid color msg false true) )
+
+(defnet iup-text-set-and-go-end-color (wid color msg)
+        (iup-text-append-low wid color msg false false) )
+
+(defnet iup-text-append-low (wid color msg append home)
+        (deflocal i j u)
+
+        (if append
+        then    (set i (iup-get-int wid "COUNT"))
+                (iup-set-str-attribute wid "APPEND" msg)
+        else    (set i 0)
+                (iup-set-str-attribute wid "VALUE" msg) )
+        (set j (iup-get-int wid "COUNT"))
+        (if (<> color undef)
+        then    (set u (iup-user))
+                (iup-set-str-attribute u "SELECTIONPOS" i ":" j)
+                (iup-set-str-attribute u "FGCOLOR"
+                    (sprint (pix-color-red color) " " (pix-color-green color) " " (pix-color-blue color)) )
+                (iup-set-attribute wid "ADDFORMATTAG_HANDLE" u) )
+        (iup-set-int wid "CARETPOS" (if home 0 j)) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

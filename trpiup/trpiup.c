@@ -381,13 +381,19 @@ static int trp_iup_cback_dropdata_cb( Ihandle *self, char *type, void *data, int
                                                                      trp_sig64( y ) ) ? IUP_DEFAULT : IUP_DEFAULT;
 }
 
+static int trp_iup_cback_spin_cb( Ihandle *self, int inc )
+{
+    return ((uns8bfun_t)IupGetAttribute( self, "TRP_SPIN_CB" ))( trp_iup_handle( self ),
+                                                                 trp_sig64( inc ) ) ? IUP_DEFAULT : IUP_DEFAULT;
+}
+
 struct cback {
     uns8b *name;
     uns8b nargs;
     Icallback cb;
 };
 
-#define TRP_IUP_CALLBACKS 13
+#define TRP_IUP_CALLBACKS 14
 
 static struct cback _trp_iup_callbacks[ TRP_IUP_CALLBACKS ] = {
     { "ACTION", 1, (Icallback)trp_iup_cback_action },
@@ -402,7 +408,8 @@ static struct cback _trp_iup_callbacks[ TRP_IUP_CALLBACKS ] = {
     { "RESIZE_CB", 3, (Icallback)trp_iup_cback_resize_cb },
     { "VALUECHANGED_CB", 1, (Icallback)trp_iup_cback_valuechanged_cb },
     { "DRAGBEGIN_CB", 3, (Icallback)trp_iup_cback_dragbegin_cb },
-    { "DROPDATA_CB", 3, (Icallback)trp_iup_cback_dropdata_cb }
+    { "DROPDATA_CB", 3, (Icallback)trp_iup_cback_dropdata_cb },
+    { "SPIN_CB", 2, (Icallback)trp_iup_cback_spin_cb }
 };
 
 uns8b trp_iup_set_callback( trp_obj_t *ih, trp_obj_t *name, trp_obj_t *cback )

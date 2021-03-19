@@ -66,6 +66,7 @@ static trp_obj_t *trp_av_length( trp_avcodec_t *obj );
 static trp_obj_t *trp_av_rational( struct AVRational *r );
 static struct SwsContext *trp_av_extract_sws_context( trp_avcodec_t *swsctx );
 static AVFormatContext *trp_av_extract_fmt_context( trp_avcodec_t *fmtctx );
+static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, trp_obj_t *par );
 static trp_obj_t *trp_av_metadata_low( AVDictionary *metadata );
 
 uns8b trp_av_init()
@@ -241,6 +242,18 @@ trp_obj_t *trp_av_swscale_version()
     return trp_cord( buf );
 }
 
+trp_obj_t *trp_av_avcodec_version()
+{
+    int v = avcodec_version();
+    uns8b buf[ 12 ];
+
+    sprintf( buf, "%d.%d.%d",
+             AV_VERSION_MAJOR( v ),
+             AV_VERSION_MINOR( v ),
+             AV_VERSION_MICRO( v ) );
+    return trp_cord( buf );
+}
+
 trp_obj_t *trp_av_avcodec_configuration()
 {
     return trp_cord( avcodec_configuration() );
@@ -249,6 +262,21 @@ trp_obj_t *trp_av_avcodec_configuration()
 trp_obj_t *trp_av_avcodec_license()
 {
     return trp_cord( avcodec_license() );
+}
+
+trp_obj_t *trp_av_avcodec_list()
+{
+    trp_obj_t *l = NIL;
+    const AVCodecDescriptor *desc = NULL;
+
+    while ( ( desc = avcodec_descriptor_next( desc ) ) ) {
+        l = trp_cons( trp_list( trp_sig64( desc->type ),
+                                trp_cord( desc->name ),
+                                trp_cord( desc->long_name ),
+                                NULL ),
+                      l );
+    }
+    return l;
 }
 
 trp_obj_t *trp_av_sws_context( trp_obj_t *wi, trp_obj_t *hi, trp_obj_t *wo, trp_obj_t *ho, trp_obj_t *alg )
@@ -315,6 +343,16 @@ uns8b trp_av_sws_scale( trp_obj_t *swsctx, trp_obj_t *pi, trp_obj_t *po )
 
 trp_obj_t *trp_av_avformat_open_input( trp_obj_t *path, trp_obj_t *par )
 {
+    return trp_av_avformat_open_input_low( 0, path, par );
+}
+
+trp_obj_t *trp_av_avformat_open_input_cuvid( trp_obj_t *path, trp_obj_t *par )
+{
+    return trp_av_avformat_open_input_low( 1, path, par );
+}
+
+static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, trp_obj_t *par )
+{
     trp_avcodec_t *obj;
     AVFormatContext *fmt_ctx = NULL;
     uns8b *cpath;
@@ -350,7 +388,22 @@ trp_obj_t *trp_av_avformat_open_input( trp_obj_t *path, trp_obj_t *par )
         if ( fmt_ctx->streams[ video_stream_idx ]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO )
             break;
     }
-    if ( ( codec = avcodec_find_decoder( fmt_ctx->streams[ video_stream_idx ]->codecpar->codec_id ) ) == NULL ) {
+
+    if ( flags & 1 ) {
+        switch ( fmt_ctx->streams[ video_stream_idx ]->codecpar->codec_id ) {
+            case AV_CODEC_ID_H264:
+                codec = avcodec_find_decoder_by_name( "h264_cuvid" );
+                break;
+            case AV_CODEC_ID_HEVC:
+                codec = avcodec_find_decoder_by_name( "hevc_cuvid" );
+                break;
+            default:
+                codec = avcodec_find_decoder( fmt_ctx->streams[ video_stream_idx ]->codecpar->codec_id );
+                break;
+        }
+    } else
+        codec = avcodec_find_decoder( fmt_ctx->streams[ video_stream_idx ]->codecpar->codec_id );
+    if ( codec == NULL ) {
         avformat_close_input( &fmt_ctx );
         return UNDEF;
     }
@@ -719,6 +772,18 @@ trp_obj_t *trp_av_codec_id( trp_obj_t *fmtctx, trp_obj_t *streamno )
     if ( n >= fmt_ctx->nb_streams )
         return UNDEF;
     return trp_cord( avcodec_get_name( fmt_ctx->streams[ n ]->codecpar->codec_id ) );
+}
+
+trp_obj_t *trp_av_codec_name( trp_obj_t *fmtctx, trp_obj_t *streamno )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    uns32b n;
+
+    if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( streamno, &n ) )
+        return UNDEF;
+    if ( n >= fmt_ctx->nb_streams )
+        return UNDEF;
+    return trp_cord( ((trp_avcodec_t *)fmtctx)->fmt.avctx->codec->name );
 }
 
 trp_obj_t *trp_av_time_base( trp_obj_t *fmtctx, trp_obj_t *streamno )
