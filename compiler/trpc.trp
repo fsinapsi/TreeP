@@ -356,9 +356,7 @@
                   (if mswin " -mms-bitfields" " -fPIC -I/usr/local/include -I/opt/local/include")
                   (if (gtk) (pkg-config-cflags "gtk+-2.0") "")
                   (if (iup) " -I/usr/local/include/iup" "")
-                  (if (cv) (if mswin
-                                " -I/local/include/opencv"
-                                (pkg-config-cflags "opencv") ) "" )
+                  (if (cv) (pkg-config-cflags "opencv") "")
                   " -o " (pathquote exepath)
                   " " (pathquote cpath)
                   (if (= ipath undef) "" (+ " " (pathquote ipath)))
@@ -386,17 +384,11 @@
                   (if (avcodec)
                         (if mswin
                                 " -lpthread -ltrpavcodec -lavformat -lavcodec -lavutil -lswscale"
-                                " -ltrpavcodec `pkg-config libavformat --libs` `pkg-config libavcodec --libs` `pkg-config libavutil --libs` `pkg-config libswscale --libs`" ) "" )
-                  (if (cv)
-                        (if mswin
-                                " -ltrpcv" \
-                                " -lopencv_calib3d230 -lopencv_highgui230" \
-                                " -lopencv_contrib230 -lopencv_imgproc230" \
-                                " -lopencv_core230 -lopencv_legacy230" \
-                                " -lopencv_features2d230 -lopencv_ml230" \
-                                " -lopencv_flann230 -lopencv_objdetect230" \
-                                " -lopencv_gpu230 -lopencv_video230"
-                                " -ltrpcv `pkg-config --libs opencv`" ) "" )
+                                " -ltrpavcodec `pkg-config libavformat --libs`" \
+                                " `pkg-config libavcodec --libs`" \
+                                " `pkg-config libavutil --libs`" \
+                                " `pkg-config libswscale --libs`" ) "" )
+                  (if (cv) (+ " -ltrpcv" (pkg-config-libs "opencv")) "")
                   (if (vlfeat) " -ltrpvlfeat" "")
                   (if (mgl) " -ltrpmgl -lmgl" "")
                   (if (lept) (+ " -ltrplept" (pkg-config-libs "lept")) "")

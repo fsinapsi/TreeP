@@ -8,18 +8,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun av-approximated-number-of-frames (fmt) net av-approximated-number-of-frames)
-(defnet av-approximated-number-of-frames (fmt @n)
-    (deflocal v)
+(defun av-frame-rate (fmt) net av-frame-rate)
+(defnet av-frame-rate (fmt @fr)
+        (deflocal v)
 
-    (set v (av-video-stream-idx fmt))
-    (set @n (rint (* (if (rationalp (av-avg-frame-rate fmt v))
-                        (av-avg-frame-rate fmt v)
-                        (av-r-frame-rate fmt v) )
-                     (av-duration fmt)
-                     (av-time-base fmt) )))
-    (integerp @n)
-    (> @n 0) )
+        (set v (av-video-stream-idx fmt))
+        (set @fr (av-avg-frame-rate fmt v))
+        (if (not (rationalp @fr))
+        then    (set @fr (av-r-frame-rate fmt v)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun av-approximated-number-of-frames (fmt)
+        (rint (* (av-frame-rate fmt)
+                 (av-duration fmt)
+                 (av-time-base fmt) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

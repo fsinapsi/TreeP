@@ -90,7 +90,8 @@ CvMat* ransac_xform( struct feature* features, int n, int mtype,
       goto end;
     }
 
-  srandom( time(NULL) );
+//  srandom( time(NULL) );
+  srand( time(NULL) );
 
   in_min = calc_min_inliers( nm, m, RANSAC_PROB_BAD_SUPP, p_badxform );
   p = pow( 1.0 - pow( in_frac, m ), k );
@@ -465,7 +466,8 @@ static struct feature** draw_ransac_sample( struct feature** features, int n,
     {
       do
         {
-          x = random() % n;
+//          x = random() % n;
+          x = rand() % n;
           feat = features[x];
           rdata = feat_ransac_data( feat );
         }

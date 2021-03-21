@@ -1001,7 +1001,7 @@ uns8b trp_pix_avn_graph_vbvfill( trp_obj_t *obj, trp_obj_t *pix, trp_obj_t *fram
 
 void trp_compiler_exit();
 
-static uns8b *_constc[1285]={
+static uns8b *_constc[1283]={
   "\015\001\000\000\000\056",
   "\015\002\000\000\000\056\056",
   "\015\004\000\000\000\110\117\115\105",
@@ -2950,8 +2950,8 @@ static uns8b *_constc[1285]={
   "\015\003\000\000\000\060\056\060",
   "\015\016\000\000\000\143\157\155\160\151\154\145\040\164\151" \
   "\155\145\072\040",
-  "\003\345\007\003\023\012\071\033\007\000\003\000\000\000\002" \
-  "\155\031\003\000\000\000\003\015\100\360\361\377\377",
+  "\003\345\007\003\025\024\026\047\007\000\002\000\000\000\244" \
+  "\015\003\000\000\000\001\350\110\360\361\377\377",
   "\015\014\000\000\000\143\157\155\160\151\154\145\144\040\157" \
   "\156\040",
   "\015\114\000\000\000\114\151\156\165\170\040\170\070\066\137" \
@@ -3132,8 +3132,6 @@ static uns8b *_constc[1285]={
   "\015\010\000\000\000\147\164\153\053\055\062\056\060",
   "\015\031\000\000\000\040\055\111\057\165\163\162\057\154\157" \
   "\143\141\154\057\151\156\143\154\165\144\145\057\151\165\160",
-  "\015\030\000\000\000\040\055\111\057\154\157\143\141\154\057" \
-  "\151\156\143\154\165\144\145\057\157\160\145\156\143\166",
   "\015\006\000\000\000\157\160\145\156\143\166",
   "\015\004\000\000\000\040\055\157\040",
   "\015\003\000\000\000\040\055\114",
@@ -3184,17 +3182,7 @@ static uns8b *_constc[1285]={
   "\320\325\005\362\212\023\060\345\041\332\160\112\227\226\144" \
   "\346\340\222\055\056\057\116\116\314\111\205\111\003\000\274" \
   "\176\062\067",
-  "\170\332\135\315\321\011\303\060\014\004\120\057\320\035\272" \
-  "\100\241\044\003\025\133\126\025\025\305\062\252\154\350\316" \
-  "\035\242\371\013\352\327\161\217\203\273\174\123\112\327\233" \
-  "\270\165\230\107\152\307\006\363\001\131\270\254\165\131\357" \
-  "\247\155\114\033\015\016\006\332\334\270\004\343\235\272\051" \
-  "\374\355\014\003\010\122\206\117\240\047\146\037\206\357\045" \
-  "\336\356\022\127\222\133\013\242\345\125\321\021\074\050\365" \
-  "\021\372\344\212\172\310\017\151\353\123\355",
-  "\015\043\000\000\000\040\055\154\164\162\160\143\166\040\140" \
-  "\160\153\147\055\143\157\156\146\151\147\040\055\055\154\151" \
-  "\142\163\040\157\160\145\156\143\166\140",
+  "\015\010\000\000\000\040\055\154\164\162\160\143\166",
   "\015\014\000\000\000\040\055\154\164\162\160\166\154\146\145" \
   "\141\164",
   "\015\017\000\000\000\040\055\154\164\162\160\155\147\154\040" \
@@ -5364,7 +5352,7 @@ static uns8b *_constc[1285]={
   "\015\002\000\000\000\052\057"
 };
 
-static trp_raw_t _constr[1285]={
+static trp_raw_t _constr[1283]={
   {TRP_RAW,1,13,0,6,6,NULL},
   {TRP_RAW,1,13,0,7,7,NULL},
   {TRP_RAW,1,13,0,9,9,NULL},
@@ -6331,7 +6319,7 @@ static trp_raw_t _constr[1285]={
   {TRP_RAW,1,13,0,15,15,NULL},
   {TRP_RAW,1,13,0,8,8,NULL},
   {TRP_RAW,1,13,0,19,19,NULL},
-  {TRP_RAW,1,3,0,28,28,NULL},
+  {TRP_RAW,1,3,0,27,27,NULL},
   {TRP_RAW,1,13,0,17,17,NULL},
   {TRP_RAW,1,13,0,81,81,NULL},
   {TRP_RAW,1,13,0,7,7,NULL},
@@ -6425,7 +6413,6 @@ static trp_raw_t _constr[1285]={
   {TRP_RAW,2,13,9,47,53,NULL},
   {TRP_RAW,1,13,0,13,13,NULL},
   {TRP_RAW,1,13,0,30,30,NULL},
-  {TRP_RAW,1,13,0,29,29,NULL},
   {TRP_RAW,1,13,0,11,11,NULL},
   {TRP_RAW,1,13,0,9,9,NULL},
   {TRP_RAW,1,13,0,8,8,NULL},
@@ -6454,8 +6441,7 @@ static trp_raw_t _constr[1285]={
   {TRP_RAW,1,13,0,13,13,NULL},
   {TRP_RAW,2,13,9,61,68,NULL},
   {TRP_RAW,2,13,9,78,142,NULL},
-  {TRP_RAW,2,13,9,116,241,NULL},
-  {TRP_RAW,1,13,0,40,40,NULL},
+  {TRP_RAW,1,13,0,13,13,NULL},
   {TRP_RAW,1,13,0,17,17,NULL},
   {TRP_RAW,1,13,0,20,20,NULL},
   {TRP_RAW,1,13,0,15,15,NULL},
@@ -6893,9 +6879,9 @@ int main(int argc,char *argv[])
 {
   trp_init(argc,argv);
   if(trp_pix_init())exit(-1);
-  trp_const_init(1285,_constr,_constc,58584);
+  trp_const_init(1283,_constr,_constc,58409);
   trp_glb_init(43,_glb);
-  _funptr[0]=trp_funptr(fun_21,2,trp_const(1129));
+  _funptr[0]=trp_funptr(fun_21,2,trp_const(1127));
   (void)net_155();
   trp_exit(NULL);
   return 0;
@@ -14334,17 +14320,17 @@ l22:
   if(net_173())goto l0;
   if(net_163())goto l0;
   if(trp_close_multi(_glb[12],NULL))goto l0;
-  j0=trp_cat(fun_53(),trp_const(1047),j9,trp_const(1048),(j10==TRP_TRUE)?(trp_const(1049)):(EMPTYCORD),trp_const(1050),(fun_20()==TRP_TRUE)?(trp_const(1051)):(EMPTYCORD),(trp_and(j20,trp_or(fun_28(),fun_29(),NULL),trp_not(j13),NULL)==TRP_TRUE)?(trp_const(1052)):(EMPTYCORD),trp_const(1053),(_glb[14]==TRP_TRUE)?(trp_const(1054)):(EMPTYCORD),(_glb[15]==TRP_TRUE)?(trp_const(1055)):(EMPTYCORD),(j20==TRP_TRUE)?(trp_const(1056)):(trp_const(1057)),(fun_28()==TRP_TRUE)?(fun_55(trp_const(1058))):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1059)):(EMPTYCORD),(fun_46()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1060)):(fun_55(trp_const(1061)))):(EMPTYCORD),trp_const(1062),fun_10(j6),trp_const(1000),fun_10(j3),(trp_equal(j8,UNDEF)==TRP_TRUE)?(EMPTYCORD):(trp_cat(trp_const(1000),fun_10(j8),NULL)),trp_const(1063),trp_sprint_list(j16,trp_const(1063)),(fun_30()==TRP_TRUE)?(trp_const(1064)):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_cat(trp_const(1065),fun_56(trp_const(1058)),NULL)):(EMPTYCORD),(fun_29()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1066)):(trp_const(1067))):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1068)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1069)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1070)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1071)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1072)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_const(1073)):(EMPTYCORD),(fun_37()==TRP_TRUE)?(trp_const(1074)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_cat(trp_const(1076),fun_56(trp_const(1075)),NULL)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_cat(trp_const(1078),fun_56(trp_const(1077)),NULL)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_const(1079)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_cat(trp_const(1081),fun_56(trp_const(1080)),trp_const(1082),NULL)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_cat(trp_const(1084),fun_56(trp_const(1083)),NULL)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1085)):(EMPTYCORD),(fun_44()==TRP_TRUE)?(trp_const(1086)):(EMPTYCORD),(fun_45()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1087)):(trp_const(1088))):(EMPTYCORD),(fun_46()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1089)):(trp_const(1090))):(EMPTYCORD),(fun_47()==TRP_TRUE)?(trp_const(1091)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_const(1092)):(EMPTYCORD),(fun_49()==TRP_TRUE)?(trp_cat(trp_const(1093),fun_56(trp_const(175)),NULL)):(EMPTYCORD),(fun_50()==TRP_TRUE)?(trp_cat(trp_const(1095),fun_56(trp_const(1094)),NULL)):(EMPTYCORD),(fun_51()==TRP_TRUE)?(trp_cat(trp_const(1097),fun_56(trp_const(1096)),NULL)):(EMPTYCORD),(fun_52()==TRP_TRUE)?(trp_const(1098)):(EMPTYCORD),trp_const(1099),fun_56(trp_const(1100)),trp_const(1101),(j20==TRP_TRUE)?(trp_const(1102)):(EMPTYCORD),(_glb[10]==TRP_TRUE)?(trp_const(1103)):(EMPTYCORD),NULL);
-  j21=(j10==TRP_TRUE)?(EMPTYCORD):(trp_cat((_glb[14]==TRP_TRUE)?(trp_const(1104)):((_glb[15]==TRP_TRUE)?(trp_const(1105)):(trp_const(1106))),trp_const(1107),fun_10(j6),NULL));
+  j0=trp_cat(fun_53(),trp_const(1047),j9,trp_const(1048),(j10==TRP_TRUE)?(trp_const(1049)):(EMPTYCORD),trp_const(1050),(fun_20()==TRP_TRUE)?(trp_const(1051)):(EMPTYCORD),(trp_and(j20,trp_or(fun_28(),fun_29(),NULL),trp_not(j13),NULL)==TRP_TRUE)?(trp_const(1052)):(EMPTYCORD),trp_const(1053),(_glb[14]==TRP_TRUE)?(trp_const(1054)):(EMPTYCORD),(_glb[15]==TRP_TRUE)?(trp_const(1055)):(EMPTYCORD),(j20==TRP_TRUE)?(trp_const(1056)):(trp_const(1057)),(fun_28()==TRP_TRUE)?(fun_55(trp_const(1058))):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1059)):(EMPTYCORD),(fun_46()==TRP_TRUE)?(fun_55(trp_const(1060))):(EMPTYCORD),trp_const(1061),fun_10(j6),trp_const(1000),fun_10(j3),(trp_equal(j8,UNDEF)==TRP_TRUE)?(EMPTYCORD):(trp_cat(trp_const(1000),fun_10(j8),NULL)),trp_const(1062),trp_sprint_list(j16,trp_const(1062)),(fun_30()==TRP_TRUE)?(trp_const(1063)):(EMPTYCORD),(fun_28()==TRP_TRUE)?(trp_cat(trp_const(1064),fun_56(trp_const(1058)),NULL)):(EMPTYCORD),(fun_29()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1065)):(trp_const(1066))):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1067)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1068)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1069)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1070)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1071)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_const(1072)):(EMPTYCORD),(fun_37()==TRP_TRUE)?(trp_const(1073)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_cat(trp_const(1075),fun_56(trp_const(1074)),NULL)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_cat(trp_const(1077),fun_56(trp_const(1076)),NULL)):(EMPTYCORD),(fun_40()==TRP_TRUE)?(trp_const(1078)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_cat(trp_const(1080),fun_56(trp_const(1079)),trp_const(1081),NULL)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_cat(trp_const(1083),fun_56(trp_const(1082)),NULL)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1084)):(EMPTYCORD),(fun_44()==TRP_TRUE)?(trp_const(1085)):(EMPTYCORD),(fun_45()==TRP_TRUE)?((j20==TRP_TRUE)?(trp_const(1086)):(trp_const(1087))):(EMPTYCORD),(fun_46()==TRP_TRUE)?(trp_cat(trp_const(1088),fun_56(trp_const(1060)),NULL)):(EMPTYCORD),(fun_47()==TRP_TRUE)?(trp_const(1089)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_const(1090)):(EMPTYCORD),(fun_49()==TRP_TRUE)?(trp_cat(trp_const(1091),fun_56(trp_const(175)),NULL)):(EMPTYCORD),(fun_50()==TRP_TRUE)?(trp_cat(trp_const(1093),fun_56(trp_const(1092)),NULL)):(EMPTYCORD),(fun_51()==TRP_TRUE)?(trp_cat(trp_const(1095),fun_56(trp_const(1094)),NULL)):(EMPTYCORD),(fun_52()==TRP_TRUE)?(trp_const(1096)):(EMPTYCORD),trp_const(1097),fun_56(trp_const(1098)),trp_const(1099),(j20==TRP_TRUE)?(trp_const(1100)):(EMPTYCORD),(_glb[10]==TRP_TRUE)?(trp_const(1101)):(EMPTYCORD),NULL);
+  j21=(j10==TRP_TRUE)?(EMPTYCORD):(trp_cat((_glb[14]==TRP_TRUE)?(trp_const(1102)):((_glb[15]==TRP_TRUE)?(trp_const(1103)):(trp_const(1104))),trp_const(1105),fun_10(j6),NULL));
   if(j11==TRP_FALSE)goto l23;
-  j7=trp_cat(j5,trp_const(1108),NULL);
+  j7=trp_cat(j5,trp_const(1106),NULL);
   _glb[12]=trp_file_create(j7);
-  if(trp_fprint(_glb[12],trp_const(1109),trp_char(10),j0,trp_char(10),j21,(trp_equal(j21,EMPTYCORD)==TRP_TRUE)?(EMPTYCORD):(trp_char(10)),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1107),trp_char(10),j0,trp_char(10),j21,(trp_equal(j21,EMPTYCORD)==TRP_TRUE)?(EMPTYCORD):(trp_char(10)),NULL))goto l0;
   if(trp_close_multi(_glb[12],NULL))goto l0;
   goto l24;
 l23:
   _glb[19]=trp_cat(_glb[19],UNO,NULL);
-  if(trp_print(fun_25(),trp_const(1040),_glb[19],trp_const(1110),trp_char(10),NULL))goto l0;
+  if(trp_print(fun_25(),trp_const(1040),_glb[19],trp_const(1108),trp_char(10),NULL))goto l0;
   if(trp_system(j0,NULL)!=ZERO)goto l0;
   if(trp_notequal(j21,EMPTYCORD)==TRP_FALSE)goto l25;
   if(trp_system(j21,NULL)!=ZERO)goto l0;
@@ -14359,7 +14345,7 @@ l27:
 l24:
   if(net_148())goto l0;
   trp_gc();
-  if(trp_print(trp_const(1111),trp_free_bytes(),trp_char(47),trp_heap_size(),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1109),trp_free_bytes(),trp_char(47),trp_heap_size(),trp_char(10),NULL))goto l0;
   return 0;
 l0:
   return 1;
@@ -14382,20 +14368,20 @@ l2:
 l3:
   trp_pop_env(&j1,&j0,i1,&i0,NULL);
   trp_push_env(i0,*i1,j0,j1,NULL);
-  j0=trp_cat(i0,trp_const(1112),NULL);
-  *i1=trp_cat(i0,trp_const(1113),NULL);
+  j0=trp_cat(i0,trp_const(1110),NULL);
+  *i1=trp_cat(i0,trp_const(1111),NULL);
   j1=trp_file_create(j0);
   if(trp_notequal(j1,UNDEF)!=TRP_TRUE)goto l4;
-  if(trp_fprint(j1,trp_const(1114),_glb[20],trp_const(1115),NULL))goto l4;
+  if(trp_fprint(j1,trp_const(1112),_glb[20],trp_const(1113),NULL))goto l4;
   if(trp_close_multi(j1,NULL))goto l4;
-  if(trp_system((_glb[14]==TRP_TRUE)?(trp_const(1116)):(trp_const(1117)),trp_const(1000),fun_10(j0),trp_const(1000),fun_10(*i1),NULL)!=ZERO)goto l4;
+  if(trp_system((_glb[14]==TRP_TRUE)?(trp_const(1114)):(trp_const(1115)),trp_const(1000),fun_10(j0),trp_const(1000),fun_10(*i1),NULL)!=ZERO)goto l4;
   if(trp_remove(j0))goto l4;
   trp_pop_env_void(4);
   goto l1;
 l4:
   trp_pop_env(&j1,&j0,i1,&i0,NULL);
   trp_push_env(i0,*i1,j0,j1,NULL);
-  if(net_139(trp_const(1118)))goto l5;
+  if(net_139(trp_const(1116)))goto l5;
   trp_pop_env_void(4);
   goto l1;
 l5:
@@ -14419,23 +14405,23 @@ static uns8b net_157(trp_obj_t *i0)
   trp_obj_t *j7=UNDEF;
   trp_obj_t *t0=UNDEF;
   if(_glb[14]==TRP_FALSE)goto l1;
-  j0=trp_const(1119);
-  j1=trp_const(1120);
+  j0=trp_const(1117);
+  j1=trp_const(1118);
   goto l2;
 l1:
-  j0=trp_const(1121);
-  j1=trp_const(1122);
+  j0=trp_const(1119);
+  j1=trp_const(1120);
 l2:
   j2=trp_queue();
   j3=trp_assoc();
   j4=trp_assoc();
   if(trp_queue_put(j2,i0))goto l0;
   if(fun_38()==TRP_FALSE)goto l3;
-  if(trp_fprint(_glb[13],trp_const(1123),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[13],trp_const(1121),trp_char(10),NULL))goto l0;
 l3:
   if(fun_50()==TRP_FALSE)goto l4;
-  if(trp_fprint(_glb[13],trp_const(1124),trp_char(10),NULL))goto l0;
-  if(trp_for_init(&t0,&(j7),trp_const(1125),NULL,UNO,0))goto l6;
+  if(trp_fprint(_glb[13],trp_const(1122),trp_char(10),NULL))goto l0;
+  if(trp_for_init(&t0,&(j7),trp_const(1123),NULL,UNO,0))goto l6;
 l5:
   if(net_158(j7,trp_cat(j1,trp_const(8),j7,NULL),j2,j3,j4))goto l0;
   if(trp_for_next(&t0))goto l5;
@@ -14449,10 +14435,10 @@ l9:
   if(net_13(&(j5),&(j6)))goto l0;
   if(trp_equal(j6,UNDEF)!=TRP_FALSE)goto l10;
   if(trp_cord_ltrim_test(&(j6),NULL))goto l0;
-  if(net_11(trp_const(1126),&(j6),&(j7)))goto l0;
+  if(net_11(trp_const(1124),&(j6),&(j7)))goto l0;
   j7=trp_cord_utf8_tolower(j7,NULL);
   if(trp_equal(trp_nth(j7,j3),UNDEF)==TRP_FALSE)goto l11;
-  if(trp_equal(j6,trp_const(1127))==TRP_FALSE)goto l12;
+  if(trp_equal(j6,trp_const(1125))==TRP_FALSE)goto l12;
   j6=trp_cat(j1,trp_const(8),j7,NULL);
 l12:
   if(net_158(j7,j6,j2,j3,j4))goto l0;
@@ -14461,12 +14447,12 @@ l11:
 l10:
   goto l7;
 l8:
-  if(trp_fprint(_glb[13],(_glb[14]==TRP_TRUE)?(trp_const(1104)):(trp_const(1105)),trp_const(1128),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[13],(_glb[14]==TRP_TRUE)?(trp_const(1102)):(trp_const(1103)),trp_const(1126),trp_char(10),NULL))goto l0;
   j4=fun_22(j4);
   if(trp_array_sort(j4,_funptr[0]))goto l0;
   if(trp_for_init(&t0,&(j7),j4,NULL,UNO,0))goto l14;
 l13:
-  if(trp_fprint(_glb[13],trp_const(1130),trp_car(j7),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[13],trp_const(1128),trp_car(j7),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l13;
 l14:
   return 0;
@@ -14477,7 +14463,7 @@ l0:
 static uns8b net_158(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2,trp_obj_t *i3,trp_obj_t *i4)
 {
   if(trp_pathexists(i1)==TRP_FALSE)goto l1;
-  if(trp_fprint(_glb[13],trp_const(1131),fun_10(i1),trp_const(1132),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[13],trp_const(1129),fun_10(i1),trp_const(1130),trp_char(10),NULL))goto l0;
   if(trp_array_set_multi(i3,i0,TRP_TRUE,NULL))goto l0;
   if(trp_queue_put(i2,i1))goto l0;
   goto l2;
@@ -14546,21 +14532,21 @@ static uns8b net_160(trp_obj_t *i0,trp_obj_t *i1,trp_obj_t *i2)
   if(trp_for_init(&t0,&(j0),i0,NULL,UNO,0))goto l2;
 l1:
   if(trp_not(trp_in_func(trp_cat(trp_const(692),trp_car(j0),NULL),_glb[27],NULL))==TRP_FALSE)goto l3;
-  if(trp_print(trp_const(1133),trp_car(j0),trp_const(674),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1131),trp_car(j0),trp_const(674),trp_char(10),NULL))goto l0;
 l3:
   if(trp_for_next(&t0))goto l1;
 l2:
   if(trp_for_init(&t0,&(j0),i1,NULL,UNO,0))goto l5;
 l4:
   if(trp_not(trp_in_func(trp_cat(trp_const(672),trp_car(j0),NULL),_glb[27],NULL))==TRP_FALSE)goto l6;
-  if(trp_print(trp_const(1134),trp_car(j0),trp_const(674),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1132),trp_car(j0),trp_const(674),trp_char(10),NULL))goto l0;
 l6:
   if(trp_for_next(&t0))goto l4;
 l5:
   if(trp_for_init(&t0,&(j0),i2,NULL,UNO,0))goto l8;
 l7:
   if(trp_not(trp_in_func(trp_cat(trp_const(189),trp_car(j0),NULL),_glb[27],NULL))==TRP_FALSE)goto l9;
-  if(trp_print(trp_const(1135),trp_car(j0),trp_const(674),trp_char(10),NULL))goto l0;
+  if(trp_print(trp_const(1133),trp_car(j0),trp_const(674),trp_char(10),NULL))goto l0;
 l9:
   if(trp_for_next(&t0))goto l7;
 l8:
@@ -14572,7 +14558,7 @@ l0:
 static uns8b net_161()
 {
   if(trp_and(fun_28(),fun_29(),NULL)==TRP_FALSE)goto l1;
-  if(net_139(trp_const(1136)))goto l0;
+  if(net_139(trp_const(1134)))goto l0;
 l1:
   return 0;
 l0:
@@ -14605,35 +14591,35 @@ l3:
 l4:
   trp_push_env(NULL);
   t0=_glb[1];
-  if(trp_equal(trp_const(1137),t0)==TRP_FALSE)goto l9;
+  if(trp_equal(trp_const(1135),t0)==TRP_FALSE)goto l9;
   if(net_164())goto l8;
   goto l7;
 l9:
-  if(trp_equal(trp_const(1138),t0)==TRP_FALSE)goto l10;
+  if(trp_equal(trp_const(1136),t0)==TRP_FALSE)goto l10;
   if(net_165())goto l8;
   goto l7;
 l10:
-  if(trp_equal(trp_const(1139),t0)==TRP_FALSE)goto l11;
+  if(trp_equal(trp_const(1137),t0)==TRP_FALSE)goto l11;
   if(net_166())goto l8;
   goto l7;
 l11:
-  if(trp_equal(trp_const(1140),t0)==TRP_FALSE)goto l12;
+  if(trp_equal(trp_const(1138),t0)==TRP_FALSE)goto l12;
   if(net_167())goto l8;
   goto l7;
 l12:
-  if(trp_equal(trp_const(1141),t0)==TRP_FALSE)goto l13;
+  if(trp_equal(trp_const(1139),t0)==TRP_FALSE)goto l13;
   if(net_168())goto l8;
   goto l7;
 l13:
-  if(trp_equal(trp_const(1142),t0)==TRP_FALSE)goto l14;
+  if(trp_equal(trp_const(1140),t0)==TRP_FALSE)goto l14;
   if(net_170())goto l8;
   goto l7;
 l14:
-  if(trp_equal(trp_const(1143),t0)==TRP_FALSE)goto l15;
+  if(trp_equal(trp_const(1141),t0)==TRP_FALSE)goto l15;
   if(net_172())goto l8;
   goto l7;
 l15:
-  if(net_139(trp_const(1144)))goto l8;
+  if(net_139(trp_const(1142)))goto l8;
   goto l7;
 l8:
   t0=UNDEF;
@@ -14674,7 +14660,7 @@ static uns8b net_164()
 l1:
   j1=trp_realpath(j0);
   if(trp_in_func(j1,_glb[18],NULL)==TRP_FALSE)goto l2;
-  if(net_139(trp_cat(trp_const(1145),j0,trp_const(1146),NULL)))goto l0;
+  if(net_139(trp_cat(trp_const(1143),j0,trp_const(1144),NULL)))goto l0;
 l2:
   j2=trp_file_openro(j0);
   if(trp_equal(j2,UNDEF)==TRP_FALSE)goto l3;
@@ -14696,7 +14682,7 @@ static uns8b net_165()
   if(net_150(_glb[1]))goto l0;
   goto l2;
 l1:
-  if(net_139(trp_cat(trp_const(1147),_glb[1],trp_const(1148),NULL)))goto l0;
+  if(net_139(trp_cat(trp_const(1145),_glb[1],trp_const(1146),NULL)))goto l0;
 l2:
   if(net_142())goto l0;
   return 0;
@@ -14724,14 +14710,14 @@ l1:
   if(trp_equal(_glb[0],trp_const(57))!=TRP_TRUE)goto l0;
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(190),NULL)==TRP_FALSE)goto l4;
   if(trp_in_func(_glb[1],_glb[25],NULL)==TRP_FALSE)goto l5;
-  if(net_139(trp_cat(_glb[1],trp_const(1149),NULL)))goto l0;
+  if(net_139(trp_cat(_glb[1],trp_const(1147),NULL)))goto l0;
 l5:
   if(trp_or(trp_equal(_glb[27],UNDEF),trp_in_func(trp_cat(trp_const(189),_glb[1],NULL),_glb[27],NULL),NULL)==TRP_FALSE)goto l6;
   if(trp_array_set_multi(_glb[25],_glb[1],trp_length(_glb[25]),NULL))goto l0;
 l6:
   goto l7;
 l4:
-  if(net_139(trp_cat(_glb[1],trp_const(1150),NULL)))goto l0;
+  if(net_139(trp_cat(_glb[1],trp_const(1148),NULL)))goto l0;
 l7:
 l3:
   goto l1;
@@ -14768,7 +14754,7 @@ static uns8b net_169(trp_obj_t *i0)
   t0=_glb[19];
   if(trp_equal(UNO,t0)==TRP_FALSE)goto l3;
   if(trp_notequal(j0,UNDEF)==TRP_FALSE)goto l4;
-  if(net_139(trp_cat(i0,trp_const(1151),NULL)))goto l2;
+  if(net_139(trp_cat(i0,trp_const(1149),NULL)))goto l2;
 l4:
   _glb[35]=trp_queue();
   _glb[36]=trp_queue();
@@ -14776,23 +14762,23 @@ l4:
   goto l1;
 l3:
   if(trp_equal(trp_const(60),t0)==TRP_FALSE)goto l5;
-  if(trp_fprint(_glb[12],trp_const(1152),trp_nth(ZERO,j0),trp_const(64),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1150),trp_nth(ZERO,j0),trp_const(64),NULL))goto l2;
   _glb[35]=trp_nth(UNO,j0);
   _glb[36]=trp_nth(trp_const(60),j0);
   if(trp_for_init(&t1,&(j1),_glb[35],NULL,UNO,0))goto l7;
 l6:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1153),(trp_cord_lmatch_func(0,j1,trp_const(187),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),trp_char(105),trp_for_pos(t1),NULL))goto l2;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1151),(trp_cord_lmatch_func(0,j1,trp_const(187),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),trp_char(105),trp_for_pos(t1),NULL))goto l2;
   if(trp_for_next(&t1))goto l6;
 l7:
   if(trp_fprint(_glb[12],trp_char(41),trp_char(10),trp_char(123),trp_char(10),NULL))goto l2;
   if(trp_for_init(&t1,&(j1),_glb[36],NULL,UNO,0))goto l9;
 l8:
-  if(trp_fprint(_glb[12],trp_const(1154),trp_for_pos(t1),trp_const(915),trp_char(10),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1152),trp_for_pos(t1),trp_const(915),trp_char(10),NULL))goto l2;
   if(trp_for_next(&t1))goto l8;
 l9:
   if(trp_for_init(&t1,&(j1),UNO,trp_nth(trp_const(142),j0),UNO,0))goto l11;
 l10:
-  if(trp_fprint(_glb[12],trp_const(1155),trp_for_pos(t1),trp_const(915),trp_char(10),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1153),trp_for_pos(t1),trp_const(915),trp_char(10),NULL))goto l2;
   if(trp_for_next(&t1))goto l10;
 l11:
   goto l1;
@@ -14814,10 +14800,10 @@ l12:
   if(trp_equal(_glb[0],trp_const(57))!=TRP_TRUE)goto l0;
   j0=trp_and(j0,trp_not(j1),NULL);
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(190),NULL)==TRP_FALSE)goto l15;
-  if(net_139(trp_const(1156)))goto l0;
+  if(net_139(trp_const(1154)))goto l0;
 l15:
   if(trp_in_func(_glb[1],_glb[35],NULL)==TRP_FALSE)goto l16;
-  if(net_139(trp_const(1157)))goto l0;
+  if(net_139(trp_const(1155)))goto l0;
 l16:
   if(net_144())goto l0;
   if(trp_queue_put(_glb[35],_glb[1]))goto l0;
@@ -14831,20 +14817,20 @@ l17:
   if(net_21())goto l0;
   if(trp_equal(_glb[0],trp_const(31))==TRP_FALSE)goto l18;
   if(net_21())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(57)),trp_equal(_glb[1],trp_const(1158)),NULL)==TRP_FALSE)goto l19;
+  if(trp_and(trp_equal(_glb[0],trp_const(57)),trp_equal(_glb[1],trp_const(1156)),NULL)==TRP_FALSE)goto l19;
 l20:
   if(net_21())goto l0;
   if(trp_equal(_glb[0],trp_const(32))!=TRP_FALSE)goto l21;
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l22;
   if(trp_equal(_glb[0],trp_const(57))!=TRP_TRUE)goto l0;
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(190),trp_const(187),NULL)==TRP_FALSE)goto l23;
-  if(net_139(trp_const(1159)))goto l0;
+  if(net_139(trp_const(1157)))goto l0;
 l23:
   if(trp_in_func(_glb[1],_glb[36],NULL)==TRP_FALSE)goto l24;
-  if(net_139(trp_const(1160)))goto l0;
+  if(net_139(trp_const(1158)))goto l0;
 l24:
   if(trp_in_func(_glb[1],_glb[35],NULL)==TRP_FALSE)goto l25;
-  if(net_139(trp_const(1161)))goto l0;
+  if(net_139(trp_const(1159)))goto l0;
 l25:
   if(net_144())goto l0;
   if(trp_queue_put(_glb[36],_glb[1]))goto l0;
@@ -14871,7 +14857,7 @@ l27:
   if(trp_array_set_multi(_glb[26],trp_cat(trp_const(692),i0,NULL),_glb[37],NULL))goto l0;
   goto l29;
 l28:
-  if(trp_fprint(_glb[12],trp_const(1162),trp_char(10),trp_const(1163),trp_char(10),trp_const(1164),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1160),trp_char(10),trp_const(1161),trp_char(10),trp_const(1162),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
 l29:
   return 0;
 l0:
@@ -14907,18 +14893,18 @@ static uns8b net_171(trp_obj_t *i0)
   t0=_glb[19];
   if(trp_equal(UNO,t0)==TRP_FALSE)goto l3;
   if(trp_notequal(j0,UNDEF)==TRP_FALSE)goto l4;
-  if(net_139(trp_cat(i0,trp_const(1165),NULL)))goto l2;
+  if(net_139(trp_cat(i0,trp_const(1163),NULL)))goto l2;
 l4:
   _glb[35]=trp_queue();
   _glb[37]=trp_assoc();
   goto l1;
 l3:
   if(trp_equal(trp_const(60),t0)==TRP_FALSE)goto l5;
-  if(trp_fprint(_glb[12],trp_const(1166),trp_car(j0),trp_const(64),NULL))goto l2;
+  if(trp_fprint(_glb[12],trp_const(1164),trp_car(j0),trp_const(64),NULL))goto l2;
   _glb[35]=trp_cdr(j0);
   if(trp_for_init(&t1,&(j0),_glb[35],NULL,UNO,0))goto l7;
 l6:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1167),trp_for_pos(t1),NULL))goto l2;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1165),trp_for_pos(t1),NULL))goto l2;
   if(trp_for_next(&t1))goto l6;
 l7:
   if(trp_fprint(_glb[12],trp_char(41),trp_char(10),trp_char(123),trp_char(10),NULL))goto l2;
@@ -14938,10 +14924,10 @@ l8:
   if(trp_equal(_glb[19],UNO)==TRP_FALSE)goto l10;
   if(trp_equal(_glb[0],trp_const(57))!=TRP_TRUE)goto l0;
   if(trp_cord_lmatch_func(0,_glb[1],trp_const(190),trp_const(187),NULL)==TRP_FALSE)goto l11;
-  if(net_139(trp_const(1168)))goto l0;
+  if(net_139(trp_const(1166)))goto l0;
 l11:
   if(trp_in_func(_glb[1],_glb[35],NULL)==TRP_FALSE)goto l12;
-  if(net_139(trp_const(1157)))goto l0;
+  if(net_139(trp_const(1155)))goto l0;
 l12:
   if(net_144())goto l0;
   if(trp_queue_put(_glb[35],_glb[1]))goto l0;
@@ -14950,12 +14936,12 @@ l10:
 l9:
   j2=TRP_FALSE;
   if(net_21())goto l0;
-  if(trp_and(trp_equal(_glb[0],trp_const(57)),trp_equal(_glb[1],trp_const(1169)),NULL)==TRP_FALSE)goto l13;
+  if(trp_and(trp_equal(_glb[0],trp_const(57)),trp_equal(_glb[1],trp_const(1167)),NULL)==TRP_FALSE)goto l13;
   if(net_21())goto l0;
   if(trp_equal(_glb[0],trp_const(32))==TRP_FALSE)goto l14;
   if(net_18())goto l0;
   _glb[0]=trp_const(57);
-  _glb[1]=trp_const(1169);
+  _glb[1]=trp_const(1167);
   goto l15;
 l14:
   if(trp_notequal(_glb[0],trp_const(57))==TRP_FALSE)goto l16;
@@ -14964,7 +14950,7 @@ l16:
   if(fun_26()==TRP_FALSE)goto l17;
   j0=trp_nth(_glb[1],_glb[32]);
   if(trp_equal(j0,UNDEF)==TRP_FALSE)goto l18;
-  if(net_139(trp_cat(_glb[1],trp_const(1170),NULL)))goto l0;
+  if(net_139(trp_cat(_glb[1],trp_const(1168),NULL)))goto l0;
 l18:
   if(trp_less(trp_length(_glb[35]),j0)==TRP_FALSE)goto l19;
   if(net_139(trp_cat(_glb[1],trp_const(956),NULL)))goto l0;
@@ -14972,13 +14958,13 @@ l19:
   if(trp_greater(trp_length(_glb[35]),j0)==TRP_FALSE)goto l20;
   if(net_139(trp_cat(_glb[1],trp_const(957),NULL)))goto l0;
 l20:
-  if(trp_fprint(_glb[12],trp_const(1171),trp_char(10),trp_const(1172),trp_nth(ZERO,trp_nth(_glb[1],_glb[30])),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1169),trp_char(10),trp_const(1170),trp_nth(ZERO,trp_nth(_glb[1],_glb[30])),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t0,&(j0),UNO,j0,UNO,0))goto l22;
 l21:
   if(trp_fprint(_glb[12],trp_char(105),trp_for_pos(t0),trp_char(44),NULL))goto l0;
   if(trp_for_next(&t0))goto l21;
 l22:
-  if(trp_fprint(_glb[12],trp_const(1173),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1171),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
   goto l23;
 l17:
   if(trp_assoc_inc(_glb[37],trp_cat(trp_const(692),_glb[1],NULL),NULL))goto l0;
@@ -14997,7 +14983,7 @@ l13:
   if(net_62(_glb[8]))goto l0;
 l25:
   if(fun_26()==TRP_FALSE)goto l26;
-  if(trp_fprint(_glb[12],trp_const(1174),_glb[5],trp_char(59),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1172),_glb[5],trp_char(59),trp_char(10),trp_char(125),trp_char(10),trp_char(10),NULL))goto l0;
 l26:
 l24:
   if(net_142())goto l0;
@@ -15021,23 +15007,23 @@ l1:
   _glb[6]=TRP_TRUE;
   if(net_57())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l3;
-  if(net_139(trp_const(1175)))goto l0;
+  if(net_139(trp_const(1173)))goto l0;
 l3:
   j0=_glb[8];
   _glb[6]=TRP_TRUE;
   if(net_57())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l4;
-  if(net_139(trp_const(1175)))goto l0;
+  if(net_139(trp_const(1173)))goto l0;
 l4:
   j1=_glb[8];
   if(trp_or(trp_not(trp_integerp(j1)),trp_less(j1,UNO),NULL)==TRP_FALSE)goto l5;
-  if(net_139(trp_const(1176)))goto l0;
+  if(net_139(trp_const(1174)))goto l0;
 l5:
   _glb[23]=trp_max(_glb[23],trp_cat(j1,UNO,NULL),NULL);
   _glb[6]=TRP_TRUE;
   if(net_57())goto l0;
   if(trp_not(_glb[7])==TRP_FALSE)goto l6;
-  if(net_139(trp_const(1175)))goto l0;
+  if(net_139(trp_const(1173)))goto l0;
 l6:
   if(trp_not(fun_26())==TRP_FALSE)goto l7;
   if(trp_queue_put(_glb[24],trp_list(j0,j1,_glb[8],NULL)))goto l0;
@@ -15060,89 +15046,89 @@ static uns8b net_173()
   trp_obj_t *t1=UNDEF;
   trp_obj_t *t2=UNDEF;
   trp_gc();
-  if(trp_fprint(_glb[12],trp_const(1177),trp_char(10),trp_const(1178),trp_const(964),trp_char(10),trp_const(1179),trp_char(10),NULL))goto l0;
-  if(net_174(trp_const(1180)))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1175),trp_char(10),trp_const(1176),trp_const(964),trp_char(10),trp_const(1177),trp_char(10),NULL))goto l0;
+  if(net_174(trp_const(1178)))goto l0;
   if(fun_28()==TRP_FALSE)goto l1;
-  if(net_174(trp_const(1181)))goto l0;
+  if(net_174(trp_const(1179)))goto l0;
 l1:
   if(fun_29()==TRP_FALSE)goto l2;
-  if(net_174(trp_const(1182)))goto l0;
+  if(net_174(trp_const(1180)))goto l0;
 l2:
   if(fun_30()==TRP_FALSE)goto l3;
-  if(net_174(trp_const(1183)))goto l0;
+  if(net_174(trp_const(1181)))goto l0;
 l3:
   if(fun_31()==TRP_FALSE)goto l4;
-  if(net_174(trp_const(1184)))goto l0;
+  if(net_174(trp_const(1182)))goto l0;
 l4:
   if(fun_32()==TRP_FALSE)goto l5;
-  if(net_174(trp_const(1185)))goto l0;
+  if(net_174(trp_const(1183)))goto l0;
 l5:
   if(fun_33()==TRP_FALSE)goto l6;
-  if(net_174(trp_const(1186)))goto l0;
+  if(net_174(trp_const(1184)))goto l0;
 l6:
   if(fun_34()==TRP_FALSE)goto l7;
-  if(net_174(trp_const(1187)))goto l0;
+  if(net_174(trp_const(1185)))goto l0;
 l7:
   if(fun_35()==TRP_FALSE)goto l8;
-  if(net_174(trp_const(1188)))goto l0;
+  if(net_174(trp_const(1186)))goto l0;
 l8:
   if(fun_36()==TRP_FALSE)goto l9;
-  if(net_174(trp_const(1189)))goto l0;
+  if(net_174(trp_const(1187)))goto l0;
 l9:
   if(fun_37()==TRP_FALSE)goto l10;
-  if(net_174(trp_const(1190)))goto l0;
+  if(net_174(trp_const(1188)))goto l0;
 l10:
   if(fun_38()==TRP_FALSE)goto l11;
-  if(net_174(trp_const(1191)))goto l0;
+  if(net_174(trp_const(1189)))goto l0;
 l11:
   if(fun_39()==TRP_FALSE)goto l12;
-  if(net_174(trp_const(1192)))goto l0;
+  if(net_174(trp_const(1190)))goto l0;
 l12:
   if(fun_40()==TRP_FALSE)goto l13;
-  if(net_174(trp_const(1193)))goto l0;
+  if(net_174(trp_const(1191)))goto l0;
 l13:
   if(fun_41()==TRP_FALSE)goto l14;
-  if(net_174(trp_const(1194)))goto l0;
+  if(net_174(trp_const(1192)))goto l0;
 l14:
   if(fun_42()==TRP_FALSE)goto l15;
-  if(net_174(trp_const(1195)))goto l0;
+  if(net_174(trp_const(1193)))goto l0;
 l15:
   if(fun_43()==TRP_FALSE)goto l16;
-  if(net_174(trp_const(1196)))goto l0;
+  if(net_174(trp_const(1194)))goto l0;
 l16:
   if(fun_44()==TRP_FALSE)goto l17;
-  if(net_174(trp_const(1197)))goto l0;
+  if(net_174(trp_const(1195)))goto l0;
 l17:
   if(fun_45()==TRP_FALSE)goto l18;
-  if(net_174(trp_const(1198)))goto l0;
+  if(net_174(trp_const(1196)))goto l0;
 l18:
   if(fun_46()==TRP_FALSE)goto l19;
-  if(net_174(trp_const(1199)))goto l0;
+  if(net_174(trp_const(1197)))goto l0;
 l19:
   if(fun_47()==TRP_FALSE)goto l20;
-  if(net_174(trp_const(1200)))goto l0;
+  if(net_174(trp_const(1198)))goto l0;
 l20:
   if(fun_48()==TRP_FALSE)goto l21;
-  if(net_174(trp_const(1201)))goto l0;
+  if(net_174(trp_const(1199)))goto l0;
 l21:
   if(fun_49()==TRP_FALSE)goto l22;
-  if(net_174(trp_const(1202)))goto l0;
+  if(net_174(trp_const(1200)))goto l0;
 l22:
   if(fun_50()==TRP_FALSE)goto l23;
-  if(net_174(trp_const(1203)))goto l0;
+  if(net_174(trp_const(1201)))goto l0;
 l23:
   if(fun_51()==TRP_FALSE)goto l24;
-  if(net_174(trp_const(1204)))goto l0;
+  if(net_174(trp_const(1202)))goto l0;
 l24:
   if(fun_52()==TRP_FALSE)goto l25;
-  if(net_174(trp_const(1205)))goto l0;
+  if(net_174(trp_const(1203)))goto l0;
 l25:
-  if(trp_fprint(_glb[12],trp_const(1206),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1204),trp_char(10),trp_char(10),NULL))goto l0;
   if(trp_greater(trp_length(_glb[22]),ZERO)==TRP_FALSE)goto l26;
-  if(trp_fprint(_glb[12],trp_const(1207),trp_char(10),trp_char(10),trp_const(1208),trp_char(10),trp_char(10),trp_const(1209),_glb[23],trp_const(1210),trp_length(_glb[22]),trp_const(1211),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1205),trp_char(10),trp_char(10),trp_const(1206),trp_char(10),trp_char(10),trp_const(1207),_glb[23],trp_const(1208),trp_length(_glb[22]),trp_const(1209),trp_char(10),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),UNO,_glb[23],UNO,0))goto l28;
 l27:
-  if(trp_fprint(_glb[12],trp_const(1212),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1210),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),_glb[22],NULL,UNO,0))goto l30;
 l29:
   j3=TRP_FALSE;
@@ -15160,23 +15146,23 @@ l31:
   goto l35;
 l34:
   if(trp_and(trp_greater(j1,UNO),trp_notequal(_glb[13],UNDEF),trp_stringp(j2),NULL)==TRP_FALSE)goto l36;
-  j3=trp_cat(trp_const(1115),fun_19(fun_19(j2,trp_const(1115),trp_const(1213)),trp_const(14),trp_const(1214)),trp_const(1115),NULL);
+  j3=trp_cat(trp_const(1113),fun_19(fun_19(j2,trp_const(1113),trp_const(1211)),trp_const(14),trp_const(1212)),trp_const(1113),NULL);
   if(trp_fprint(_glb[13],j3,trp_char(10),trp_math_minus(j1,UNO,NULL),trp_char(10),j3,trp_char(10),trp_char(10),NULL))goto l0;
 l36:
   j3=j2;
 l35:
   if(trp_in_test(j3,_glb[21],NULL,&(j4),NULL))goto l0;
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_cat(trp_const(180),(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1215)),ZERO)==TRP_TRUE)?(trp_const(1216)):(EMPTYCORD),NULL)):(EMPTYCORD),j4,NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_cat(trp_const(180),(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1213)),ZERO)==TRP_TRUE)?(trp_const(1214)):(EMPTYCORD),NULL)):(EMPTYCORD),j4,NULL))goto l0;
   if(trp_for_next(&t1))goto l29;
 l30:
-  if(trp_fprint(_glb[12],trp_const(1217),(trp_less(j1,_glb[23])==TRP_TRUE)?(trp_const(180)):(EMPTYCORD),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1215),(trp_less(j1,_glb[23])==TRP_TRUE)?(trp_const(180)):(EMPTYCORD),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l27;
 l28:
-  if(trp_fprint(_glb[12],trp_const(1218),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1216),trp_char(10),trp_char(10),NULL))goto l0;
 l26:
   if(trp_greater(trp_length(_glb[21]),ZERO)==TRP_FALSE)goto l37;
   j0=ZERO;
-  if(trp_fprint(_glb[12],trp_const(1219),trp_length(_glb[21]),trp_const(1211),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1217),trp_length(_glb[21]),trp_const(1209),NULL))goto l0;
   j3=trp_queue();
   if(trp_for_init(&t0,&(j4),_glb[21],NULL,UNO,0))goto l39;
 l38:
@@ -15186,11 +15172,11 @@ l38:
   if(trp_queue_put(j3,trp_raw_compression_level(j1)))goto l0;
   if(trp_queue_put(j3,trp_length(j1)))goto l0;
   if(trp_queue_put(j3,trp_raw_uncompressed_len(j1)))goto l0;
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t0),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1220),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t0),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1218),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),ZERO,trp_math_minus(trp_length(j1),UNO,NULL),UNO,0))goto l41;
 l40:
-  if(trp_and(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1221)),ZERO),trp_greater(trp_for_pos(t1),ZERO),NULL)==TRP_FALSE)goto l42;
-  if(trp_fprint(_glb[12],trp_const(1222),trp_char(10),trp_const(1220),NULL))goto l0;
+  if(trp_and(trp_equal(trp_math_mod(trp_for_pos(t1),trp_const(1219)),ZERO),trp_greater(trp_for_pos(t1),ZERO),NULL)==TRP_FALSE)goto l42;
+  if(trp_fprint(_glb[12],trp_const(1220),trp_char(10),trp_const(1218),NULL))goto l0;
 l42:
   j2=trp_length(trp_nth(j2,j1));
   if(trp_fprint(_glb[12],trp_char(92),trp_math_div(j2,trp_const(26)),trp_math_mod(trp_math_div(j2,trp_const(27)),trp_const(27)),trp_math_mod(j2,trp_const(27)),NULL))goto l0;
@@ -15203,34 +15189,34 @@ l41:
 l43:
   if(trp_for_next(&t0))goto l38;
 l39:
-  if(trp_fprint(_glb[12],trp_char(10),trp_const(1218),trp_char(10),trp_char(10),trp_const(1223),trp_length(_glb[21]),trp_const(1211),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_char(10),trp_const(1216),trp_char(10),trp_char(10),trp_const(1221),trp_length(_glb[21]),trp_const(1209),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),UNO,trp_length(_glb[21]),UNO,0))goto l45;
 l44:
-  if(trp_fprint(_glb[12],(trp_greater(j1,UNO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1224),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(j1,UNO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_char(10),trp_const(1222),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_queue_get(j3),trp_char(44),NULL))goto l0;
-  if(trp_fprint(_glb[12],trp_queue_get(j3),trp_const(1225),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_queue_get(j3),trp_const(1223),NULL))goto l0;
   if(trp_for_next(&t0))goto l44;
 l45:
-  if(trp_fprint(_glb[12],trp_char(10),trp_const(1218),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_char(10),trp_const(1216),trp_char(10),trp_char(10),NULL))goto l0;
 l37:
   if(trp_greater(trp_length(_glb[25]),ZERO)==TRP_FALSE)goto l46;
-  if(trp_fprint(_glb[12],trp_const(1226),trp_length(_glb[25]),trp_const(1227),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1224),trp_length(_glb[25]),trp_const(1225),trp_char(10),trp_char(10),NULL))goto l0;
 l46:
   if(trp_greater(trp_length(_glb[28]),ZERO)==TRP_FALSE)goto l47;
-  if(trp_fprint(_glb[12],trp_const(1228),trp_length(_glb[28]),trp_const(1227),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1226),trp_length(_glb[28]),trp_const(1225),trp_char(10),trp_char(10),NULL))goto l0;
 l47:
   if(trp_greater(trp_length(_glb[29]),ZERO)==TRP_FALSE)goto l48;
-  if(trp_fprint(_glb[12],trp_const(1229),trp_length(_glb[29]),trp_const(1227),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1227),trp_length(_glb[29]),trp_const(1225),trp_char(10),trp_char(10),NULL))goto l0;
 l48:
   if(trp_for_init(&t0,&(j1),_glb[30],NULL,UNO,0))goto l50;
 l49:
-  if(trp_fprint(_glb[12],trp_const(1152),trp_nth(ZERO,trp_cdr(j1)),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1150),trp_nth(ZERO,trp_cdr(j1)),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),trp_nth(UNO,trp_cdr(j1)),NULL,UNO,0))goto l52;
 l51:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1153),(trp_cord_lmatch_func(0,j2,trp_const(187),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1151),(trp_cord_lmatch_func(0,j2,trp_const(187),NULL)==TRP_TRUE)?(trp_char(42)):(EMPTYCORD),NULL))goto l0;
   if(trp_for_next(&t1))goto l51;
 l52:
   if(trp_fprint(_glb[12],trp_const(913),trp_char(10),NULL))goto l0;
@@ -15238,21 +15224,21 @@ l52:
 l50:
   if(trp_for_init(&t0,&(j1),_glb[31],NULL,UNO,0))goto l54;
 l53:
-  if(trp_fprint(_glb[12],trp_const(1166),trp_car(trp_cdr(j1)),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1164),trp_car(trp_cdr(j1)),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),trp_cdr(trp_cdr(j1)),NULL,UNO,0))goto l56;
 l55:
-  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1153),NULL))goto l0;
+  if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t1),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(1151),NULL))goto l0;
   if(trp_for_next(&t1))goto l55;
 l56:
   if(trp_fprint(_glb[12],trp_const(913),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l53;
 l54:
-  if(trp_fprint(_glb[12],trp_char(10),trp_const(1230),trp_char(10),trp_const(1231),trp_char(10),(fun_28()==TRP_TRUE)?(trp_const(1232)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1233)):(EMPTYCORD),trp_const(1234),trp_char(10),(fun_41()==TRP_TRUE)?(trp_const(1235)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1236)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1237)):(EMPTYCORD),(fun_44()==TRP_TRUE)?(trp_const(1238)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1239)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1240)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1241)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_const(1242)):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1243)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1244)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1245)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_const(1246)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1247)):(EMPTYCORD),(fun_45()==TRP_TRUE)?(trp_const(1248)):(EMPTYCORD),(fun_46()==TRP_TRUE)?(trp_const(1249)):(EMPTYCORD),(fun_47()==TRP_TRUE)?(trp_const(1250)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_const(1251)):(EMPTYCORD),(fun_49()==TRP_TRUE)?(trp_const(1252)):(EMPTYCORD),(fun_50()==TRP_TRUE)?(trp_const(1253)):(EMPTYCORD),(fun_51()==TRP_TRUE)?(trp_const(1254)):(EMPTYCORD),(fun_52()==TRP_TRUE)?(trp_const(1255)):(EMPTYCORD),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_char(10),trp_const(1228),trp_char(10),trp_const(1229),trp_char(10),(fun_28()==TRP_TRUE)?(trp_const(1230)):(EMPTYCORD),(fun_29()==TRP_TRUE)?(trp_const(1231)):(EMPTYCORD),trp_const(1232),trp_char(10),(fun_41()==TRP_TRUE)?(trp_const(1233)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1234)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1235)):(EMPTYCORD),(fun_44()==TRP_TRUE)?(trp_const(1236)):(EMPTYCORD),(fun_33()==TRP_TRUE)?(trp_const(1237)):(EMPTYCORD),(fun_34()==TRP_TRUE)?(trp_const(1238)):(EMPTYCORD),(fun_35()==TRP_TRUE)?(trp_const(1239)):(EMPTYCORD),(fun_36()==TRP_TRUE)?(trp_const(1240)):(EMPTYCORD),(fun_31()==TRP_TRUE)?(trp_const(1241)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1242)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1243)):(EMPTYCORD),(fun_39()==TRP_TRUE)?(trp_const(1244)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1245)):(EMPTYCORD),(fun_45()==TRP_TRUE)?(trp_const(1246)):(EMPTYCORD),(fun_46()==TRP_TRUE)?(trp_const(1247)):(EMPTYCORD),(fun_47()==TRP_TRUE)?(trp_const(1248)):(EMPTYCORD),(fun_48()==TRP_TRUE)?(trp_const(1249)):(EMPTYCORD),(fun_49()==TRP_TRUE)?(trp_const(1250)):(EMPTYCORD),(fun_50()==TRP_TRUE)?(trp_const(1251)):(EMPTYCORD),(fun_51()==TRP_TRUE)?(trp_const(1252)):(EMPTYCORD),(fun_52()==TRP_TRUE)?(trp_const(1253)):(EMPTYCORD),NULL))goto l0;
   if(trp_greater(trp_length(_glb[21]),ZERO)==TRP_FALSE)goto l57;
-  if(trp_fprint(_glb[12],trp_const(1256),trp_length(_glb[21]),trp_const(1257),j0,trp_const(913),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1254),trp_length(_glb[21]),trp_const(1255),j0,trp_const(913),trp_char(10),NULL))goto l0;
 l57:
   if(trp_greater(trp_length(_glb[25]),ZERO)==TRP_FALSE)goto l58;
-  if(trp_fprint(_glb[12],trp_const(1258),trp_length(_glb[25]),trp_const(1259),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1256),trp_length(_glb[25]),trp_const(1257),trp_char(10),NULL))goto l0;
 l58:
   if(trp_for_init(&t0,&(j1),_glb[28],NULL,UNO,0))goto l60;
 l59:
@@ -15262,11 +15248,11 @@ l59:
 l61:
   if(trp_in_test(trp_car(j1),_glb[21],NULL,&(j4),NULL))goto l0;
   j3=trp_nth(UNO,j2);
-  if(trp_fprint(_glb[12],trp_const(1260),trp_cdr(j1),trp_const(1261),trp_nth(ZERO,j2),trp_char(44),trp_length(j3),trp_const(714),j4,trp_const(1262),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1258),trp_cdr(j1),trp_const(1259),trp_nth(ZERO,j2),trp_char(44),trp_length(j3),trp_const(714),j4,trp_const(1260),trp_char(10),NULL))goto l0;
   if(trp_for_init(&t1,&(j2),j3,NULL,UNO,0))goto l63;
 l62:
   if(trp_cord_lmatch_func(0,j2,trp_const(187),NULL)==TRP_FALSE)goto l64;
-  if(net_139(trp_cat(trp_car(j1),trp_const(1263),NULL)))goto l0;
+  if(net_139(trp_cat(trp_car(j1),trp_const(1261),NULL)))goto l0;
 l64:
   if(trp_for_next(&t1))goto l62;
 l63:
@@ -15279,22 +15265,22 @@ l65:
   if(net_139(trp_cat(trp_car(j1),trp_const(671),NULL)))goto l0;
 l67:
   if(trp_in_test(trp_car(j1),_glb[21],NULL,&(j4),NULL))goto l0;
-  if(trp_fprint(_glb[12],trp_const(1264),trp_cdr(j1),trp_const(1265),trp_car(j2),trp_char(44),trp_length(trp_cdr(j2)),trp_const(714),j4,trp_const(1262),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1262),trp_cdr(j1),trp_const(1263),trp_car(j2),trp_char(44),trp_length(trp_cdr(j2)),trp_const(714),j4,trp_const(1260),trp_char(10),NULL))goto l0;
   if(trp_for_next(&t0))goto l65;
 l66:
   j1=trp_nth(_glb[34],_glb[30]);
-  if(trp_fprint(_glb[12],trp_const(1266),trp_nth(ZERO,j1),trp_char(40),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1264),trp_nth(ZERO,j1),trp_char(40),NULL))goto l0;
   if(trp_for_init(&t0,&(j1),trp_nth(UNO,j1),NULL,UNO,0))goto l69;
 l68:
   if(trp_cord_lmatch_func(0,j1,trp_const(187),NULL)==TRP_FALSE)goto l70;
-  if(net_139(trp_const(1267)))goto l0;
+  if(net_139(trp_const(1265)))goto l0;
 l70:
   if(trp_fprint(_glb[12],(trp_greater(trp_for_pos(t0),ZERO)==TRP_TRUE)?(trp_char(44)):(EMPTYCORD),trp_const(197),NULL))goto l0;
   if(trp_for_next(&t0))goto l68;
 l69:
-  if(trp_fprint(_glb[12],trp_const(913),trp_char(10),trp_const(1268),trp_char(10),trp_const(1162),trp_char(10),trp_const(1217),trp_char(10),trp_char(10),trp_const(1269),trp_char(10),trp_const(1231),trp_char(10),(fun_29()==TRP_TRUE)?(trp_const(1270)):(EMPTYCORD),(fun_45()==TRP_TRUE)?(trp_const(1271)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1272)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1273)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_const(1274)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1275)):(EMPTYCORD),(fun_51()==TRP_TRUE)?(trp_const(1276)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1277)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1278)):(EMPTYCORD),trp_const(1217),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(913),trp_char(10),trp_const(1266),trp_char(10),trp_const(1160),trp_char(10),trp_const(1215),trp_char(10),trp_char(10),trp_const(1267),trp_char(10),trp_const(1229),trp_char(10),(fun_29()==TRP_TRUE)?(trp_const(1268)):(EMPTYCORD),(fun_45()==TRP_TRUE)?(trp_const(1269)):(EMPTYCORD),(fun_32()==TRP_TRUE)?(trp_const(1270)):(EMPTYCORD),(fun_43()==TRP_TRUE)?(trp_const(1271)):(EMPTYCORD),(fun_41()==TRP_TRUE)?(trp_const(1272)):(EMPTYCORD),(fun_42()==TRP_TRUE)?(trp_const(1273)):(EMPTYCORD),(fun_51()==TRP_TRUE)?(trp_const(1274)):(EMPTYCORD),(fun_38()==TRP_TRUE)?(trp_const(1275)):(EMPTYCORD),(fun_30()==TRP_TRUE)?(trp_const(1276)):(EMPTYCORD),trp_const(1215),trp_char(10),trp_char(10),NULL))goto l0;
   if(trp_greater(trp_length(_glb[22]),ZERO)==TRP_FALSE)goto l71;
-  if(trp_fprint(_glb[12],trp_const(1279),trp_char(10),trp_const(1231),trp_char(10),trp_const(1280),trp_char(10),trp_const(1281),trp_math_minus(_glb[23],UNO,NULL),trp_const(1282),trp_char(10),trp_const(1283),trp_char(10),trp_const(1162),trp_char(10),trp_const(1217),trp_char(10),trp_char(10),NULL))goto l0;
+  if(trp_fprint(_glb[12],trp_const(1277),trp_char(10),trp_const(1229),trp_char(10),trp_const(1278),trp_char(10),trp_const(1279),trp_math_minus(_glb[23],UNO,NULL),trp_const(1280),trp_char(10),trp_const(1281),trp_char(10),trp_const(1160),trp_char(10),trp_const(1215),trp_char(10),trp_char(10),NULL))goto l0;
 l71:
   return 0;
 l0:
@@ -15304,7 +15290,7 @@ l0:
 static uns8b net_174(trp_obj_t *i0)
 {
   trp_obj_t *j0=UNDEF;
-  if(trp_cord_search_test(0,trp_const(1284),i0,&(j0),NULL))goto l0;
+  if(trp_cord_search_test(0,trp_const(1282),i0,&(j0),NULL))goto l0;
   if(trp_fprint(_glb[12],trp_sub(trp_cat(j0,trp_const(60),NULL),TRP_MAXINT,i0),trp_char(10),NULL))goto l0;
   return 0;
 l0:
