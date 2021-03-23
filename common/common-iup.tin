@@ -864,6 +864,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defnet iup-text-set-and-go-home (wid msg)
+        (iup-text-append-low wid (iup-fgcolor wid) msg false true) )
+
+(defnet iup-text-set-and-go-end (wid msg)
+        (iup-text-append-low wid (iup-fgcolor wid) msg false false) )
+
+(defnet iup-text-set-and-go-home-color (wid color msg)
+        (iup-text-append-low wid color msg false true) )
+
+(defnet iup-text-set-and-go-end-color (wid color msg)
+        (iup-text-append-low wid color msg false false) )
+
 (defnet iup-text-append-and-go-home (wid msg)
         (iup-text-append-low wid (iup-fgcolor wid) msg true true) )
 
@@ -876,17 +888,8 @@
 (defnet iup-text-append-and-go-end-color (wid color msg)
         (iup-text-append-low wid color msg true false) )
 
-(defnet iup-text-set-and-go-home (wid msg)
-        (iup-text-append-low wid (iup-fgcolor wid) msg false true) )
-
-(defnet iup-text-set-and-go-end (wid msg)
-        (iup-text-append-low wid (iup-fgcolor wid) msg false false) )
-
-(defnet iup-text-set-and-go-home-color (wid color msg)
-        (iup-text-append-low wid color msg false true) )
-
-(defnet iup-text-set-and-go-end-color (wid color msg)
-        (iup-text-append-low wid color msg false false) )
+(defnet iup-text-clear (wid)
+        (iup-text-set-and-go-home wid "") )
 
 (defnet iup-text-append-low (wid color msg append home)
         (deflocal i j u)
