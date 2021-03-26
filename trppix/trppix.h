@@ -95,6 +95,8 @@ trp_obj_t *trp_pix_ssim_linear( trp_obj_t *pix1, trp_obj_t *pix2 );
 trp_obj_t *trp_pix_ssim_gaussian( trp_obj_t *pix1, trp_obj_t *pix2 );
 trp_obj_t *trp_pix_scd( trp_obj_t *pix, trp_obj_t *ref, trp_obj_t *dimblock, trp_obj_t *radius );
 trp_obj_t *trp_pix_scd_histogram( trp_obj_t *pix1, trp_obj_t *pix2 );
+uns8b trp_pix_scd_histogram_set( trp_obj_t *pix, trp_obj_t *raw );
+trp_obj_t *trp_pix_scd_histogram_dist( trp_obj_t *raw1, trp_obj_t *raw2 );
 trp_obj_t *trp_pix_box_stat( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *w, trp_obj_t *h );
 trp_obj_t *trp_pix_is_empty( trp_obj_t *pix, trp_obj_t *threshold );
 trp_obj_t *trp_pix_trim( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *threshold );

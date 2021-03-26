@@ -165,3 +165,42 @@ trp_obj_t *trp_pix_scd_histogram( trp_obj_t *pix1, trp_obj_t *pix2 )
     return trp_math_ratio( trp_sig64( n1 ), trp_sig64( n2 ), NULL );
 }
 
+uns8b trp_pix_scd_histogram_set( trp_obj_t *pix, trp_obj_t *raw )
+{
+    trp_pix_color_t *c;
+    uns32b n;
+    uns32b *h;
+
+    if ( ( pix->tipo != TRP_PIX ) || ( raw->tipo != TRP_RAW ) )
+        return 1;
+    if ( ( ( c = ((trp_pix_t *)pix)->map.c ) == NULL ) ||
+         ( ((trp_raw_t *)raw)->len != 256 ) )
+        return 1;
+    n = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h;
+    h = (uns32b *)( ((trp_raw_t *)raw)->data );
+    memset( h, 0, 256 );
+    for ( ; n ; n--, c++ )
+        h[ trp_pix_hist_val( c ) ]++;
+    return 0;
+}
+
+trp_obj_t *trp_pix_scd_histogram_dist( trp_obj_t *raw1, trp_obj_t *raw2 )
+{
+    uns32b i, n, k;
+    uns32b *h1, *h2;
+
+    if ( ( raw1->tipo != TRP_RAW ) || ( raw2->tipo != TRP_RAW ) )
+        return UNDEF;
+    if ( ( ((trp_raw_t *)raw1)->len != 256 ) ||
+         ( ((trp_raw_t *)raw2)->len != 256 ) )
+        return UNDEF;
+    h1 = (uns32b *)( ((trp_raw_t *)raw1)->data );
+    h2 = (uns32b *)( ((trp_raw_t *)raw2)->data );
+    for ( i = 0, n = 0, k = 0 ; i < 64 ; i++ ) {
+        n += h1[ i ];
+        n += h2[ i ];
+        k += trp_pix_dist( h1[ i ], h2[ i ] );
+    }
+    return trp_math_ratio( trp_sig64( k ), trp_sig64( n ), NULL );
+}
+

@@ -50,6 +50,7 @@
           [ "gamma-rgb"                 4 4 ]
           [ "snap-color"                3 4 ]
           [ "scale"                     2 2 ]
+          [ "scd-histogram-set"         2 2 ]
           [ "draw-pix"                  4 4 ]
           [ "draw-pix-alpha"            4 4 ]
           [ "draw-pix-odd-lines"        2 2 ]
