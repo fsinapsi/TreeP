@@ -48,7 +48,7 @@
           [ "frameno2ts"                2 2 ]
           [ "frameno"                   1 1 ]
           [ "ts"                        1 1 ]
-          [ "first-ts"                  1 1 ]
+          [ "first-ts"                  1 2 ]
           [ "is-frame-recoverable"      1 1 ]
         ] )
 

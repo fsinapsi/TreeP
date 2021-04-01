@@ -946,13 +946,89 @@ trp_obj_t *trp_av_ts( trp_obj_t *fmtctx )
     return ( ts == AV_NOPTS_VALUE ) ? UNDEF : trp_sig64( ts );
 }
 
-trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx )
+trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    AVCodec *codec;
+    AVCodecContext *avctx;
+    AVFrame *frame;
+    AVPacket *packet;
+    sig64b first_ts;
+    uns32b stream_idx;
+    int res;
 
     if ( fmt_ctx == NULL )
         return UNDEF;
-    return trp_sig64( ((trp_avcodec_t *)fmtctx)->fmt.first_ts );
+    if ( streamno ) {
+        if ( trp_cast_uns32b( streamno, &stream_idx ) )
+            return UNDEF;
+        if ( stream_idx >= fmt_ctx->nb_streams )
+            return UNDEF;
+    } else
+        stream_idx = ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx;
+    if ( stream_idx == ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx )
+        return trp_sig64( ((trp_avcodec_t *)fmtctx)->fmt.first_ts );
+
+    /* non so se questo seek sia necessario */
+    avcodec_flush_buffers( ((trp_avcodec_t *)fmtctx)->fmt.avctx );
+    if ( av_seek_frame( fmt_ctx, ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx, 0, 0 ) < 0 )
+        return UNDEF;
+
+    codec = avcodec_find_decoder( fmt_ctx->streams[ stream_idx ]->codecpar->codec_id );
+    if ( codec == NULL )
+        return UNDEF;
+    if ( ( avctx = avcodec_alloc_context3( codec ) ) == NULL )
+        return UNDEF;
+    if ( avcodec_parameters_to_context( avctx, fmt_ctx->streams[ stream_idx ]->codecpar ) < 0 ) {
+        avcodec_free_context( &avctx );
+        return UNDEF;
+    }
+    if ( avcodec_open2( avctx, codec, NULL ) < 0 ) {
+        avcodec_free_context( &avctx );
+        return UNDEF;
+    }
+    if ( ( frame = av_frame_alloc() ) == NULL ) {
+        avcodec_free_context( &avctx );
+        return UNDEF;
+    }
+    if ( ( packet = av_packet_alloc() ) == NULL ) {
+        avcodec_free_context( &avctx );
+        av_frame_free( &frame );
+        return UNDEF;
+    }
+    for ( ; ; ) {
+        if ( av_read_frame( fmt_ctx, packet ) < 0 ) {
+            avcodec_free_context( &avctx );
+            av_frame_free( &frame );
+            av_packet_free( &packet );
+            return UNDEF;
+        }
+        if ( packet->stream_index != stream_idx ) {
+            av_packet_unref( packet );
+            continue;
+        }
+        if ( avcodec_send_packet( avctx, packet ) < 0 ) {
+            av_packet_unref( packet );
+            avcodec_free_context( &avctx );
+            av_frame_free( &frame );
+            av_packet_free( &packet );
+            return UNDEF;
+        }
+        res = avcodec_receive_frame( avctx, frame );
+        if ( ( res == AVERROR(EAGAIN) ) || ( res == AVERROR_EOF ) ) {
+            av_packet_unref( packet );
+            continue;
+        }
+        first_ts = packet->dts;
+        av_packet_unref( packet );
+        avcodec_free_context( &avctx );
+        av_frame_free( &frame );
+        av_packet_free( &packet );
+        if ( ( res < 0 ) || ( first_ts == AV_NOPTS_VALUE ) )
+            return UNDEF;
+        break;
+    }
+    return trp_sig64( first_ts );
 }
 
 /*

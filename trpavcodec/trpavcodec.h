@@ -59,7 +59,7 @@ trp_obj_t *trp_av_metadata( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_frameno2ts( trp_obj_t *fmtctx, trp_obj_t *frameno );
 trp_obj_t *trp_av_frameno( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_ts( trp_obj_t *fmtctx );
-trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_is_frame_recoverable( trp_obj_t *fmtctx );
 
 #endif /* !__trpavcodec__h */
