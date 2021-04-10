@@ -683,6 +683,52 @@ uns8b trp_av_seek_frame( trp_obj_t *fmtctx, trp_obj_t *ts )
                             ( tts > ((trp_avcodec_t *)fmtctx)->fmt.first_ts ) ? AVSEEK_FLAG_BACKWARD : 0 ) < 0 ) ? 1 : 0;
 }
 
+/*
+ rende true sse l'ultimo frame letto (da trp_av_read_frame) è rileggibile
+ correttamente (da trp_av_read_frame) specificando il numero di frame
+ */
+
+trp_obj_t *trp_av_is_frame_recoverable( trp_obj_t *fmtctx )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    AVStream *stream;
+    trp_obj_t *fr, *tb, *durm, *target_ts, *target_ts_min, *target_ts_max;
+    sig64b ts;
+    uns32b frameno;
+
+    if ( fmt_ctx == NULL )
+        return TRP_FALSE;
+    frameno = ((trp_avcodec_t *)fmtctx)->fmt.frameno;
+    if ( frameno == TRP_AV_FRAMENO_UNDEF )
+        return TRP_FALSE;
+    ts = ((trp_avcodec_t *)fmtctx)->fmt.frame->pts;
+    if ( ts == AV_NOPTS_VALUE )
+        return TRP_FALSE;
+
+    stream = fmt_ctx->streams[ ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx ];
+    fr = trp_av_rational( trp_av_stream2framerate( stream ) );
+    tb = trp_av_rational( &( stream->time_base ) );
+
+    durm = trp_math_ratio( UNO, fr, trp_sig64( 2 ), NULL );
+    if ( frameno == 0 )
+        target_ts = trp_math_times( trp_sig64( ((trp_avcodec_t *)fmtctx)->fmt.first_ts ), tb, NULL );
+    else
+        target_ts = trp_cat( trp_math_times( trp_sig64( ((trp_avcodec_t *)fmtctx)->fmt.second_ts ), tb, NULL ),
+                             trp_math_ratio( trp_sig64( frameno - 1 ), fr, NULL ),
+                             NULL );
+    target_ts_min = trp_math_minus( target_ts,
+                                    durm,
+                                    NULL );
+    target_ts_max = trp_cat( target_ts,
+                             durm,
+                             NULL );
+
+    target_ts = trp_math_times( trp_sig64( ts ), tb, NULL );
+
+    return ( ( trp_less( target_ts_min, target_ts ) == TRP_TRUE ) &&
+             ( trp_less( target_ts, target_ts_max ) == TRP_TRUE ) ) ? TRP_TRUE : TRP_FALSE;
+}
+
 trp_obj_t *trp_av_nb_streams( trp_obj_t *fmtctx )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
@@ -1029,51 +1075,5 @@ trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno )
         break;
     }
     return trp_sig64( first_ts );
-}
-
-/*
- rende true sse l'ultimo frame letto (da trp_av_read_frame) è rileggibile
- correttamente (da trp_av_read_frame) specificando il numero di frame
- */
-
-trp_obj_t *trp_av_is_frame_recoverable( trp_obj_t *fmtctx )
-{
-    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
-    AVStream *stream;
-    trp_obj_t *fr, *tb, *durm, *target_ts, *target_ts_min, *target_ts_max;
-    sig64b ts;
-    uns32b frameno;
-
-    if ( fmt_ctx == NULL )
-        return TRP_FALSE;
-    frameno = ((trp_avcodec_t *)fmtctx)->fmt.frameno;
-    if ( frameno == TRP_AV_FRAMENO_UNDEF )
-        return TRP_FALSE;
-    ts = ((trp_avcodec_t *)fmtctx)->fmt.frame->pts;
-    if ( ts == AV_NOPTS_VALUE )
-        return TRP_FALSE;
-
-    stream = fmt_ctx->streams[ ((trp_avcodec_t *)fmtctx)->fmt.video_stream_idx ];
-    fr = trp_av_rational( trp_av_stream2framerate( stream ) );
-    tb = trp_av_rational( &( stream->time_base ) );
-
-    durm = trp_math_ratio( UNO, fr, trp_sig64( 2 ), NULL );
-    if ( frameno == 0 )
-        target_ts = trp_math_times( trp_sig64( ((trp_avcodec_t *)fmtctx)->fmt.first_ts ), tb, NULL );
-    else
-        target_ts = trp_cat( trp_math_times( trp_sig64( ((trp_avcodec_t *)fmtctx)->fmt.second_ts ), tb, NULL ),
-                             trp_math_ratio( trp_sig64( frameno - 1 ), fr, NULL ),
-                             NULL );
-    target_ts_min = trp_math_minus( target_ts,
-                                    durm,
-                                    NULL );
-    target_ts_max = trp_cat( target_ts,
-                             durm,
-                             NULL );
-
-    target_ts = trp_math_times( trp_sig64( ts ), tb, NULL );
-
-    return ( ( trp_less( target_ts_min, target_ts ) == TRP_TRUE ) &&
-             ( trp_less( target_ts, target_ts_max ) == TRP_TRUE ) ) ? TRP_TRUE : TRP_FALSE;
 }
 

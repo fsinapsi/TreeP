@@ -212,7 +212,7 @@
         (iup-set-str-attribute pre "MARGIN" "0x3")
 
         (set btn-ok (iup-button-icon-ok cback q))
-        (iup-set-str-attribute btn-ok "CANFOCUS" (if (cmingw) "YES" "NO"))
+        (iup-set-bool btn-ok "CANFOCUS" (cmingw))
 
         (set hbox (iup-hbox
                 (iup-fill)
@@ -877,6 +877,59 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun iup-text-buffer () net iup-text-buffer)
+(defnet iup-text-buffer (@buf)
+        (set @buf (array 3))
+        (set <@buf 0> "")
+        (set <@buf 1> 0)
+        (set <@buf 2> (queue)) )
+
+(defnet iup-text-buffer-append (buf msg)
+        (iup-text-buffer-append-color buf undef msg) )
+
+(defnet iup-text-buffer-append-color (buf color msg)
+        (deflocal i j)
+
+        (set j (utf8-length msg))
+        (integerp j)
+        (inc <buf 0> msg)
+        (set i <buf 1>)
+        (inc j i)
+        (set <buf 1> j)
+        (if (<> color undef)
+        then    (queue-put <buf 2> (list i j color)) ))
+
+(defnet iup-text-buffer-flush (buf wid)
+        (deflocal uu u color i)
+
+        (iup-set-str-attribute wid "VALUE" <buf 0>)
+        (set uu (iup-user))
+        (iup-set-bool uu "BULK" true)
+        (iup-set-bool uu "CLEANOUT" true)
+        (for i in <buf 2> do
+                (set u (iup-user))
+                (set color <i 2>)
+                (iup-set-str-attribute u "SELECTIONPOS" <i 0> ":" <i 1>)
+                (iup-set-str-attribute u "FGCOLOR"
+                    (sprint (pix-color-red color) " " (pix-color-green color) " " (pix-color-blue color)) )
+                (iup-append uu u) )
+        (if false ; (cmingw)
+        then    (set u (iup-user))
+                (iup-set-str-attribute u "FONTSCALE" 1.1)
+                (iup-set-str-attribute u "SELECTIONPOS" "0:" <buf 1>)
+                (iup-append uu u) )
+        (iup-set-attribute wid "ADDFORMATTAG_HANDLE" uu) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defnet iup-text-set-and-go-home (wid msg)
         (iup-text-append-low wid (iup-fgcolor wid) msg false true) )
 
@@ -920,6 +973,29 @@
                     (sprint (pix-color-red color) " " (pix-color-green color) " " (pix-color-blue color)) )
                 (iup-set-attribute wid "ADDFORMATTAG_HANDLE" u) )
         (iup-set-int wid "CARETPOS" (if home 0 j)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-text-generic (value wrap) net iup-text-generic)
+(defnet iup-text-generic (value wrap @wid)
+        (set @wid (iup-text))
+        (iup-set-bool @wid "MULTILINE" true)
+        (iup-set-bool @wid "READONLY" true)
+        (iup-set-bool @wid "EXPAND" true)
+        (iup-set-bool @wid "WORDWRAP" wrap)
+        (iup-set-str-attribute @wid "PADDING" "2x0")
+        (iup-set-str-attribute @wid "VALUE" value)
+        (iup-set-int @wid "VISIBLELINES" 1)
+        (iup-set-int @wid "VISIBLECOLUMNS" 1)
+        (iup-set-int @wid "CARETPOS" 0) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

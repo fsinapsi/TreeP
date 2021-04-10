@@ -614,9 +614,13 @@ uns8b trp_iup_insert( trp_obj_t *ih, trp_obj_t *ref_child, trp_obj_t *new_child 
     Ihandle *h, *rc, *nc;
 
     if ( ( ( h = trp_iup_check( ih ) ) == NULL ) ||
-         ( ( rc = trp_iup_check( ref_child ) ) == NULL ) ||
          ( ( nc = trp_iup_check( new_child ) ) == NULL ) )
         return 1;
+    if ( ref_child == UNDEF )
+        rc = NULL;
+    else
+        if ( ( rc = trp_iup_check( ref_child ) ) == NULL )
+            return 1;
     return IupInsert( h, rc, nc ) ? 0 : 1;
 }
 

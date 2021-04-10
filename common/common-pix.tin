@@ -53,8 +53,8 @@
 
 (defun pix-scale-treep (pix w h) (pix-scale pix w h))
 
-(defun pix-sws-scale (pix w h alg) net pix-sws-scale)
-(defnet pix-sws-scale (pix w h alg @res)
+(defun pix-sws-scale (pix w h alg) net pix-sws-scale-fun)
+(defnet pix-sws-scale-fun (pix w h alg @res)
         (deflocal ctx)
         (set w (rint w))
         (set h (rint h))
@@ -98,6 +98,48 @@
 
 (defun pix-sws-scale-spline (pix w h)
         (pix-sws-scale pix w h (cmacro SWS_SPLINE)) )
+
+(defnet pix-sws-scale (pixi pixo alg)
+        (deflocal ctx)
+        (set ctx (av-sws-context (width pixi) (height pixi) (width pixo) (height pixo) alg))
+        (<> ctx undef)
+        (alt    (av-sws-scale ctx pixi pixo)
+                (seq    (close ctx)
+                        (fail) ))
+        (close ctx) )
+
+(defnet pix-sws-scale-fast-bilinear (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_FAST_BILINEAR)) )
+
+(defnet pix-sws-scale-bilinear (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_BILINEAR)) )
+
+(defnet pix-sws-scale-bicubic (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_BICUBIC)) )
+
+(defnet pix-sws-scale-x (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_X)) )
+
+(defnet pix-sws-scale-point (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_POINT)) )
+
+(defnet pix-sws-scale-area (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_AREA)) )
+
+(defnet pix-sws-scale-bicublin (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_BICUBLIN)) )
+
+(defnet pix-sws-scale-gauss (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_GAUSS)) )
+
+(defnet pix-sws-scale-sinc (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_SINC)) )
+
+(defnet pix-sws-scale-lanczos (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_LANCZOS)) )
+
+(defnet pix-sws-scale-spline (pixi pixo)
+        (pix-sws-scale pixi pixo (cmacro SWS_SPLINE)) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

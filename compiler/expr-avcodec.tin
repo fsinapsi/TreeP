@@ -30,6 +30,7 @@
           [ "sws-context"               4 5 ]
           [ "avformat-open-input"       1 2 ]
           [ "avformat-open-input-cuvid" 1 2 ]
+          [ "is-frame-recoverable"      1 1 ]
           [ "nb-streams"                1 1 ]
           [ "video-stream-idx"          1 1 ]
           [ "nb-frames"                 2 2 ]
@@ -49,7 +50,6 @@
           [ "frameno"                   1 1 ]
           [ "ts"                        1 1 ]
           [ "first-ts"                  1 2 ]
-          [ "is-frame-recoverable"      1 1 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
