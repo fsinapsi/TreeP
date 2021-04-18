@@ -12,9 +12,9 @@
         (deflocal i)
 
         (lmatch remove func "sqlite3-")
-        (if (= func "exec")
+        (if (in func [ "exec" "exec-raw" ])
         then    (if (last-pass)
-                then    (fprint _dst "  if(trp_sqlite3_exec_data(") )
+                then    (fprint _dst (if (= func "exec") "  if(trp_sqlite3_exec_data(" "  if(trp_sqlite3_exec_data_raw(")) )
                 (expr)
                 (virgola)
                 (expr)
@@ -27,6 +27,7 @@
 
 (defun test-sqlite3-table ()
         [ [ "exec-data"         4 undef ]
+          [ "exec-data-raw"     4 undef ]
           [ "begin"             1 1 ]
           [ "begin-exclusive"   1 1 ]
           [ "end"               1 1 ]

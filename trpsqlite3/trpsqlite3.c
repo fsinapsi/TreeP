@@ -46,6 +46,11 @@ typedef struct {
     uns32b len;
 } trp_sqlite3_arg_t;
 
+typedef struct {
+    uns8b flags;
+    trp_obj_t **res;
+} trp_sqlite3_flags_t;
+
 static uns8b trp_sqlite3_print( trp_print_t *p, trp_sqlite3_t *obj );
 static uns8b trp_sqlite3_close( trp_sqlite3_t *obj );
 static uns8b trp_sqlite3_close_basic( uns8b flags, trp_sqlite3_t *obj );
@@ -53,10 +58,12 @@ static void trp_sqlite3_finalize( void *obj, void *data );
 static uns8b trp_sqlite3_check( trp_obj_t *obj, sqlite3 **s, uns32b *level );
 static int trp_sqlite3_encode_binary( const uns8b *in, int n, uns8b *out );
 static int trp_sqlite3_decode_binary( const uns8b *in, uns8b *out );
-static uns8b *trp_sqlite3_create_query( trp_obj_t *query, va_list args, uns32b n );
-static trp_obj_t *trp_sqlite3_get_value( uns8b *v );
-static int trp_sqlite3_callback( trp_obj_t **res, int argc, char **argv, char **col_names );
-static int trp_sqlite3_test_callback( trp_obj_t **cdata, int argc, char **argv, char **col_names );
+static uns8b *trp_sqlite3_create_query( uns8b flags, trp_obj_t *query, va_list args, uns32b n );
+static trp_obj_t *trp_sqlite3_get_value( uns8b flags, uns8b *v );
+static int trp_sqlite3_callback( trp_sqlite3_flags_t *flags, int argc, char **argv, char **col_names );
+static trp_obj_t *trp_sqlite3_exec_low( uns8b flags, trp_obj_t *obj, uns8b *q );
+static int trp_sqlite3_test_callback( trp_sqlite3_flags_t *flags, int argc, char **argv, char **col_names );
+static uns8b trp_sqlite3_exec_data_low( uns8b flags, trp_obj_t *obj, trp_obj_t *net, trp_obj_t *data, uns8b *q );
 
 uns8b trp_sqlite3_init()
 {
@@ -272,7 +279,7 @@ static int trp_sqlite3_decode_binary( const uns8b *in, uns8b *out )
     return i;
 }
 
-static uns8b *trp_sqlite3_create_query( trp_obj_t *query, va_list args, uns32b n )
+static uns8b *trp_sqlite3_create_query( uns8b flags, trp_obj_t *query, va_list args, uns32b n )
 {
     trp_sqlite3_arg_t *qargs = trp_gc_malloc( sizeof( trp_sqlite3_arg_t ) * n );
     uns8b *q;
@@ -344,7 +351,7 @@ static uns8b *trp_sqlite3_create_query( trp_obj_t *query, va_list args, uns32b n
         case 1:
             q[ len     ] = 155;
             q[ len + 1 ] = 155;
-            q[ len + 2 ] = 152 + qargs[ i ].tipo;
+            q[ len + 2 ] = 152 + ( ( ( flags & 1 ) && ( qargs[ i ].tipo == 1 ) ) ? 0 : qargs[ i ].tipo );
             q[ len + 3 ] = trp_sqlite3_encode_binary( (uns8b *)(&(qargs[ i ].extra)), sizeof( trp_sqlite3_extra_t ), q + len + 4 );
             trp_sqlite3_encode_binary( qargs[ i ].val.raw->data, qargs[ i ].val.raw->len, q + len + 4 + q[ len + 3 ] );
             if ( qargs[ i ].tipo == 0 ) {
@@ -370,7 +377,7 @@ static uns8b *trp_sqlite3_create_query( trp_obj_t *query, va_list args, uns32b n
     return q;
 }
 
-static trp_obj_t *trp_sqlite3_get_value( uns8b *v )
+static trp_obj_t *trp_sqlite3_get_value( uns8b flags, uns8b *v )
 {
     if ( v == NULL )
         return UNDEF;
@@ -387,7 +394,7 @@ static trp_obj_t *trp_sqlite3_get_value( uns8b *v )
                 if ( trp_sqlite3_decode_binary( v + 4, (uns8b *)(&extra) ) != sizeof( trp_sqlite3_extra_t ) )
                     return UNDEF;
                 v[ 4 + v[ 3 ] ] = tipo;
-                tipo = v[ 2 ] & 1;
+                tipo = ( v[ 2 ] | flags ) & 1;
                 raw = trp_gc_malloc( sizeof( trp_raw_t ) );
                 raw->tipo = TRP_RAW;
                 raw->mode = extra.mode;
@@ -419,12 +426,13 @@ static trp_obj_t *trp_sqlite3_get_value( uns8b *v )
     return trp_cord( v );
 }
 
-static int trp_sqlite3_callback( trp_obj_t **res, int argc, char **argv, char **col_names )
+static int trp_sqlite3_callback( trp_sqlite3_flags_t *flags, int argc, char **argv, char **col_names )
 {
+    trp_obj_t **res = flags->res;
     trp_obj_t *l = NIL;
 
     while ( argc )
-        l = trp_cons( trp_sqlite3_get_value( argv[ --argc ] ), l );
+        l = trp_cons( trp_sqlite3_get_value( flags->flags, argv[ --argc ] ), l );
     l = trp_cons( l, NIL );
     if ( *res == UNDEF ) {
         *res = trp_gc_malloc( sizeof( trp_cons_t ) );
@@ -438,23 +446,49 @@ static int trp_sqlite3_callback( trp_obj_t **res, int argc, char **argv, char **
 
 trp_obj_t *trp_sqlite3_exec( trp_obj_t *obj, trp_obj_t *query, ... )
 {
-    trp_obj_t *res = UNDEF;
     uns32b n;
-    sqlite3 *s;
     uns8b *q;
     va_list args;
 
-    if ( trp_sqlite3_check( obj, &s, NULL ) )
-        return UNDEF;
     va_start( args, query );
     n = trp_nargs( args );
     va_end( args );
     va_start( args, query );
-    q = trp_sqlite3_create_query( query, args, n );
+    q = trp_sqlite3_create_query( 0, query, args, n );
     va_end( args );
+    return trp_sqlite3_exec_low( 0, obj, q );
+}
+
+trp_obj_t *trp_sqlite3_exec_raw( trp_obj_t *obj, trp_obj_t *query, ... )
+{
+    uns32b n;
+    uns8b *q;
+    va_list args;
+
+    va_start( args, query );
+    n = trp_nargs( args );
+    va_end( args );
+    va_start( args, query );
+    q = trp_sqlite3_create_query( 1, query, args, n );
+    va_end( args );
+    return trp_sqlite3_exec_low( 1, obj, q );
+}
+
+static trp_obj_t *trp_sqlite3_exec_low( uns8b flags, trp_obj_t *obj, uns8b *q )
+{
+    trp_obj_t *res = UNDEF;
+    sqlite3 *s;
+    trp_sqlite3_flags_t sflags;
+
     if ( q == NULL )
         return UNDEF;
-    switch ( sqlite3_exec( s, q, (void *)trp_sqlite3_callback, (void *)(&res), NULL ) ) {
+    if ( trp_sqlite3_check( obj, &s, NULL ) ) {
+        free( q );
+        return UNDEF;
+    }
+    sflags.flags = flags;
+    sflags.res = (void *)(&res);
+    switch ( sqlite3_exec( s, q, (void *)trp_sqlite3_callback, (void *)( &sflags ), NULL ) ) {
     case SQLITE_OK:
         if ( res == UNDEF ) {
             res = NIL;
@@ -470,8 +504,9 @@ trp_obj_t *trp_sqlite3_exec( trp_obj_t *obj, trp_obj_t *query, ... )
     return res;
 }
 
-static int trp_sqlite3_test_callback( trp_obj_t **cdata, int argc, char **argv, char **col_names )
+static int trp_sqlite3_test_callback( trp_sqlite3_flags_t *flags, int argc, char **argv, char **col_names )
 {
+    trp_obj_t **cdata = flags->res;
     int i, j = 0;
     uns8bfun_t f = ((trp_netptr_t *)( cdata[ 0 ] ))->f;
     trp_obj_t *p[ 21 ];
@@ -481,7 +516,7 @@ static int trp_sqlite3_test_callback( trp_obj_t **cdata, int argc, char **argv, 
     if ( cdata[ 1 ] )
         p[ j++ ] = cdata[ 1 ];
     for ( i = 0 ; i < argc ; )
-        p[ j++ ] = trp_sqlite3_get_value( argv[ i++ ] );
+        p[ j++ ] = trp_sqlite3_get_value( flags->flags, argv[ i++ ] );
     while ( j < 21 )
         p[ j++ ] = UNDEF;
     switch ( ((trp_netptr_t *)( cdata[ 0 ] ))->nargs ) {
@@ -591,32 +626,63 @@ static int trp_sqlite3_test_callback( trp_obj_t **cdata, int argc, char **argv, 
 
 uns8b trp_sqlite3_exec_data( trp_obj_t *obj, trp_obj_t *net, trp_obj_t *data, trp_obj_t *query, ... )
 {
-    trp_obj_t *cdata[ 2 ];
     uns32b n;
-    sqlite3 *s;
-    uns8b *q, res = 1;
+    uns8b *q;
     va_list args;
 
-    if ( trp_sqlite3_check( obj, &s, NULL ) )
-        return 1;
-    if ( net->tipo == TRP_NETPTR ) {
-        if ( ((trp_netptr_t *)net)->nargs > 20 )
-            return 1;
-    } else if ( net != UNDEF )
-        return 1;
-    cdata[ 0 ] = net;
-    cdata[ 1 ] = data;
     va_start( args, query );
     n = trp_nargs( args );
     va_end( args );
     va_start( args, query );
-    q = trp_sqlite3_create_query( query, args, n );
+    q = trp_sqlite3_create_query( 0, query, args, n );
     va_end( args );
+    return trp_sqlite3_exec_data_low( 0, obj, net, data, q );
+}
+
+uns8b trp_sqlite3_exec_data_raw( trp_obj_t *obj, trp_obj_t *net, trp_obj_t *data, trp_obj_t *query, ... )
+{
+    uns32b n;
+    uns8b *q;
+    va_list args;
+
+    va_start( args, query );
+    n = trp_nargs( args );
+    va_end( args );
+    va_start( args, query );
+    q = trp_sqlite3_create_query( 1, query, args, n );
+    va_end( args );
+    return trp_sqlite3_exec_data_low( 1, obj, net, data, q );
+}
+
+static uns8b trp_sqlite3_exec_data_low( uns8b flags, trp_obj_t *obj, trp_obj_t *net, trp_obj_t *data, uns8b *q )
+{
+    trp_obj_t *cdata[ 2 ];
+    sqlite3 *s;
+    uns8b res = 1;
+    trp_sqlite3_flags_t sflags;
+
     if ( q == NULL )
         return 1;
+    if ( trp_sqlite3_check( obj, &s, NULL ) ) {
+        free( q );
+        return 1;
+    }
+    if ( net->tipo == TRP_NETPTR ) {
+        if ( ((trp_netptr_t *)net)->nargs > 20 ) {
+            free( q );
+            return 1;
+        }
+    } else if ( net != UNDEF ) {
+        free( q );
+        return 1;
+    }
+    cdata[ 0 ] = net;
+    cdata[ 1 ] = data;
+    sflags.flags = flags;
+    sflags.res = (void *)cdata;
     if ( sqlite3_exec( s, q,
                        ( net == UNDEF ) ? NULL : (void *)trp_sqlite3_test_callback,
-                       ( net == UNDEF ) ? NULL : (void *)cdata, NULL ) == SQLITE_OK )
+                       ( net == UNDEF ) ? NULL : (void *)( &sflags ), NULL ) == SQLITE_OK )
         res = 0;
     free( q );
     return res;

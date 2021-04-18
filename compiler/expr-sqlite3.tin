@@ -22,6 +22,7 @@
         [ [ "open"              1 1 ]
           [ "escape-strings"    1 undef ]
           [ "exec"              2 undef ]
+          [ "exec-raw"          2 undef ]
           [ "changes"           1 1 ]
           [ "total-changes"     1 1 ]
         ] )

@@ -37,6 +37,7 @@
           [ "sample-aspect-ratio"       2 2 ]
           [ "avg-frame-rate"            2 2 ]
           [ "r-frame-rate"              2 2 ]
+          [ "video-frame-rate"          1 1 ]
           [ "codec-type"                2 2 ]
           [ "codec-id"                  2 2 ]
           [ "codec-name"                2 2 ]
@@ -49,6 +50,8 @@
           [ "frameno2ts"                2 2 ]
           [ "frameno"                   1 1 ]
           [ "ts"                        1 1 ]
+          [ "get-buf-size"              1 1 ]
+          [ "get-buf-content"           1 1 ]
           [ "first-ts"                  1 2 ]
         ] )
 

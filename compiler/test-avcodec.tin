@@ -19,10 +19,11 @@
         (flag-true "avcodec") )
 
 (defun test-avcodec-table ()
-        [ [ "sws-scale" 3 3 ]
-          [ "read-frame" 2 3 ]
-          [ "skip-frame" 1 2 ]
-          [ "seek-frame" 2 2 ]
+        [ [ "sws-scale"     3 3 ]
+          [ "read-frame"    2 3 ]
+          [ "skip-frame"    1 2 ]
+          [ "rewind"        1 1 ]
+          [ "set-buf-size"  2 2 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

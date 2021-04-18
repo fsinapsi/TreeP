@@ -40,7 +40,7 @@ trp_obj_t *trp_av_avformat_open_input( trp_obj_t *path, trp_obj_t *par );
 trp_obj_t *trp_av_avformat_open_input_cuvid( trp_obj_t *path, trp_obj_t *par );
 uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno );
 uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n );
-uns8b trp_av_seek_frame( trp_obj_t *fmtctx, trp_obj_t *ts );
+uns8b trp_av_rewind( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_is_frame_recoverable( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_nb_streams( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_video_stream_idx( trp_obj_t *fmtctx );
@@ -48,6 +48,7 @@ trp_obj_t *trp_av_nb_frames( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_sample_aspect_ratio( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_avg_frame_rate( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_r_frame_rate( trp_obj_t *fmtctx, trp_obj_t *streamno );
+trp_obj_t *trp_av_video_frame_rate( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_codec_type( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_codec_id( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_codec_name( trp_obj_t *fmtctx, trp_obj_t *streamno );
@@ -60,6 +61,9 @@ trp_obj_t *trp_av_metadata( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_frameno2ts( trp_obj_t *fmtctx, trp_obj_t *frameno );
 trp_obj_t *trp_av_frameno( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_ts( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_get_buf_size( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_get_buf_content( trp_obj_t *fmtctx );
+uns8b trp_av_set_buf_size( trp_obj_t *fmtctx, trp_obj_t *bufsize );
 trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno );
 
 #endif /* !__trpavcodec__h */
