@@ -47,6 +47,7 @@
           [ "expander"                          0 1 ]
           [ "split"                             2 2 ]
           [ "label"                             0 undef ]
+          [ "flat-label"                        0 undef ]
           [ "animated-label"                    1 1 ]
           [ "link"                              1 undef ]
           [ "button"                            0 1 ]

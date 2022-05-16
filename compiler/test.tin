@@ -138,6 +138,7 @@
                                         (if (last-pass)
                                         then    (fprint _dst "  goto l" _labfail ';' nl) ))
                 "skip"          (test-skip)
+                "segfault"      (exprseq 0 0 "  trp_segfault(" ");\n")
                 "clr"           (test-clr)
                 "set"           (test-set)
                 "inc"           (test-incdec "inc" "cat")
@@ -178,6 +179,8 @@
                 "vidp"          (exprseq-ext 1 1 "  if(((" ")->tipo)!=TRP_VID)")
 
                 "gc"            (exprseq 0 0 "  trp_gc(" ");\n")
+                "link"          (exprseq-ext 2 2 "  if(trp_link(" "))")
+                "symlink"       (exprseq-ext 2 2 "  if(trp_symlink(" "))")
                 "sync"          (exprseq 0 0 "  trp_sync(" ");\n")
                 "close"         (exprseq-ext 1 undef "  if(trp_close_multi(" "))")
                 "call"          (test-callparse)

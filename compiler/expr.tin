@@ -472,6 +472,7 @@
                                         (expr-constant (if (or _win32 _win64) "MINGW32_NT-5.1" (uname)))
                                         (set _expr_const_enabled false) )
 
+                "cc-version"    (exprseq-basic 0 0 "trp_cc_version(" ')')
                 "gc-version-major"
                                 (exprseq-basic 0 0 "trp_gc_version_major(" ')')
                 "gc-version-minor"
@@ -636,6 +637,8 @@
                 "raw-load-static"
                                 (expr-raw-load-static const-state)
                 "system"        (exprseq-basic 1 undef "trp_system(" ')')
+                "getpid"        (exprseq-basic 0 0 "trp_getpid(" ')')
+                "fork"          (exprseq-basic 0 0 "trp_fork(" ')')
                 "directory"     (exprseq-basic 0 1 "trp_directory(" ')')
                 "getenv"        (exprseq-basic 1 1 "trp_getenv(" ')')
 

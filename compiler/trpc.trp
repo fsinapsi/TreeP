@@ -65,6 +65,7 @@
                (if (endianness) "little" "big") " endian, "
                (if (cstatic) "statically" "dynamically") " linked, "
                (if (multithreaded) "multi" "single-") "threaded version" nl
+               "CC (rts): " (cc-version) nl
                "GMP version: " (gmp-version) nl )
         (exit) )
 
@@ -356,6 +357,10 @@
                   (if mswin " -mms-bitfields" " -fPIC -I/usr/local/include -I/opt/local/include")
                   (if (gtk) (pkg-config-cflags "gtk+-2.0") "")
                   (if (iup) " -I/usr/local/include/iup" "")
+                  (if (avcodec)
+                        (+ (pkg-config-cflags "libavformat") (pkg-config-cflags "libavcodec")
+                           (pkg-config-cflags "libavutil") (pkg-config-cflags "libswscale")
+                           (pkg-config-cflags "libavfilter") ) "" )
                   (if (cv) (pkg-config-cflags "opencv") "")
                   " -o " (pathquote exepath)
                   " " (pathquote cpath)
@@ -382,12 +387,9 @@
                   (if (sqlite3) " -ltrpsqlite3 -lsqlite3" "")
                   (if (wn) " -ltrpwn" "")
                   (if (avcodec)
-                        (if mswin
-                                " -lpthread -ltrpavcodec -lavformat -lavcodec -lavutil -lswscale"
-                                " -ltrpavcodec `pkg-config libavformat --libs`" \
-                                " `pkg-config libavcodec --libs`" \
-                                " `pkg-config libavutil --libs`" \
-                                " `pkg-config libswscale --libs`" ) "" )
+                        (+ " -ltrpavcodec" (pkg-config-libs "libavformat") (pkg-config-libs "libavcodec")
+                           (pkg-config-libs "libavutil") (pkg-config-libs "libswscale")
+                           (pkg-config-libs "libavfilter") ) "" )
                   (if (cv) (+ " -ltrpcv" (pkg-config-libs "opencv")) "")
                   (if (vlfeat) " -ltrpvlfeat" "")
                   (if (mgl) " -ltrpmgl -lmgl" "")

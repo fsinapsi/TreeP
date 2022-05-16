@@ -19,11 +19,14 @@
         (flag-true "avcodec") )
 
 (defun test-avcodec-table ()
-        [ [ "sws-scale"     3 3 ]
-          [ "read-frame"    2 3 ]
-          [ "skip-frame"    1 2 ]
-          [ "rewind"        1 1 ]
-          [ "set-buf-size"  2 2 ]
+        [ [ "sws-scale"                 3 3 ]
+          [ "read-frame"                2 3 ]
+          [ "skip-frame"                1 2 ]
+          [ "read-scd-histogram-set"    2 2 ]
+          [ "rewind"                    1 1 ]
+          [ "set-buf-size"              2 2 ]
+          [ "set-filter"                1 2 ]
+          [ "set-filter-rows"           1 2 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
