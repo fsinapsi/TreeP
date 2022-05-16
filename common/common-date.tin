@@ -62,15 +62,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun date->str (d)
-        (sprint (date-year d)
-                (date->str0 (date-month d))
-                (date->str0 (date-day d))
-                (date->str0 (date-hours d))
-                (date->str0 (date-minutes d))
-                (date->str0 (date-seconds d)) ))
+        (+ (int->str (date-year d) 4 '0')
+           (date->str0 (date-month d))
+           (date->str0 (date-day d))
+           (date->str0 (date-hours d))
+           (date->str0 (date-minutes d))
+           (date->str0 (date-seconds d)) ))
 (defun date->str0 (v)
-        (if (= v undef) ""
-                (sprint (if (< v 10) '0' "") v) ))
+        (if (integerp v) (int->str v 2 '0') "") )
 
 (defun str->date (s) net str->date)
 (defnet str->date (s @d)

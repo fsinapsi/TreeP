@@ -504,20 +504,40 @@
 ;;; genera un sorgente dot
 ;;;
 
-(defun dgraph->dot (g) net dgraph->dot)
-(defnet dgraph->dot (g @dot)
+(defun dgraph->dot (g)
+        ;(dgraph->dot-neato g) ) ; <- talvolta crasha
+        (dgraph->dot-sfdp g) )
+
+(defun dgraph->dot-dot (g)
+        (dgraph->dot-low g "dot") )
+
+(defun dgraph->dot-neato (g)
+        (dgraph->dot-low g "neato") )
+
+(defun dgraph->dot-fdp (g)
+        (dgraph->dot-low g "fdp") )
+
+(defun dgraph->dot-sfdp (g)
+        (dgraph->dot-low g "sfdp") )
+
+(defun dgraph->dot-twopi (g)
+        (dgraph->dot-low g "twopi") )
+
+(defun dgraph->dot-circo (g)
+        (dgraph->dot-low g "circo") )
+
+(defun dgraph->dot-low (g layout) net dgraph->dot-low)
+(defnet dgraph->dot-low (g layout @dot)
         (deflocal a n nn s m v sep)
 
         (assocp g)
-        (set @dot "digraph G {\n" \
-                ;  "  layout=dot;\n" \
-                ;  "  rankdir=LR;\n" \
-                  "  layout=neato;\n" \
-                  "  esep=0.4;\n" \
-                  "  splines=true;\n" \
-                  "  overlap=voronoi;\n" \
-                  "  overlap_shrink=true;\n"
-                  )
+        (set @dot (+ "digraph G {" nl
+                     "  layout=" layout ";" nl
+                     (if (= layout "dot") "  rankdir=LR;\n" "")
+                     "  esep=0.4;" nl
+                     "  splines=true;" nl
+                     "  overlap=voronoi;" nl
+                     "  overlap_shrink=true;" nl ))
         (set a (assoc))
         (for n in g do
                 (set nn (car n))
@@ -526,7 +546,7 @@
                 (inc @dot "  " s " [label=" (dgraph->dot-quote nn))
                 (for v in <(cdr n) 3> do
                         (inc @dot "," (car v) "=" (dgraph->dot-value (cdr v))) )
-                (inc @dot "];\n") )
+                (inc @dot "];" nl) )
         (for n in g do
                 (set nn (car n))
                 (set s <a nn>)
@@ -543,8 +563,8 @@
                         (for v in <(cdr m) 1> do
                                 (inc @dot sep (car v) "=" (dgraph->dot-value (cdr v)))
                                 (set sep ",") )
-                        (inc @dot "];\n") ))
-        (inc @dot "}\n") )
+                        (inc @dot "];" nl) ))
+        (inc @dot "}" nl) )
 
 (defun dgraph->dot-quote (s)
         (+ "\"" (find-and-replace (str-split (find-and-replace s "\"" "\\\"") 20) "\n" "\\n") "\"") )

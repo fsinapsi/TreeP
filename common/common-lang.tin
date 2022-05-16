@@ -42,6 +42,10 @@
 1
 "Errore"
 
+"Sound"
+1
+"Suono"
+
 "Warning"
 1
 "Avviso"
@@ -57,6 +61,18 @@
 "Cancel"
 1
 "Annulla"
+
+"Abort"
+1
+"Interrompi"
+
+"Are you sure?"
+1
+"Confermi?"
+
+"The current operation will be aborted."
+1
+"L'operazione in corso verrà interrotta."
 
 "Choose a date"
 1

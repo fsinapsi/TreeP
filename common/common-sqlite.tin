@@ -87,16 +87,16 @@
                                 (seq    (print "errore: non capisco la sintassi del comando (index)" nl)
                                         (fail) ))))
         (inc @s "digraph g {" nl
-                "layout=neato;" nl
-                "overlap=false;" nl
+                "layout=sfdp;" nl
                 "splines=true;" nl
+                "overlap=voronoi;" nl
                 "graph [" nl "ranksep=1.5;rankdir=\"TB\"" nl
                 "];" nl )
         (set s (queue))
         (for table in q do
                 (inc @s "node" <asc table "cp"> " [shape=record,label=\"{" table)
                 (if count
-                then    (inc @s " (" (str->num <(sqlite3-exec db "SELECT count(*) FROM " table) 0 0>) ")") )
+                then    (inc @s " (" (format-num (str->num <(sqlite3-exec db "SELECT count(*) FROM " table) 0 0>)) ")") )
                 (inc @s "|{{")
                 (for field in <asc table "fields"> do
                         (if (lmatch field "cp_")

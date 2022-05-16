@@ -217,9 +217,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet mktmpdir (@path)
+        (mktmpdir-low @path (tmppath)) )
+
+(defnet mktmpdir-data (@path)
+        (deflocal dir)
+
+        (set dir (datapath))
+        (set dir (+ dir "tmp" (path-separator dir)))
+        (mkdirhier dir)
+        (mktmpdir-low @path dir) )
+
+(defnet mktmpdir-low (@path dir)
         (deflocal prefix i)
 
-        (set prefix (+ (tmppath) (random-alphanumeric-string 4)))
+        (set prefix (+ dir (random-alphanumeric-string 4)))
         (set i 0)
         (repeat (set @path (+ prefix (int->str i 4 '0')))
                 (alt    (seq    (not (pathexists @path))

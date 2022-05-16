@@ -85,6 +85,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defnet iup-label-set (lbl txt)
+        (iup-set-str-attribute lbl "TITLE" (find-and-replace txt "&" "&&"))
+        (iup-refresh lbl) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun iup-color-iup->trp (s) net iup-color-iup->trp)
 (defnet iup-color-iup->trp (s @color)
         (deflocal r g b)
@@ -233,8 +247,7 @@
         (set pre (iup-hbox))
         (iup-set-str-attribute pre "MARGIN" "0x3")
 
-        (set sep (iup-label))
-        (iup-set-str-attribute sep "SEPARATOR" "HORIZONTAL")
+        (set sep (iup-horizontal-separator))
 
         (set btn-ok (iup-button-icon-ok-low title-ok cback-ok q))
         (iup-set-str-attribute btn-ok "CANFOCUS" (if (cmingw) "YES" "NO"))
@@ -749,7 +762,9 @@
 (defun iup-button-color (initial-color) net iup-button-color)
 (defnet iup-button-color (initial-color @but)
         (set @but (iup-button))
-        (iup-set-str-attribute @but "BGCOLOR" (sprint (pix-color-red initial-color) " " (pix-color-green initial-color) " " (pix-color-blue initial-color)))
+        (iup-set-str-attribute @but "BGCOLOR" (sprint (pix-color-red initial-color) " "
+                                                      (pix-color-green initial-color) " "
+                                                      (pix-color-blue initial-color) ))
         (iup-set-str-attribute @but "RASTERSIZE" "32x32")
         (iup-set-callback @but "ACTION" (netptr iup-button-color-cb)) )
 
@@ -899,6 +914,16 @@
         (if (<> color undef)
         then    (queue-put <buf 2> (list i j color)) ))
 
+(defnet iup-text-buffer-cat (buf buf2)
+        (deflocal n q i)
+
+        (set n <buf 1>)
+        (set q <buf 2>)
+        (inc <buf 0> <buf2 0>)
+        (inc <buf 1> <buf2 1>)
+        (for i in <buf2 2> do
+                (queue-put q (list (+ <i 0> n) (+ <i 1> n) <i 2>)) ))
+
 (defnet iup-text-buffer-flush (buf wid)
         (deflocal uu u color i)
 
@@ -996,6 +1021,210 @@
         (iup-set-int @wid "VISIBLELINES" 1)
         (iup-set-int @wid "VISIBLECOLUMNS" 1)
         (iup-set-int @wid "CARETPOS" 0) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-progress-delay () 0.01)
+
+(defnet iup-progress (th parent title marquee interruptible label timers th-join)
+        (deflocal start-time thclk q vbox box gauge gauge-aux dlg lbl lbl-trun lbl-ttot lbl-trem lbl-tend x y aborted done cnt msg)
+
+        (threadp th)
+
+        (set start-time (now))
+
+        (set thclk (thread-create (netptr iup-progress-clock-th) (thread-self)))
+        (threadp thclk)
+
+        (set q (queue))
+
+        (if (= marquee "aux")
+        then    (set marquee false)
+                (set gauge-aux true) )
+
+        (set vbox (iup-vbox))
+
+        (if timers
+        then    (set box (iup-hbox))
+                (set lbl-trun (iup-label "00:00:00"))
+                (iup-append box (iup-label "run "))
+                (iup-append box lbl-trun)
+                (if (not marquee)
+                then    (set lbl-ttot (iup-label "99:59:59"))
+                        (set lbl-trem (iup-label "99:59:59"))
+                        (set lbl-tend (iup-label (date-trunc-hhmmss (+ (now) (+ (* (+ (* 99 60) 59) 60) 59)))))
+                        (iup-append box (iup-label " - tot "))
+                        (iup-append box lbl-ttot)
+                        (iup-append box (iup-label " - rem "))
+                        (iup-append box lbl-trem)
+                        (iup-append box (iup-label " - end "))
+                        (iup-append box lbl-tend) )
+                (iup-set-str-attribute box "MARGIN" "0x0")
+                (iup-set-int box "GAP" 0)
+                (iup-append vbox box) )
+
+        (if marquee
+        then    (set gauge (iup-progress-bar))
+                (iup-set-bool gauge "MARQUEE" true)
+        else    (set gauge (iup-gauge))
+                (iup-set-bool gauge "SHOWTEXT" true) )
+        (iup-set-str-attribute gauge "RASTERSIZE" "360x30")
+        (iup-set-str-attribute gauge "FGCOLOR" "0 120 220")
+        (iup-set-str-attribute gauge "EXPAND" "HORIZONTAL")
+
+        (if (= gauge-aux undef)
+        then    (set box gauge)
+        else    (set gauge-aux (iup-gauge))
+                (iup-set-bool gauge-aux "SHOWTEXT" true)
+                (iup-set-str-attribute gauge-aux "RASTERSIZE" "360x30")
+                (iup-set-str-attribute gauge-aux "FGCOLOR" "0 120 220")
+                (iup-set-str-attribute gauge-aux "EXPAND" "HORIZONTAL")
+                (set box (iup-vbox gauge gauge-aux))
+                (iup-set-str-attribute box "MARGIN" "0x0")
+                (iup-set-int box "GAP" 4) )
+        (iup-append vbox box)
+
+        (if (or label interruptible)
+        then    (set box (iup-hbox))
+
+                (if label
+                then    (set lbl (iup-label ""))
+                        (iup-set-str-attribute lbl "EXPAND" "HORIZONTAL")
+                        (iup-set-bool lbl "ELLIPSIS" true)
+                        (iup-append box lbl)
+                else    (iup-append box (iup-fill)) )
+
+                (if interruptible
+                then    (set cnt (iup-button-icon $"Abort" (netptr iup-progress-abort-cb) (pix-load-static "16x16/dialog-cancel-3.png") q))
+                        (iup-set-bool cnt "EXPAND" false)
+                        (iup-append box cnt) )
+
+                (iup-append vbox box)
+                (iup-set-str-attribute box "ALIGNMENT" "ACENTER")
+                (iup-set-str-attribute box "MARGIN" "0x0")
+                (iup-set-int box "GAP" 4) )
+
+        (iup-set-str-attribute vbox "MARGIN" "6x6")
+        (iup-set-int vbox "GAP" 4)
+
+        (set dlg (iup-dialog vbox))
+        (iup-set-int dlg "TRP_ABORTED" 0)
+        (if (= parent undef)
+        then    (set x (cmacro IUP_CENTER))
+                (set y (cmacro IUP_CENTER))
+        else    (iup-set-dlg-parent parent dlg)
+                (set x (cmacro IUP_CENTERPARENT))
+                (set y (cmacro IUP_CENTERPARENT)) )
+        (if (<> title undef)
+        then    (iup-set-str-attribute dlg "TITLE" title) )
+        (iup-set-bool dlg "DIALOGFRAME" true)
+        (iup-set-bool dlg "SIMULATEMODAL" true)
+        (iup-set-callback dlg "CLOSE_CB" (netptr iup-success-cb))
+        (if interruptible
+        then    (iup-set-callback dlg "K_ANY" (netptr iup-progress-kb-cb)) )
+
+        (iup-show-xy dlg x y)
+        (iup-flush)
+
+        (set aborted false)
+        (set done false)
+        (set cnt 0)
+
+        (send (iup-progress-delay) to thclk)
+
+        (thread-case*
+
+            priority 1 (not done) (receive msg from th) ->
+                (alt    (seq    (= msg "q")
+                                (set done true) )
+                        (seq    (= msg "a")
+                                (set done true)
+                                (set aborted true) )
+                        (seq    (= (car msg) "m")
+                                (if label
+                                then    (iup-label-set lbl (cdr msg))
+                                        (iup-flush) ))
+                        (seq    (rationalp msg)
+                                (in msg 0 .. 1)
+                                (if (not marquee)
+                                then    (iup-set-double gauge "VALUE" msg)
+                                        (if (and timers (> msg 0))
+                                        then    (set x (- (now) start-time))
+                                                (set y (linear 1 0 msg 0 x))
+                                                (iup-label-set lbl-trun (date-s2hhmmss x))
+                                                (iup-label-set lbl-ttot (date-s2hhmmss y))
+                                                (iup-label-set lbl-trem (date-s2hhmmss (- y x)))
+                                                (iup-label-set lbl-tend (date-trunc-hhmmss (+ start-time y))) )
+                                        (iup-flush) ))
+                        (seq    (= (car msg) "aux")
+                                (set msg (cdr msg))
+                                (rationalp msg)
+                                (in msg 0 .. 1)
+                                (if (<> gauge-aux undef)
+                                then    (iup-set-double gauge-aux "VALUE" msg)
+                                        (iup-flush) ))
+                        (seq    (= msg "dlg")
+                                (send dlg to th) )
+                        (seq    (= msg "r")
+                                (set start-time (now)) )
+                        (success) )
+
+         [] priority 0 (not done) (receive msg from thclk) ->
+                (inc cnt)
+                (if (= (% cnt 5) 0)
+                then    (if (= cnt 30)
+                        then    (set cnt 0)
+                                (if timers
+                                then    (iup-label-set lbl-trun (date-s2hhmmss (- (now) start-time))) ))
+                        (iup-flush) )
+                (send (iup-progress-delay) to thclk) )
+
+        (if th-join
+        then    (thread-join th) )
+
+        (receive msg from thclk)
+        (send undef to thclk)
+        (thread-join thclk)
+
+        (iup-set-bool dlg "SIMULATEMODAL" false)
+        (close dlg)
+        (iup-close-queue q)
+
+        (not aborted) )
+
+(defnet iup-progress-kb-cb (dlg c)
+        (case c of
+                (cmacro K_ESC)  (iup-progress-abort-cb dlg)
+                default         (fail) ))
+
+(defnet iup-progress-clock-th (th)
+        (deflocal delay)
+
+        (repeat (receive delay from th)
+                until (= delay undef)
+                (sleep delay)
+                (send true to th) ))
+
+(defnet iup-progress-abort-cb (self)
+        (set self (iup-get-dialog self))
+        (opt    (= (iup-get-int self "TRP_ABORTED") 0)
+                (iup-confirm60 self
+                        (+ $"The current operation will be aborted." nl
+                           $"Are you sure?" ))
+                (iup-set-active self false)
+                (iup-set-int self "TRP_ABORTED" 1) )
+        (iup-set-bool self "SIMULATEMODAL" true) )
+
+(defun iup-progress-aborted (dlg)
+        (= (iup-get-int dlg "TRP_ABORTED") 1) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

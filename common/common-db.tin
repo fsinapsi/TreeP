@@ -8,10 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun av-approximated-number-of-frames (fmt)
-        (rint (* (av-video-frame-rate fmt)
-                 (av-duration fmt)
-                 (av-time-base fmt) )))
+(defglobal _db)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -23,35 +20,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun av-dar (fmt) net av-dar)
-(defnet av-dar (fmt @dar)
-        (deflocal par)
+(defnet db-comm (comm)
+        (sqlite3-exec _db undef comm) )
 
-        (set par (av-sample-aspect-ratio fmt (av-video-stream-idx fmt)))
-        (if (= par 0)
-        then    (set par 1) )
-        (set @dar (* (/ (width fmt) (height fmt)) par)) )
+(defnet db-begin ()
+        (sqlite3-begin _db) )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defnet db-end ()
+        (sqlite3-end _db) )
 
-(defun av-codec-type-str (fmt streamno) net av-codec-type-str)
-(defnet av-codec-type-str (fmt streamno @s)
-        (case (av-codec-type fmt streamno) of
-                (cmacro AVMEDIA_TYPE_VIDEO)     (set @s "AVMEDIA_TYPE_VIDEO")
-                (cmacro AVMEDIA_TYPE_AUDIO)     (set @s "AVMEDIA_TYPE_AUDIO")
-                (cmacro AVMEDIA_TYPE_DATA)      (set @s "AVMEDIA_TYPE_DATA")
-                (cmacro AVMEDIA_TYPE_SUBTITLE)  (set @s "AVMEDIA_TYPE_SUBTITLE")
-                (cmacro AVMEDIA_TYPE_ATTACHMENT)(set @s "AVMEDIA_TYPE_ATTACHMENT")
-                (cmacro AVMEDIA_TYPE_NB)        (set @s "AVMEDIA_TYPE_NB")
-                default                         (set @s "AVMEDIA_TYPE_UNKNOWN") ))
+(defnet db-rollback ()
+        (sqlite3-rollback _db) )
+
+(defnet db-transaction (comm-seq)
+        (deflocal comm)
+
+        (db-begin)
+        (alt    (for comm in comm-seq do
+                        (db-comm comm) )
+                (seq    (db-rollback)
+                        (fail) ))
+        (db-end) )
+
+(defnet db-vacuum ()
+        (db-comm "VACUUM") )
+
+(defun db-num-expr (num-expr)
+        (str->num <(sqlite3-exec _db num-expr) 0 0>) )
+
+(defun db-table-count (table)
+        (db-num-expr (+ "SELECT count(*) FROM " table)) )
+
+(defun db-last-insert-rowid ()
+        (db-num-expr "SELECT last_insert_rowid()") )
+
+(defun db-changes ()
+        (sqlite3-changes _db) )
+
+(defun db-escape (val)
+        (if (= val undef) "NULL"
+                (+ "'" (sqlite3-escape-strings val) "'") ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
