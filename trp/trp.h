@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -386,6 +386,8 @@ uns32b trp_nargs( va_list args );
 uns8b trp_upcase( uns8b c );
 uns8b trp_downcase( uns8b c );
 void trp_skip( trp_obj_t *obj );
+void trp_segfault();
+trp_obj_t *trp_cc_version();
 
 uns8b trp_cast_uns32b( trp_obj_t *obj, uns32b *val );
 uns8b trp_cast_uns32b_range( trp_obj_t *obj, uns32b *val, uns32b min, uns32b max );
@@ -503,7 +505,6 @@ uns8b trp_mkdir( trp_obj_t *path );
 uns8b trp_mkfifo( trp_obj_t *path );
 uns8b trp_remove( trp_obj_t *path );
 uns8b trp_rename( trp_obj_t *oldp, trp_obj_t *newp );
-trp_obj_t *trp_system( trp_obj_t *obj, ... );
 trp_obj_t *trp_pathexists( trp_obj_t *path );
 trp_obj_t *trp_ftime( trp_obj_t *path );
 trp_obj_t *trp_fsize( trp_obj_t *path );
@@ -523,8 +524,13 @@ trp_obj_t *trp_inode( trp_obj_t *path );
 trp_obj_t *trp_gc_version_major();
 trp_obj_t *trp_gc_version_minor();
 trp_obj_t *trp_readlink( trp_obj_t *path );
+uns8b trp_link( trp_obj_t *path1, trp_obj_t *path2 );
+uns8b trp_symlink( trp_obj_t *path1, trp_obj_t *path2 );
 void trp_sync();
 trp_obj_t *trp_ipv4_address();
+trp_obj_t *trp_system( trp_obj_t *obj, ... );
+trp_obj_t *trp_getpid();
+trp_obj_t *trp_fork();
 
 uns8b trp_special_print( trp_print_t *p, trp_special_t *obj );
 uns32b trp_special_size( trp_special_t *obj );

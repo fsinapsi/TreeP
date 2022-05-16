@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,21 +37,34 @@ typedef struct {
     uns16b bits_per_sample;
 } trp_sdl_wave_header;
 
+static uns8b trp_sdl_check();
 static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns32b *len, uns8b **buf );
 static void trp_sdl_wavplay_cback( void *userdata, uns8b *stream, int len );
 
 uns8b trp_sdl_init()
 {
-    if ( SDL_Init( SDL_INIT_AUDIO ) < 0 ) {
-        fprintf( stderr, "Initialization of SDL2 failed\n" );
-        return 1;
-    }
+//    if ( SDL_Init( SDL_INIT_AUDIO ) < 0 ) {
+//        fprintf( stderr, "Initialization of SDL2 failed\n" );
+//        return 1;
+//    }
     return 0;
 }
 
 void trp_sdl_quit()
 {
     SDL_Quit();
+}
+
+static uns8b trp_sdl_check()
+{
+    static uns8b toinit = 1;
+
+    if ( toinit ) {
+        if ( SDL_Init( SDL_INIT_AUDIO ) < 0 )
+            return 1;
+        toinit = 0;
+    }
+    return 0;
 }
 
 static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns32b *len, uns8b **buf )
@@ -124,6 +137,8 @@ uns8b trp_sdl_playwav( trp_obj_t *path, trp_obj_t *volume )
     SDL_AudioSpec wav_spec;
     double vol;
 
+    if ( trp_sdl_check() )
+        return 1;
     if ( volume ) {
         if ( trp_cast_double_range( volume, &vol, 0.0, 1.0 ) )
             return 1;
@@ -155,6 +170,8 @@ uns8b trp_sdl_playwav_memory( trp_obj_t *raw, trp_obj_t *volume )
     SDL_AudioSpec wav_spec;
     double vol;
 
+    if ( trp_sdl_check() )
+        return 1;
     if ( trp_sdl_raw2audiospec( (trp_raw_t *)raw, &wav_spec, &( a.len ), &( a.buf ) ) )
         return 1;
     if ( volume ) {

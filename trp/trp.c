@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 */
 
 #include "trp.h"
+#include <signal.h>
 
 extern void trp_char_init();
 extern void trp_compiler_exit();
 
+static void trp_signal_handler( int sig );
 static void trp_init_check();
 static void trp_init_error( char *msg );
 static void trp_gc_warn_proc( char *msg, GC_word arg );
@@ -68,6 +70,58 @@ void trp_init( int argc, char *argv[] )
     (void)TRP_STDOUT;
     (void)TRP_STDERR;
     (void)trp_date_19700101();
+
+    signal( SIGSEGV, trp_signal_handler );
+#ifndef MINGW
+    signal( SIGBUS, trp_signal_handler );
+#endif
+    signal( SIGINT, trp_signal_handler );
+    signal( SIGTERM, trp_signal_handler );
+    signal( SIGABRT, trp_signal_handler );
+#ifndef MINGW
+    signal( SIGHUP, trp_signal_handler );
+    signal( SIGQUIT, trp_signal_handler );
+    signal( SIGPIPE, trp_signal_handler );
+#endif
+    signal( SIGILL, trp_signal_handler );
+    signal( SIGFPE, trp_signal_handler );
+}
+
+static void trp_signal_handler( int sig )
+{
+    signal( sig, trp_signal_handler );
+    switch ( sig ) {
+    case SIGSEGV:
+#ifndef MINGW
+    case SIGBUS:
+#endif
+        fprintf( stderr, "Segmentation fault!\n" );
+        trp_exit_internal( -1 );
+        break;
+    case SIGINT:
+    case SIGTERM:
+    case SIGABRT:
+        fprintf( stderr, "\nReceived signal int/term/abrt. Premature exit.\n" );
+        trp_exit_internal( -1 );
+        break;
+#ifndef MINGW
+    case SIGHUP:
+        fprintf( stderr, "\nReceived signal hup (ignored)\n" );
+        break;
+    case SIGQUIT:
+        fprintf( stderr, "\nReceived signal quit (ignored)\n" );
+        break;
+    case SIGPIPE:
+        fprintf( stderr, "\nReceived signal pipe (ignored)\n" );
+        break;
+#endif
+    case SIGILL:
+        fprintf( stderr, "\nReceived signal ill (ignored)\n" );
+        break;
+    case SIGFPE:
+        fprintf( stderr, "\nReceived signal fpe (ignored)\n" );
+        break;
+    }
 }
 
 static void trp_init_check()
@@ -340,5 +394,19 @@ uns8b trp_downcase( uns8b c )
 void trp_skip( trp_obj_t *obj )
 {
     return;
+}
+
+void trp_segfault()
+{
+    uns8b *p = NULL;
+
+    *p = 0;
+}
+
+#include "../.ccver"
+
+trp_obj_t *trp_cc_version()
+{
+    return trp_cord( _trp_cc_ver );
 }
 

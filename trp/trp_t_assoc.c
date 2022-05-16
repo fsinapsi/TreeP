@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     Copyright 1998 Michael H. Buselli <cosine@cosine.org>
     Copyright 2000-2002  Wessel Dankers <wsl@nl.linux.org>

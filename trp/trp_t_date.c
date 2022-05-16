@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -672,17 +672,25 @@ trp_obj_t *trp_date_wday( trp_obj_t *d )
 trp_obj_t *trp_date_s2hhmmss( trp_obj_t *s )
 {
     uns32b hh;
-    uns8b mm, ss, buf[ 9 + 91 ];
+    uns8b mm, ss, buf[ 9 ];
 
-    if ( s->tipo == TRP_RATIO )
-        s = trp_math_rint( s );
-    if ( trp_cast_uns32b( s, &hh ) )
+    if ( ( s->tipo != TRP_SIG64 ) &&
+         ( s->tipo != TRP_MPI ) &&
+         ( s->tipo != TRP_RATIO ) )
         return UNDEF;
+    if ( trp_less( trp_sig64( 359999 ), s ) == TRP_TRUE )
+        hh = 359999;
+    else {
+        if ( s->tipo == TRP_RATIO )
+            s = trp_math_rint( s );
+        if ( trp_cast_uns32b( s, &hh ) )
+            return UNDEF;
+    }
     ss = hh % 60;
     hh /= 60;
     mm = hh % 60;
     hh /= 60;
-    sprintf( buf, ( hh < 100 ) ? "%02d:%02d:%02d" : "%d:%02d:%02d", (int)hh, (int)mm, (int)ss );
+    sprintf( buf, "%02d:%02d:%02d", (int)hh, (int)mm, (int)ss );
     return trp_cord( buf );
 }
 

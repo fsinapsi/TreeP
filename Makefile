@@ -27,6 +27,11 @@ ifeq ($(TARGET), Linux)
 CFLAGS += -fPIC
 CFLAGS += -I/usr/local/include -I/opt/local/include
 endif
+ifeq ($(TARGET), MSYS_NT-6.1-7601)
+CFLAGS += -mms-bitfields
+CFLAGS += -DMINGW -D__WORDSIZE=32
+CFLAGS += -I/usr/local/include -I/mingw32/include
+endif
 ifeq ($(TARGET), i686-w64-mingw32)
 CFLAGS += -mms-bitfields
 CFLAGS += -DMINGW -D__WORDSIZE=32
@@ -41,19 +46,28 @@ endif
 LDFLAGS =  -L/usr/local/lib -L/opt/local/lib
 LDFLAGS += -lgmp -lgc -lpthread -lz -lm
 
+CCVER = $(shell $(CC) -v 2>&1 | grep version)
+
 all:		rts
 
+ifeq ($(TARGET), Linux)
 install:	rts
 	cp -f libs/libtrp* $(PREFIX)/lib
 	ldconfig
+endif
 
-win32:
+ifeq ($(TARGET), MSYS_NT-6.1-7601)
+install:	rts
+	cp -f libs/libtrp* $(PREFIX)/lib
+endif
+
+win32:		cleanall
 	make TARGET=i686-w64-mingw32
 
 win32-install:	win32
 	cp -f libs/libtrp* $(LOCAL_WIN_32)/lib
 
-win64:
+win64:		cleanall
 	make TARGET=x86_64-w64-mingw32
 
 win64-install:	win64
@@ -67,6 +81,7 @@ dumpflags:
 	echo -n $(CFLAGS) > .cflags
 	echo -n $(LDFLAGS) > .ldflags
 	echo -n $(PREFIX)/bin > .installbin
+	echo -n "static char *_trp_cc_ver=\"$(CCVER)\";" > .ccver
 
 rts:		dumpflags
 	mkdir -p libs
@@ -98,7 +113,7 @@ rts:		dumpflags
 #	( cd trpmgl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 
 clean:
-	rm -f *~ .cflags .ldflags .installbin
+	rm -f *~ .cflags .ldflags .installbin .ccver
 	rm -rf libs
 	( cd compiler && make clean )
 	( cd examples && make clean )

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #define K_csRIGHT iup_XkeyCtrl(K_sRIGHT)
 #define K_csUP iup_XkeyCtrl(K_sUP)
 #define K_csDOWN iup_XkeyCtrl(K_sDOWN)
+#define K_csD iup_XkeyShift(K_cD)
 #define K_csS iup_XkeyShift(K_cS)
 #define K_csV iup_XkeyShift(K_cV)
 
@@ -89,6 +90,7 @@ trp_obj_t *trp_iup_radio( trp_obj_t *child );
 trp_obj_t *trp_iup_expander( trp_obj_t *child );
 trp_obj_t *trp_iup_split( trp_obj_t *child1, trp_obj_t *child2 );
 trp_obj_t *trp_iup_label( trp_obj_t *title, ... );
+trp_obj_t *trp_iup_flat_label( trp_obj_t *title, ... );
 trp_obj_t *trp_iup_animated_label( trp_obj_t *animation );
 trp_obj_t *trp_iup_link( trp_obj_t *url, trp_obj_t *title, ... );
 trp_obj_t *trp_iup_button( trp_obj_t *title );

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -459,20 +459,6 @@ uns8b trp_rename( trp_obj_t *oldp, trp_obj_t *newp )
 }
 
 #endif
-
-trp_obj_t *trp_system( trp_obj_t *obj, ... )
-{
-    int res;
-    uns8b *p;
-    va_list args;
-
-    va_start( args, obj );
-    p = trp_csprint_multi( obj, args );
-    va_end( args );
-    res = system( p );
-    trp_csprint_free( p );
-    return trp_sig64( res );
-}
 
 #ifndef MINGW
 
@@ -970,6 +956,36 @@ trp_obj_t *trp_readlink( trp_obj_t *path )
 #endif
 }
 
+uns8b trp_link( trp_obj_t *path1, trp_obj_t *path2 )
+{
+#ifdef MINGW
+    return 1;
+#else
+    uns8b *cpath1 = trp_csprint( path1 ), *cpath2 = trp_csprint( path2 );
+    int res;
+
+    res = link( cpath1, cpath2 );
+    trp_csprint_free( cpath1 );
+    trp_csprint_free( cpath2 );
+    return res ? 1 : 0;
+#endif
+}
+
+uns8b trp_symlink( trp_obj_t *path1, trp_obj_t *path2 )
+{
+#ifdef MINGW
+    return 1;
+#else
+    uns8b *cpath1 = trp_csprint( path1 ), *cpath2 = trp_csprint( path2 );
+    int res;
+
+    res = symlink( cpath1, cpath2 );
+    trp_csprint_free( cpath1 );
+    trp_csprint_free( cpath2 );
+    return res ? 1 : 0;
+#endif
+}
+
 void trp_sync()
 {
 #ifndef MINGW
@@ -992,6 +1008,34 @@ trp_obj_t *trp_ipv4_address()
     ioctl( fd, SIOCGIFADDR, &ifr );
     close( fd );
     return trp_cord( inet_ntoa( ( ( struct sockaddr_in *)&ifr.ifr_addr )->sin_addr ) );
+#endif
+}
+
+trp_obj_t *trp_system( trp_obj_t *obj, ... )
+{
+    int res;
+    uns8b *p;
+    va_list args;
+
+    va_start( args, obj );
+    p = trp_csprint_multi( obj, args );
+    va_end( args );
+    res = system( p );
+    trp_csprint_free( p );
+    return trp_sig64( res );
+}
+
+trp_obj_t *trp_getpid()
+{
+    return trp_sig64( getpid() );
+}
+
+trp_obj_t *trp_fork()
+{
+#ifdef MINGW
+    return trp_sig64( -1 );
+#else
+return trp_sig64( fork() );
 #endif
 }
 

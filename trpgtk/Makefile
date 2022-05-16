@@ -24,6 +24,9 @@ CFLAGS= `cat ../.cflags`
 ifeq ($(TARGET), Linux)
 CFLAGS+= `pkg-config --cflags gtk+-2.0`
 endif
+ifeq ($(TARGET), MSYS_NT-6.1-7601)
+CFLAGS+= `pkg-config --cflags gtk+-2.0`
+endif
 ifeq ($(TARGET), i686-w64-mingw32)
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags gtk+-2.0`
 endif

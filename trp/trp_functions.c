@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -784,9 +784,12 @@ uns8b trp_in_test( trp_obj_t *obj, trp_obj_t *seq, trp_obj_t *interv, trp_obj_t 
 
 static uns8b trp_in_interv( trp_obj_t *obj, trp_obj_t *from, trp_obj_t *to )
 {
-    if ( ( ( obj->tipo == TRP_SIG64 ) || ( obj->tipo == TRP_MPI ) ) &&
-         ( ( from->tipo == TRP_SIG64 ) || ( from->tipo == TRP_MPI ) ) &&
-         ( ( to->tipo == TRP_SIG64 ) || ( to->tipo == TRP_MPI ) ) ) {
+    if ( ( ( ( obj->tipo == TRP_SIG64 ) || ( obj->tipo == TRP_MPI ) || ( obj->tipo == TRP_RATIO ) ) &&
+           ( ( from->tipo == TRP_SIG64 ) || ( from->tipo == TRP_MPI ) || ( from->tipo == TRP_RATIO ) ) &&
+           ( ( to->tipo == TRP_SIG64 ) || ( to->tipo == TRP_MPI ) || ( to->tipo == TRP_RATIO ) ) ) ||
+         ( ( obj->tipo == TRP_DATE ) &&
+           ( from->tipo == TRP_DATE ) &&
+           ( to->tipo == TRP_DATE ) ) ) {
         if ( trp_less( obj, from ) == TRP_TRUE )
             return 1;
         if ( trp_less( to, obj ) == TRP_TRUE )

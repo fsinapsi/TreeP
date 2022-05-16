@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #define trp_pix_dist(x,y) (((x)>=(y))?((x)-(y)):((y)-(x)))
 
 static trp_obj_t *trp_pix_top_bottom_field( uns8b bottom, trp_obj_t *pix );
+static uns8b trp_pix_top_bottom_field_test( uns8b bottom, trp_obj_t *pix );
 static void trp_pix_colormod_set_table( uns8b tipo, uns8b *t, double v );
 static void trp_pix_colormod_basic( uns8b tipo, trp_pix_color_t *map, uns32b w, uns32b h, double vr, double vg, double vb );
 
@@ -155,6 +156,41 @@ trp_obj_t *trp_pix_top_field( trp_obj_t *pix )
 trp_obj_t *trp_pix_bottom_field( trp_obj_t *pix )
 {
     return trp_pix_top_bottom_field( 1, pix );
+}
+
+static uns8b trp_pix_top_bottom_field_test( uns8b bottom, trp_obj_t *pix )
+{
+    trp_pix_color_t *p, *q;
+    uns32b w, h, w2, w4;
+
+    if ( pix->tipo != TRP_PIX )
+        return 1;
+    if ( ( p = ((trp_pix_t *)pix)->map.c ) == NULL )
+        return 1;
+    w = ((trp_pix_t *)pix)->w;
+    h = ((trp_pix_t *)pix)->h;
+    h >>= 1; /* accettiamo anche altezze dispari */
+    q = p + w;
+    w2 = w << 1;
+    w4 = w << 2;
+    if ( bottom ) {
+        trp_pix_color_t *r = p;
+        p = q;
+        q = r;
+    }
+    for ( ; h ; h--, p += w2, q += w2 )
+        memcpy( q, p, w4 );
+    return 0;
+}
+
+uns8b trp_pix_top_field_test( trp_obj_t *pix )
+{
+    return trp_pix_top_bottom_field_test( 0, pix );
+}
+
+uns8b trp_pix_bottom_field_test( trp_obj_t *pix )
+{
+    return trp_pix_top_bottom_field_test( 1, pix );
 }
 
 trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, double xx, double yy, double ww, double hh )

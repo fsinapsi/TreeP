@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include "./trpavcodec.h"
 #include <libavutil/imgutils.h>
 
+#define TRP_AV_FILTERS_ENABLED
+
 typedef struct {
     AVFrame *frame;
     uns32b   fmin;
@@ -29,9 +31,18 @@ typedef struct {
 } trp_avcodec_buf_t;
 
 typedef struct {
+#ifdef TRP_AV_FILTERS_ENABLED
+    AVFilterContext      *buffersink_ctx;
+    AVFilterContext      *buffersrc_ctx;
+    AVFilterGraph        *filter_graph;
+#endif
+    trp_obj_t            *descr;
+} trp_avcodec_filter_t;
+
+typedef struct {
     uns8b tipo;
     uns8b sottotipo;
-    struct SwsContext *sws_ctx;
+    struct SwsContext    *sws_ctx;
     uns32b wi;
     uns32b hi;
     uns32b wo;
@@ -41,19 +52,22 @@ typedef struct {
 typedef struct {
     uns8b tipo;
     uns8b sottotipo;
-    AVFormatContext   *fmt_ctx;
-    AVCodecContext    *avctx;
-    AVPacket          *packet;
-    struct SwsContext *sws_ctx;
-    trp_avcodec_buf_t *cbuf;
-    uns32b             buf_max;
-    uns32b             buf_cur;
-    uns32b             video_stream_idx;
-    uns32b             act_frameno;
-    sig64b             act_ts;
-    sig64b             cur_ts;
-    sig64b             first_ts;
-    sig64b             second_ts;
+    AVFormatContext      *fmt_ctx;
+    AVCodecContext       *avctx;
+    AVPacket             *packet;
+    struct SwsContext    *sws_ctx;
+    trp_avcodec_filter_t *filter;
+    trp_avcodec_buf_t    *cbuf;
+    trp_obj_t            *path;
+    uns32b                buf_max;
+    uns32b                buf_cur;
+    uns32b                video_stream_idx;
+    uns32b                act_frameno;
+    sig64b                act_ts;
+    sig64b                cur_ts;
+    sig64b                first_ts;
+    sig64b                second_ts;
+    uns8b                 filter_rows;
 } trp_avcodec_t;
 
 struct AVDictionary {
@@ -70,6 +84,7 @@ static uns8b trp_av_print( trp_print_t *p, trp_avcodec_t *obj );
 static uns8b trp_av_close( trp_avcodec_t *obj );
 static uns8b trp_av_close_basic( uns8b flags, trp_avcodec_t *obj );
 static void trp_av_finalize( void *obj, void *data );
+static void trp_av_close_filter( trp_avcodec_t *fmtctx );
 static trp_obj_t *trp_av_width( trp_avcodec_t *obj );
 static trp_obj_t *trp_av_height( trp_avcodec_t *obj );
 static trp_obj_t *trp_av_length( trp_avcodec_t *obj );
@@ -77,6 +92,10 @@ static trp_obj_t *trp_av_rational( struct AVRational *r );
 static struct SwsContext *trp_av_extract_sws_context( trp_avcodec_sws_t *swsctx );
 static AVFormatContext *trp_av_extract_fmt_context( trp_avcodec_t *fmtctx );
 static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, trp_obj_t *par );
+static void trp_av_frameno2ts_range_low( trp_avcodec_t *fmtctx, uns32b frameno,
+                                         trp_obj_t **ts, trp_obj_t **ts_min, trp_obj_t **ts_max, trp_obj_t **tb, trp_obj_t **dur );
+static void trp_av_frameno2ts_range( trp_avcodec_t *fmtctx, uns32b frameno, trp_obj_t **ts, trp_obj_t **ts_min, trp_obj_t **ts_max );
+static uns8b trp_av_ts_is_in_range( trp_avcodec_t *fmtctx, sig64b ts, trp_obj_t *ts_min, trp_obj_t *ts_max );
 static uns8b trp_av_read_frame_low_low( trp_avcodec_t *fmtctx, AVFormatContext *fmt_ctx, uns32b frameno );
 static uns8b trp_av_read_frame_low( trp_avcodec_t *fmtctx, AVFormatContext *fmt_ctx, uns32b frameno, AVFrame **frame );
 static trp_obj_t *trp_av_metadata_low( AVDictionary *metadata );
@@ -138,6 +157,7 @@ static uns8b trp_av_close_basic( uns8b flags, trp_avcodec_t *obj )
             avcodec_free_context( &obj->avctx );
             av_packet_free( &obj->packet );
             sws_freeContext( obj->sws_ctx ); /* If swsContext is NULL, then does nothing. */
+            trp_av_close_filter( obj );
             for ( cnt = 0 ; cnt < obj->buf_max ; cnt++ ) {
                 av_frame_unref( obj->cbuf[ cnt ].frame );
                 av_frame_free( &( obj->cbuf[ cnt ].frame ) );
@@ -153,6 +173,16 @@ static uns8b trp_av_close_basic( uns8b flags, trp_avcodec_t *obj )
 static void trp_av_finalize( void *obj, void *data )
 {
     trp_av_close_basic( 0, (trp_avcodec_t *)obj );
+}
+
+static void trp_av_close_filter( trp_avcodec_t *fmtctx )
+{
+#ifdef TRP_AV_FILTERS_ENABLED
+    if ( fmtctx->filter ) {
+        avfilter_graph_free( &fmtctx->filter->filter_graph );
+        fmtctx->filter = NULL;
+    }
+#endif
 }
 
 static trp_obj_t *trp_av_width( trp_avcodec_t *obj )
@@ -373,20 +403,12 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
     trp_avcodec_t *obj;
     AVFormatContext *fmt_ctx = NULL;
     uns8b *cpath;
-    AVCodec *codec;
+    const AVCodec *codec;
     AVCodecContext *avctx;
     AVPacket *packet;
-    uns32b debug_mv, video_stream_idx, cnt;
+    uns32b video_stream_idx, cnt;
     int res;
 
-    if ( par ) {
-        if ( trp_cast_uns32b_range( par, &debug_mv, 0,
-                                    FF_DEBUG_VIS_MV_P_FOR |
-                                    FF_DEBUG_VIS_MV_B_FOR |
-                                    FF_DEBUG_VIS_MV_B_BACK ) )
-            return UNDEF;
-    } else
-        debug_mv = 0;
     cpath = trp_csprint( path );
     res = avformat_open_input( &fmt_ctx, cpath, NULL, NULL );
     trp_csprint_free( cpath );
@@ -431,7 +453,6 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
         avcodec_free_context( &avctx );
         return UNDEF;
     }
-    avctx->debug_mv = (int)debug_mv;
     if ( avcodec_open2( avctx, codec, NULL ) < 0 ) {
         avformat_close_input( &fmt_ctx );
         avcodec_free_context( &avctx );
@@ -446,9 +467,12 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
     obj->tipo = TRP_AVCODEC;
     obj->sottotipo = 1;
     obj->fmt_ctx = fmt_ctx;
+    obj->path = path;
     obj->avctx = avctx;
     obj->packet = packet;
     obj->sws_ctx = NULL;
+    obj->filter = NULL;
+    obj->filter_rows = 0;
     obj->cbuf = trp_gc_malloc_atomic( TRP_AV_BUFSIZE * sizeof( trp_avcodec_buf_t ) );
     obj->video_stream_idx = video_stream_idx;
     for ( cnt = 0 ; cnt < TRP_AV_BUFSIZE ; cnt++ ) {
@@ -498,7 +522,7 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
         if ( cnt == 0 ) {
             obj->first_ts = obj->cbuf[ cnt ].frame->pts;
         } else {
-            obj->second_ts = obj->cbuf[ cnt ].frame->pts;
+            obj->cur_ts = obj->second_ts = obj->cbuf[ cnt ].frame->pts;
             break;
         }
         cnt = 1;
@@ -509,25 +533,30 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
     return (trp_obj_t *)obj;
 }
 
-static void trp_av_frameno2ts_range( trp_avcodec_t *fmtctx, uns32b frameno, trp_obj_t **ts, trp_obj_t **ts_min, trp_obj_t **ts_max )
+static void trp_av_frameno2ts_range_low( trp_avcodec_t *fmtctx, uns32b frameno,
+                                         trp_obj_t **ts, trp_obj_t **ts_min, trp_obj_t **ts_max, trp_obj_t **tb, trp_obj_t **dur )
 {
     AVStream *stream = fmtctx->fmt_ctx->streams[ fmtctx->video_stream_idx ];
-    trp_obj_t *fr, *tb, *dur, *durm;
+    trp_obj_t *durm;
 
-    fr = trp_av_rational( trp_av_stream2framerate( stream ) );
-    tb = trp_av_rational( &( stream->time_base ) );
-
-    dur = trp_math_ratio( UNO, fr, NULL );
-    durm = trp_math_ratio( dur, trp_sig64( 2 ), NULL );
-
+    *tb = trp_av_rational( &( stream->time_base ) );
+    *dur = trp_math_ratio( UNO, trp_av_rational( trp_av_stream2framerate( stream ) ), NULL );
+    durm = trp_math_ratio( *dur, trp_sig64( 2 ), NULL );
     if ( frameno == 0 )
-        *ts = trp_math_times( trp_sig64( fmtctx->first_ts ), tb, NULL );
+        *ts = trp_math_times( trp_sig64( fmtctx->first_ts ), *tb, NULL );
     else
-        *ts = trp_cat( trp_math_times( trp_sig64( fmtctx->second_ts ), tb, NULL ),
-                       trp_math_ratio( trp_sig64( frameno - 1 ), fr, NULL ),
+        *ts = trp_cat( trp_math_times( trp_sig64( fmtctx->second_ts ), *tb, NULL ),
+                       trp_math_times( trp_sig64( frameno - 1 ), *dur, NULL ),
                        NULL );
     *ts_min = trp_math_minus( *ts, durm, NULL );
     *ts_max = trp_cat( *ts, durm, NULL );
+}
+
+static void trp_av_frameno2ts_range( trp_avcodec_t *fmtctx, uns32b frameno, trp_obj_t **ts, trp_obj_t **ts_min, trp_obj_t **ts_max )
+{
+    trp_obj_t *tb, *dur;
+
+    trp_av_frameno2ts_range_low( fmtctx, frameno, ts, ts_min, ts_max, &tb, &dur );
 }
 
 static uns8b trp_av_ts_is_in_range( trp_avcodec_t *fmtctx, sig64b ts, trp_obj_t *ts_min, trp_obj_t *ts_max )
@@ -537,10 +566,10 @@ static uns8b trp_av_ts_is_in_range( trp_avcodec_t *fmtctx, sig64b ts, trp_obj_t 
     if ( ts == AV_NOPTS_VALUE )
         return 3;
     trp_ts = trp_math_times( trp_sig64( ts ), trp_av_rational( &( fmtctx->fmt_ctx->streams[ fmtctx->video_stream_idx ]->time_base ) ), NULL );
-    if ( trp_less( trp_ts, ts_max ) != TRP_TRUE )
-        return 1;
     if ( trp_less( trp_ts, ts_min ) == TRP_TRUE )
         return 2;
+    if ( trp_less( trp_ts, ts_max ) != TRP_TRUE )
+        return 1;
     return 0;
 }
 
@@ -556,8 +585,8 @@ static uns8b trp_av_ts_is_in_range( trp_avcodec_t *fmtctx, sig64b ts, trp_obj_t 
             av_packet_unref( packet ); \
             return 1; \
         } \
-        fmtctx->cbuf[ buf_cur ].status = 2; \
-        res = avcodec_receive_frame( avctx, fmtctx->cbuf[ buf_cur ].frame ); \
+        cbuf[ buf_cur ].status = 2; \
+        res = avcodec_receive_frame( avctx, cbuf[ buf_cur ].frame ); \
         if ( ( res == AVERROR(EAGAIN) ) || ( res == AVERROR_EOF ) ) { \
             av_packet_unref( packet ); \
             continue; \
@@ -566,54 +595,39 @@ static uns8b trp_av_ts_is_in_range( trp_avcodec_t *fmtctx, sig64b ts, trp_obj_t 
             av_packet_unref( packet ); \
             return 1; \
         } \
-        fmtctx->cur_ts = fmtctx->cbuf[ buf_cur ].frame->pts = packet->dts; \
-        fmtctx->cbuf[ buf_cur ].fmin = fmtctx->cbuf[ buf_cur ].fmax = TRP_AV_FRAMENO_UNDEF; \
+        fmtctx->cur_ts = cbuf[ buf_cur ].frame->pts = packet->dts; \
+        cur_ts = trp_math_times( trp_sig64( fmtctx->cur_ts ), tb, NULL ); \
+        cbuf[ buf_cur ].fmin = cbuf[ buf_cur ].fmax = TRP_AV_FRAMENO_UNDEF; \
         av_packet_unref( packet ); \
         break; \
     }
 
 static uns8b trp_av_read_frame_low_low( trp_avcodec_t *fmtctx, AVFormatContext *fmt_ctx, uns32b frameno )
 {
+    trp_avcodec_buf_t *cbuf = fmtctx->cbuf;
     AVCodecContext *avctx = fmtctx->avctx;
     AVStream *stream;
     AVPacket *packet = fmtctx->packet;
-    uns32b buf_cur = fmtctx->buf_cur;
-    uns32b video_stream_idx = fmtctx->video_stream_idx;
-    trp_obj_t *fr, *tb, *dur, *durm, *target_ts, *target_ts_min, *target_ts_max;
+    trp_obj_t *tb, *dur, *target_ts, *target_ts_min, *target_ts_max, *cur_ts;
     sig64b ts;
+    uns32b video_stream_idx = fmtctx->video_stream_idx;
+    uns32b buf_cur;
     int almeno_una_lettura = 0, noseek = 1, res;
 
-    buf_cur = ( buf_cur + 1 ) % fmtctx->buf_max;
-
+    buf_cur = ( fmtctx->buf_cur + 1 ) % fmtctx->buf_max;
     stream = fmt_ctx->streams[ video_stream_idx ];
 
-    fr = trp_av_rational( trp_av_stream2framerate( stream ) );
-    tb = trp_av_rational( &( stream->time_base ) );
+    trp_av_frameno2ts_range_low( fmtctx, frameno, &target_ts, &target_ts_min, &target_ts_max, &tb, &dur );
 
-    dur = trp_math_ratio( UNO, fr, NULL );
-    durm = trp_math_ratio( dur, trp_sig64( 2 ), NULL );
-
-    if ( frameno == 0 )
-        target_ts = trp_math_times( trp_sig64( fmtctx->first_ts ), tb, NULL );
-    else
-        target_ts = trp_cat( trp_math_times( trp_sig64( fmtctx->second_ts ), tb, NULL ),
-                             trp_math_ratio( trp_sig64( frameno - 1 ), fr, NULL ),
-                             NULL );
-    target_ts_min = trp_math_minus( target_ts,
-                                    durm,
-                                    NULL );
-    target_ts_max = trp_cat( target_ts,
-                             durm,
-                             NULL );
+    cur_ts = trp_math_times( trp_sig64( fmtctx->cur_ts ), tb, NULL );
 
     /*
      * ottimizzazione: se siamo prima di target_ts_max e non siamo
      * troppo prima (2.5 secondi) di target_ts_min, evitiamo il seek...
      */
     if ( ( fmtctx->cur_ts == AV_NOPTS_VALUE ) ||
-         ( trp_less( trp_math_times( trp_sig64( fmtctx->cur_ts ), tb, NULL ), target_ts_max ) != TRP_TRUE ) ||
-         ( trp_less( trp_cat( trp_math_times( trp_sig64( fmtctx->cur_ts ), tb, NULL ), trp_double( 2.5 ), NULL ),
-                     target_ts_min ) == TRP_TRUE ) ) {
+         ( trp_less( cur_ts, target_ts_max ) != TRP_TRUE ) ||
+         ( trp_less( cur_ts, trp_math_minus( target_ts_min, trp_double( 2.5 ), NULL ) ) == TRP_TRUE ) ) {
         noseek = 0;
         for ( ; ; ) {
             ts = ((trp_sig64_t *)trp_math_ceil( trp_math_ratio( target_ts, tb, NULL ) ) )->val;
@@ -622,7 +636,7 @@ static uns8b trp_av_read_frame_low_low( trp_avcodec_t *fmtctx, AVFormatContext *
                 return 1;
             TRP_AV_READ_FRAME
             almeno_una_lettura = 1;
-            if ( trp_less( trp_math_times( trp_sig64( fmtctx->cur_ts ), tb, NULL ), target_ts_max ) == TRP_TRUE )
+            if ( trp_less( cur_ts, target_ts_max ) == TRP_TRUE )
                 break;
             if ( trp_less( target_ts, dur ) == TRP_TRUE )
                 return 1;
@@ -630,12 +644,12 @@ static uns8b trp_av_read_frame_low_low( trp_avcodec_t *fmtctx, AVFormatContext *
         }
     }
     for ( ; ; ) {
-        if ( trp_less( trp_math_times( trp_sig64( fmtctx->cur_ts ), tb, NULL ), target_ts_min ) != TRP_TRUE )
+        if ( trp_less( cur_ts, target_ts_min ) != TRP_TRUE )
             break;
         if ( almeno_una_lettura )
             buf_cur = ( buf_cur + 1 ) % fmtctx->buf_max;
         if ( noseek )
-            fmtctx->cbuf[ fmtctx->buf_cur ].status = 2;
+            cbuf[ fmtctx->buf_cur ].status = 2;
         TRP_AV_READ_FRAME
         almeno_una_lettura = 1;
     }
@@ -652,12 +666,9 @@ static uns8b trp_av_read_frame_low( trp_avcodec_t *fmtctx, AVFormatContext *fmt_
 
     choice = fmtctx->buf_max;
 
-//    printf( "### richiesto frame %u\n", frameno );
-
     for ( i = 0 ; i < fmtctx->buf_max ; i++ ) {
         if ( cbuf[ i ].status == 1 )
             if ( ( frameno >= cbuf[ i ].fmin ) && ( frameno <= cbuf[ i ].fmax ) ) {
-//                printf( "### recuperato dalla cache\n" );
                 choice = i;
                 break;
             }
@@ -674,7 +685,6 @@ static uns8b trp_av_read_frame_low( trp_avcodec_t *fmtctx, AVFormatContext *fmt_
             fmtctx->act_ts = fmtctx->cur_ts = AV_NOPTS_VALUE;
             return 1;
         }
-//        printf( "### recuperato da low_low\n" );
         mframeno = frameno;
         i = fmtctx->buf_cur;
         if ( cbuf[ i ].status == 2 ) {
@@ -741,13 +751,32 @@ static uns8b trp_av_read_frame_low( trp_avcodec_t *fmtctx, AVFormatContext *fmt_
     return 0;
 }
 
+static void trp_av_read_frame_free( AVFrame *frameo, AVFrame *filt_rows, AVFrame *filt0_frame, AVFrame *filt1_frame )
+{
+    if ( frameo ) {
+        av_frame_free( &frameo );
+    }
+    if ( filt_rows ) {
+        av_freep( &( filt_rows->data[ 0 ] ) );
+        av_frame_free( &filt_rows );
+    }
+    if ( filt0_frame ) {
+        av_frame_unref( filt0_frame );
+        av_frame_free( &filt0_frame );
+    }
+    if ( filt1_frame ) {
+        av_frame_unref( filt1_frame );
+        av_frame_free( &filt1_frame );
+    }
+}
+
 uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
     AVCodecContext *avctx;
-    AVFrame *frame, *frameo;
+    AVFrame *frame, *frameo = NULL, *filt_rows = NULL, *filt0_frame = NULL, *filt1_frame = NULL;
     struct SwsContext *sws_ctx;
-    uns32b fframeno, wo, ho;
+    uns32b fframeno, w, h, wo, ho;
 
     if ( ( fmt_ctx == NULL ) || ( pix->tipo != TRP_PIX ) )
         return 1;
@@ -765,25 +794,88 @@ uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno )
     }
     if ( trp_av_read_frame_low( (trp_avcodec_t *)fmtctx, fmt_ctx, fframeno, &frame ) )
         return 1;
+
     avctx = ((trp_avcodec_t *)fmtctx)->avctx;
+    w = avctx->width;
+    h = avctx->height;
+
+    if ( ((trp_avcodec_t *)fmtctx)->filter_rows ) {
+        trp_pix_color_t *p, *q;
+        uns32b w2, w4, hh;
+
+        if ( ( sws_ctx = sws_getContext( w, h, avctx->pix_fmt,
+                                         w, h, AV_PIX_FMT_BGR32,
+                                         SWS_BICUBIC, NULL, NULL, NULL ) ) == NULL )
+            return 1;
+        if ( ( filt_rows = av_frame_alloc() ) == NULL ) {
+            sws_freeContext( sws_ctx );
+            return 1;
+        }
+        if ( av_image_alloc( filt_rows->data, filt_rows->linesize, w, h, AV_PIX_FMT_BGR32, 32 ) < 0 ) {
+            av_frame_free( &filt_rows );
+            sws_freeContext( sws_ctx );
+            return 1;
+        }
+        sws_scale( sws_ctx, (const uint8_t * const *)( frame->data ), frame->linesize, 0, h, filt_rows->data, filt_rows->linesize );
+        sws_freeContext( sws_ctx );
+        p = (trp_pix_color_t *)( filt_rows->data[ 0 ] );
+        q = p + w;
+        if ( ((trp_avcodec_t *)fmtctx)->filter_rows == 2 ) {
+            trp_pix_color_t *r = p;
+            p = q;
+            q = r;
+        }
+        hh = h >> 1;
+        w2 = w << 1;
+        w4 = w << 2;
+        for ( ; hh ; hh--, p += w2, q += w2 )
+            memcpy( q, p, w4 );
+        frame = filt_rows;
+    }
+
+#ifdef TRP_AV_FILTERS_ENABLED
+    if ( ((trp_avcodec_t *)fmtctx)->filter ) {
+        if ( ( filt0_frame = av_frame_alloc() ) &&
+             ( filt1_frame = av_frame_alloc() ) ) {
+            if ( av_buffersrc_add_frame_flags( ((trp_avcodec_t *)fmtctx)->filter->buffersrc_ctx, frame, AV_BUFFERSRC_FLAG_KEEP_REF) >= 0 ) {
+                int which, ret, done;
+
+                for ( which = 0, done = 0 ; ; which = 1 - which ) {
+                    av_frame_unref( which ? filt1_frame : filt0_frame );
+                    ret = av_buffersink_get_frame( ((trp_avcodec_t *)fmtctx)->filter->buffersink_ctx, which ? filt1_frame : filt0_frame );
+                    if ( ( ret == AVERROR(EAGAIN) ) || ( ret == AVERROR_EOF ) )
+                        break;
+                    if ( ret < 0 )
+                        break;
+                    done = 1;
+                }
+                if ( done )
+                    frame = ( which ? filt0_frame : filt1_frame );
+            }
+        }
+    }
+#endif
+
     wo = ((trp_pix_t *)pix)->w;
     ho = ((trp_pix_t *)pix)->h;
     sws_ctx = ((trp_avcodec_t *)fmtctx)->sws_ctx =
         sws_getCachedContext( ((trp_avcodec_t *)fmtctx)->sws_ctx,
-                              avctx->width, avctx->height, avctx->pix_fmt,
+                              w, h, filt_rows ? AV_PIX_FMT_BGR32 : avctx->pix_fmt,
                               wo, ho, AV_PIX_FMT_BGR32,
                               SWS_BICUBIC, NULL, NULL, NULL );
-    if ( ( frameo = av_frame_alloc() ) == NULL )
-        return 1;
-    if ( av_image_alloc( frameo->data, frameo->linesize, wo, ho, AV_PIX_FMT_BGR32, 32 ) < 0 ) {
-        av_frame_free( &frameo );
+    if ( ( frameo = av_frame_alloc() ) == NULL ) {
+        trp_av_read_frame_free( frameo, filt_rows, filt0_frame, filt1_frame );
         return 1;
     }
-    sws_scale( sws_ctx, (const uint8_t * const *)( frame->data ), frame->linesize, 0, frame->height, frameo->data, frameo->linesize );
+    if ( av_image_alloc( frameo->data, frameo->linesize, wo, ho, AV_PIX_FMT_BGR32, 32 ) < 0 ) {
+        trp_av_read_frame_free( frameo, filt_rows, filt0_frame, filt1_frame );
+        return 1;
+    }
+    sws_scale( sws_ctx, (const uint8_t * const *)( frame->data ), frame->linesize, 0, h, frameo->data, frameo->linesize );
     av_image_copy_to_buffer( ((trp_pix_t *)pix)->map.p, ( wo * ho ) << 2,
                              (const uint8_t * const *)( frameo->data ), frameo->linesize, AV_PIX_FMT_BGR32, wo, ho, 1 );
     av_freep( &( frameo->data[ 0 ] ) );
-    av_frame_free( &frameo );
+    trp_av_read_frame_free( frameo, filt_rows, filt0_frame, filt1_frame );
     return 0;
 }
 
@@ -808,6 +900,56 @@ uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n )
     for ( ; nn ; nn--, fframeno++ )
         if ( trp_av_read_frame_low( (trp_avcodec_t *)fmtctx, fmt_ctx, fframeno, &frame ) )
             return 1;
+    return 0;
+}
+
+uns8b trp_av_read_scd_histogram_set( trp_obj_t *fmtctx, trp_obj_t *raw )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    AVCodecContext *avctx;
+    AVFrame *frame, *frameo;
+    struct SwsContext *sws_ctx;
+    uns32b *h;
+    uns32b fframeno, ww, hh, n;
+    uns8b *p;
+
+    if ( ( fmt_ctx == NULL ) || ( raw->tipo != TRP_RAW ) )
+        return 1;
+    if ( ((trp_raw_t *)raw)->len != 256 )
+        return 1;
+    fframeno = ((trp_avcodec_t *)fmtctx)->act_frameno;
+    if ( fframeno == TRP_AV_FRAMENO_UNDEF )
+        fframeno = 0;
+    else
+        fframeno++;
+    avctx = ((trp_avcodec_t *)fmtctx)->avctx;
+    ww = avctx->width;
+    hh = avctx->height;
+    if ( ( frameo = av_frame_alloc() ) == NULL )
+        return 1;
+    if ( av_image_alloc( frameo->data, frameo->linesize, ww, hh, AV_PIX_FMT_GRAY8, 8 ) < 0 ) {
+        av_frame_free( &frameo );
+        return 1;
+    }
+    if ( ( sws_ctx = sws_getContext( ww, hh, avctx->pix_fmt, ww, hh, AV_PIX_FMT_GRAY8, SWS_BICUBIC, NULL, NULL, NULL ) ) == NULL ) {
+        av_freep( &( frameo->data[ 0 ] ) );
+        av_frame_free( &frameo );
+        return 1;
+    }
+    if ( trp_av_read_frame_low( (trp_avcodec_t *)fmtctx, fmt_ctx, fframeno, &frame ) ) {
+        sws_freeContext( sws_ctx );
+        av_freep( &( frameo->data[ 0 ] ) );
+        av_frame_free( &frameo );
+        return 1;
+    }
+    sws_scale( sws_ctx, (const uint8_t * const *)( frame->data ), frame->linesize, 0, frame->height, frameo->data, frameo->linesize );
+    sws_freeContext( sws_ctx );
+    h = (uns32b *)( ((trp_raw_t *)raw)->data );
+    memset( h, 0, 256 );
+    for ( n = ww * hh, p = frameo->data[ 0 ] ; n ; n--, p++ )
+        h[ (*p) >> 2 ]++;
+    av_freep( &( frameo->data[ 0 ] ) );
+    av_frame_free( &frameo );
     return 0;
 }
 
@@ -840,6 +982,15 @@ trp_obj_t *trp_av_is_frame_recoverable( trp_obj_t *fmtctx )
         return TRP_FALSE;
     trp_av_frameno2ts_range( (trp_avcodec_t *)fmtctx, frameno, &ts, &ts_min, &ts_max );
     return trp_av_ts_is_in_range( (trp_avcodec_t *)fmtctx, ((trp_avcodec_t *)fmtctx)->act_ts, ts_min, ts_max ) ? TRP_FALSE : TRP_TRUE;
+}
+
+trp_obj_t *trp_av_path( trp_obj_t *fmtctx )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+
+    if ( fmt_ctx == NULL )
+        return UNDEF;
+    return ( (trp_avcodec_t *)fmtctx )->path;
 }
 
 trp_obj_t *trp_av_nb_streams( trp_obj_t *fmtctx )
@@ -991,34 +1142,6 @@ trp_obj_t *trp_av_start_time( trp_obj_t *fmtctx, trp_obj_t *streamno )
     return ( start_time == AV_NOPTS_VALUE ) ? UNDEF : trp_sig64( start_time );
 }
 
-trp_obj_t *trp_av_nb_index_entries( trp_obj_t *fmtctx, trp_obj_t *streamno )
-{
-    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
-    uns32b n;
-
-    if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( streamno, &n ) )
-        return UNDEF;
-    if ( n >= fmt_ctx->nb_streams )
-        return UNDEF;
-    return trp_sig64( fmt_ctx->streams[ n ]->nb_index_entries );
-}
-
-trp_obj_t *trp_av_nb_index_iskeyframe( trp_obj_t *fmtctx, trp_obj_t *streamno, trp_obj_t *frameno )
-{
-    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
-    AVStream *stream;
-    uns32b n, m;
-
-    if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( streamno, &n ) || trp_cast_uns32b( frameno, &m ) )
-        return UNDEF;
-    if ( n >= fmt_ctx->nb_streams )
-        return UNDEF;
-    stream = fmt_ctx->streams[ n ];
-    if ( m >= stream->nb_index_entries )
-        return TRP_FALSE;
-    return ( stream->index_entries[ m ].flags & AVINDEX_KEYFRAME ) ? TRP_TRUE : TRP_FALSE;
-}
-
 trp_obj_t *trp_av_duration( trp_obj_t *fmtctx, trp_obj_t *streamno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
@@ -1105,6 +1228,108 @@ trp_obj_t *trp_av_ts( trp_obj_t *fmtctx )
         return UNDEF;
     ts = ((trp_avcodec_t *)fmtctx)->act_ts;
     return ( ts == AV_NOPTS_VALUE ) ? UNDEF : trp_sig64( ts );
+}
+
+trp_obj_t *trp_av_nearest_keyframe( trp_obj_t *fmtctx, trp_obj_t *frameno, trp_obj_t *max_diff )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    AVCodecContext *avctx;
+    AVStream *stream;
+    AVPacket *packet;
+    trp_avcodec_buf_t *cbuf;
+    trp_obj_t *tb, *dur, *target_ts, *target_ts_min, *target_ts_max;
+    sig64b ts;
+    uns32b video_stream_idx;
+    uns32b buf_cur;
+    uns32b fframeno, mmax_diff, i, j, k, l, m;
+    int res;
+
+    if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( frameno, &fframeno ) )
+        return UNDEF;
+    if ( max_diff ) {
+        if ( trp_cast_uns32b( max_diff, &mmax_diff ) )
+            return UNDEF;
+    } else
+        mmax_diff = 100;
+
+    cbuf = ((trp_avcodec_t *)fmtctx)->cbuf;
+    j = fframeno + mmax_diff;
+    k = ( fframeno < mmax_diff ) ? 0 : fframeno - mmax_diff;
+    l = mmax_diff + 1;
+
+    for ( i = 0 ; i < ((trp_avcodec_t *)fmtctx)->buf_max ; i++ )
+        if ( cbuf[ i ].status == 1 )
+            if ( ( j >= cbuf[ i ].fmin ) && ( k <= cbuf[ i ].fmax ) ) {
+                uns32b t, d;
+
+                if ( ( fframeno >= cbuf[ i ].fmin ) && ( fframeno <= cbuf[ i ].fmax ) )
+                    return frameno;
+                if ( fframeno < cbuf[ i ].fmin ) {
+                    t = cbuf[ i ].fmin;
+                    d = t - fframeno;
+                } else {
+                    t = cbuf[ i ].fmax;
+                    d = fframeno - t;
+                }
+                if ( d < l ) {
+                    m = t;
+                    l = d;
+                }
+            }
+    if ( l < mmax_diff + 1 )
+        return trp_sig64( m );
+
+    avctx = ((trp_avcodec_t *)fmtctx)->avctx;
+    packet = ((trp_avcodec_t *)fmtctx)->packet;
+    video_stream_idx = ((trp_avcodec_t *)fmtctx)->video_stream_idx;
+    stream = fmt_ctx->streams[ video_stream_idx ];
+    trp_av_frameno2ts_range_low( ((trp_avcodec_t *)fmtctx), fframeno, &target_ts, &target_ts_min, &target_ts_max, &tb, &dur );
+    ts = ((trp_sig64_t *)trp_math_ceil( trp_math_ratio( target_ts, tb, NULL ) ) )->val;
+
+    ((trp_avcodec_t *)fmtctx)->act_frameno = TRP_AV_FRAMENO_UNDEF;
+    ((trp_avcodec_t *)fmtctx)->act_ts = ((trp_avcodec_t *)fmtctx)->cur_ts = AV_NOPTS_VALUE;
+
+    avcodec_flush_buffers( avctx );
+    if ( av_seek_frame( fmt_ctx, video_stream_idx, ts, ( ts <= ((trp_avcodec_t *)fmtctx)->first_ts ) ? 0 : AVSEEK_FLAG_BACKWARD ) < 0 )
+        return UNDEF;
+
+    buf_cur = ( ((trp_avcodec_t *)fmtctx)->buf_cur + 1 ) % ((trp_avcodec_t *)fmtctx)->buf_max;
+
+    for ( ; ; ) {
+        if ( av_read_frame( fmt_ctx, packet ) < 0 )
+            return UNDEF;
+        if ( packet->stream_index != video_stream_idx ) {
+            av_packet_unref( packet );
+            continue;
+        }
+        if ( avcodec_send_packet( avctx, packet ) < 0 ) {
+            av_packet_unref( packet );
+            return UNDEF;
+        }
+        cbuf[ buf_cur ].status = 0;
+        res = avcodec_receive_frame( avctx, cbuf[ buf_cur ].frame );
+        if ( ( res == AVERROR(EAGAIN) ) || ( res == AVERROR_EOF ) ) {
+            av_packet_unref( packet );
+            continue;
+        }
+        if ( res < 0 ) {
+            av_packet_unref( packet );
+            return UNDEF;
+        }
+        ts = packet->dts;
+        av_packet_unref( packet );
+        break;
+    }
+    target_ts = trp_math_times( trp_sig64( ts ), tb, NULL );
+    while ( fframeno && ( trp_less( target_ts, target_ts_min ) == TRP_TRUE ) )
+        trp_av_frameno2ts_range( ((trp_avcodec_t *)fmtctx), --fframeno, &dur, &target_ts_min, &target_ts_max );
+    while ( trp_less( target_ts, target_ts_max ) != TRP_TRUE )
+        trp_av_frameno2ts_range( ((trp_avcodec_t *)fmtctx), ++fframeno, &dur, &target_ts_min, &target_ts_max );
+    ((trp_avcodec_t *)fmtctx)->act_ts = ((trp_avcodec_t *)fmtctx)->cur_ts = cbuf[ buf_cur ].frame->pts = ts;
+    ((trp_avcodec_t *)fmtctx)->act_frameno = cbuf[ buf_cur ].fmin = cbuf[ buf_cur ].fmax = fframeno;
+    ((trp_avcodec_t *)fmtctx)->buf_cur = buf_cur;
+    cbuf[ buf_cur ].status = 1;
+    return trp_sig64( fframeno );
 }
 
 trp_obj_t *trp_av_get_buf_size( trp_obj_t *fmtctx )
@@ -1197,7 +1422,7 @@ uns8b trp_av_set_buf_size( trp_obj_t *fmtctx, trp_obj_t *bufsize )
 trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
-    AVCodec *codec;
+    const AVCodec *codec;
     AVCodecContext *avctx;
     AVFrame *frame;
     AVPacket *packet;
@@ -1277,5 +1502,166 @@ trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno )
         break;
     }
     return trp_sig64( first_ts );
+}
+
+trp_obj_t *trp_av_get_filter( trp_obj_t *fmtctx )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+
+    if ( fmt_ctx == NULL )
+        return UNDEF;
+    if ( ((trp_avcodec_t *)fmtctx)->filter == NULL )
+        return UNDEF;
+    return ((trp_avcodec_t *)fmtctx)->filter->descr;
+}
+
+uns8b trp_av_set_filter( trp_obj_t *fmtctx, trp_obj_t *descr )
+{
+#ifdef TRP_AV_FILTERS_ENABLED
+    char args[ 512 ];
+    const AVFilter *buffersrc  = avfilter_get_by_name( "buffer" );
+    const AVFilter *buffersink = avfilter_get_by_name( "buffersink" );
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    AVCodecContext *dec_ctx;
+    trp_avcodec_filter_t *filter;
+    AVFilterInOut *outputs, *inputs;
+    AVFilterGraph *filter_graph;
+    AVFilterContext *buffersink_ctx;
+    AVFilterContext *buffersrc_ctx;
+    uns8b *c;
+    AVRational time_base;
+    enum AVPixelFormat pix_fmts[ 2 ];
+
+    if ( fmt_ctx == NULL )
+        return 1;
+    if ( descr == NULL ) {
+        trp_av_close_filter( (trp_avcodec_t *)fmtctx );
+        return 0;
+    }
+    if ( ( outputs = avfilter_inout_alloc() ) == NULL )
+        return 1;
+    if ( ( inputs = avfilter_inout_alloc() ) == NULL ) {
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+    if ( ( filter_graph = avfilter_graph_alloc() ) == NULL ) {
+        avfilter_inout_free( &inputs );
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+    dec_ctx = ((trp_avcodec_t *)fmtctx)->avctx;
+    time_base = fmt_ctx->streams[ ((trp_avcodec_t *)fmtctx)->video_stream_idx ]->time_base;
+
+    snprintf( args, sizeof( args ),
+              "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+              dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt,
+              time_base.num, time_base.den,
+              dec_ctx->sample_aspect_ratio.num, dec_ctx->sample_aspect_ratio.den );
+
+    if ( avfilter_graph_create_filter( &buffersrc_ctx, buffersrc, "in",
+                                       args, NULL, filter_graph ) < 0 ) {
+        avfilter_graph_free( &filter_graph );
+        avfilter_inout_free( &inputs );
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+
+    /* buffer video sink: to terminate the filter chain. */
+    if ( avfilter_graph_create_filter( &buffersink_ctx, buffersink, "out",
+                                       NULL, NULL, filter_graph ) < 0 ) {
+        avfilter_graph_free( &filter_graph );
+        avfilter_inout_free( &inputs );
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+
+    pix_fmts[ 0 ] = dec_ctx->pix_fmt;
+    pix_fmts[ 1 ] = AV_PIX_FMT_NONE;
+
+    if ( av_opt_set_int_list( buffersink_ctx, "pix_fmts", pix_fmts,
+                              AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN ) < 0 ) {
+        avfilter_graph_free( &filter_graph );
+        avfilter_inout_free( &inputs );
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+
+    /*
+     * Set the endpoints for the filter graph. The filter_graph will
+     * be linked to the graph described by filters_descr.
+     */
+
+    /*
+     * The buffer source output must be connected to the input pad of
+     * the first filter described by filters_descr; since the first
+     * filter input label is not specified, it is set to "in" by
+     * default.
+     */
+    outputs->name       = av_strdup( "in" );
+    outputs->filter_ctx = buffersrc_ctx;
+    outputs->pad_idx    = 0;
+    outputs->next       = NULL;
+
+    /*
+     * The buffer sink input must be connected to the output pad of
+     * the last filter described by filters_descr; since the last
+     * filter output label is not specified, it is set to "out" by
+     * default.
+     */
+    inputs->name       = av_strdup( "out" );
+    inputs->filter_ctx = buffersink_ctx;
+    inputs->pad_idx    = 0;
+    inputs->next       = NULL;
+
+    c = trp_csprint( descr );
+
+    if ( avfilter_graph_parse_ptr( filter_graph, c,
+                                   &inputs, &outputs, NULL ) < 0 ) {
+        trp_csprint_free( c );
+        avfilter_graph_free( &filter_graph );
+        avfilter_inout_free( &inputs );
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+
+    trp_csprint_free( c );
+
+    if ( avfilter_graph_config( filter_graph, NULL ) < 0 ) {
+        avfilter_graph_free( &filter_graph );
+        avfilter_inout_free( &inputs );
+        avfilter_inout_free( &outputs );
+        return 1;
+    }
+
+    avfilter_inout_free( &inputs );
+    avfilter_inout_free( &outputs );
+
+    filter = trp_gc_malloc( sizeof( trp_avcodec_filter_t ) );
+    filter->buffersink_ctx = buffersink_ctx;
+    filter->buffersrc_ctx = buffersrc_ctx;
+    filter->filter_graph = filter_graph;
+    filter->descr = descr;
+    trp_av_close_filter( (trp_avcodec_t *)fmtctx );
+    ((trp_avcodec_t *)fmtctx)->filter = filter;
+    return 0;
+#else
+    return 1;
+#endif
+}
+
+uns8b trp_av_set_filter_rows( trp_obj_t *fmtctx, trp_obj_t *mode )
+{
+    AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
+    uns32b filter_rows;
+
+    if ( fmt_ctx == NULL )
+        return 1;
+    if ( mode ) {
+        if ( trp_cast_uns32b_range( mode, &filter_rows, 0, 2 ) )
+            return 1;
+    } else
+        filter_rows = 0;
+    ((trp_avcodec_t *)fmtctx)->filter_rows = (uns8b)filter_rows;
+    return 0;
 }
 

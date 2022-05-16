@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -344,6 +344,13 @@ static int trp_iup_cback_button_cb( Ihandle *self, int button, int pressed, int 
                                                                    UNDEF ) ? IUP_CLOSE : IUP_DEFAULT;
 }
 
+static int trp_iup_cback_motion_cb( Ihandle *self, int x, int y, char *status )
+{
+    return ((uns8bfun_t)IupGetAttribute( self, "TRP_MOTION_CB" ))( trp_iup_handle( self ),
+                                                                   trp_sig64( x ),
+                                                                   trp_sig64( y ) ) ? IUP_CLOSE : IUP_DEFAULT;
+}
+
 static int trp_iup_cback_resize_cb( Ihandle *self, int width, int height )
 {
     return ((uns8bfun_t)IupGetAttribute( self, "TRP_RESIZE_CB" ))( trp_iup_handle( self ),
@@ -393,7 +400,7 @@ struct cback {
     Icallback cb;
 };
 
-#define TRP_IUP_CALLBACKS 14
+#define TRP_IUP_CALLBACKS 15
 
 static struct cback _trp_iup_callbacks[ TRP_IUP_CALLBACKS ] = {
     { "ACTION", 1, (Icallback)trp_iup_cback_action },
@@ -405,6 +412,7 @@ static struct cback _trp_iup_callbacks[ TRP_IUP_CALLBACKS ] = {
     { "TABCHANGEPOS_CB", 3, (Icallback)trp_iup_cback_tabchangepos_cb },
     { "DROPFILES_CB", 5, (Icallback)trp_iup_cback_dropfiles_cb },
     { "BUTTON_CB", 6, (Icallback)trp_iup_cback_button_cb },
+    { "MOTION_CB", 3, (Icallback)trp_iup_cback_motion_cb },
     { "RESIZE_CB", 3, (Icallback)trp_iup_cback_resize_cb },
     { "VALUECHANGED_CB", 1, (Icallback)trp_iup_cback_valuechanged_cb },
     { "DRAGBEGIN_CB", 3, (Icallback)trp_iup_cback_dragbegin_cb },
@@ -992,6 +1000,23 @@ trp_obj_t *trp_iup_label( trp_obj_t *title, ... )
     } else
         s = NULL;
     title = trp_iup_handle( IupLabel( s ) );
+    if ( s )
+        trp_csprint_free( s );
+    return title;
+}
+
+trp_obj_t *trp_iup_flat_label( trp_obj_t *title, ... )
+{
+    uns8b *s;
+    va_list args;
+
+    if ( title ) {
+        va_start( args, title );
+        s = trp_csprint_multi( title, args );
+        va_end( args );
+    } else
+        s = NULL;
+    title = trp_iup_handle( IupFlatLabel( s ) );
     if ( s )
         trp_csprint_free( s );
     return title;

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2021 Frank Sinapsi
+    Copyright (C) 2008-2022 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,6 +63,8 @@ trp_obj_t *trp_pix_point( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y );
 trp_obj_t *trp_pix_color_count( trp_obj_t *pix, trp_obj_t *color );
 trp_obj_t *trp_pix_top_field( trp_obj_t *pix );
 trp_obj_t *trp_pix_bottom_field( trp_obj_t *pix );
+uns8b trp_pix_top_field_test( trp_obj_t *pix );
+uns8b trp_pix_bottom_field_test( trp_obj_t *pix );
 trp_obj_t *trp_pix_crop( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *w, trp_obj_t *h );
 uns8b trp_pix_bgr( trp_obj_t *pix );
 uns8b trp_pix_noalpha( trp_obj_t *pix );
