@@ -23,6 +23,7 @@
           [ "bitstream-type"            1 1 ]
           [ "error"                     1 1 ]
           [ "userdata"                  1 1 ]
+          [ "qpneg"                     1 1 ]
           [ "missing-vol"               1 1 ]
           [ "cnt-vol"                   1 1 ]
           [ "cnt-vop"                   1 1 ]

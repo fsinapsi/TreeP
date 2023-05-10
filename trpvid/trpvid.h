@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ uns8b trp_vid_parse_matroska( trp_obj_t *vid, trp_obj_t *size );
 trp_obj_t *trp_vid_bitstream_type( trp_obj_t *obj );
 trp_obj_t *trp_vid_error( trp_obj_t *obj );
 trp_obj_t *trp_vid_userdata( trp_obj_t *obj );
+trp_obj_t *trp_vid_qpneg( trp_obj_t *obj );
 trp_obj_t *trp_vid_missing_vol( trp_obj_t *obj );
 trp_obj_t *trp_vid_cnt_vol( trp_obj_t *obj );
 trp_obj_t *trp_vid_cnt_vop( trp_obj_t *obj );

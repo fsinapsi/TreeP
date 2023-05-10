@@ -15,6 +15,8 @@
 (include "common-date.tin")
 (include "common-graphs.tin")
 (include "common-pix.tin")
+(include "common-svg.tin")
+(include "common-cairo.tin")
 (include "common-strings.tin")
 (include "common-srt.tin")
 (include "common-curl.tin")

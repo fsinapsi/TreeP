@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ void trp_init( int argc, char *argv[] )
 {
     extern trp_obj_t *trp_date_19700101();
 
+#ifndef MINGW
+    GC_set_handle_fork( -1 );
+#endif
     GC_INIT();
 //    _trp_gc_warn_proc =
     GC_set_warn_proc( trp_gc_warn_proc );

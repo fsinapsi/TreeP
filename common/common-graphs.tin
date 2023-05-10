@@ -532,6 +532,7 @@
 
         (assocp g)
         (set @dot (+ "digraph G {" nl
+                     "  graph [bgcolor=\"#ffffff00\"];" nl
                      "  layout=" layout ";" nl
                      (if (= layout "dot") "  rankdir=LR;\n" "")
                      "  esep=0.4;" nl
@@ -581,15 +582,34 @@
 (defun dgraph->dot-color-byte (b) (sprint (hexdigit0 (div b 0x10)) (hexdigit0 (% b 0x10))))
 
 ;;;
-;;; genera un`immagine del grafo g
+;;; genera un'immagine del grafo g
 ;;;
 
-(defun dgraph->pix (g)
-        (ag-dot2pix-transparent (dgraph->dot g)) )
+(defun dgraph->svg (g)
+        (ag-dot2svg (dgraph->dot g)) )
+
+(defun dgraph->pix (g) net dgraph->pix)
+(defnet dgraph->pix (g @pix)
+        (deflocal raw)
+
+        (set raw (dgraph->svg g))
+        (rawp raw)
+        (set @pix (rsvg-load raw 1.4))
+        (close raw) )
 
 ;;;
-;;; salva su path un`immagine del grafo g
+;;; salva su path un'immagine del grafo g
 ;;;
+
+(defnet dgraph-save-svg (g path)
+        (deflocal raw)
+
+        (set raw (dgraph->svg g))
+        (rawp raw)
+        (alt    (raw-save path raw)
+                (seq    (close raw)
+                        (fail) ))
+        (close raw) )
 
 (defnet dgraph-save-png (g path)
         (deflocal pix)
@@ -600,32 +620,6 @@
                 (seq    (close pix)
                         (fail) ))
         (close pix) )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; obsoleto (usare ag-dot2pix)
-
-;(defun dot->pix (dot) net dot->pix)
-;(defnet dot->pix (dot @pix)
-;        (deflocal tmp)
-
-;        (stringp dot)
-;        (mktmpdir tmp)
-;        (alt    (seq    (str-save (+ tmp "/a.dot") dot)
-;                        (system "dot -Tpng " (+ tmp "/a.dot") " > " (+ tmp "/a.png") " 2>/dev/null")
-;                        (set @pix (pix-load (+ tmp "/a.png")))
-;                        (pixp @pix)
-;                        (rmhier tmp) )
-;                (seq    (rmhier tmp)
-;                        (fail) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

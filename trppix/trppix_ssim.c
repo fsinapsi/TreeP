@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -405,9 +405,9 @@ static trp_obj_t *trp_pix_ssim_index_basic( trp_obj_t *pix1, trp_obj_t *pix2, tr
     s->ssim_g /= (double)( s->win_cnt );
     s->ssim_b /= (double)( s->win_cnt );
 
-    return trp_double( 0.299 * s->ssim_r +
-                       0.587 * s->ssim_g +
-                       0.114 * s->ssim_b );
+    return trp_double( TRP_PIX_WEIGHT_RED_F * s->ssim_r +
+                       TRP_PIX_WEIGHT_GREEN_F * s->ssim_g +
+                       TRP_PIX_WEIGHT_BLUE_F * s->ssim_b );
 }
 
 trp_obj_t *trp_pix_ssim( trp_obj_t *pix1, trp_obj_t *pix2, trp_obj_t *weights )

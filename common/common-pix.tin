@@ -29,7 +29,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun pix-color-negative (c)
-        (pix-color (- 0xff (pix-color-red c)) (- 0xff (pix-color-green c)) (- 0xff (pix-color-blue c))) )
+        (pix-color (- 0xff (pix-color-red c))
+                   (- 0xff (pix-color-green c))
+                   (- 0xff (pix-color-blue c)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -53,6 +55,7 @@
         (pix-draw-pix @pix n n pix) )
 
 (defun pix-clone (pix) (pix-add-margins pix 0 undef))
+; (pix-crop pix 0 0 (width pix) (height pix))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,6 +201,204 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun pix-affine-cairo (pix xx xy yx yy) net pix-affine-cairo)
+(defnet pix-affine-cairo (pix xx xy yx yy @pix)
+        (deflocal w h xmin xmax ymin ymax o cr raw)
+
+        (pixp pix)
+
+        (set w (width pix))
+        (set h (height pix))
+
+        (pix-affine-cairo-update xx xy yx yy 0 0 xmin xmax ymin ymax)
+        (pix-affine-cairo-update xx xy yx yy w 0 xmin xmax ymin ymax)
+        (pix-affine-cairo-update xx xy yx yy 0 h xmin xmax ymin ymax)
+        (pix-affine-cairo-update xx xy yx yy w h xmin xmax ymin ymax)
+
+        (set cr (cairo-svg-surface-create-for-stream (- xmax xmin) (- ymax ymin)))
+        (cairo-set-matrix cr xx xy 0 yx yy 0)
+        (set o (cairo-device-to-user cr xmin ymin))
+        (cairo-set-source-surface cr pix -(car o) -(cdr o))
+
+        (set raw (cairo-flush-and-close-raw cr))
+        (set @pix (rsvg-load raw))
+        (close raw) )
+
+(defnet pix-affine-cairo-update (xx xy yx yy x y @xmin @xmax @ymin @ymax)
+        (deflocal nx ny)
+
+        (set nx (+ (* xx x) (* xy y)))
+        (set ny (+ (* yx x) (* yy y)))
+        (if (or (= @xmin undef) (< nx @xmin))
+        then    (set @xmin nx) )
+        (if (or (= @xmax undef) (> nx @xmax))
+        then    (set @xmax nx) )
+        (if (or (= @ymin undef) (< ny @ymin))
+        then    (set @ymin ny) )
+        (if (or (= @ymax undef) (> ny @ymax))
+        then    (set @ymax ny) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-scale-cairo (pix w h)
+        (pix-affine-cairo pix (/ w (width pix)) 0 0 (/ h (height pix))) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-rotate-cairo (pix ang) net pix-rotate-cairo)
+(defnet pix-rotate-cairo (pix ang @pix)
+        (deflocal si co)
+
+        (set ang (deg->rad ang))
+        (set si (sin ang))
+        (set co (cos ang))
+        (set @pix (pix-affine-cairo pix co si -si co)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-draw-and-close-cairo (pix cr)
+        (deflocal raw)
+
+        (cairo-stroke cr)
+        (set raw (cairo-flush-and-close-raw cr))
+        (set cr (rsvg-load raw))
+        (close raw)
+        (pix-draw-pix-alpha pix 0 0 cr)
+        (close cr) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-draw-line-cairo (pix x1 y1 x2 y2 line-width color)
+        (deflocal cr)
+
+        (set cr (cairo-svg-surface-create-for-stream (width pix) (height pix)))
+        (cairo-set-line-width-and-color cr line-width color)
+        (cairo-move-to cr x1 y1)
+        (cairo-line-to cr x2 y2)
+        (pix-draw-and-close-cairo pix cr) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-draw-circle-cairo (pix x y r line-width color)
+        (deflocal cr)
+
+        (set cr (cairo-svg-surface-create-for-stream (width pix) (height pix)))
+        (cairo-set-line-width-and-color cr line-width color)
+        (cairo-draw-circle cr x y r)
+        (pix-draw-and-close-cairo pix cr) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-draw-ellipse-cairo (pix x1 y1 x2 y2 a line-width color)
+        (deflocal cr)
+
+        (set cr (cairo-svg-surface-create-for-stream (width pix) (height pix)))
+        (cairo-set-line-width-and-color cr line-width color)
+        (cairo-draw-ellipse cr x1 y1 x2 y2 a)
+        (pix-draw-and-close-cairo pix cr) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-draw-keypoints (pix color)
+        (deflocal feat cr i raw)
+
+        (set feat (sift-features pix))
+        (<> feat undef)
+        (set cr (cairo-svg-surface-create-for-stream (width pix) (height pix)))
+        (cairo-set-antialias cr (cmacro CAIRO_ANTIALIAS_BEST))
+        (cairo-set-line-width-and-color cr 1 color)
+        (for i in 0 .. (- (length feat) 1) do
+                (set raw <feat i>)
+                (cairo-draw-arrow cr
+                        <raw 0> <raw 1>
+                        (rad->deg -<raw 3>)
+                        (* <raw 2> 5) ))
+        (pix-draw-and-close-cairo pix cr) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-font-view (font target-w target-h) net pix-font-view)
+(defnet pix-font-view (font target-w target-h @pix)
+        (deflocal raw)
+
+        (set raw (svg-font-view font))
+        (set @pix (rsvg-load-size raw target-w target-h))
+        (close raw) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defnet pix-binarize-wolf (@pix)
         (pix-binarize-wolf-low @pix 0.6) )
 
@@ -217,6 +418,224 @@
                         (rmhier tmpdir) )
                 (seq    (rmhier tmpdir)
                         (fail) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-save-ptg-puzzle (w h q opath)
+        (deflocal fo l)
+
+        (queuep q)
+        (set l (length q))
+        (> l 0)
+        (set fo (fcreate opath))
+        (<> fo undef)
+        (alt    (seq    (fprint fo "hOro1%lB@fmAnGkoQbaWgaSx35ZuXBCh")
+                        (pix-save-ptg-uns32 fo w)
+                        (pix-save-ptg-uns32 fo h)
+                        (pix-save-ptg-uns32 fo l)
+                        (for l in q do
+                                (pix-save-ptg-uns32 fo <l 0>)
+                                (pix-save-ptg-uns32 fo <l 1>)
+                                (pix-save-ptg-pix fo <l 2>) ))
+                (seq    (close fo)
+                        (remove opath)
+                        (fail) ))
+        (close fo) )
+
+(defnet pix-save-ptg-crop (x y w h pixpath opath)
+        (deflocal fo)
+
+        (set fo (fcreate opath))
+        (<> fo undef)
+        (alt    (seq    (fprint fo "hOro1%lB@fmAnGkoQbaWgaSx35ZuXBCc")
+                        (pix-save-ptg-uns32 fo x)
+                        (pix-save-ptg-uns32 fo y)
+                        (pix-save-ptg-uns32 fo w)
+                        (pix-save-ptg-uns32 fo h)
+                        (pix-save-ptg-pix fo pixpath) )
+                (seq    (close fo)
+                        (remove opath)
+                        (fail) ))
+        (close fo) )
+
+(defnet pix-save-ptg-scale (w h pixpath opath)
+        (deflocal fo)
+
+        (set fo (fcreate opath))
+        (<> fo undef)
+        (alt    (seq    (fprint fo "hOro1%lB@fmAnGkoQbaWgaSx35ZuXBCs")
+                        (pix-save-ptg-uns32 fo w)
+                        (pix-save-ptg-uns32 fo h)
+                        (pix-save-ptg-pix fo pixpath) )
+                (seq    (close fo)
+                        (remove opath)
+                        (fail) ))
+        (close fo) )
+
+(defnet pix-save-ptg-rotate (a pixpath opath)
+        (deflocal fo)
+
+        (set fo (fcreate opath))
+        (<> fo undef)
+        (alt    (seq    (fprint fo "hOro1%lB@fmAnGkoQbaWgaSx35ZuXBCr")
+                        (pix-save-ptg-uns64 fo (ratio->uns64b a))
+                        (pix-save-ptg-pix fo pixpath) )
+                (seq    (close fo)
+                        (remove opath)
+                        (fail) ))
+        (close fo) )
+
+(defnet pix-save-ptg-negative (pixpath opath)
+        (deflocal fo)
+
+        (set fo (fcreate opath))
+        (<> fo undef)
+        (alt    (seq    (fprint fo "hOro1%lB@fmAnGkoQbaWgaSx35ZuXBCn")
+                        (pix-save-ptg-pix fo pixpath) )
+                (seq    (close fo)
+                        (remove opath)
+                        (fail) ))
+        (close fo) )
+
+(defnet pix-save-ptg-alpha (pixpath pixpath-alpha opath)
+        (deflocal fo)
+
+        (set fo (fcreate opath))
+        (<> fo undef)
+        (alt    (seq    (fprint fo "hOro1%lB@fmAnGkoQbaWgaSx35ZuXBCa")
+                        (pix-save-ptg-pix fo pixpath)
+                        (pix-save-ptg-pix fo pixpath-alpha) )
+                (seq    (close fo)
+                        (remove opath)
+                        (fail) ))
+        (close fo) )
+
+(defnet pix-save-ptg-uns32 (fo n)
+        (fprint fo (int->char (% n 256))
+                   (int->char (% (div n 256) 256))
+                   (int->char (% (div n (* 256 256)) 256))
+                   (int->char (div n (* 256 256 256))) ))
+
+(defnet pix-save-ptg-uns64 (fo n)
+        (pix-save-ptg-uns32 fo (% n (* 256 256 256 256)))
+        (pix-save-ptg-uns32 fo (div n (* 256 256 256 256))) )
+
+(defnet pix-save-ptg-pix (fo pixpath)
+        (deflocal fi raw)
+
+        (set fi (fopenro pixpath))
+        (<> fi undef)
+        (set raw (raw 65536))
+        (pix-save-ptg-uns64 fo (length fi))
+        (alt    (filecopy-basic fi fo (length fi) raw)
+                (seq    (close raw fi)
+                        (fail) ))
+        (close raw fi) )
+
+(defnet pix-save-ptg-vertical (q path)
+        (deflocal w h qq p pix wp hp)
+
+        (set w 0)
+        (set h 0)
+        (set qq (queue))
+        (for p in q do
+                (set pix (pix-load p))
+                (pixp pix)
+                (set wp (width pix))
+                (set hp (height pix))
+                (close pix)
+                (queue-put qq (list 0 h p))
+                (set w (max w wp))
+                (inc h hp) )
+        (pix-save-ptg-puzzle w h qq path) )
+
+(defnet pix-save-ptg-horizontal (q path)
+        (deflocal w h qq p pix wp hp)
+
+        (set w 0)
+        (set h 0)
+        (set qq (queue))
+        (for p in q do
+                (set pix (pix-load p))
+                (pixp pix)
+                (set wp (width pix))
+                (set hp (height pix))
+                (close pix)
+                (queue-put qq (list w 0 p))
+                (inc w wp)
+                (set h (max h hp)) )
+        (pix-save-ptg-puzzle w h qq path) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet pix-save-ptg-segments (pix path v-seg h-seg)
+        (pix-save-ptg-segments-low false pix path v-seg h-seg) )
+
+(defnet pix-save-ptg-segments-rec (pix path v-seg h-seg)
+        (pix-save-ptg-segments-low true pix path v-seg h-seg) )
+
+(defnet pix-save-ptg-segments-low (rec pix path v-seg h-seg)
+        (deflocal tmp)
+
+        (pixp pix)
+        (integerp v-seg)
+        (integerp h-seg)
+        (set v-seg (max 1 (min (width pix) v-seg)))
+        (set h-seg (max 1 (min (height pix) h-seg)))
+        (if (or (= v-seg 1) (= h-seg 1))
+        then    (set rec false) )
+        (mktmpdir tmp)
+        (alt    (pix-save-ptg-segments-low-low rec tmp pix path v-seg h-seg)
+                (seq    (rmhier tmp)
+                        (fail) ))
+        (rmhier tmp) )
+
+(defnet pix-save-ptg-segments-low-low (rec tmp pix path v-seg h-seg)
+        (deflocal dw dh i j x y tmppix tmppath qq q)
+
+        (set dw (/ (width pix) v-seg))
+        (set dh (/ (height pix) h-seg))
+        (set qq (queue))
+        (for i in 1 .. v-seg do
+                (set q (queue))
+                (for j in 1 .. h-seg do
+                        (set x (rint (* (- i 1) dw)))
+                        (set y (rint (* (- j 1) dh)))
+                        (set tmppix (pix-crop pix x y (- (rint (* i dw)) x) (- (rint (* j dh)) y)))
+                        (pixp tmppix)
+                        (alt    (if (and rec (> dw 100) (> dh 100))
+                                then    (set tmppath (+ tmp "j" j ".ptg"))
+                                        (pix-save-ptg-segments-low rec tmppix tmppath v-seg h-seg)
+                                else    (set tmppath (+ tmp "j" j ".jp2"))
+                                        (openjp2-save tmppix tmppath 20) )
+                                (seq    (close tmppix)
+                                        (fail) ))
+                        (close tmppix)
+                        (queue-put q tmppath) )
+                (set tmppath (+ tmp "i" i ".ptg"))
+                (pix-save-ptg-vertical q tmppath)
+                (while (> (length q) 0) do
+                        (remove (queue-get q)) )
+                (queue-put qq tmppath) )
+        (pix-save-ptg-horizontal qq path)
+        (while (> (length qq) 0) do
+                (remove (queue-get qq)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -119,9 +119,13 @@
         (inc mm)
         (ltrim s)
         (rtrim s)
-        (set aa (str->num s))
-        (integerp aa)
-        (set @d (date aa mm gg))
+        (alt    (seq    (search-and-cut ", " s aa)
+                        (set aa (str->num aa))
+                        (integerp aa)
+                        (str->date1 (+ (int->str aa 4 '0') (int->str mm 2 '0') (int->str gg 2 '0') (sub 0 2 s) (sub 3 2 s) (sub 6 (maxint) s)) @d) )
+                (seq    (set aa (str->num s))
+                        (integerp aa)
+                        (set @d (date aa mm gg)) ))
         (datep @d) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

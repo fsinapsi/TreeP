@@ -64,6 +64,17 @@
                 until (= i utf8-pos)
                 (inc @pos (if (integerp i) (- utf8-pos i) 1)) ))
 
+(defun utf8-nth (s utf8-pos) net utf8-nth)
+(defnet utf8-nth (s utf8-pos @s)
+        (deflocal pos i)
+
+        (set pos (utf8-real-pos s utf8-pos))
+        (integerp pos)
+        (set i 1)
+        (repeat (set @s (sub pos i s))
+                until (utf8p @s)
+                (inc i) ))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                      ;;;;
@@ -78,6 +89,13 @@
         (deflocal i)
 
         (search key @s i)
+        (set @cut (sub 0 i @s))
+        (set @s (sub (+ i (length key)) (maxint) @s)) )
+
+(defnet search-and-cut-case (key @s @cut)
+        (deflocal i)
+
+        (search case key @s i)
         (set @cut (sub 0 i @s))
         (set @s (sub (+ i (length key)) (maxint) @s)) )
 
@@ -101,6 +119,20 @@
 
         (set @res "")
         (opt*   (search from str i)
+                (inc @res (sub 0 i str) to)
+                (set str (sub (+ i (length from)) (maxint) str)) )
+        (inc @res str) )
+
+(defun find-and-replace-case (str from to) net find-and-replace-case-low)
+
+(defnet find-and-replace-case (@str from to)
+        (find-and-replace-case-low @str from to @str) )
+
+(defnet find-and-replace-case-low (str from to @res)
+        (deflocal i)
+
+        (set @res "")
+        (opt*   (search case from str i)
                 (inc @res (sub 0 i str) to)
                 (set str (sub (+ i (length from)) (maxint) str)) )
         (inc @res str) )

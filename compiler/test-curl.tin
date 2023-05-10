@@ -67,8 +67,6 @@
           [ "setopt-stderr"                     1 2 ]
           [ "setopt-verbose"                    2 2 ]
           [ "setopt-failonerror"                2 2 ]
-          [ "setopt-random-file"                1 2 ]
-          [ "setopt-egdsocket"                  1 2 ]
           [ "setopt-ignore-content-length"      2 2 ]
           [ "setopt-ssh-public-keyfile"         1 2 ]
           [ "setopt-ssh-private-keyfile"        1 2 ]

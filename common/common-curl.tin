@@ -52,7 +52,7 @@
 (defnet download-as-raw-low (useragent url @raw)
         (deflocal c)
 
-        (curl-create-default useragent  c)
+        (curl-create-default useragent c)
         (alt    (download-as-raw-curl c url @raw)
                 (seq    (close c)
                         (fail) ))

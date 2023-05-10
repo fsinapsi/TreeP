@@ -20,7 +20,6 @@
 
 (defun expr-cv-table ()
         [ [ "version"                   0 0 ]
-          [ "pix-load"                  1 1 ]
           [ "pix-rotate"                2 3 ]
           [ "get-affine-transform"    12 12 ]
           [ "sift-features"             1 1 ]

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 typedef struct {
     uns32b size;
     uns8b typ;
-    uns8b qscale;
+    sig8b qscale;
 } frameinfo_t;
 
 typedef struct {
@@ -48,7 +48,7 @@ typedef struct {
     int vui_seq_parameters_aspect_ratio_idc;
     int vui_seq_parameters_sar_width;
     int vui_seq_parameters_sar_height;
-    uns8b* scaling_list[ 12 ];
+    uns8b *scaling_list[ 12 ];
 } sps_t;
 
 typedef struct {
@@ -72,7 +72,7 @@ typedef struct {
     int constrained_intra_pred_flag;
     int redundant_pic_cnt_present_flag;
     int transform_8x8_mode_flag;
-    uns8b* scaling_list[ 12 ];
+    uns8b *scaling_list[ 12 ];
 } pps_t;
 
 /*
@@ -122,7 +122,10 @@ typedef struct {
     uns32b max_bframes, cnt_bframe, cnt_bframes[ MAX_BFRAMES + 1 ];
     uns32b cnt_warp_points_used[ MAX_WARPING_POINTS + 1 ];
     uns32b cnt_qscale[ MAX_QSCALE_AVC + 1 ][ 7 ];
-    uns32b cnt_qscale_cnt[ 7 ], cnt_qscale_max[ 7 ], cnt_qscale_avg[ 7 ], cnt_qscale_var[ 7 ];
+    uns32b cnt_qscale_cnt[ 7 ];
+    sig32b cnt_qscale_max[ 7 ];
+    sig32b cnt_qscale_avg[ 7 ];
+    uns32b cnt_qscale_var[ 7 ];
     uns32b mp4_sample_cnt, mp4_entry_cnt, mp4_chunk_cnt;
     uns32b *mp4_sample_size;
     stc_t *mp4_sample_to_chunk;
@@ -134,8 +137,8 @@ uns8b trp_vid_close( trp_vid_t *obj );
 uns8b trp_vid_parse_msmpeg4( trp_vid_t *vid );
 uns8b trp_vid_parse_mpeg4asp( trp_vid_t *vid );
 uns8b trp_vid_parse_mpeg4avc( trp_vid_t *vid );
-uns32b trp_vid_effective_qscale( uns32b qscale, sig8b bitstream_type );
-void trp_vid_update_qscale( trp_vid_t *vid, sig8b bitstream_type, uns32b typ, uns32b qscale );
+uns32b trp_vid_effective_qscale( sig32b qscale, sig8b bitstream_type );
+void trp_vid_update_qscale( trp_vid_t *vid, sig8b bitstream_type, uns32b typ, sig32b qscale );
 void trp_vid_store_userdata( trp_vid_t *vid, uns8b *src, uns32b size );
 void trp_vid_calculate_max_avg_frame_size( trp_vid_t *vid );
 uns8b trp_vid_check( trp_obj_t *obj, trp_vid_t **vid );

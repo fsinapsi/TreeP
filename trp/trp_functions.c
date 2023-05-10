@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ static uns8b trp_default_in( trp_obj_t *obj, trp_obj_t *seq, uns32b *pos, uns32b
 static void trp_default_encode( trp_obj_t *obj, uns8b **buf );
 static trp_obj_t *trp_default_relation( trp_obj_t *o1, trp_obj_t *o2 );
 
-uns8b *_trp_tipo_descr[ TRP_MAX ] = {
+uns8b *_trp_tipo_descr[ TRP_MAX_T ] = {
     "TRP_SPECIAL",
     "TRP_RAW",
     "TRP_CHAR",
@@ -60,16 +60,18 @@ uns8b *_trp_tipo_descr[ TRP_MAX ] = {
     "TRP_AVI",
     "TRP_AVCODEC",
     "TRP_OPENCV",
-    "TRP_VLFEAT",
+    "TRP_SIFT",
     "TRP_SUF",
     "TRP_MGL",
     "TRP_IUP",
     "TRP_REGEX",
     "TRP_FIBO",
-    "TRP_CHESS"
+    "TRP_CHESS",
+    "TRP_CAIRO",
+    "TRP_MHD"
 };
 
-uns8bfun_t _trp_print_fun[ TRP_MAX ] = {
+uns8bfun_t _trp_print_fun[ TRP_MAX_T ] = {
     trp_special_print,
     trp_raw_print,
     trp_char_print,
@@ -100,16 +102,18 @@ uns8bfun_t _trp_print_fun[ TRP_MAX ] = {
     trp_default_print, /* avi */
     trp_default_print, /* avcodec */
     trp_default_print, /* opencv */
-    trp_default_print, /* vlfeat */
+    trp_default_print, /* sift */
     trp_default_print, /* suf */
     trp_default_print, /* mgl */
     trp_default_print, /* iup */
     trp_default_print, /* regex */
     trp_fibo_print,
-    trp_default_print  /* chess */
+    trp_default_print, /* chess */
+    trp_default_print, /* cairo */
+    trp_default_print  /* mhd */
 };
 
-uns32bfun_t _trp_size_fun[ TRP_MAX ] = {
+uns32bfun_t _trp_size_fun[ TRP_MAX_T ] = {
     trp_special_size,
     trp_raw_size,
     trp_char_size,
@@ -140,16 +144,18 @@ uns32bfun_t _trp_size_fun[ TRP_MAX ] = {
     trp_special_size, /* avi */
     trp_special_size, /* avcodec */
     trp_special_size, /* opencv */
-    trp_special_size, /* vlfeat */
+    trp_special_size, /* sift */
     trp_special_size, /* suf */
     trp_special_size, /* mgl */
     trp_special_size, /* iup */
     trp_special_size, /* regex */
     trp_special_size, /* fibo */
-    trp_special_size  /* chess */
+    trp_special_size, /* chess */
+    trp_special_size, /* cairo */
+    trp_special_size  /* mhd */
 };
 
-voidfun_t _trp_encode_fun[ TRP_MAX ] = {
+voidfun_t _trp_encode_fun[ TRP_MAX_T ] = {
     trp_special_encode,
     trp_raw_encode,
     trp_char_encode,
@@ -180,16 +186,18 @@ voidfun_t _trp_encode_fun[ TRP_MAX ] = {
     trp_default_encode, /* avi */
     trp_default_encode, /* avcodec */
     trp_default_encode, /* opencv */
-    trp_default_encode, /* vlfeat */
+    trp_default_encode, /* sift */
     trp_default_encode, /* suf */
     trp_default_encode, /* mgl */
     trp_default_encode, /* iup */
     trp_default_encode, /* regex */
     trp_default_encode, /* fibo */
-    trp_default_encode  /* chess */
+    trp_default_encode, /* chess */
+    trp_default_encode, /* cairo */
+    trp_default_encode  /* mhd */
 };
 
-objfun_t _trp_decode_fun[ TRP_MAX ] = {
+objfun_t _trp_decode_fun[ TRP_MAX_T ] = {
     trp_special_decode,
     trp_raw_decode,
     trp_char_decode,
@@ -220,16 +228,18 @@ objfun_t _trp_decode_fun[ TRP_MAX ] = {
     trp_special_decode, /* avi */
     trp_special_decode, /* avcodec */
     trp_special_decode, /* opencv */
-    trp_special_decode, /* vlfeat */
+    trp_special_decode, /* sift */
     trp_special_decode, /* suf */
     trp_special_decode, /* mgl */
     trp_special_decode, /* iup */
     trp_special_decode, /* regex */
     trp_special_decode, /* fibo */
-    trp_special_decode  /* chess */
+    trp_special_decode, /* chess */
+    trp_special_decode, /* cairo */
+    trp_special_decode  /* mhd */
 };
 
-objfun_t _trp_equal_fun[ TRP_MAX ] = {
+objfun_t _trp_equal_fun[ TRP_MAX_T ] = {
     trp_special_equal,
     trp_raw_equal,
     trp_char_equal,
@@ -260,16 +270,18 @@ objfun_t _trp_equal_fun[ TRP_MAX ] = {
     trp_default_relation, /* avi */
     trp_default_relation, /* avcodec */
     trp_default_relation, /* opencv */
-    trp_default_relation, /* vlfeat */
+    trp_default_relation, /* sift */
     trp_default_relation, /* suf */
     trp_default_relation, /* mgl */
     trp_default_relation, /* iup */
     trp_default_relation, /* regex */
     trp_default_relation, /* fibo */
-    trp_default_relation  /* chess */
+    trp_default_relation, /* chess */
+    trp_default_relation, /* cairo */
+    trp_default_relation  /* mhd */
 };
 
-objfun_t _trp_less_fun[ TRP_MAX ] = {
+objfun_t _trp_less_fun[ TRP_MAX_T ] = {
     trp_special_less,
     trp_default_relation, /* raw */
     trp_char_less,
@@ -300,16 +312,18 @@ objfun_t _trp_less_fun[ TRP_MAX ] = {
     trp_default_relation, /* avi */
     trp_default_relation, /* avcodec */
     trp_default_relation, /* opencv */
-    trp_default_relation, /* vlfeat */
+    trp_default_relation, /* sift */
     trp_default_relation, /* suf */
     trp_default_relation, /* mgl */
     trp_default_relation, /* iup */
     trp_default_relation, /* regex */
     trp_default_relation, /* fibo */
-    trp_default_relation  /* chess */
+    trp_default_relation, /* chess */
+    trp_default_relation, /* cairo */
+    trp_default_relation  /* mhd */
 };
 
-uns8bfun_t _trp_close_fun[ TRP_MAX ] = {
+uns8bfun_t _trp_close_fun[ TRP_MAX_T ] = {
     trp_default_close, /* special */
     trp_raw_close,
     trp_default_close, /* char */
@@ -340,16 +354,18 @@ uns8bfun_t _trp_close_fun[ TRP_MAX ] = {
     trp_default_close, /* avi */
     trp_default_close, /* avcodec */
     trp_default_close, /* opencv */
-    trp_default_close, /* vlfeat */
+    trp_default_close, /* sift */
     trp_default_close, /* suf */
     trp_default_close, /* mgl */
     trp_default_close, /* iup */
     trp_regex_close,
     trp_default_close, /* fibo */
-    trp_default_close  /* chess */
+    trp_default_close, /* chess */
+    trp_default_close, /* cairo */
+    trp_default_close  /* mhd */
 };
 
-objfun_t _trp_length_fun[ TRP_MAX ] = {
+objfun_t _trp_length_fun[ TRP_MAX_T ] = {
     trp_special_length,
     trp_raw_length,
     trp_char_length,
@@ -380,16 +396,18 @@ objfun_t _trp_length_fun[ TRP_MAX ] = {
     trp_default_obj, /* avi */
     trp_default_obj, /* avcodec */
     trp_default_obj, /* opencv */
-    trp_default_obj, /* vlfeat */
+    trp_default_obj, /* sift */
     trp_default_obj, /* suf */
     trp_default_obj, /* mgl */
     trp_default_obj, /* iup */
     trp_regex_length,
     trp_fibo_length,
-    trp_default_obj  /* chess */
+    trp_default_obj, /* chess */
+    trp_default_obj, /* cairo */
+    trp_default_obj  /* mhd */
 };
 
-objfun_t _trp_width_fun[ TRP_MAX ] = {
+objfun_t _trp_width_fun[ TRP_MAX_T ] = {
     trp_default_obj,
     trp_default_obj,
     trp_default_obj,
@@ -420,16 +438,18 @@ objfun_t _trp_width_fun[ TRP_MAX ] = {
     trp_default_obj, /* avi */
     trp_default_obj, /* avcodec */
     trp_default_obj, /* opencv */
-    trp_default_obj, /* vlfeat */
+    trp_default_obj, /* sift */
     trp_default_obj, /* suf */
     trp_default_obj, /* mgl */
     trp_default_obj, /* iup */
     trp_default_obj, /* regex */
     trp_fibo_width,
-    trp_default_obj  /* chess */
+    trp_default_obj, /* chess */
+    trp_default_obj, /* cairo */
+    trp_default_obj  /* mhd */
 };
 
-objfun_t _trp_height_fun[ TRP_MAX ] = {
+objfun_t _trp_height_fun[ TRP_MAX_T ] = {
     trp_default_obj,
     trp_default_obj,
     trp_default_obj,
@@ -460,16 +480,18 @@ objfun_t _trp_height_fun[ TRP_MAX ] = {
     trp_default_obj, /* avi */
     trp_default_obj, /* avcodec */
     trp_default_obj, /* opencv */
-    trp_default_obj, /* vlfeat */
+    trp_default_obj, /* sift */
     trp_default_obj, /* suf */
     trp_default_obj, /* mgl */
     trp_default_obj, /* iup */
     trp_default_obj, /* regex */
     trp_default_obj, /* fibo */
-    trp_default_obj  /* chess */
+    trp_default_obj, /* chess */
+    trp_default_obj, /* cairo */
+    trp_default_obj  /* mhd */
 };
 
-objfun_t _trp_nth_fun[ TRP_MAX ] = {
+objfun_t _trp_nth_fun[ TRP_MAX_T ] = {
     trp_default_nth, /* special */
     trp_raw_nth,
     trp_default_nth, /* char */
@@ -500,16 +522,18 @@ objfun_t _trp_nth_fun[ TRP_MAX ] = {
     trp_default_nth, /* avi */
     trp_default_nth, /* avcodec */
     trp_default_nth, /* opencv */
-    trp_default_nth, /* vlfeat */
+    trp_default_nth, /* sift */
     trp_default_nth, /* suf */
     trp_default_nth, /* mgl */
     trp_default_nth, /* iup */
     trp_default_nth, /* regex */
     trp_default_nth, /* fibo */
-    trp_default_nth  /* chess */
+    trp_default_nth, /* chess */
+    trp_default_nth, /* cairo */
+    trp_default_nth  /* mhd */
 };
 
-objfun_t _trp_sub_fun[ TRP_MAX ] = {
+objfun_t _trp_sub_fun[ TRP_MAX_T ] = {
     trp_special_sub,
     trp_default_sub, /* raw */
     trp_default_sub, /* char */
@@ -540,16 +564,18 @@ objfun_t _trp_sub_fun[ TRP_MAX ] = {
     trp_default_sub, /* avi */
     trp_default_sub, /* avcodec */
     trp_default_sub, /* opencv */
-    trp_default_sub, /* vlfeat */
+    trp_default_sub, /* sift */
     trp_default_sub, /* suf */
     trp_default_sub, /* mgl */
     trp_default_sub, /* iup */
     trp_default_sub, /* regex */
     trp_default_sub, /* fibo */
-    trp_default_sub  /* chess */
+    trp_default_sub, /* chess */
+    trp_default_sub, /* cairo */
+    trp_default_sub  /* mhd */
 };
 
-objfun_t _trp_cat_fun[ TRP_MAX ] = {
+objfun_t _trp_cat_fun[ TRP_MAX_T ] = {
     trp_list_cat,
     trp_raw_cat, /* raw */
     trp_char_cat, /* char */
@@ -580,16 +606,18 @@ objfun_t _trp_cat_fun[ TRP_MAX ] = {
     trp_default_cat, /* avi */
     trp_default_cat, /* avcodec */
     trp_default_cat, /* opencv */
-    trp_default_cat, /* vlfeat */
+    trp_default_cat, /* sift */
     trp_default_cat, /* suf */
     trp_default_cat, /* mgl */
     trp_default_cat, /* iup */
     trp_default_cat, /* regex */
     trp_default_cat, /* fibo */
-    trp_default_cat  /* chess */
+    trp_default_cat, /* chess */
+    trp_default_cat, /* cairo */
+    trp_default_cat  /* mhd */
 };
 
-uns8bfun_t _trp_in_fun[ TRP_MAX ] = {
+uns8bfun_t _trp_in_fun[ TRP_MAX_T ] = {
     trp_default_in, /* special */
     trp_default_in, /* raw */
     trp_default_in, /* char */
@@ -620,13 +648,15 @@ uns8bfun_t _trp_in_fun[ TRP_MAX ] = {
     trp_default_in, /* avi */
     trp_default_in, /* avcodec */
     trp_default_in, /* opencv */
-    trp_default_in, /* vlfeat */
+    trp_default_in, /* sift */
     trp_default_in, /* suf */
     trp_default_in, /* mgl */
     trp_default_in, /* iup */
     trp_default_in, /* regex */
     trp_default_in, /* fibo */
-    trp_default_in  /* chess */
+    trp_default_in, /* chess */
+    trp_default_in, /* cairo */
+    trp_default_in  /* mhd */
 };
 
 static trp_obj_t *trp_default_obj( trp_obj_t *obj )
@@ -853,7 +883,7 @@ trp_obj_t *trp_typev( trp_obj_t *obj )
 
     if ( trp_cast_uns32b( obj, &n ) )
         return UNDEF;
-    if ( n >= TRP_MAX )
+    if ( n >= TRP_MAX_T )
         return UNDEF;
     return trp_cord( _trp_tipo_descr[ n ] );
 }

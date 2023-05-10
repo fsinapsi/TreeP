@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,6 +49,19 @@ trp_obj_t *trp_vid_userdata( trp_obj_t *obj )
     for ( res = NIL, i = vid->userdata_cnt ; i ; )
         res = trp_cons( trp_cord( vid->userdata[ --i ] ), res );
     return res;
+}
+
+trp_obj_t *trp_vid_qpneg( trp_obj_t *obj )
+{
+    trp_vid_t *vid;
+    uns32b i;
+
+    if ( trp_vid_check( obj, &vid ) )
+        return UNDEF;
+    for ( i = 0 ; i < vid->cnt_vop ; )
+        if ( vid->qscale[ i++ ].qscale < 0 )
+            return TRP_TRUE;
+    return TRP_FALSE;
 }
 
 trp_obj_t *trp_vid_missing_vol( trp_obj_t *obj )
@@ -230,7 +243,8 @@ trp_obj_t *trp_vid_cnt_qscale_max( trp_obj_t *obj, trp_obj_t *ttyp, trp_obj_t *t
 trp_obj_t *trp_vid_cnt_qscale_avg( trp_obj_t *obj, trp_obj_t *ttyp, trp_obj_t *tosa, trp_obj_t *tosb )
 {
     trp_vid_t *vid;
-    uns32b res, typ, tosub_a, tosub_b;
+    sig32b res;
+    uns32b typ, tosub_a, tosub_b;
 
     if ( trp_vid_check( obj, &vid ) ||
          trp_cast_uns32b( ttyp, &typ ) ||

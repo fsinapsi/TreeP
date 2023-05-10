@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #define __trpcgraph__h
 
 uns8b trp_ag_init();
-trp_obj_t *trp_ag_dot2pix( trp_obj_t *s );
-trp_obj_t *trp_ag_dot2pix_transparent( trp_obj_t *s );
+trp_obj_t *trp_ag_dot2svg( trp_obj_t *s );
 
 #endif /* !__trpcgraph__h */

@@ -150,15 +150,23 @@
 (defun exif () <_kv "exif">)
 (defun quirc () <_kv "quirc">)
 (defun pix () <_kv "pix">)
+(defun webp () <_kv "webp">)
+(defun qoi () <_kv "qoi">)
+(defun openjp2 () <_kv "openjp2">)
+(defun jbig2 () <_kv "jbig2">)
+(defun rsvg () <_kv "rsvg">)
+(defun sail () <_kv "sail">)
+(defun sift () <_kv "sift">)
 (defun curl () <_kv "curl">)
 (defun sqlite3 () <_kv "sqlite3">)
 (defun wn () <_kv "wn">)
 (defun avcodec () <_kv "avcodec">)
 (defun cv () <_kv "cv">)
-(defun vlfeat () <_kv "vlfeat">)
 (defun mgl () <_kv "mgl">)
 (defun lept () <_kv "lept">)
 (defun cgraph () <_kv "cgraph">)
+(defun cairo () <_kv "cairo">)
+(defun microhttpd () <_kv "microhttpd">)
 (defun sdl () <_kv "sdl">)
 (defun chess () <_kv "chess">)
 
@@ -191,8 +199,9 @@
 (defun libs-list ()
         [ "gtk" "iup" "thread" "license" "gcrypt" "suf"
           "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
-          "pix" "curl" "sqlite3" "wn" "avcodec" "cv"
-          "vlfeat" "mgl" "lept" "cgraph" "sdl" "chess" ])
+          "pix" "webp" "qoi" "openjp2" "jbig2" "rsvg" "sail" "sift"
+          "curl" "sqlite3" "wn" "avcodec" "cv" "mgl"
+          "lept" "cgraph" "cairo" "microhttpd" "sdl" "chess" ])
 
 (defnet init-globals ()
         (set _kv (assoc))
@@ -357,6 +366,8 @@
                   (if mswin " -mms-bitfields" " -fPIC -I/usr/local/include -I/opt/local/include")
                   (if (gtk) (pkg-config-cflags "gtk+-2.0") "")
                   (if (iup) " -I/usr/local/include/iup" "")
+                  (if (cairo) (pkg-config-cflags "cairo") "")
+                  (if (cairo) (pkg-config-cflags "freetype2") "")
                   (if (avcodec)
                         (+ (pkg-config-cflags "libavformat") (pkg-config-cflags "libavcodec")
                            (pkg-config-cflags "libavutil") (pkg-config-cflags "libswscale")
@@ -382,8 +393,14 @@
                   (if (magic) (+ " -ltrpmagic" (pkg-config-libs "libmagic")) "")
                   (if (exif) (+ " -ltrpexif" (pkg-config-libs "libexif")) "")
                   (if (quirc) " -ltrpquirc -lqrencode" "")
-                  (if (pix) (+ " -ltrppix" (pkg-config-libs "libpng") " -ljpeg -lgif") "")
-                  (if (curl) (+ " -ltrpcurl" (pkg-config-libs "libcurl")) "" )
+                  (if (webp) (+ " -ltrpwebp" (pkg-config-libs "libwebp")) "")
+                  (if (qoi) " -ltrpqoi" "")
+                  (if (openjp2) (+ " -ltrpopenjp2" (pkg-config-libs "libopenjp2") (pkg-config-libs "lcms2")) "")
+                  (if (jbig2) (+ " -ltrpjbig2" (pkg-config-libs "jbig2dec")) "")
+                  (if (rsvg) (+ " -ltrprsvg" (pkg-config-libs "librsvg-2.0")) "")
+                  (if (sail) (+ " -ltrpsail" (pkg-config-libs "libsail")) "")
+                  (if (sift) " -ltrpsift -lgomp -lstdc++" "")
+                  (if (curl) (+ " -ltrpcurl" (pkg-config-libs "libcurl")) "")
                   (if (sqlite3) " -ltrpsqlite3 -lsqlite3" "")
                   (if (wn) " -ltrpwn" "")
                   (if (avcodec)
@@ -391,12 +408,14 @@
                            (pkg-config-libs "libavutil") (pkg-config-libs "libswscale")
                            (pkg-config-libs "libavfilter") ) "" )
                   (if (cv) (+ " -ltrpcv" (pkg-config-libs "opencv")) "")
-                  (if (vlfeat) " -ltrpvlfeat" "")
                   (if (mgl) " -ltrpmgl -lmgl" "")
                   (if (lept) (+ " -ltrplept" (pkg-config-libs "lept")) "")
                   (if (cgraph) (+ " -ltrpcgraph" (pkg-config-libs "libgvc")) "")
+                  (if (cairo) (+ " -ltrpcairo" (pkg-config-libs "cairo") (pkg-config-libs "freetype2") (pkg-config-libs "librsvg-2.0")) "")
+                  (if (microhttpd) (+ " -ltrpmicrohttpd" (pkg-config-libs "libmicrohttpd")) "")
                   (if (sdl) (+ " -ltrpsdl" (pkg-config-libs "sdl2")) "")
                   (if (chess) " -ltrpchess" "")
+                  (if (pix) (+ " -ltrppix" (pkg-config-libs "libpng") " -ljpeg -lgif") "")
                   " -ltrp -lgmp" (pkg-config-libs "bdw-gc") " -lz -lm"
                   (if mswin " -lregex" "")
                   (if _cstatic " -static" "") ))
@@ -437,25 +456,35 @@
                         (remove rcpath) )
                 (error "creation of icon failed") ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defnet dump-required-dlls (path)
         (deflocal ldd dllpath q a notfound s l m)
 
         (if _win32
         then    (set ldd "i686-w64-mingw32-ldd")
-                (set dllpath "/home/frank/wd/programming/mingw-w64/32/bin")
+                (set dllpath (homepathp "wd/programming/mingw-w64/32/bin/"))
         else    (set ldd "x86_64-w64-mingw32-ldd")
-                (set dllpath "/home/frank/wd/programming/mingw-w64/64/bin") )
+                (set dllpath (homepathp "wd/programming/mingw-w64/64/bin/")) )
         (set q (queue))
         (set a (assoc))
         (set notfound (assoc))
         (queue-put q path)
         (if (magic)
-        then    (fprint _log "cp /home/frank/wd/programming/mingw-w64/magic.mgc ." nl) )
+        then    (fprint _log "cp " (homepathp "wd/programming/mingw-w64/magic.mgc") " ." nl) )
         (if (cgraph)
-        then    (fprint _log "cp /home/frank/wd/programming/mingw-w64/config6 ." nl)
+        then    (fprint _log "cp " (homepathp "wd/programming/mingw-w64/config6") " ." nl)
                 (for m in [ "libgvplugin_core-6.dll" "libgvplugin_dot_layout-6.dll"
                             "libgvplugin_neato_layout-6.dll" "libgvplugin_pango-6.dll" ] do
-                        (dump-required-dlls-add m (+ dllpath "/" m) q a notfound) ))
+                        (dump-required-dlls-add m (+ dllpath m) q a notfound) ))
         (while (> (length q) 0) do
                 (set path (queue-get q))
                 (set s (system-stdout->str (+ ldd " " (pathquote path))))
@@ -466,7 +495,7 @@
                         (set m (utf8-tolower m))
                         (if (= <a m> undef)
                         then    (if (= l "not found")
-                                then    (set l (+ dllpath "/" m)) )
+                                then    (set l (+ dllpath m)) )
                                 (dump-required-dlls-add m l q a notfound) )))
         (fprint _log (if _win32 "i686-w64-mingw32-strip" "x86_64-w64-mingw32-strip") " -s *dll" nl)
         (set notfound (assoc->array notfound))
@@ -480,6 +509,16 @@
                 (set <a libname> true)
                 (queue-put q libpath)
         else    (set <notfound libname> true) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet analyze-calls (@unused)
         (deflocal q n i)
@@ -528,7 +567,8 @@
         (skip) )
 
 (defnet dependences ()
-        (if (or (gtk) (iup) (avcodec) (mgl) (lept) (cgraph) (cv) (vlfeat))
+        (if (or (webp) (qoi) (openjp2) (jbig2) (rsvg) (sail) (sift)
+                (gtk) (iup) (avcodec) (mgl) (lept) (cv) )
         then    (flag-true "pix") ))
 
 (defnet parse-pass ()
@@ -837,6 +877,20 @@
         then    (print-header (str-load-static "../trpquirc/trpquirc.h")) )
         (if (pix)
         then    (print-header (str-load-static "../trppix/trppix.h")) )
+        (if (webp)
+        then    (print-header (str-load-static "../trpwebp/trpwebp.h")) )
+        (if (qoi)
+        then    (print-header (str-load-static "../trpqoi/trpqoi.h")) )
+        (if (openjp2)
+        then    (print-header (str-load-static "../trpopenjp2/trpopenjp2.h")) )
+        (if (jbig2)
+        then    (print-header (str-load-static "../trpjbig2/trpjbig2.h")) )
+        (if (rsvg)
+        then    (print-header (str-load-static "../trprsvg/trprsvg.h")) )
+        (if (sail)
+        then    (print-header (str-load-static "../trpsail/trpsail.h")) )
+        (if (sift)
+        then    (print-header (str-load-static "../trpsift/trpsift.h")) )
         (if (curl)
         then    (print-header (str-load-static "../trpcurl/trpcurl.h")) )
         (if (sqlite3)
@@ -847,14 +901,16 @@
         then    (print-header (str-load-static "../trpavcodec/trpavcodec.h")) )
         (if (cv)
         then    (print-header (str-load-static "../trpcv/trpcv.h")) )
-        (if (vlfeat)
-        then    (print-header (str-load-static "../trpvlfeat/trpvlfeat.h")) )
         (if (mgl)
         then    (print-header (str-load-static "../trpmgl/trpmgl.h")) )
         (if (lept)
         then    (print-header (str-load-static "../trplept/trplept.h")) )
         (if (cgraph)
         then    (print-header (str-load-static "../trpcgraph/trpcgraph.h")) )
+        (if (cairo)
+        then    (print-header (str-load-static "../trpcairo/trpcairo.h")) )
+        (if (microhttpd)
+        then    (print-header (str-load-static "../trpmicrohttpd/trpmicrohttpd.h")) )
         (if (sdl)
         then    (print-header (str-load-static "../trpsdl/trpsdl.h")) )
         (if (chess)
@@ -962,7 +1018,14 @@
                      "  if(trp_gtk_init(&argc,&argv))exit(-1);\n" "" ) (if (iup)
                      "  if(trp_iup_init(&argc,&argv))exit(-1);\n" "" )
                      "  trp_init(argc,argv);" nl (if (pix)
-                     "  if(trp_pix_init())exit(-1);\n" "" ) (if (curl)
+                     "  if(trp_pix_init())exit(-1);\n" "" ) (if (webp)
+                     "  if(trp_webp_init())exit(-1);\n" "" ) (if (qoi)
+                     "  if(trp_qoi_init())exit(-1);\n" "" ) (if (openjp2)
+                     "  if(trp_openjp2_init())exit(-1);\n" "" ) (if (jbig2)
+                     "  if(trp_jbig2_init())exit(-1);\n" "" ) (if (rsvg)
+                     "  if(trp_rsvg_init())exit(-1);\n" "" ) (if (sail)
+                     "  if(trp_sail_init())exit(-1);\n" "" ) (if (sift)
+                     "  if(trp_sift_init())exit(-1);\n" "" ) (if (curl)
                      "  if(trp_curl_init())exit(-1);\n" "" ) (if (thread)
                      "  if(trp_thread_init())exit(-1);\n" "" ) (if (wn)
                      "  if(trp_wn_init())exit(-1);\n" "" ) (if (suf)
@@ -976,11 +1039,12 @@
                      "  if(trp_exif_init())exit(-1);\n" "" ) (if (sqlite3)
                      "  if(trp_sqlite3_init())exit(-1);\n" "" ) (if (avcodec)
                      "  if(trp_av_init())exit(-1);\n" "" ) (if (cv)
-                     "  if(trp_cv_init())exit(-1);\n" "" ) (if (vlfeat)
-                     "  if(trp_vl_init())exit(-1);\n" "" ) (if (mgl)
+                     "  if(trp_cv_init())exit(-1);\n" "" ) (if (mgl)
                      "  if(trp_mgl_init())exit(-1);\n" "" ) (if (lept)
                      "  if(trp_lept_init())exit(-1);\n" "" ) (if (cgraph)
-                     "  if(trp_ag_init())exit(-1);\n" "" ) (if (sdl)
+                     "  if(trp_ag_init())exit(-1);\n" "" ) (if (cairo)
+                     "  if(trp_cairo_init())exit(-1);\n" "" ) (if (microhttpd)
+                     "  if(trp_mhd_init())exit(-1);\n" "" ) (if (sdl)
                      "  if(trp_sdl_init())exit(-1);\n" "" ) (if (chess)
                      "  if(trp_chess_init())exit(-1);\n" "" )
                       )
@@ -1022,7 +1086,8 @@
                      "void trp_compiler_exit()" nl
                      "{" nl (if (iup)
                      "  trp_iup_quit();\n" "" ) (if (avcodec)
-                     "  trp_av_quit();\n" "" ) (if (gcrypt)
+                     "  trp_av_quit();\n" "" ) (if (cairo)
+                     "  trp_cairo_quit();\n" "" ) (if (gcrypt)
                      "  trp_gcry_quit();\n" "" ) (if (sqlite3)
                      "  trp_sqlite3_quit();\n" "" ) (if (pix)
                      "  trp_pix_quit();\n" "" ) (if (curl)

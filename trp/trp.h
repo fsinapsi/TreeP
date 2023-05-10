@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -81,6 +81,7 @@
 #include <regex.h>
 #include <gmp.h>
 #ifndef MINGW
+#include <sys/wait.h>
 #include <sys/socket.h>
 #include <poll.h>
 #else
@@ -148,14 +149,16 @@ enum {
     TRP_AVI,
     TRP_AVCODEC,
     TRP_OPENCV,
-    TRP_VLFEAT,
+    TRP_SIFT,
     TRP_SUF,
     TRP_MGL,
     TRP_IUP,
     TRP_REGEX,
     TRP_FIBO,
     TRP_CHESS,
-    TRP_MAX /* lasciarlo sempre per ultimo */
+    TRP_CAIRO,
+    TRP_MHD,
+    TRP_MAX_T /* lasciarlo sempre per ultimo */
 };
 
 #define UNDEF        trp_undef()
@@ -185,6 +188,11 @@ enum {
 #define trp_gc_free(p)
 #endif
 
+#define TRP_MAX(a,b) (((a)>=(b))?(a):(b))
+#define TRP_MIN(a,b) (((a)<=(b))?(a):(b))
+#define TRP_ABS(a) (((a)>=0.0)?(a):-(a))
+#define TRP_ABSDIFF(a,b) (((a)>=(b))?((a)-(b)):((b)-(a)))
+
 typedef struct {
     uns8b flags;
     FILE *fp;
@@ -199,7 +207,7 @@ typedef struct {
 
 typedef void (*voidfun_t)();
 typedef int (*intfun_t)();
-typedef double (*doublefun_t)();
+typedef flt64b (*doublefun_t)();
 typedef uns8b (*uns8bfun_t)();
 typedef uns32b (*uns32bfun_t)();
 typedef trp_obj_t * (*objfun_t)();
@@ -399,8 +407,10 @@ uns8b trp_cast_sig64b( trp_obj_t *obj, sig64b *val );
 uns8b trp_cast_sig64b_range( trp_obj_t *obj, sig64b *val, sig64b min, sig64b max );
 uns8b trp_cast_sig64b_rint( trp_obj_t *obj, sig64b *val );
 uns8b trp_cast_sig64b_rint_range( trp_obj_t *obj, sig64b *val, sig64b min, sig64b max );
-uns8b trp_cast_double( trp_obj_t *obj, double *val );
-uns8b trp_cast_double_range( trp_obj_t *obj, double *val, double min, double max );
+uns8b trp_cast_flt64b( trp_obj_t *obj, flt64b *val );
+uns8b trp_cast_flt64b_range( trp_obj_t *obj, flt64b *val, flt64b min, flt64b max );
+#define trp_cast_double(a,b) trp_cast_flt64b(a,b)
+#define trp_cast_double_range(a,b,c,d) trp_cast_flt64b_range(a,b,c,d)
 
 void trp_arg_init( int argc, char *argv[] );
 trp_obj_t *trp_argc();
@@ -418,7 +428,7 @@ trp_obj_t *trp_in_func( trp_obj_t *obj, trp_obj_t *seq, trp_obj_t *interv );
 uns8b trp_in_test( trp_obj_t *obj, trp_obj_t *seq, trp_obj_t *interv, trp_obj_t **pos, trp_obj_t *nth );
 trp_obj_t *trp_reverse( trp_obj_t *obj );
 trp_obj_t *trp_typeof( trp_obj_t *obj );
-#define trp_typec() trp_sig64(TRP_MAX)
+#define trp_typec() trp_sig64(TRP_MAX_T)
 trp_obj_t *trp_typev( trp_obj_t *obj );
 trp_obj_t *trp_integerp( trp_obj_t *obj );
 trp_obj_t *trp_rationalp( trp_obj_t *obj );
@@ -531,6 +541,8 @@ trp_obj_t *trp_ipv4_address();
 trp_obj_t *trp_system( trp_obj_t *obj, ... );
 trp_obj_t *trp_getpid();
 trp_obj_t *trp_fork();
+trp_obj_t *trp_ratio2uns64b( trp_obj_t *obj );
+void trp_print_rusage_diff( char *msg );
 
 uns8b trp_special_print( trp_print_t *p, trp_special_t *obj );
 uns32b trp_special_size( trp_special_t *obj );
@@ -674,7 +686,7 @@ uns8b trp_math_set_seed( trp_obj_t *obj );
 trp_obj_t *trp_math_get_seed();
 trp_obj_t *trp_math_gmp_version();
 trp_obj_t *trp_sig64( sig64b val );
-trp_obj_t *trp_double( double val );
+trp_obj_t *trp_double( flt64b val );
 trp_obj_t *trp_complex( trp_obj_t *re, trp_obj_t *im );
 trp_obj_t *trp_zero();
 trp_obj_t *trp_uno();
@@ -722,7 +734,6 @@ trp_obj_t *trp_math_acos( trp_obj_t *n );
 trp_obj_t *trp_math_tan( trp_obj_t *n );
 trp_obj_t *trp_math_sin( trp_obj_t *n );
 trp_obj_t *trp_math_cos( trp_obj_t *n );
-trp_obj_t *trp_sift_analyze( trp_obj_t *m );
 
 uns8b trp_list_print( trp_print_t *p, trp_cons_t *obj );
 uns32b trp_list_size( trp_cons_t *obj );

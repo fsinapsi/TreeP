@@ -9,7 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun sqlite3-structure (db count)
-        (ag-dot2pix (sqlite3-structure-dot db count)) )
+        (ag-dot2svg (sqlite3-structure-dot db count)) )
 
 (defun sqlite3-structure-dot (db count) net sqlite3-structure-dot)
 (defnet sqlite3-structure-dot (db count @s)

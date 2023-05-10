@@ -1,0 +1,50 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet expr-cairo (func)
+        (deflocal i)
+
+        (lmatch remove func "cairo-")
+        (for i in (expr-cairo-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-basic <i 1> <i 2> (+ "trp_cairo_" (dash->underscore func) "(") ")")
+        (flag-true "cairo") )
+
+(defun expr-cairo-table ()
+        [ [ "svg-surface-create-for-stream"     2 2 ]
+          [ "svg-surface-create-from-svg"       1 1 ]
+          [ "pdf-surface-create"                3 3 ]
+          [ "flush-and-close-raw"               1 1 ]
+          [ "flush-and-close-string"            1 1 ]
+          [ "get-matrix"                        1 1 ]
+          [ "user-to-device"                    3 3 ]
+          [ "user-to-device-distance"           3 3 ]
+          [ "device-to-user"                    3 3 ]
+          [ "device-to-user-distance"           3 3 ]
+          [ "get-ft-family-name"                1 1 ]
+          [ "get-ft-style-name"                 1 1 ]
+          [ "get-ft-postscript-name"            1 1 ]
+          [ "get-ft-available-chars"            1 1 ]
+          [ "toy-font-face-get-family"          1 1 ]
+          [ "font-extents"                      1 1 ]
+          [ "text-extents"                      2 undef ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

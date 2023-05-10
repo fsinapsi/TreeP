@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 
 uns8b trp_cv_init();
 trp_obj_t *trp_cv_version();
-trp_obj_t *trp_cv_pix_load( trp_obj_t *path );
 uns8b trp_cv_pix_gray( trp_obj_t *pix );
 uns8b trp_cv_pix_smooth( trp_obj_t *pix, trp_obj_t *type, trp_obj_t *size1, trp_obj_t *size2, trp_obj_t *sigma1, trp_obj_t *sigma2 );
 trp_obj_t *trp_cv_pix_rotate( trp_obj_t *pix, trp_obj_t *angle, trp_obj_t *flags );

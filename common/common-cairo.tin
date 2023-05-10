@@ -1,0 +1,122 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet cairo-set-line-width-and-color (cr line-width color)
+        (cairo-set-line-width cr (if (= line-width undef) 1 line-width))
+        (cairo-set-source-rgba cr (if (= color undef) (black) color)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet cairo-draw-circle (cr x y r)
+        ; equivale a
+        ; (cairo-draw-ellipse cr x y x y r)
+        (cairo-arc cr x y r 0 (deg->rad 360)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;
+;;; (x1,y1) e (x2,y2) sono i fuochi
+;;; a è il semiasse maggiore
+;;;
+
+(defnet cairo-draw-ellipse (cr x1 y1 x2 y2 a)
+        (deflocal b ang m dx dy i)
+
+        ;(cairo-draw-circle cr x1 y1 2 1 (green))
+        ;(cairo-draw-circle cr x2 y2 2 1 (green))
+
+        (set dx (- x2 x1))
+        (set dy (- y2 y1))
+
+        ; il semiasse maggiore deve essere più grande della metà
+        ; della distanza tra i due fuochi
+
+        (set i (- (* a a) (/ (+ (* dx dx) (* dy dy)) 4)))
+        (> i 0)
+
+        ; b è il semiasse minore
+        (set b (sqrt i))
+
+        ; angolo di rotazione
+        (set ang (if (= dx 0) (deg->rad 90) (atan (/ dy dx))))
+
+        (set m (cairo-get-matrix cr))
+        (cairo-identity-matrix cr) ; (cairo-set-matrix cr 1 0 0 0 1 0)
+        (cairo-rotate cr ang)
+        (cairo-scale cr a b)
+        (set i (cairo-device-to-user cr (/ (+ x1 x2) 2) (/ (+ y1 y2) 2)))
+        (cairo-set-matrix cr <m 0 0> <m 0 1> <m 0 2> <m 1 0> <m 1 1> <m 1 2>)
+        (cairo-rotate cr ang)
+        (cairo-scale cr a b)
+        (cairo-arc cr (car i) (cdr i) 1 0 (deg->rad 360))
+        (cairo-set-matrix cr <m 0 0> <m 0 1> <m 0 2> <m 1 0> <m 1 1> <m 1 2>) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun cairo-draw-arrow-hook-ang () (deg->rad 30))
+
+(defnet cairo-draw-arrow (cr x y ang len)
+        (deflocal x1 y1 x2 y2 x3 y3)
+
+        (set ang (deg->rad ang))
+
+        (set x1 (+ x (* len (cos ang))))
+        (set y1 (+ y (* len (sin ang))))
+
+        ; la lunghezza del "gancio" è 1/5 di quella della freccia
+        (set len (/ len 5))
+
+        (set x2 (- x1 (* len (cos (+ ang (cairo-draw-arrow-hook-ang))))))
+        (set y2 (- y1 (* len (sin (+ ang (cairo-draw-arrow-hook-ang))))))
+
+        (set x3 (- x1 (* len (cos (- ang (cairo-draw-arrow-hook-ang))))))
+        (set y3 (- y1 (* len (sin (- ang (cairo-draw-arrow-hook-ang))))))
+
+        (cairo-move-to cr x y)
+        (cairo-line-to cr x1 y1)
+        (cairo-move-to cr x2 y2)
+        (cairo-line-to cr x1 y1)
+        (cairo-move-to cr x3 y3)
+        (cairo-line-to cr x1 y1) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

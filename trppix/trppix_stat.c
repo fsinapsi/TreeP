@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -161,37 +161,41 @@ static uns8b trp_pix_trim_low( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *thre
         if ( x1 > x2 )
             return 1;
         for ( c = map + x1, i = y1 ; i <= y2 ; i++, c += w )
-            if ( trp_pix_trim_cond( c->red, r, thr ) ||
-                 trp_pix_trim_cond( c->green, g, thr ) ||
-                 trp_pix_trim_cond( c->blue, b, thr ) )
-                break;
+            if ( c->alpha )
+                if ( trp_pix_trim_cond( c->red, r, thr ) ||
+                     trp_pix_trim_cond( c->green, g, thr ) ||
+                     trp_pix_trim_cond( c->blue, b, thr ) )
+                    break;
         if ( i <= y2 )
             break;
     }
     for ( ; x2 > x1 ; x2-- ) {
         for ( c = map + x2, i = y1 ; i <= y2 ; i++, c += w )
-            if ( trp_pix_trim_cond( c->red, r, thr ) ||
-                 trp_pix_trim_cond( c->green, g, thr ) ||
-                 trp_pix_trim_cond( c->blue, b, thr ) )
-                break;
+            if ( c->alpha )
+                if ( trp_pix_trim_cond( c->red, r, thr ) ||
+                     trp_pix_trim_cond( c->green, g, thr ) ||
+                     trp_pix_trim_cond( c->blue, b, thr ) )
+                    break;
         if ( i <= y2 )
             break;
     }
     for ( ; ; y1++ ) {
         for ( c = map + x1 + w * y1, i = x1 ; i <= x2 ; i++, c++ )
-            if ( trp_pix_trim_cond( c->red, r, thr ) ||
-                 trp_pix_trim_cond( c->green, g, thr ) ||
-                 trp_pix_trim_cond( c->blue, b, thr ) )
-                break;
+            if ( c->alpha )
+                if ( trp_pix_trim_cond( c->red, r, thr ) ||
+                     trp_pix_trim_cond( c->green, g, thr ) ||
+                     trp_pix_trim_cond( c->blue, b, thr ) )
+                    break;
         if ( i <= x2 )
             break;
     }
     for ( ; y2 > y1 ; y2-- ) {
         for ( c = map + x1 + w * y2, i = x1 ; i <= x2 ; i++, c++ )
-            if ( trp_pix_trim_cond( c->red, r, thr ) ||
-                 trp_pix_trim_cond( c->green, g, thr ) ||
-                 trp_pix_trim_cond( c->blue, b, thr ) )
-                break;
+            if ( c->alpha )
+                if ( trp_pix_trim_cond( c->red, r, thr ) ||
+                     trp_pix_trim_cond( c->green, g, thr ) ||
+                     trp_pix_trim_cond( c->blue, b, thr ) )
+                    break;
         if ( i <= x2 )
             break;
     }

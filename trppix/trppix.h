@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ trp_obj_t *trp_pix_color_green( trp_obj_t *obj );
 trp_obj_t *trp_pix_color_blue( trp_obj_t *obj );
 trp_obj_t *trp_pix_color_alpha( trp_obj_t *obj );
 trp_obj_t *trp_pix_create( trp_obj_t *w, trp_obj_t *h );
-trp_obj_t *trp_pix_info( trp_obj_t *path );
+trp_obj_t *trp_pix_loader( trp_obj_t *pix );
 trp_obj_t *trp_pix_load( trp_obj_t *path );
 trp_obj_t *trp_pix_load_multiple( trp_obj_t *path );
 trp_obj_t *trp_pix_load_memory( trp_obj_t *raw, trp_obj_t *cnt );
@@ -35,19 +35,22 @@ trp_obj_t *trp_pix_load_memory_ext( trp_obj_t *raw, trp_obj_t *w, trp_obj_t *h, 
 trp_obj_t *trp_pix_load_thumbnail( trp_obj_t *path, trp_obj_t *w, trp_obj_t *h );
 trp_obj_t *trp_pix_load_thumbnail_memory( trp_obj_t *raw, trp_obj_t *w, trp_obj_t *h );
 trp_obj_t *trp_pix_load_thumbnail_memory_ext( trp_obj_t *raw, trp_obj_t *sw, trp_obj_t *sh, trp_obj_t *w, trp_obj_t *h );
-trp_obj_t *trp_pix_image_format( trp_obj_t *obj );
 uns8b trp_pix_save_png( trp_obj_t *pix, trp_obj_t *path );
 uns8b trp_pix_save_jpg( trp_obj_t *pix, trp_obj_t *path, trp_obj_t *quality );
 trp_obj_t *trp_pix_save_jpg_memory( trp_obj_t *pix, trp_obj_t *quality );
 uns8b trp_pix_save_pnm( trp_obj_t *pix, trp_obj_t *path );
 uns8b trp_pix_save_pnm_noalpha( trp_obj_t *pix, trp_obj_t *path );
 uns8b trp_pix_save_gif( trp_obj_t *pix, trp_obj_t *path, trp_obj_t *transp, trp_obj_t *delay );
+uns8b trp_pix_save_tga( trp_obj_t *pix, trp_obj_t *path );
+uns8b trp_pix_save_xpm( trp_obj_t *pix, trp_obj_t *path );
 uns8b trp_pix_save_yuv4mpeg2_init( trp_obj_t *width, trp_obj_t *height, trp_obj_t *framerate, trp_obj_t *aspect_ratio, trp_obj_t *f );
 uns8b trp_pix_save_yuv4mpeg2( trp_obj_t *pix, trp_obj_t *f );
+uns8b trp_pix_scale_test( trp_obj_t *pix_i, trp_obj_t *pix_o );
+trp_obj_t *trp_pix_scale( trp_obj_t *pix, trp_obj_t *w, trp_obj_t *h );
+uns8b trp_pix_rotate_test( trp_obj_t *pix, trp_obj_t *angle );
+trp_obj_t *trp_pix_rotate( trp_obj_t *pix, trp_obj_t *angle );
 uns8b trp_pix_set_color( trp_obj_t *pix, trp_obj_t *color );
 trp_obj_t *trp_pix_get_color( trp_obj_t *pix );
-trp_obj_t *trp_pix_get_luminance( trp_obj_t *pix );
-trp_obj_t *trp_pix_get_contrast( trp_obj_t *pix );
 uns8b trp_pix_draw_pix( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t *src );
 uns8b trp_pix_draw_pix_alpha( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t *src );
 uns8b trp_pix_draw_pix_odd_lines( trp_obj_t *dst, trp_obj_t *src );
@@ -57,10 +60,14 @@ uns8b trp_pix_draw_line( trp_obj_t *dst, trp_obj_t *x1, trp_obj_t *y1, trp_obj_t
 uns8b trp_pix_draw_dashed_line( trp_obj_t *dst, trp_obj_t *x1, trp_obj_t *y1, trp_obj_t *x2, trp_obj_t *y2,  trp_obj_t *l1, trp_obj_t *l2, trp_obj_t *color );
 uns8b trp_pix_draw_circle( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t *rad, trp_obj_t *color );
 uns8b trp_pix_draw_grid( trp_obj_t *dst, trp_obj_t *size, trp_obj_t *color );
+trp_obj_t *trp_pix_has_alpha( trp_obj_t *pix );
 trp_obj_t *trp_pix_grayp( trp_obj_t *pix );
 trp_obj_t *trp_pix_bwp( trp_obj_t *pix );
-trp_obj_t *trp_pix_point( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y );
 trp_obj_t *trp_pix_color_count( trp_obj_t *pix, trp_obj_t *color );
+trp_obj_t *trp_pix_get_luminance( trp_obj_t *pix );
+trp_obj_t *trp_pix_get_contrast( trp_obj_t *pix );
+trp_obj_t *trp_pix_gray_histogram( trp_obj_t *pix );
+trp_obj_t *trp_pix_point( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y );
 trp_obj_t *trp_pix_top_field( trp_obj_t *pix );
 trp_obj_t *trp_pix_bottom_field( trp_obj_t *pix );
 uns8b trp_pix_top_field_test( trp_obj_t *pix );
@@ -76,21 +83,17 @@ uns8b trp_pix_linear( trp_obj_t *pix, trp_obj_t *min1, trp_obj_t *max1, trp_obj_
 uns8b trp_pix_negative( trp_obj_t *pix );
 uns8b trp_pix_transparent( trp_obj_t *pix, trp_obj_t *color );
 uns8b trp_pix_clralpha( trp_obj_t *pix, trp_obj_t *color );
+uns8b trp_pix_setalpha( trp_obj_t *pix, trp_obj_t *pix_alpha );
 uns8b trp_pix_hflip( trp_obj_t *pix );
 uns8b trp_pix_vflip( trp_obj_t *pix );
-uns8b trp_pix_rotate_test( trp_obj_t *pix, trp_obj_t *angle );
-trp_obj_t *trp_pix_rotate( trp_obj_t *pix, trp_obj_t *angle );
+uns8b trp_pix_snap_color( trp_obj_t *pix, trp_obj_t *src_color, trp_obj_t *thres, trp_obj_t *dst_color );
 uns8b trp_pix_brightness( trp_obj_t *pix, trp_obj_t *val );
 uns8b trp_pix_brightness_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, trp_obj_t *val_b );
 uns8b trp_pix_contrast( trp_obj_t *pix, trp_obj_t *val );
 uns8b trp_pix_contrast_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, trp_obj_t *val_b );
 uns8b trp_pix_gamma( trp_obj_t *pix, trp_obj_t *val );
 uns8b trp_pix_gamma_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, trp_obj_t *val_b );
-uns8b trp_pix_snap_color( trp_obj_t *pix,  trp_obj_t *src_color,  trp_obj_t *thres, trp_obj_t *dst_color );
-uns8b trp_pix_scale_test( trp_obj_t *pix_i, trp_obj_t *pix_o );
-trp_obj_t *trp_pix_scale( trp_obj_t *pix, trp_obj_t *w, trp_obj_t *h );
 trp_obj_t *trp_pix_mse( trp_obj_t *pix1, trp_obj_t *pix2 );
-trp_obj_t *trp_pix_gray_histogram( trp_obj_t *pix );
 trp_obj_t *trp_pix_text( trp_obj_t *s, ... );
 trp_obj_t *trp_pix_ssim( trp_obj_t *pix1, trp_obj_t *pix2, trp_obj_t *weights );
 trp_obj_t *trp_pix_ssim_linear( trp_obj_t *pix1, trp_obj_t *pix2 );

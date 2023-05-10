@@ -1,3 +1,11 @@
+N.B. (10-05-2023)
+Questo file e' obsoleto, lo lascio perche' alcune indicazioni
+possono essere ancora utili, purche' si tenga presente che nel
+tempo le librerie necessarie sono cambiate.
+In caso di problemi, potete contattarmi direttamente per email
+(l'indirizzo e' alla fine di questo file).
+
+
 
 Installazione veloce
 --------------------
@@ -143,12 +151,10 @@ seguenti librerie (e relativi pacchetti di sviluppo):
 - GTK2
 - SQLite3
 - cURL (libcurl)
-- OpenCV
 - libleptonica
 - libmagic (pacchetto "file")
 - libid3tag-0.15.1b
 - libexif
-- libmysqlclient
 - libavcodec
 
 Il pacchetto zlib e' molto diffuso, e comunque, se dovesse mancare,

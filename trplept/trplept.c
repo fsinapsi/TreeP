@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,18 +24,21 @@ static PIX *trp_lept_pix2PIX( trp_obj_t *pix );
 static PIX *trp_lept_pix2PIX_8bpp( trp_obj_t *pix );
 static PIX *trp_lept_pix2PIX_1bpp( trp_obj_t *pix );
 static trp_obj_t *trp_lept_PIX2pix( PIX *pixs );
-static void trp_lept_copy_PIX2pix( PIX *pixs, trp_obj_t *pix );
+static uns8b trp_lept_copy_PIX2pix( PIX *pixs, trp_obj_t *pix );
+static uns8b trp_lept_copy_PIX2pix_low( PIX *pixs, uns32b w, uns32b h, uns8b *data );
+static uns8b trp_pix_load_lept_low( PIX *pixs, uns32b *w, uns32b *h, uns8b **data );
 static uns8b trp_pix_load_lept( uns8b *cpath, uns32b *w, uns32b *h, uns8b **data );
+static uns8b trp_pix_load_lept_memory( uns8b *idata, uns32b isize, uns32b *w, uns32b *h, uns8b **data );
 
 #define TRP_PI 3.1415926535897932384626433832795029L
 
 uns8b trp_lept_init()
 {
     extern uns8bfun_t _trp_pix_load_lept;
-    extern objfun_t _trp_pix_rotate_lept;
+    extern uns8bfun_t _trp_pix_load_lept_memory;
 
     _trp_pix_load_lept = trp_pix_load_lept;
-    _trp_pix_rotate_lept = trp_lept_pix_rotate;
+    _trp_pix_load_lept_memory = trp_pix_load_lept_memory;
     setMsgSeverity( L_SEVERITY_NONE );
     return 0;
 }
@@ -72,10 +75,10 @@ static PIX *trp_lept_pix2PIX( trp_obj_t *pix )
     h = ((trp_pix_t *)pix)->h;
     if ( ( pixs = pixCreateNoInit( w, h, 32 ) ) == NULL )
         return NULL;
-    d = (trp_pix_color_t *)( pixs->data );
+    d = (trp_pix_color_t *)( pixGetData( pixs ) );
     for ( i = w * h ; ; ) {
         i--;
-        d[ i ].red = ~( c[ i ].alpha );
+        d[ i ].red = c[ i ].alpha;
         d[ i ].green = c[ i ].blue;
         d[ i ].blue = c[ i ].green;
         d[ i ].alpha = c[ i ].red;
@@ -101,7 +104,7 @@ static PIX *trp_lept_pix2PIX_8bpp( trp_obj_t *pix )
     if ( ( pixs = pixCreateNoInit( w, h, 8 ) ) == NULL )
         return NULL;
     for ( i = 0 ; i < h ; i++ ) {
-        d = pixs->data + pixs->wpl * i;
+        d = pixGetData( pixs ) + pixGetWpl( pixs ) * i;
         for ( j = 0, buf = 0, cnt = 32 ; j < w ; j++, c++ ) {
             if ( cnt == 0 ) {
                 *d++ = buf;
@@ -109,9 +112,9 @@ static PIX *trp_lept_pix2PIX_8bpp( trp_obj_t *pix )
                 cnt = 32;
             }
             cnt -= 8;
-            buf |= ( ( ( (uns32b)( c->red ) * 299 +
-                         (uns32b)( c->green ) * 587 +
-                         (uns32b)( c->blue ) * 114 + 500 ) / 1000 ) << cnt );
+            buf |= ( ( ( (uns32b)( c->red ) * TRP_PIX_WEIGHT_RED +
+                         (uns32b)( c->green ) * TRP_PIX_WEIGHT_GREEN +
+                         (uns32b)( c->blue ) * TRP_PIX_WEIGHT_BLUE + 500 ) / 1000 ) << cnt );
         }
         *d = buf;
     }
@@ -134,15 +137,15 @@ static PIX *trp_lept_pix2PIX_1bpp( trp_obj_t *pix )
     if ( ( pixs = pixCreateNoInit( w, h, 1 ) ) == NULL )
         return NULL;
     for ( i = 0 ; i < h ; i++ ) {
-        d = pixs->data + pixs->wpl * i;
+        d = pixGetData( pixs ) + pixGetWpl( pixs ) * i;
         for ( j = 0, buf = cnt = 0 ; j < w ; j++, c++, ++cnt ) {
             if ( cnt == 32 ) {
                 *d++ = buf;
                 buf = cnt = 0;
             }
-            if ( ( ( (uns32b)( c->red ) * 299 +
-                     (uns32b)( c->green ) * 587 +
-                     (uns32b)( c->blue ) * 114 + 500 ) / 1000 ) < 128 )
+            if ( ( ( (uns32b)( c->red ) * TRP_PIX_WEIGHT_RED +
+                     (uns32b)( c->green ) * TRP_PIX_WEIGHT_GREEN +
+                     (uns32b)( c->blue ) * TRP_PIX_WEIGHT_BLUE + 500 ) / 1000 ) < 128 )
                 buf |= ( 0x80000000 >> cnt );
         }
         *d = buf;
@@ -152,268 +155,86 @@ static PIX *trp_lept_pix2PIX_1bpp( trp_obj_t *pix )
 
 static trp_obj_t *trp_lept_PIX2pix( PIX *pixs )
 {
-    trp_obj_t *res = trp_pix_create_basic( pixs->w, pixs->h );
+    trp_obj_t *res = trp_pix_create_basic( pixGetWidth( pixs ), pixGetHeight( pixs ) );
 
     if ( res != UNDEF )
-        trp_lept_copy_PIX2pix( pixs, res );
+        if ( trp_lept_copy_PIX2pix( pixs, res ) ) {
+            (void)trp_pix_close( (trp_pix_t *)res );
+            res = UNDEF;
+        }
     return res;
 }
 
-static void trp_lept_copy_PIX2pix( PIX *pixs, trp_obj_t *pix )
+static uns8b trp_lept_copy_PIX2pix( PIX *pixs, trp_obj_t *pix )
 {
-    trp_pix_color_t *c = ((trp_pix_t *)pix)->map.c;
-    uns32b w = ((trp_pix_t *)pix)->w, h = ((trp_pix_t *)pix)->h;
-
-    switch ( pixs->d ) {
-    case 1:
-        {
-            uns32b i, j, buf, cnt;
-            uns32b *d;
-
-            for ( i = 0 ; i < h ; i++ ) {
-                d = pixs->data + pixs->wpl * i;
-                for ( j = 0, cnt = 32 ; j < w ; j++, c++, buf <<= 1, ++cnt ) {
-                    if ( cnt == 32 ) {
-                        buf = *d++;
-                        cnt = 0;
-                    }
-                    c->red = c->green = c->blue = ( buf & 0x80000000 ) ? 0 : 0xff;
-                    c->alpha = 0xff;
-                }
-            }
-        }
-        break;
-    case 8:
-        {
-            uns32b i, j, buf, cnt;
-            uns32b *d;
-
-            for ( i = 0 ; i < h ; i++ ) {
-                d = pixs->data + pixs->wpl * i;
-                for ( j = 0, cnt = 4 ; j < w ; j++, c++, buf <<= 8, ++cnt ) {
-                    if ( cnt == 4 ) {
-                        buf = *d++;
-                        cnt = 0;
-                    }
-                    c->red = c->green = c->blue = (uns8b)( buf >> 24 );
-                    c->alpha = 0xff;
-                }
-            }
-        }
-        break;
-    case 32:
-        {
-            uns32b i;
-            trp_pix_color_t *d = (trp_pix_color_t *)( pixs->data );
-
-            for ( i = w * h ; ; ) {
-                i--;
-                c[ i ].red = d[ i ].alpha;
-                c[ i ].green = d[ i ].blue;
-                c[ i ].blue = d[ i ].green;
-                c[ i ].alpha = ~( d[ i ].red );
-                if ( i == 0 )
-                    break;
-            }
-        }
-        break;
-    }
+    return trp_lept_copy_PIX2pix_low( pixs, ((trp_pix_t *)pix)->w, ((trp_pix_t *)pix)->h, ((trp_pix_t *)pix)->map.p );
 }
 
-static uns8b trp_pix_load_lept( uns8b *cpath, uns32b *w, uns32b *h, uns8b **data )
+static uns8b trp_lept_copy_PIX2pix_low( PIX *pixs, uns32b w, uns32b h, uns8b *data )
 {
-    PIX *pixs;
-    trp_pix_color_t *c;
+    trp_pix_color_t *c = (trp_pix_color_t *)data, *d;
+    uns32b i;
+    uns8b tofree = 0, m;
 
-    if ( ( pixs = pixRead( cpath ) ) == NULL )
+    if ( pixGetDepth( pixs ) != 32 ) {
+        PIX *pix32 = pixConvertTo32( pixs );
+        if ( pix32 == NULL )
+            return 1;
+        pixs = pix32;
+        tofree = 1;
+    }
+    d = (trp_pix_color_t *)( pixGetData( pixs ) );
+    m = ( pixGetSpp( pixs ) == 4 ) ? 0 : 0xff;
+    for ( i = w * h ; ; ) {
+        i--;
+        c[ i ].red = d[ i ].alpha;
+        c[ i ].green = d[ i ].blue;
+        c[ i ].blue = d[ i ].green;
+        c[ i ].alpha = d[ i ].red | m;
+        if ( i == 0 )
+            break;
+    }
+    if ( tofree )
+        pixDestroy( &pixs );
+    return 0;
+}
+
+static uns8b trp_pix_load_lept_low( PIX *pixs, uns32b *w, uns32b *h, uns8b **data )
+{
+    uns32b d;
+
+    if ( pixs == NULL )
         return 1;
-    *w = pixs->w;
-    *h = pixs->h;
+    pixGetDimensions( pixs, w, h, &d );
+    if ( d != 32 ) {
+        PIX *pix32 = pixConvertTo32( pixs );
+
+        if ( pix32 ) {
+            pixDestroy( &pixs );
+            pixs = pix32;
+        }
+    }
     if ( ( *data = malloc( ( *w * *h ) << 2 ) ) == NULL ) {
         pixDestroy( &pixs );
         return 1;
     }
-    c = (trp_pix_color_t *)( *data );
-    switch ( pixs->d ) {
-    case 1:
-        {
-            uns32b i, j, buf, cnt;
-            uns32b *d;
-
-            for ( i = 0 ; i < *h ; i++ ) {
-                d = pixs->data + pixs->wpl * i;
-                for ( j = 0, cnt = 32 ; j < *w ; j++, c++, buf <<= 1, ++cnt ) {
-                    if ( cnt == 32 ) {
-                        buf = *d++;
-                        cnt = 0;
-                    }
-                    c->red = c->green = c->blue = ( buf & 0x80000000 ) ? 0 : 0xff;
-                    c->alpha = 0xff;
-                }
-            }
-        }
-        break;
-    case 8:
-        {
-            uns32b i, j, buf, cnt;
-            uns32b *d;
-
-            for ( i = 0 ; i < *h ; i++ ) {
-                d = pixs->data + pixs->wpl * i;
-                for ( j = 0, cnt = 4 ; j < *w ; j++, c++, buf <<= 8, ++cnt ) {
-                    if ( cnt == 4 ) {
-                        buf = *d++;
-                        cnt = 0;
-                    }
-                    c->red = c->green = c->blue = (uns8b)( buf >> 24 );
-                    c->alpha = 0xff;
-                }
-            }
-        }
-        break;
-    case 32:
-        {
-            uns32b i;
-            trp_pix_color_t *d = (trp_pix_color_t *)( pixs->data );
-
-            for ( i = *w * *h ; ; ) {
-                i--;
-                c[ i ].red = d[ i ].alpha;
-                c[ i ].green = d[ i ].blue;
-                c[ i ].blue = d[ i ].green;
-                c[ i ].alpha = ~( d[ i ].red );
-                if ( i == 0 )
-                    break;
-            }
-        }
-        break;
-    default:
-//        printf( "#supp: %d x %d, depth=%d, wpl=%d\n", *w, *h, pixs->d, pixs->wpl );
-        free( (void *)( *data ));
+    if ( trp_lept_copy_PIX2pix_low( pixs, *w, *h, *data ) ) {
         pixDestroy( &pixs );
+        free( *data );
         return 1;
     }
     pixDestroy( &pixs );
     return 0;
 }
 
-trp_obj_t *trp_lept_pix_load( trp_obj_t *path )
+static uns8b trp_pix_load_lept( uns8b *cpath, uns32b *w, uns32b *h, uns8b **data )
 {
-    uns8b *cpath = trp_csprint( path ), *data;
-    uns32b w, h;
-
-    if ( trp_pix_load_lept( cpath, &w, &h, &data ) ) {
-        trp_csprint_free( cpath );
-        return UNDEF;
-    }
-    trp_csprint_free( cpath );
-    return trp_pix_create_image_from_data( 0, w, h, data );
+    return trp_pix_load_lept_low( pixRead( cpath ), w, h, data );
 }
 
-trp_obj_t *trp_lept_pix_rotate( trp_obj_t *pix, trp_obj_t *angle )
+static uns8b trp_pix_load_lept_memory( uns8b *idata, uns32b isize, uns32b *w, uns32b *h, uns8b **data )
 {
-    PIX *pixs1, *pixs2, *pixd;
-    trp_pix_color_t *c, *d1, *d2;
-    uns32b w, h, ww, hh, i;
-    double a, si, co;
-    uns8b tofree = 0;
-
-    if ( trp_cast_double( angle, &a ) )
-        return UNDEF;
-    a = -a;
-    while ( a >= 360.0 - 45.0 )
-        a -= 360.0;
-    while ( a < 0.0 - 45.0 )
-        a += 360.0;
-    if ( a >= 270.0 - 45.0 ) {
-        pix = trp_pix_rotate_orthogonal( pix, 90 );
-        a -= 270.0;
-        tofree = 1;
-    } else if ( a >= 180.0 - 45.0 ) {
-        pix = trp_pix_rotate_orthogonal( pix, 180 );
-        a -= 180.0;
-        tofree = 1;
-    } else if ( a >= 90.0 - 45.0 ) {
-        pix = trp_pix_rotate_orthogonal( pix, 270 );
-        a -= 90.0;
-        tofree = 1;
-    }
-    a *= (TRP_PI/180.0);
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ( c = ((trp_pix_t *)pix)->map.c ) == NULL )
-        return UNDEF;
-    w = ((trp_pix_t *)pix)->w;
-    h = ((trp_pix_t *)pix)->h;
-    /*
-    si = fabs( sin( a ) );
-    co = fabs( cos( a ) );
-    ww = (double)w * co + (double)h * si + 0.5;
-    hh = (double)h * co + (double)w * si + 0.5;
-    */
-    if ( ( pixs1 = pixCreateNoInit( w, h, 32 ) ) == NULL ) {
-        if ( tofree )
-            (void)trp_pix_close( (trp_pix_t *)pix );
-        return UNDEF;
-    }
-    if ( ( pixs2 = pixCreateNoInit( w, h, 32 ) ) == NULL ) {
-        pixDestroy( &pixs1 );
-        if ( tofree )
-            (void)trp_pix_close( (trp_pix_t *)pix );
-        return UNDEF;
-    }
-    d1 = (trp_pix_color_t *)( pixs1->data );
-    d2 = (trp_pix_color_t *)( pixs2->data );
-    for ( i = w * h ; ; ) {
-        i--;
-        d1[ i ].red = ~( c[ i ].alpha );
-        d1[ i ].green = c[ i ].blue;
-        d1[ i ].blue = c[ i ].green;
-        d1[ i ].alpha = c[ i ].red;
-        d2[ i ].red = d2[ i ].green = d2[ i ].blue = d2[ i ].alpha = ~( c[ i ].alpha );
-        if ( i == 0 )
-            break;
-    }
-    if ( tofree )
-        (void)trp_pix_close( (trp_pix_t *)pix );
-    pixd = pixRotate( pixs1, a, L_ROTATE_AREA_MAP, L_BRING_IN_WHITE, w, h );
-    pixDestroy( &pixs1 );
-    if ( pixd == NULL ) {
-        pixDestroy( &pixs2 );
-        return UNDEF;
-    }
-    pix = trp_lept_PIX2pix( pixd );
-    pixDestroy( &pixd );
-    if ( pix == UNDEF ) {
-        pixDestroy( &pixs2 );
-        return UNDEF;
-    }
-    pixd = pixRotate( pixs2, a, L_ROTATE_AREA_MAP, L_BRING_IN_WHITE, w, h );
-    pixDestroy( &pixs2 );
-    if ( pixd == NULL ) {
-        (void)trp_pix_close( (trp_pix_t *)pix );
-        return UNDEF;
-    }
-    c = ((trp_pix_t *)pix)->map.c;
-    w = ((trp_pix_t *)pix)->w;
-    h = ((trp_pix_t *)pix)->h;
-    d2 = (trp_pix_color_t *)( pixd->data );
-    for ( i = w * h ; ; ) {
-        i--;
-        c[ i ].alpha = ~( d2[ i ].alpha );
-        if ( i == 0 )
-            break;
-    }
-    pixDestroy( &pixd );
-    /*
-    if ( ( w > ww ) || ( h > hh ) ) {
-        printf( "### w = %u, h= %u, ww = %u, hh = %u\n", w, h, ww, hh );
-        trp_obj_t *pix2 = trp_pix_crop_low( pix, (double)( ( 1 + w - ww ) >> 1 ), (double)( ( 1 + h - hh ) >> 1 ), (double)ww, (double)hh );
-        (void)trp_pix_close( (trp_pix_t *)pix );
-        pix = pix2;
-    }
-    */
-    return pix;
+    return trp_pix_load_lept_low( pixReadMem( idata, isize ), w, h, data );
 }
 
 trp_obj_t *trp_lept_pix_find_skew( trp_obj_t *pix )
@@ -429,53 +250,6 @@ trp_obj_t *trp_lept_pix_find_skew( trp_obj_t *pix )
     }
     pixDestroy( &pixs );
     return trp_cons( trp_double( ((double)pangle) ), trp_double( ((double)pconf) ) );
-}
-
-uns8b trp_lept_convert_files_to_pdf( trp_obj_t *dirname, trp_obj_t *substr, trp_obj_t *res, trp_obj_t *scalefactor, trp_obj_t *type, trp_obj_t *quality, trp_obj_t *title, trp_obj_t *fileout )
-{
-    l_int32 i;
-    uns32b rres, ttype, qquality;
-    double sscalefactor;
-    uns8b *ddirname, *ssubstr, *ttitle, *ffileout;
-
-    if ( res == UNDEF )
-        rres = 0;
-    else
-        if ( trp_cast_uns32b_range( res, &rres, 0, 1200 ) )
-            return 1;
-    if ( scalefactor == UNDEF )
-        sscalefactor = 0.0;
-    else
-        if ( trp_cast_double_range( scalefactor, &sscalefactor, 0.0, 100.0 ) )
-            return 1;
-    if ( type == UNDEF )
-        ttype = 0;
-    else
-        if ( trp_cast_uns32b_range( type, &ttype, 0, 3 ) )
-            return 1;
-    if ( quality == UNDEF )
-        qquality = 0;
-    else
-        if ( trp_cast_uns32b_range( quality, &qquality, 0, 100 ) )
-            return 1;
-    ddirname = trp_csprint( dirname );
-    if ( substr == UNDEF )
-        ssubstr = NULL;
-    else
-        ssubstr = trp_csprint( substr );
-    if ( title == UNDEF )
-        ttitle = NULL;
-    else
-        ttitle = trp_csprint( title );
-    ffileout = trp_csprint( fileout );
-    i = convertFilesToPdf( ddirname, ssubstr, rres, sscalefactor, ttype, qquality, ttitle, ffileout );
-    trp_csprint_free( ddirname );
-    if ( ssubstr )
-        trp_csprint_free( ssubstr );
-    if ( ttitle )
-        trp_csprint_free( ttitle );
-    trp_csprint_free( ffileout );
-    return i ? 1 : 0;
 }
 
 uns8b trp_lept_pix_dither_to_binary( trp_obj_t *pix )
@@ -636,14 +410,6 @@ uns8b trp_lept_pix_blend( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t 
     trp_lept_copy_PIX2pix( pixd, dst );
     pixDestroy( &pixd );
     return 0;
-}
-
-uns8b trp_lept_pix_write_ttf_text( trp_obj_t *pix, trp_obj_t *size, trp_obj_t *angle, trp_obj_t *x, trp_obj_t *y, trp_obj_t *letter_space, trp_obj_t *color, trp_obj_t *fontfile, trp_obj_t *text, trp_obj_t *brect )
-{
-    /*
-     FIXME
-     */
-    return 1;
 }
 
 trp_obj_t *trp_lept_pix_count_conn_comp( trp_obj_t *pix, trp_obj_t *connectivity )

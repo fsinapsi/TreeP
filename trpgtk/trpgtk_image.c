@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ trp_obj_t *trp_gtk_image_new_from_file( trp_obj_t *path )
          si prova a vedere se trp_pix ha un loader che vada bene
          in questo caso...
          */
-        trp_obj_t *pix = trp_pix_load_basic( p );
+        trp_obj_t *pix = trp_pix_load_low( p );
         if ( pix != UNDEF ) {
             trp_obj_t *res = trp_gtk_image_new_from_pixbuf( pix );
             trp_close_multi( pix, NULL );

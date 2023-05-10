@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ trp_obj_t *trp_quirc_decode( trp_obj_t *pix )
     for ( ; w ; w-- ) {
         image++;
         for ( i = 0 ; i < h ; i++, c++ )
-            *image++ = ( (uns32b)( c->red ) * 299 +
-                         (uns32b)( c->green ) * 587 +
-                         (uns32b)( c->blue ) * 114 + 500 ) / 1000;
+            *image++ = ( (uns32b)( c->red ) * TRP_PIX_WEIGHT_RED +
+                         (uns32b)( c->green ) * TRP_PIX_WEIGHT_GREEN +
+                         (uns32b)( c->blue ) * TRP_PIX_WEIGHT_BLUE + 500 ) / 1000;
         image++;
     }
     quirc_end( qr );

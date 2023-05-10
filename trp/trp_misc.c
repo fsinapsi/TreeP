@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1013,6 +1013,7 @@ trp_obj_t *trp_ipv4_address()
 
 trp_obj_t *trp_system( trp_obj_t *obj, ... )
 {
+#ifdef MINGW
     int res;
     uns8b *p;
     va_list args;
@@ -1020,9 +1021,34 @@ trp_obj_t *trp_system( trp_obj_t *obj, ... )
     va_start( args, obj );
     p = trp_csprint_multi( obj, args );
     va_end( args );
+    GC_gcollect();
     res = system( p );
     trp_csprint_free( p );
     return trp_sig64( res );
+#else
+    int res, pid;
+
+    GC_gcollect();
+    GC_atfork_prepare();
+    pid = fork();
+    if ( pid == 0 ) {
+        uns8b *sh = "/bin/sh", *p;
+        va_list args;
+
+        GC_atfork_child();
+        va_start( args, obj );
+        p = trp_csprint_multi( obj, args );
+        va_end( args );
+        execl( sh, sh, "-c", p, NULL );
+        exit( -1 );
+    }
+    GC_atfork_parent();
+    if ( pid == -1 )
+        res = -1;
+    else
+        waitpid( pid, &res, 0 );
+    return trp_sig64( res );
+#endif
 }
 
 trp_obj_t *trp_getpid()
@@ -1035,7 +1061,55 @@ trp_obj_t *trp_fork()
 #ifdef MINGW
     return trp_sig64( -1 );
 #else
-return trp_sig64( fork() );
+    int pid;
+
+    GC_gcollect();
+    GC_atfork_prepare();
+    pid = fork();
+    if ( pid )
+        GC_atfork_parent();
+    else
+        GC_atfork_child();
+    return trp_sig64( pid );
 #endif
+}
+
+trp_obj_t *trp_ratio2uns64b( trp_obj_t *obj )
+{
+    uns64b val;
+
+    if ( trp_cast_double( obj, (flt64b *)( &val ) ) )
+        return UNDEF;
+    if ( val <= 0x7fffffffffffffffLL )
+        return trp_sig64( val );
+    return trp_cat( TRP_MAXINT, trp_sig64( val - 0x7fffffffffffffffLL ), NULL );
+}
+
+void trp_print_rusage_diff( char *msg )
+{
+    static trp_obj_t *st = NULL;
+    static uns8b lev = 0;
+    trp_obj_t *tmsg, *act;
+    uns8b i;
+
+    if ( st == NULL )
+        st = NIL;
+    tmsg = trp_cord( msg );
+    act = trp_car( trp_getrusage_self() );
+    if ( trp_equal( tmsg, trp_car( trp_car( st ) ) ) == TRP_TRUE ) {
+        lev--;
+        for ( i = lev ; i ; i-- )
+            fprintf( stderr, "  " );
+        fprintf( stderr, "### %s (fine): ", msg );
+        trp_fprint( TRP_STDERR, trp_math_minus( act, trp_cdr( trp_car( st ) ), NULL ), NULL );
+        fprintf( stderr, " secondi\n" );
+        st = trp_cdr( st );
+    } else {
+        for ( i = lev ; i ; i-- )
+            fprintf( stderr, "  " );
+        lev++;
+        fprintf( stderr, "### %s (inizio)\n", msg );
+        st = trp_cons( trp_cons( tmsg, act ), st );
+    }
 }
 

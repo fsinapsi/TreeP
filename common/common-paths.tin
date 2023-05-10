@@ -286,6 +286,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-ancestors (path) net path-ancestors)
+(defnet path-ancestors (path @l)
+        (deflocal sep i)
+
+        (set sep (path-separator (currpath)))
+        (rtrim path sep)
+        (set @l nil)
+        (set sep (sprint sep))
+        (opt*   (search sep path i (maxint))
+                (set path (sub 0 i path))
+                (list-push @l (+ path sep)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
 ;;;; restituisce, se lo trova, un path esistente che matcha a destra      ;;;;
 ;;;; rpath                                                                ;;;;
 ;;;; cercandolo in alcune directory `standard`                            ;;;;
@@ -295,30 +317,41 @@
 
 (defun search-path-default (rpath) net search-path-default)
 (defnet search-path-default (rpath @path)
-        (deflocal a path i j p)
+        (deflocal sep q a p pp i)
 
+        (set sep (path-separator (currpath)))
+        (ltrim rpath sep)
+        (set q (queue))
         (set a (assoc))
-        (for path in (list (currpath)
-                           (datapath)
-                           (homepathp "wd/programming/treep/trp")
-                           (callpath)
-                           (currpathp "TreeP")
-                           (callpathp "TreeP")
-                           (homepathp "TreeP") ) do
-                (repeat (alt    (seq    (rtrim path '/')
-                                        (search "/" path i (maxint)) )
-                                (clr i) )
-                        (if (pathexists path)
-                        then    (for j in [ "" "common/" "icons/" "sounds/" "common/icons/" "common/sounds/" ] do
-                                        (set p (+ path (if (rmatch path "/") "" "/") j rpath))
-                                        (if (= <a p> undef)
-                                        then    (if (pathexists p)
-                                                then    (set @path p)
-                                                else    (set <a p> true) ))))
-                        until (stringp @path)
-                        until (not (integerp i))
-                        (set path (sub 0 (+ i 1) path)) )
-                until (stringp @path) ))
+        (for i in (list (currpath)
+                        (callpath)
+                        (homepathp (+ "wd" sep "programming"))
+                        (datapath) ) do
+                (queue-put q i) )
+        (clr @path)
+        (while (> (length q) 0) do
+                (set p (queue-get q))
+                (opt    (rtrim p sep)
+                        (= <a p> undef)
+                        (set <a p> true)
+                        (inc p sep)
+                        (pathexists p)
+                        (truep (isdir p))
+                        (set pp (+ p rpath))
+                        (if (pathexists pp)
+                        then    (set @path pp)
+                        else    (for i in [ "TreeP"
+                                            "treep"
+                                            "trp"
+                                            "common"
+                                            "icons"
+                                            "images"
+                                            "sounds" ] do
+                                        (queue-put q (+ p i)) )
+                                (for i in (path-ancestors p) do
+                                        (queue-put q i) )))
+                until (stringp @path) )
+        (stringp @path) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -453,6 +486,12 @@
         (alt    (seq    (= "TreeP source code text" m)
                         (alt    (path-suggest-extension-permissive path [ "tin" ] @ext)
                                 (set @ext "trp") ))
+                (seq    (= "TreeP image data" m)
+                        (set @ext "ptg") )
+                (seq    (= "JBIG2 image data" m)
+                        (set @ext "jbig2") )
+                (seq    (= "JB2E image data" m)
+                        (set @ext "jb2e") )
                 (seq    (search case "Perl script" m)
                         (set @ext "pl") )
                 (seq    (search case "Web Open Font Format (Version 2)" m)
@@ -465,10 +504,25 @@
                         (set @ext "eot") )
                 (seq    (search case "TrueType Font data" m)
                         (set @ext "ttf") )
+                (seq    (search case "OpenType font data" m)
+                        (set @ext "otf") )
+                (seq    (search case "PostScript type" m)
+                        (search case "font" m)
+                        (alt    (seq    (search case " text" m)
+                                        (set @ext "pfa") )
+                                (seq    (search case "program data" m)
+                                        (set @ext "pfb") )))
+                (seq    (search case "ASCII font metrics" m)
+                        (set @ext "afm") )
+                (seq    (search case "Printer Font Metrics" m)
+                        (set @ext "pfm") )
                 (seq    (search case "windows icon resource" m)
                         (set @ext "ico") )
-                (seq    (search case "Netpbm image data" m)
-                        (alt    (seq    (search case "pixmap" m)
+                (seq    (search case "Netpbm" m)
+                        (search case "image" m)
+                        (alt    (seq    (search case " PAM" m)
+                                        (set @ext "pam") )
+                                (seq    (search case "pixmap" m)
                                         (set @ext "ppm") )
                                 (seq    (search case "greymap" m)
                                         (set @ext "pgm") )
@@ -482,15 +536,20 @@
                         (set @ext "jp2") )
                 (seq    (search case "Web/P image" m)
                         (set @ext "webp") )
+                (seq    (search case "QOI image" m)
+                        (set @ext "qoi") )
                 (seq    (search case "X pixmap image" m)
-                        (search case "ASCII text" m)
+                        (search case "text" m)
                         (set @ext "xpm") )
                 (seq    (search case "PNG image" m)
                         (set @ext "png") )
                 (seq    (search case "GIF image data" m)
                         (set @ext "gif") )
+                (seq    (search case "Targa image data" m)
+                        (set @ext "tga") )
                 (seq    (search case "TIFF image data" m)
-                        (set @ext "tif") )
+                        (alt    (path-suggest-extension-permissive path [ "tif" ] @ext)
+                                (set @ext "tiff") ))
                 (seq    (search case "PC bitmap" m)
                         (search case "Windows " m)
                         (set @ext "bmp") )
@@ -513,7 +572,9 @@
                 (seq    (search case "Apple QuickTime movie" m)
                         (set @ext "mov") )
                 (seq    (search case "ISO Media" m)
-                        (alt    (path-suggest-extension-permissive path [ "mov" "3gp" "m4a" ] @ext)
+                        (alt    (seq    (search case "AVIF Image" m)
+                                        (set @ext "avif") )
+                                (path-suggest-extension-permissive path [ "mov" "3gp" "m4a" ] @ext)
                                 (set @ext "mp4") ))
                 (seq    (search case "RIFF (little-endian) data" m)
                         (alt    (seq    (search "WAVE audio" m)
@@ -577,6 +638,7 @@
                 (seq    (search case "7-zip archive data" m)
                         (set @ext "7z") )
                 (seq    (alt    (search case "Zip archive data" m)
+                                (search case "Zip multi-volume archive data" m)
                                 (search case "Zip data" m) )
                         (alt    (seq    (path-suggest-extension-permissive path [ "cbr" "cbz" "jar" "epub"
                                                                                   "docx" "odt" "ods" "xps"
@@ -629,6 +691,10 @@
                         (set @ext "djvu") )
                 (seq    (search case "MS Windows HtmlHelp Data" m)
                         (set @ext "chm") )
+                (seq    (search case "LaTeX" m)
+                        (search case "document" m)
+                        (search case "text" m)
+                        (set @ext "latex") )
                 (seq    (search case "TeX DVI file" m)
                         (set @ext "dvi") )
                 (seq    (search case "OpenDocument Text" m)
@@ -683,7 +749,10 @@
                                 (path-suggest-extension-permissive path
                                         [ "txt" "cue" "log" "srt" "bat" "avs" "mfl" "pgn" "fen"
                                           "c" "h" "cpp" "cc" "pas" "hs" "go" "clp" "l" "ss"
-                                          "java" "sh" ] @ext )))))
+                                          "java" "sh" ] @ext )))
+                (seq    (= m "data")
+                        (rmatch case path ".ts")
+                        (set @ext "ts") )))
 
 (defnet path-suggest-extension-permissive (path ext-l @ext)
         (deflocal found)

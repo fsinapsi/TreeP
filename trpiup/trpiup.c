@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -805,12 +805,12 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
         child = trp_car( l );
         if ( child->tipo == TRP_ARRAY ) {
             trp_gc_free( l );
-            if ( ( h = malloc( ( ((trp_array_t *)child)->len + 1 ) * sizeof( Ihandle * ) ) ) == NULL )
+            if ( ( h = trp_gc_malloc_atomic( ( ((trp_array_t *)child)->len + 1 ) * sizeof( Ihandle * ) ) ) == NULL )
                 return UNDEF;
             for ( n = 0 ; n < ((trp_array_t *)child)->len ; n++ ) {
                 l = ((trp_array_t *)child)->data[ n ];
                 if ( ( e = trp_iup_check( l ) ) == NULL ) {
-                    free( h );
+                    trp_gc_free( h );
                     return UNDEF;
                 }
                 h[ n ] = e;
@@ -820,12 +820,12 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
             trp_queue_elem *elem;
 
             trp_gc_free( l );
-            if ( ( h = malloc( ( ((trp_queue_t *)child)->len + 1 ) * sizeof( Ihandle * ) ) ) == NULL )
+            if ( ( h = trp_gc_malloc_atomic( ( ((trp_queue_t *)child)->len + 1 ) * sizeof( Ihandle * ) ) ) == NULL )
                 return UNDEF;
             for ( elem = (trp_queue_elem *)( ((trp_queue_t *)child)->first ), n = 0 ; elem ; elem = (trp_queue_elem *)( elem->next ), n++ ) {
                 l = elem->val;
                 if ( ( e = trp_iup_check( l ) ) == NULL ) {
-                    free( h );
+                    trp_gc_free( h );
                     return UNDEF;
                 }
                 h[ n ] = e;
@@ -834,7 +834,7 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
         } /* else if ... FIXME aggiungere liste o altro  */
     }
     if ( h == NULL ) {
-        if ( ( h = malloc( ( n + 1 ) * sizeof( Ihandle * ) ) ) == NULL ) {
+        if ( ( h = trp_gc_malloc_atomic( ( n + 1 ) * sizeof( Ihandle * ) ) ) == NULL ) {
             trp_free_list( l );
             return UNDEF;
         }
@@ -842,7 +842,7 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
         while ( l != NIL ) {
             child = trp_car( l );
             if ( ( e = trp_iup_check( child ) ) == NULL ) {
-                free( h );
+                trp_gc_free( h );
                 trp_free_list( l );
                 return UNDEF;
             }
@@ -853,7 +853,7 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
         }
     }
     l = trp_iup_handle( (f)( h ) );
-    free( h );
+    trp_gc_free( h );
     return l;
 }
 

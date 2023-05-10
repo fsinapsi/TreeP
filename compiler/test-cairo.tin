@@ -1,0 +1,76 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet test-cairo (func)
+        (deflocal i)
+
+        (lmatch remove func "cairo-")
+        (for i in (test-cairo-table) do
+                until (= <i 0> func) )
+        (= <i 0> func)
+        (exprseq-ext <i 1> <i 2> (+ "  if(trp_cairo_" (dash->underscore func) "(") "))")
+        (flag-true "cairo") )
+
+(defun test-cairo-table ()
+        [ [ "surface-flush"             1 1 ]
+          [ "save"                      1 1 ]
+          [ "restore"                   1 1 ]
+          [ "copy-page"                 1 1 ]
+          [ "show-page"                 1 1 ]
+          [ "translate"                 3 3 ]
+          [ "scale"                     3 3 ]
+          [ "rotate"                    2 2 ]
+          [ "transform"                 7 7 ]
+          [ "set-matrix"                7 7 ]
+          [ "identity-matrix"           1 1 ]
+          [ "set-antialias"             2 2 ]
+          [ "select-font-face"          4 4 ]
+          [ "set-font-face-ft"          2 2 ]
+          [ "set-font-size"             2 2 ]
+          [ "set-line-width"            2 2 ]
+          [ "set-line-cap"              2 2 ]
+          [ "set-line-join"             2 2 ]
+          [ "set-fill-rule"             2 2 ]
+          [ "set-miter-limit"           2 2 ]
+          [ "set-source-rgba"           2 2 ]
+          [ "set-source-surface"        4 5 ]
+          [ "new-path"                  1 1 ]
+          [ "close-path"                1 1 ]
+          [ "stroke"                    1 1 ]
+          [ "stroke-preserve"           1 1 ]
+          [ "fill"                      1 1 ]
+          [ "fill-preserve"             1 1 ]
+          [ "clip"                      1 1 ]
+          [ "clip-preserve"             1 1 ]
+          [ "reset-clip"                1 1 ]
+          [ "paint"                     1 1 ]
+          [ "paint-with-alpha"          2 2 ]
+          [ "move-to"                   3 3 ]
+          [ "rel-move-to"               3 3 ]
+          [ "line-to"                   3 3 ]
+          [ "rel-line-to"               3 3 ]
+          [ "curve-to"                  7 7 ]
+          [ "rel-curve-to"              7 7 ]
+          [ "rectangle"                 5 5 ]
+          [ "arc"                       6 6 ]
+          [ "arc-negative"              6 6 ]
+          [ "show-text"                 2 undef ]
+        ] )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -34,7 +34,7 @@ extern "C" {
    void          epeg_size_get                  (Epeg_Image *im, int *w, int *h);
    void          epeg_decode_size_set           (Epeg_Image *im, int w, int h);
    void          epeg_decode_colorspace_set     (Epeg_Image *im, Epeg_Colorspace colorspace);
-   const void   *epeg_pixels_get                (Epeg_Image *im, int x, int y, int w, int h);
+   void         *epeg_pixels_get                (Epeg_Image *im, int x, int y, int w, int h);
    void          epeg_pixels_free               (Epeg_Image *im, const void *data);
    const char   *epeg_comment_get               (Epeg_Image *im);
    void          epeg_thumbnail_comments_get    (Epeg_Image *im, Epeg_Thumbnail_Info *info);

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -103,13 +103,13 @@ uns8b trp_cast_sig64b_rint_range( trp_obj_t *obj, sig64b *val, sig64b min, sig64
     return ( ( *val >= min ) && ( *val <= max ) ) ? 0 : 1;
 }
 
-uns8b trp_cast_double( trp_obj_t *obj, double *val )
+uns8b trp_cast_flt64b( trp_obj_t *obj, flt64b *val )
 {
     uns8b res;
 
     switch ( obj->tipo ) {
     case TRP_SIG64:
-        *val = (double)( ((trp_sig64_t *)obj)->val );
+        *val = (flt64b)( ((trp_sig64_t *)obj)->val );
         res = 0;
         break;
     case TRP_RATIO:
@@ -123,9 +123,9 @@ uns8b trp_cast_double( trp_obj_t *obj, double *val )
     return res;
 }
 
-uns8b trp_cast_double_range( trp_obj_t *obj, double *val, double min, double max )
+uns8b trp_cast_flt64b_range( trp_obj_t *obj, flt64b *val, flt64b min, flt64b max )
 {
-    if ( trp_cast_double( obj, val ) )
+    if ( trp_cast_flt64b( obj, val ) )
         return 1;
     return ( ( *val >= min ) && ( *val <= max ) ) ? 0 : 1;
 }

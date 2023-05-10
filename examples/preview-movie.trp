@@ -7,10 +7,6 @@
 (defun h ()       6)
 (defun size ()  160)
 (defun margin ()  6)
-(defun display-mv1 () 0)
-(defun display-mv2 () (+ (cmacro FF_DEBUG_VIS_MV_P_FOR)
-                         (cmacro FF_DEBUG_VIS_MV_B_FOR)
-                         (cmacro FF_DEBUG_VIS_MV_B_BACK) ))
 
 (defnet create-pframe (w h @pframe)
         (if (>= w h)
@@ -23,13 +19,12 @@
 (defnet copy-thumbs (av pframe pix)
         (deflocal framecnt step i j)
 
-        (set step (/ (av-index-entries av) (w) (h)))
+        (set step (/ (av-approximated-number-of-frames av) (w) (h)))
         (set framecnt (/ step 2))
         (for i in 0 .. (- (h) 1) do
         (for j in 0 .. (- (w) 1) do
-                (av-seek av (rint framecnt))
+                (av-read-frame av pframe (rint framecnt))
                 (inc framecnt step)
-                (av-read-frame av pframe)
                 (pix-draw-pix pix (+ (* j (width pframe))
                                      (* (+ j 1) (margin)) )
                                   (+ (* i (height pframe))
@@ -46,13 +41,12 @@
                nl )
         (> (argc) 1)
         (print "path: " (argv 1) nl)
-        (set av (av-open-input-file (argv 1) (display-mv1)))
+        (set av (av-avformat-open-input (argv 1)))
         (if (= av undef)
         then    (print "apertura filmato fallita" nl)
                 (fail) )
         (print "size: " (width av) " x " (height av) nl
-               "time base: " (av-time-base av) " s" nl
-               "index entries: " (av-index-entries av) nl )
+               "index entries: " (av-approximated-number-of-frames av) nl )
         (create-pframe (width av) (height av) pframe)
         (set pix (pix-create (+ (* (w) (width pframe))
                                 (* (+ (w) 1) (margin)) )

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -386,7 +386,7 @@ static trp_obj_t *trp_gcry_stego_extract_new( gcry_md_hd_t *hd, uns8b *map, uns3
     }
     raw->unc_len = k;
     if ( ( raw->mode > 2 ) ||
-         ( raw->unc_tipo >= TRP_MAX ) ||
+         ( raw->unc_tipo >= TRP_MAX_T ) ||
          ( raw->compression_level > 9 ) ||
          ( raw->len > raw->unc_len ) ||
          ( ( raw->compression_level == 0 ) && ( raw->len != raw->unc_len ) ) ) {
@@ -452,7 +452,7 @@ static trp_obj_t *trp_gcry_stego_extract_old( gcry_md_hd_t *hd, uns8b *map, uns3
     }
     raw->unc_len = k;
     if ( ( raw->mode > 2 ) ||
-         ( raw->unc_tipo >= TRP_MAX ) ||
+         ( raw->unc_tipo >= TRP_MAX_T ) ||
          ( raw->compression_level > 9 ) ||
          ( raw->len > raw->unc_len ) ||
          ( ( raw->compression_level == 0 ) && ( raw->len != raw->unc_len ) ) ) {
@@ -830,7 +830,7 @@ static trp_obj_t *trp_gcry_stego_extract_new( struct md5_ctx *context, uns8b *ma
     }
     raw->unc_len = k;
     if ( ( raw->mode > 2 ) ||
-         ( raw->unc_tipo >= TRP_MAX ) ||
+         ( raw->unc_tipo >= TRP_MAX_T ) ||
          ( raw->compression_level > 9 ) ||
          ( raw->len > raw->unc_len ) ||
          ( ( raw->compression_level == 0 ) && ( raw->len != raw->unc_len ) ) ) {
@@ -896,7 +896,7 @@ static trp_obj_t *trp_gcry_stego_extract_old( struct md5_ctx *context, uns8b *ma
     }
     raw->unc_len = k;
     if ( ( raw->mode > 2 ) ||
-         ( raw->unc_tipo >= TRP_MAX ) ||
+         ( raw->unc_tipo >= TRP_MAX_T ) ||
          ( raw->compression_level > 9 ) ||
          ( raw->len > raw->unc_len ) ||
          ( ( raw->compression_level == 0 ) && ( raw->len != raw->unc_len ) ) ) {

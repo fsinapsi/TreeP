@@ -23,14 +23,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun av-dar (fmt) net av-dar)
-(defnet av-dar (fmt @dar)
-        (deflocal par)
+(defun av-par (fmt) net av-par)
+(defnet av-par (fmt @par)
+        (set @par (av-sample-aspect-ratio fmt (av-video-stream-idx fmt)))
+        (if (= @par 0)
+        then    (set @par 1) ))
 
-        (set par (av-sample-aspect-ratio fmt (av-video-stream-idx fmt)))
-        (if (= par 0)
-        then    (set par 1) )
-        (set @dar (* (/ (width fmt) (height fmt)) par)) )
+(defun av-dar (fmt)
+        (* (/ (width fmt) (height fmt)) (av-par fmt)) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

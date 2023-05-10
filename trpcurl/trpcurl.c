@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ static uns8b trp_curl_easy_setopt_curloff_internal( trp_obj_t *curl, trp_obj_t *
 static uns8b trp_curl_easy_setopt_long_internal( trp_obj_t *curl, trp_obj_t *val, CURLoption opt );
 static size_t trp_curl_cback_receive( void *p, size_t size, size_t nmemb, void *curl );
 static size_t trp_curl_cback_send( void *p, size_t size, size_t nmemb, void *curl );
-static int trp_curl_cback_progress( void *curl, double dltotal, double dlnow, double ultotal, double ulnow );
+static int trp_curl_cback_progress( void *curl, sig64b dltotal, sig64b dlnow, sig64b ultotal, sig64b ulnow );
 
 static void trp_curl_free( void *ptr )
 {
@@ -429,25 +429,25 @@ trp_obj_t *trp_curl_easy_getinfo_filetime( trp_obj_t *curl )
 trp_obj_t *trp_curl_easy_getinfo_size_download( trp_obj_t *curl )
 {
     CURL *c = trp_curl_get( curl );
-    double res;
+    sig64b res;
 
     if ( c == NULL )
         return UNDEF;
-    if ( curl_easy_getinfo( c, CURLINFO_SIZE_DOWNLOAD, &res ) != CURLE_OK )
+    if ( curl_easy_getinfo( c, CURLINFO_SIZE_DOWNLOAD_T, &res ) != CURLE_OK )
         return UNDEF;
-    return trp_double( res );
+    return trp_sig64( res );
 }
 
 trp_obj_t *trp_curl_easy_getinfo_size_upload( trp_obj_t *curl )
 {
     CURL *c = trp_curl_get( curl );
-    double res;
+    sig64b res;
 
     if ( c == NULL )
         return UNDEF;
-    if ( curl_easy_getinfo( c, CURLINFO_SIZE_UPLOAD, &res ) != CURLE_OK )
+    if ( curl_easy_getinfo( c, CURLINFO_SIZE_UPLOAD_T, &res ) != CURLE_OK )
         return UNDEF;
-    return trp_double( res );
+    return trp_sig64( res );
 }
 
 uns8b trp_curl_easy_setopt_errorbuffer( trp_obj_t *curl, trp_obj_t *set_on_off )
@@ -574,10 +574,10 @@ uns8b trp_curl_easy_setopt_readfunction( trp_obj_t *curl, trp_obj_t *len, trp_ob
              curl_easy_setopt( c, CURLOPT_READFUNCTION, trp_curl_cback_send ) ) ? 1 : 0;
 }
 
-static int trp_curl_cback_progress( void *curl, double dltotal, double dlnow, double ultotal, double ulnow )
+static int trp_curl_cback_progress( void *curl, sig64b dltotal, sig64b dlnow, sig64b ultotal, sig64b ulnow )
 {
     uns8bfun_t f = ((trp_netptr_t *)( ((trp_curl_t *)curl)->transfer_cback_progress_net ))->f;
-    double total, now;
+    sig64b total, now;
     uns8b res;
 
     if ( ((trp_curl_t *)curl)->transfer_rem == -1 ) {
@@ -588,14 +588,14 @@ static int trp_curl_cback_progress( void *curl, double dltotal, double dlnow, do
         now = ulnow;
     }
     if ( ( total < now ) ||
-         ( total == 0.0 ) ||
-         ( now < 0.0 ) )
+         ( total == 0 ) ||
+         ( now < 0 ) )
         return 0;
     if ( ((trp_curl_t *)curl)->transfer_progress_data )
-        res = (f)( trp_double( total), trp_double( now ),
+        res = (f)( trp_sig64( total), trp_sig64( now ),
                    ((trp_curl_t *)curl)->transfer_progress_data );
     else
-        res = (f)( trp_double( total), trp_double( now ) );
+        res = (f)( trp_sig64( total), trp_sig64( now ) );
     return res;
 }
 
@@ -616,7 +616,7 @@ uns8b trp_curl_easy_setopt_progressfunction( trp_obj_t *curl, trp_obj_t *net, tr
     ((trp_curl_t *)curl)->transfer_progress_data = data;
     return ( curl_easy_setopt( c, CURLOPT_NOPROGRESS, (long)0 ) ||
              curl_easy_setopt( c, CURLOPT_PROGRESSDATA, curl ) ||
-             curl_easy_setopt( c, CURLOPT_PROGRESSFUNCTION, trp_curl_cback_progress ) ) ? 1 : 0;
+             curl_easy_setopt( c, CURLOPT_XFERINFOFUNCTION, trp_curl_cback_progress ) ) ? 1 : 0;
 }
 
 uns8b trp_curl_easy_setopt_filetime( trp_obj_t *curl, trp_obj_t *set_on_off )
@@ -898,16 +898,6 @@ uns8b trp_curl_easy_setopt_verbose( trp_obj_t *curl, trp_obj_t *set_on_off )
 uns8b trp_curl_easy_setopt_failonerror( trp_obj_t *curl, trp_obj_t *set_on_off )
 {
     return trp_curl_easy_setopt_boolean_internal( curl, set_on_off, CURLOPT_FAILONERROR );
-}
-
-uns8b trp_curl_easy_setopt_random_file( trp_obj_t *curl, trp_obj_t *val )
-{
-    return trp_curl_easy_setopt_copied_string_internal( curl, val, CURLOPT_RANDOM_FILE );
-}
-
-uns8b trp_curl_easy_setopt_random_egdsocket( trp_obj_t *curl, trp_obj_t *val )
-{
-    return trp_curl_easy_setopt_copied_string_internal( curl, val, CURLOPT_EGDSOCKET );
 }
 
 uns8b trp_curl_easy_setopt_ignore_content_length( trp_obj_t *curl, trp_obj_t *set_on_off )

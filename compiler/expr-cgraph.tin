@@ -19,8 +19,7 @@
         (flag-true "cgraph") )
 
 (defun expr-cgraph-table ()
-        [ [ "dot2pix"                   1 1 ]
-          [ "dot2pix-transparent"       1 1 ]
+        [ [ "dot2svg"                   1 1 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

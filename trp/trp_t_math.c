@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1922,119 +1922,5 @@ trp_obj_t *trp_math_cos( trp_obj_t *n )
     if ( trp_cast_double( n, &dn ) )
         return UNDEF;
     return trp_double( cos( dn ) );
-}
-
-typedef struct {
-    trp_obj_t *val;
-    void *next;
-} trp_queue_elem;
-
-#define trp_sift_analyze_abs(a) (((a)>=0.0)?(a):-(a))
-#define TRP_SIFT_ANALYZE_MIN 6.0
-
-trp_obj_t *trp_sift_analyze( trp_obj_t *m )
-{
-    trp_queue_elem *elem1, *elem2;
-    double x1, y1, x2, y2, dx1, dy1, dx2, dy2, u;
-    double sumx[ 100 ], sumy[ 100 ], deltax[ 100 ], deltay[ 100 ];
-    uns32b cntx[ 100 ], cnty[ 100 ], nx, ny, bnx, bny, i, j;
-
-    if ( m->tipo != TRP_QUEUE )
-        return UNDEF;
-    for ( i = 0 ; i < 100 ; i++ ) {
-        sumx[ i ] = sumy[ i ] = deltax[ i ] = deltay[ i ] = 0.0;
-        cntx[ i ] = cnty[ i ] = 0;
-    }
-    for ( elem1 = (trp_queue_elem *)( ((trp_queue_t *)m)->first );
-          elem1 ;
-          elem1 = (trp_queue_elem *)( elem1->next ) ) {
-        if ( trp_cast_double( trp_car( trp_car ( elem1->val ) ), &x1 ) ||
-             trp_cast_double( trp_cdr( trp_car ( elem1->val ) ), &y1 ) ||
-             trp_cast_double( trp_car( trp_cdr ( elem1->val ) ), &x2 ) ||
-             trp_cast_double( trp_cdr( trp_cdr ( elem1->val ) ), &y2 ) )
-            return UNDEF;
-        for ( elem2 = (trp_queue_elem *)( elem1->next );
-              elem2 ;
-              elem2 = (trp_queue_elem *)( elem2->next ) ) {
-            if ( trp_cast_double( trp_car( trp_car ( elem2->val ) ), &dx1 ) ||
-                 trp_cast_double( trp_cdr( trp_car ( elem2->val ) ), &dy1 ) ||
-                 trp_cast_double( trp_car( trp_cdr ( elem2->val ) ), &dx2 ) ||
-                 trp_cast_double( trp_cdr( trp_cdr ( elem2->val ) ), &dy2 ) )
-                return UNDEF;
-            dx1 -= x1;
-            dx2 -= x2;
-            if ( ( ( dx1 < -TRP_SIFT_ANALYZE_MIN ) && ( dx2 < -TRP_SIFT_ANALYZE_MIN ) ) ||
-                 ( ( dx1 >  TRP_SIFT_ANALYZE_MIN ) && ( dx2 >  TRP_SIFT_ANALYZE_MIN ) ) ) {
-                dx2 /= dx1;
-                i = (uns32b)( dx2 * 10.0 + 0.5 );
-                if ( i > 99 )
-                    i = 99;
-                sumx[ i ] += dx2;
-                deltax[ i ] += ( x2 - dx2 * x1 );
-                cntx[ i ]++;
-            }
-            dy1 -= y1;
-            dy2 -= y2;
-            if ( ( ( dy1 < -TRP_SIFT_ANALYZE_MIN ) && ( dy2 < -TRP_SIFT_ANALYZE_MIN ) ) ||
-                 ( ( dy1 >  TRP_SIFT_ANALYZE_MIN ) && ( dy2 >  TRP_SIFT_ANALYZE_MIN ) ) ) {
-                dy2 /= dy1;
-                i = (uns32b)( dy2 * 10.0 + 0.5 );
-                if ( i > 99 )
-                    i = 99;
-                sumy[ i ] += dy2;
-                deltay[ i ] += ( y2 - dy2 * y1 );
-                cnty[ i ]++;
-            }
-        }
-    }
-    bnx = nx = cntx[ 0 ];
-    x2 = sumx[ 0 ];
-    dx2 = deltax[ 0 ];
-    bny = ny = cnty[ 0 ];
-    y2 = sumy[ 0 ];
-    dy2 = deltay[ 0 ];
-    for ( i = 1 ; i < 100 ; i++ ) {
-        nx += cntx[ i ];
-        ny += cnty[ i ];
-        if ( j = cntx[ i ] ) {
-            x1 = sumx[ i ];
-            dx1 = deltax[ i ];
-            if ( cntx[ i - 1 ] ) {
-                u = sumx[ i - 1 ] / (double)( cntx[ i - 1 ] ) - x1 / (double)j;
-                if ( trp_sift_analyze_abs( u ) < 0.1 ) {
-                    j += cntx[ i - 1 ];
-                    x1 += sumx[ i - 1 ];
-                    dx1 += deltax[ i - 1 ];
-                }
-            }
-            if ( j > bnx ) {
-                bnx = j;
-                x2 = x1;
-                dx2 = dx1;
-            }
-        }
-        if ( j = cnty[ i ] ) {
-            y1 = sumy[ i ];
-            dy1 = deltay[ i ];
-            if ( cnty[ i - 1 ] ) {
-                u = sumy[ i - 1 ] / (double)( cnty[ i - 1 ] ) - y1 / (double)j;
-                if ( trp_sift_analyze_abs( u ) < 0.1 ) {
-                    j += cnty[ i - 1 ];
-                    y1 += sumy[ i - 1 ];
-                    dy1 += deltay[ i - 1 ];
-                }
-            }
-            if ( j > bny ) {
-                bny = j;
-                y2 = y1;
-                dy2 = dy1;
-            }
-        }
-    }
-    return trp_list( trp_sig64( nx ), trp_sig64( ny ),
-                     trp_sig64( bnx ), trp_sig64( bny ),
-                     trp_double( x2 ), trp_double( y2 ),
-                     trp_double( dx2 ), trp_double( dy2 ),
-                     NULL );
 }
 

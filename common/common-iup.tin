@@ -115,6 +115,15 @@
 (defun iup-bgcolor (wid)
         (iup-color-iup->trp (iup-get-str-attribute wid "BGCOLOR")) )
 
+(defun iup-color-trp->iup (c)
+        (sprint (pix-color-red c) " " (pix-color-green c) " " (pix-color-blue c)) )
+
+(defnet iup-set-fgcolor (wid c)
+        (iup-set-str-attribute wid "FGCOLOR" (iup-color-trp->iup c)) )
+
+(defnet iup-set-bgcolor (wid c)
+        (iup-set-str-attribute wid "BGCOLOR" (iup-color-trp->iup c)) )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                      ;;;;
@@ -533,6 +542,9 @@
 (defnet iup-warning60 (self msg) (iup-info-low self $"Warning" (pix-load-static "48x48/dialog-important-2.png") msg 60))
 (defnet iup-error60 (self msg) (iup-info-low self $"Error" (pix-load-static "48x48/dialog-error-4.png") msg 60))
 
+(defnet iup-info-pix (self pix msg) (iup-info-low self "Info" pix msg 0))
+(defnet iup-info60-pix (self pix msg) (iup-info-low self "Info" pix msg 60))
+
 (defnet iup-info-low (self title pix msg maxlen)
         (deflocal q img hbox butbox dlg i)
 
@@ -584,12 +596,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defglobal _iup_confirm_lock)
+
 (defnet iup-confirm (self msg) (iup-confirm-low self msg 0))
 
 (defnet iup-confirm60 (self msg) (iup-confirm-low self msg 60))
 
 (defnet iup-confirm-low (self msg maxlen)
         (deflocal q img hbox butbox dlg i)
+
+        (set _iup_confirm_lock true)
 
         (set q (queue))
 
@@ -623,10 +639,12 @@
         (iup-set-str-attribute dlg "TITLE" $"Confirmation request")
         (iup-set-bool dlg "DIALOGFRAME" true)
         ; notare che defaultenter è il pulsante annulla
-        ; perché vogliamo che l`utente confermi cliccando sul pulsante conferma
+        ; perché vogliamo che l'utente confermi cliccando sul pulsante conferma
         ;(iup-set-attribute-handle dlg "DEFAULTENTER" (iup-box-ok-cancel-btn-cancel butbox))
         ;(iup-set-attribute-handle dlg "DEFAULTESC" (iup-box-ok-cancel-btn-cancel butbox))
         (iup-set-int dlg "STATUS" 0)
+
+        (iup-post-call (netptr iup-confirm-unlock))
 
         (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
 
@@ -635,13 +653,17 @@
         (iup-close-queue q)
         (= i 1) )
 
+(defnet iup-confirm-unlock ()
+        (set _iup_confirm_lock false) )
+
 (defnet iup-confirm-cb (dlg c)
-        (case c of
-                (cmacro K_y)    (iup-ok-cb dlg)
-                (cmacro K_s)    (iup-ok-cb dlg)
-                (cmacro K_ESC)  (iup-cancel-cb dlg)
-                (cmacro K_n)    (iup-cancel-cb dlg)
-                default         (fail) ))
+        (if (not _iup_confirm_lock)
+        then    (case c of
+                        (cmacro K_y)    (iup-ok-cb dlg)
+                        (cmacro K_s)    (iup-ok-cb dlg)
+                        (cmacro K_ESC)  (iup-cancel-cb dlg)
+                        (cmacro K_n)    (iup-cancel-cb dlg)
+                        default         (fail) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -762,9 +784,7 @@
 (defun iup-button-color (initial-color) net iup-button-color)
 (defnet iup-button-color (initial-color @but)
         (set @but (iup-button))
-        (iup-set-str-attribute @but "BGCOLOR" (sprint (pix-color-red initial-color) " "
-                                                      (pix-color-green initial-color) " "
-                                                      (pix-color-blue initial-color) ))
+        (iup-set-bgcolor @but initial-color)
         (iup-set-str-attribute @but "RASTERSIZE" "32x32")
         (iup-set-callback @but "ACTION" (netptr iup-button-color-cb)) )
 
@@ -775,7 +795,70 @@
                 (set newcolor (iup-choose-color but oldcolor))
                 (pixp newcolor)
                 (<> newcolor oldcolor)
-                (iup-set-str-attribute but "BGCOLOR" (sprint (pix-color-red newcolor) " " (pix-color-green newcolor) " " (pix-color-blue newcolor))) ))
+                (iup-set-bgcolor but newcolor) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-list->menu (l) net iup-list->menu)
+(defnet iup-list->menu (l @wid)
+        (deflocal q item)
+
+        (listp l)
+        (set q (queue))
+        (while (<> l nil) do
+                (list-pop l item)
+                (queue-put q (iup-list->menu-item item)) )
+        (set @wid (iup-menu q)) )
+
+(defun iup-list->menu-item (item) net iup-list->menu-item)
+(defnet iup-list->menu-item (item @wid)
+        (deflocal title state icon asc asckey l i m)
+
+        (if (listp item)
+        then    (list-pop item title)
+                (if (listp title)
+                then    (set l title)
+                        (list-pop l title)
+                        (while (<> l nil) do
+                                (list-pop l i)
+                                (if (booleanp i)
+                                then    (set state i)
+                                else    (set m (car i))
+                                        (if (pixp m)
+                                        then    (if (and (= (width m) 16) (= (height m) 16))
+                                                then    (set icon (iup-image-rgba m))
+                                                else    (set m (pix-scale m 16 16))
+                                                        (set icon (iup-image-rgba m))
+                                                        (close m) )
+                                                (queue-put (cdr i) icon)
+                                        else    (set asc m)
+                                                (set asckey (cdr i)) ))))
+                ; title deve essere una stringa
+                (if (cmingw)
+                then    (opt    (search "\t" title i)
+                                (inc i)
+                                (set title (+ (sub 0 i title) (ltrim (sub i (maxint) title) '\t'))) ))
+                (if (listp item)
+                then    (set @wid (iup-submenu title (iup-list->menu item)))
+                else    ; item deve essere un puntatore a rete
+                        (set @wid (iup-item title))
+                        (iup-set-callback @wid "ACTION" item) )
+                (if (booleanp state)
+                then    (iup-set-bool @wid "VALUE" state) )
+                (if (<> icon undef)
+                then    (iup-set-attribute-handle @wid "IMAGE" icon) )
+                (if (assocp asc)
+                then    (set <asc asckey> @wid) )
+        else    ; item deve essere di tipo iup (iup-separator)
+                (set @wid item) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -935,8 +1018,7 @@
                 (set u (iup-user))
                 (set color <i 2>)
                 (iup-set-str-attribute u "SELECTIONPOS" <i 0> ":" <i 1>)
-                (iup-set-str-attribute u "FGCOLOR"
-                    (sprint (pix-color-red color) " " (pix-color-green color) " " (pix-color-blue color)) )
+                (iup-set-fgcolor u color)
                 (iup-append uu u) )
         (if false ; (cmingw)
         then    (set u (iup-user))
@@ -994,8 +1076,7 @@
         (if (<> color undef)
         then    (set u (iup-user))
                 (iup-set-str-attribute u "SELECTIONPOS" i ":" j)
-                (iup-set-str-attribute u "FGCOLOR"
-                    (sprint (pix-color-red color) " " (pix-color-green color) " " (pix-color-blue color)) )
+                (iup-set-fgcolor u color)
                 (iup-set-attribute wid "ADDFORMATTAG_HANDLE" u) )
         (iup-set-int wid "CARETPOS" (if home 0 j)) )
 
@@ -1076,7 +1157,7 @@
                 (iup-set-bool gauge "MARQUEE" true)
         else    (set gauge (iup-gauge))
                 (iup-set-bool gauge "SHOWTEXT" true) )
-        (iup-set-str-attribute gauge "RASTERSIZE" "360x30")
+        (iup-set-str-attribute gauge "RASTERSIZE" "520x30")
         (iup-set-str-attribute gauge "FGCOLOR" "0 120 220")
         (iup-set-str-attribute gauge "EXPAND" "HORIZONTAL")
 
@@ -1084,7 +1165,7 @@
         then    (set box gauge)
         else    (set gauge-aux (iup-gauge))
                 (iup-set-bool gauge-aux "SHOWTEXT" true)
-                (iup-set-str-attribute gauge-aux "RASTERSIZE" "360x30")
+                (iup-set-str-attribute gauge-aux "RASTERSIZE" "520x30")
                 (iup-set-str-attribute gauge-aux "FGCOLOR" "0 120 220")
                 (iup-set-str-attribute gauge-aux "EXPAND" "HORIZONTAL")
                 (set box (iup-vbox gauge gauge-aux))

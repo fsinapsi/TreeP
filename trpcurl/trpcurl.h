@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,8 +80,6 @@ uns8b trp_curl_easy_setopt_httpheader( trp_obj_t *curl, ... );
 uns8b trp_curl_easy_setopt_stderr( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_verbose( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_failonerror( trp_obj_t *curl, trp_obj_t *set_on_off );
-uns8b trp_curl_easy_setopt_random_file( trp_obj_t *curl, trp_obj_t *val );
-uns8b trp_curl_easy_setopt_random_egdsocket( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_ignore_content_length( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_ssh_public_keyfile( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_ssh_private_keyfile( trp_obj_t *curl, trp_obj_t *val );

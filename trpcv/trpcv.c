@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,12 +61,13 @@ static IplImage *trp_cv_pix2IplImage( trp_obj_t *pix );
 static IplImage *trp_cv_pix2IplImage_alpha( trp_obj_t *pix );
 static void trp_cv_copy_im2pix( IplImage *im, trp_obj_t *pix );
 static uns8b trp_pix_load_cv( uns8b *cpath, uns32b *w, uns32b *h, uns8b **data );
+static uns8b trp_pix_load_cv_memory( uns8b *idata, uns32b isize, uns32b *w, uns32b *h, uns8b **data );
 static trp_obj_t *trp_cv_sift_features_basic( uns8b flags, trp_obj_t *pix );
 
 uns8b trp_cv_init()
 {
     extern uns8bfun_t _trp_pix_load_cv;
-    extern objfun_t _trp_pix_rotate_cv;
+    extern uns8bfun_t _trp_pix_load_cv_memory;
     extern uns8bfun_t _trp_print_fun[];
     extern uns8bfun_t _trp_close_fun[];
     extern uns32bfun_t _trp_size_fun[];
@@ -76,7 +77,7 @@ uns8b trp_cv_init()
     extern objfun_t _trp_length_fun[];
 
     _trp_pix_load_cv = trp_pix_load_cv;
-    _trp_pix_rotate_cv = trp_cv_pix_rotate;
+    _trp_pix_load_cv_memory = trp_pix_load_cv_memory;
     _trp_print_fun[ TRP_OPENCV ] = trp_cv_print;
     _trp_close_fun[ TRP_OPENCV ] = trp_cv_close;
     _trp_size_fun[ TRP_OPENCV ] = trp_cv_size;
@@ -275,17 +276,12 @@ static uns8b trp_pix_load_cv( uns8b *cpath, uns32b *w, uns32b *h, uns8b **data )
     return 0;
 }
 
-trp_obj_t *trp_cv_pix_load( trp_obj_t *path )
+static uns8b trp_pix_load_cv_memory( uns8b *idata, uns32b isize, uns32b *w, uns32b *h, uns8b **data )
 {
-    uns8b *cpath = trp_csprint( path ), *data;
-    uns32b w, h;
-
-    if ( trp_pix_load_cv( cpath, &w, &h, &data ) ) {
-        trp_csprint_free( cpath );
-        return UNDEF;
-    }
-    trp_csprint_free( cpath );
-    return trp_pix_create_image_from_data( 0, w, h, data );
+    /*
+     * FIXME
+     */
+    return 1;
 }
 
 uns8b trp_cv_pix_gray( trp_obj_t *pix )

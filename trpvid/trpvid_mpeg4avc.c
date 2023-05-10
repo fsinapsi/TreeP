@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -847,10 +847,12 @@ static uns8b decode_slice( trp_vid_t *vid, uns8b *buf, uns32b size, int nal_ref_
 
     qp = 26 + pps->pic_init_qp_minus26 + se_v( &b ); /* slice_qp_delta */
 
+#if 0
     if ( qp < 0 ) {
         vid->error = "QP < 0";
         return 1;
     }
+#endif
 
     if ( ( type == SP_SLICE ) || ( type == SI_SLICE ) ) {
         if ( type == SP_SLICE )

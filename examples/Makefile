@@ -5,7 +5,7 @@ PRG+= testmagic testaud testvid mp3split
 PRG+= testthread1 testthread2 testthread3
 PRG+= testlicense testgtk testpix ssim
 PRG+= preview-movie iup-simple-notepad
-PRG+= testcurl testsqlite3 testwn cv-siftmatch vl-siftmatch testvlfeat # testmgl
+PRG+= testcurl testsqlite3 testwn cv-siftmatch # testmgl
 
 all:	$(PRG)
 
@@ -89,12 +89,6 @@ testwn:		testwn.trp
 
 cv-siftmatch:	cv-siftmatch.trp
 	trpc -f cv-siftmatch.trp
-
-vl-siftmatch:	vl-siftmatch.trp
-	trpc -f vl-siftmatch.trp
-
-testvlfeat:	testvlfeat.trp
-	trpc -f testvlfeat.trp
 
 testmgl:	testmgl.trp
 	trpc -f testmgl.trp

@@ -203,7 +203,7 @@ epeg_decode_colorspace_set(Epeg_Image *im, Epeg_Colorspace colorspace)
  * allocations failed or the image data cannot be decoded.
  *
  */
-const void *
+void *
 epeg_pixels_get(Epeg_Image *im, int x, int y,  int w, int h)
 {
    int xx, yy, ww, hh, bpp, ox, oy, ow, oh, iw, ih;

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2022 Frank Sinapsi
+    Copyright (C) 2008-2023 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -150,13 +150,18 @@ trp_obj_t *trp_vid_create( trp_obj_t *f )
     return (trp_obj_t *)vid;
 }
 
-uns32b trp_vid_effective_qscale( uns32b qscale, sig8b bitstream_type )
+uns32b trp_vid_effective_qscale( sig32b qscale, sig8b bitstream_type )
 {
     uns32b maxq = ( bitstream_type == 3 ) ? MAX_QSCALE_AVC : MAX_QSCALE_ASP;
-    return ( qscale <= maxq ) ? qscale : maxq;
+
+    if ( qscale < 0 )
+        qscale = 0;
+    if ( qscale > maxq )
+        qscale = maxq;
+    return qscale;
 }
 
-void trp_vid_update_qscale( trp_vid_t *vid, sig8b bitstream_type, uns32b typ, uns32b qscale )
+void trp_vid_update_qscale( trp_vid_t *vid, sig8b bitstream_type, uns32b typ, sig32b qscale )
 {
     vid->cnt_qscale[ trp_vid_effective_qscale( qscale, bitstream_type ) ][ typ ]++;
     vid->cnt_qscale_cnt[ typ ]++;
@@ -215,7 +220,7 @@ void trp_vid_store_userdata( trp_vid_t *vid, uns8b *src, uns32b size )
     e = sscanf( nub, "DivX%dBuild%d%c", &ver, &build, &last );
     if ( e < 2 )
         e = sscanf( nub, "DivX%db%d%c", &ver, &build, &last );
-    if( e >= 2 ) {
+    if ( e >= 2 ) {
         vid->divx_version = ver;
         vid->divx_build = build;
     }

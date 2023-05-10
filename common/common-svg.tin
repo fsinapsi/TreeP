@@ -1,0 +1,263 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun svg->svg (svg)
+        (cairo-flush-and-close-raw (cairo-svg-surface-create-from-svg svg)) )
+
+(defun svg->svg-size (svg w h) net svg->svg-size)
+(defnet svg->svg-size (svg w h @raw)
+        (deflocal cr1 cr2 rw rh)
+
+        (set cr1 (cairo-svg-surface-create-from-svg svg))
+        (set rw (/ w (width cr1)))
+        (set rh (/ h (height cr1)))
+        (if (and (= rw 1) (= rh 1))
+        then    (set @raw (cairo-flush-and-close-raw cr1))
+        else    (set cr2 (cairo-svg-surface-create-for-stream w h))
+                (cairo-scale cr2 rw rh)
+                (cairo-set-source-surface cr2 cr1 0 0)
+                (close cr1)
+                (set @raw (cairo-flush-and-close-raw cr2)) ))
+
+(defun svg->svg-size-preserve-ar (svg w h) net svg->svg-size-preserve-ar)
+(defnet svg->svg-size-preserve-ar (svg w h @raw)
+        (deflocal cr1 cr2 rw rh r)
+
+        (set cr1 (cairo-svg-surface-create-from-svg svg))
+        (set rw (/ w (width cr1)))
+        (set rh (/ h (height cr1)))
+        (if (and (= rw 1) (= rh 1))
+        then    (set @raw (cairo-flush-and-close-raw cr1))
+        else    (set r (min rw rh))
+                (set cr2 (cairo-svg-surface-create-for-stream (* (width cr1) r) (* (height cr1) r)))
+                (cairo-scale cr2 r r)
+                (cairo-set-source-surface cr2 cr1 0 0)
+                (close cr1)
+                (set @raw (cairo-flush-and-close-raw cr2)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet svg-save-as-pdf (svg opath)
+        (deflocal cr pix)
+
+        (set pix (rsvg-load svg))
+        (pixp pix)
+        (set cr (cairo-pdf-surface-create opath (width pix) (height pix)))
+        (close pix)
+        (<> cr undef)
+        (cairo-set-source-surface cr svg 0 0)
+        (close cr) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun svg-autocrop (svg) net svg-autocrop)
+(defnet svg-autocrop (svg @raw)
+        (deflocal pix mag l cr)
+
+        (alt    (seq    (set pix (rsvg-load-size svg
+                                (clamp (* 5 (rsvg-width svg)) 500 8192)
+                                (clamp (* 5 (rsvg-height svg)) 500 8192) ))
+                        (pixp pix)
+                        (set mag (/ (width pix) (rsvg-width svg)))
+                        (set l (pix-trim-values pix (white)))
+                        (close pix)
+                        (<> l undef)
+                        (or (> <l 0> 0) (> <l 1> 0))
+                        (set cr (cairo-svg-surface-create-for-stream (/ <l 2> mag) (/ <l 3> mag)))
+                        (cairo-set-source-surface cr svg -(/ <l 0> mag) -(/ <l 1> mag))
+                        (set @raw (cairo-flush-and-close-raw cr))
+                        (rawp @raw) )
+                (set @raw (svg->svg svg)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun svg-add-margin (svg ml mr mt mb) net svg-add-margin)
+(defnet svg-add-margin (svg ml mr mt mb @raw)
+        (deflocal cr pix w h)
+
+        (set pix (rsvg-load svg))
+        (pixp pix)
+        (set w (+ (width pix) ml mr))
+        (set h (+ (height pix) mt mb))
+        (close pix)
+        (set cr (cairo-svg-surface-create-for-stream w h))
+        (cairo-set-source-surface cr svg ml mt)
+        (set @raw (cairo-flush-and-close-raw cr)) )
+
+(defun svg-add-margin-rel (svg ml mr mt mb) net svg-add-margin-rel)
+(defnet svg-add-margin-rel (svg ml mr mt mb @raw)
+        (deflocal cr pix w h)
+
+        (set pix (rsvg-load svg))
+        (pixp pix)
+        (set w (width pix))
+        (set h (height pix))
+        (close pix)
+        (set cr (cairo-svg-surface-create-for-stream (* w (+ 1 ml mr)) (* h (+ 1 mt mb))))
+        (cairo-set-source-surface cr svg (* w ml) (* h mt))
+        (set @raw (cairo-flush-and-close-raw cr)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun svg-text (s)
+        (svg-text-font undef undef s) )
+
+(defun svg-text-font (font color s) net svg-text-font)
+(defnet svg-text-font (font color s @raw)
+        (deflocal q col row x y cr l)
+
+        (set q (queue))
+        (set col 0)
+        (set row 0)
+        (repeat (str-readline s l)
+                until (= l undef)
+                (queue-put q l)
+                (set col (max col (length l)))
+                (inc row) )
+        (set cr (cairo-svg-surface-create-for-stream 10 10))
+        (if (= font undef)
+        then    (cairo-select-font-face cr "serif"
+                        (cmacro CAIRO_FONT_SLANT_NORMAL)
+                        (cmacro CAIRO_FONT_WEIGHT_NORMAL) )
+        else    (cairo-set-font-face-ft cr font) )
+        (cairo-set-font-size cr 13)
+        (set l (cairo-font-extents cr))
+        (close cr)
+        (set x (max 3 (abs <l 3>)))
+        (set y (max 3 (abs <l 2>)))
+
+        (set cr (cairo-svg-surface-create-for-stream (* (+ col 2) x) (* (+ row 2) y)))
+        (if (= font undef)
+        then    (cairo-select-font-face cr "serif"
+                        (cmacro CAIRO_FONT_SLANT_NORMAL)
+                        (cmacro CAIRO_FONT_WEIGHT_NORMAL) )
+        else    (cairo-set-font-face-ft cr font) )
+        (cairo-set-font-size cr 13)
+        (cairo-set-source-rgba cr (if (= color undef) (black) color))
+        (set row 0)
+        (while (> (length q) 0) do
+                (set l (queue-get q))
+                (inc row)
+                (cairo-move-to cr x (* row y))
+                (cairo-show-text cr l) )
+        (set l (cairo-flush-and-close-raw cr))
+        (set q (svg-autocrop l))
+        (close l)
+        (set @raw (svg-add-margin-rel q 0.05 0.05 0.05 0.05))
+        (close q) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun svg-font-view (font) net svg-font-view)
+(defnet svg-font-view (font @raw)
+        (deflocal cr fname sname pname avail-chars raw1 raw2 h)
+
+        (set cr (cairo-svg-surface-create-for-stream 10 10))
+        (alt    (cairo-set-font-face-ft cr font)
+                (seq    (close cr)
+                        (fail) ))
+        (set fname (cairo-get-ft-family-name cr))
+        (set sname (cairo-get-ft-style-name cr))
+        (set pname (cairo-get-ft-postscript-name cr))
+        (set avail-chars (cairo-get-ft-available-chars cr))
+        (close cr)
+        (if (and (stringp fname) (stringp sname))
+        then    (inc fname "-" sname)
+        else    (if (stringp pname)
+                then    (set fname pname) ))
+        (set @raw (svg-text-font font undef (svg-font-view-filter (+
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ" nl
+                "abcdefghijklmnopqrstuvwxyz" nl
+                "ÀÁÈÉÌÍÒÓÙÚÂÃÄÅÆÇÊËÎÏÐÑÔÕÖ×ØÛÜÝÞß" nl
+                "àáèéìíòóùúâãäåæçêëîïðñôõö÷øûüýþÿ" nl
+                "0123456789+-×/±⋅*≤<=>≥¼½¾⁰¹²³⁴⁵⁶⁷⁸⁹ⁱ⁺⁻⁼⁽⁾" nl
+                " !¡?¿:;,.©®™℠@~#%&^_\"´'`“”‘’„|\\()[]{}«»" nl
+                "€¢$£¤¥¦§¨°ªº¬¯µ¶·¸ﬁﬂ…⏎" )
+                avail-chars )))
+        (if (stringp fname)
+        then    (set raw1 (svg-text-font undef (blue) fname))
+                (set h (rsvg-height raw1))
+                (set cr (cairo-svg-surface-create-for-stream (max (rsvg-width raw1) (rsvg-width @raw)) (+ h (rsvg-height @raw))))
+                (cairo-set-source-surface cr raw1 0 0)
+                (cairo-set-source-surface cr @raw 0 h)
+                (set raw2 (cairo-flush-and-close-raw cr))
+                (close @raw raw1)
+                (set @raw raw2) ))
+
+(defun svg-font-view-filter (s avail-chars) net svg-font-view-filter)
+(defnet svg-font-view-filter (s avail-chars @s)
+        (deflocal l t i c)
+
+        (set @s "")
+        (repeat (str-readline s l)
+                until (= l undef)
+                (set t "")
+                (while (<> l "") do
+                        (set i 1)
+                        (repeat (<= i (length l))
+                                (set c (sub 0 i l))
+                                until (integerp (utf8-length c))
+                                (inc i) )
+                        (set l (sub i (maxint) l))
+                        (if (in c avail-chars)
+                        then    (inc t c) ))
+                (if (<> t "")
+                then    (inc @s (if (= @s "") "" nl) t) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

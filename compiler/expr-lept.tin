@@ -21,8 +21,6 @@
 (defun expr-lept-table ()
         [ [ "version"                   0 0 ]
           [ "cversion"                  0 0 ]
-          [ "pix-load"                  1 1 ]
-          [ "pix-rotate"                2 2 ]
           [ "pix-find-skew"             1 1 ]
           [ "pix-count-conn-comp"       2 2 ]
         ] )

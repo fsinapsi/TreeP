@@ -25,16 +25,38 @@
         (exprseq-basic <i 1> <i 2> (+ "trp_pix_" (dash->underscore func) "(") ")") )
 
 (defnet expr-pix-load-static (const-state)
-        (deflocal i)
+        (deflocal path i j w h)
 
         (set _expr_const_enabled true)
         (expr-basic)
         (if (not _expr_const)
         then    (error "`pix-load-static' requires a path") )
-        (set i (pix-load (search-path-default _expr_const_val)))
+        (set path (search-path-default _expr_const_val))
+        (set i (pix-load path))
         (if (= i undef)
-        then    (error (+ "`pix-load-static': cant't load a static image from " _expr_const_val)) )
-        (chiusa)
+        then    (error (+ "`pix-load-static': can't load a static image from " _expr_const_val)) )
+        (next-token)
+        (if (<> _token "chiusa")
+        then    (token-retract)
+                (expr-basic)
+                (if (not _expr_const)
+                then    (close i)
+                        (error "`pix-load-static' requires a constant width") )
+                (set w _expr_const_val)
+                (expr-basic)
+                (if (not _expr_const)
+                then    (close i)
+                        (error "`pix-load-static' requires a constant height") )
+                (set h _expr_const_val)
+                (chiusa)
+                (if (= (pix-loader i) "svg")
+                then    (close i)
+                        (set j (rsvg-load-size path w h))
+                else    (set j (pix-scale i w h))
+                        (close i) )
+                (if (= j undef)
+                then    (error "`pix-load-static': invalid width or height") )
+                (set i j) )
         (set _expr_const_enabled const-state)
         (expr-constant i)
         (set _expr_const_enabled false) )
@@ -56,7 +78,7 @@
           [ "color-blue"                        1 1 ]
           [ "color-alpha"                       1 1 ]
           [ "create"                            1 2 ]
-          [ "info"                              1 1 ]
+          [ "loader"                            1 1 ]
           [ "load"                              1 1 ]
           [ "load-multiple"                     1 1 ]
           [ "load-memory"                       1 2 ]
@@ -64,15 +86,15 @@
           [ "load-thumbnail"                    2 3 ]
           [ "load-thumbnail-memory"             2 3 ]
           [ "load-thumbnail-memory-ext"         4 5 ]
-          [ "image-format"                      1 1 ]
           [ "save-jpg-memory"                   1 2 ]
           [ "get-color"                         1 1 ]
-          [ "get-luminance"                     1 1 ]
-          [ "get-contrast"                      1 1 ]
+          [ "has-alpha"                         1 1 ]
           [ "grayp"                             1 1 ]
           [ "bwp"                               1 1 ]
-          [ "point"                             3 3 ]
           [ "color-count"                       2 2 ]
+          [ "get-luminance"                     1 1 ]
+          [ "get-contrast"                      1 1 ]
+          [ "point"                             3 3 ]
           [ "top-field"                         1 1 ]
           [ "bottom-field"                      1 1 ]
           [ "crop"                              5 5 ]

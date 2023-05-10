@@ -39,14 +39,14 @@
         (thread-case*
            priority p1 (receive msg from a1) ->
                 (print a1 " -> " msg nl)
-                (set p2 (+ p2 1))
-                (set p3 (+ p3 1))
+                (inc p2)
+                (inc p3)
         [] priority p2 (receive msg from a2) ->
                 (print a2 " -> " msg nl)
-                (set p1 (+ p1 1))
-                (set p3 (+ p3 1))
+                (inc p1)
+                (inc p3)
         [] priority p3 (receive msg from a3) ->
                 (print a3 " -> " msg nl)
-                (set p1 (+ p1 1))
-                (set p2 (+ p2 1)) ))
+                (inc p1)
+                (inc p2) ))
 
