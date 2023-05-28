@@ -46,7 +46,7 @@ static uns8b trp_sift_close_basic( uns8b flags, trp_sift_t *obj );
 static void trp_sift_finalize( void *obj, void *data );
 static trp_obj_t *trp_sift_length( trp_sift_t *obj );
 static trp_obj_t *trp_sift_nth( uns32b n, trp_sift_t *obj );
-static trp_sift_keypoint_t *trp_sift_keypoints_low( trp_obj_t *obj, uns32b *cnt, uns8b *to_free );
+static trp_sift_keypoint_t *trp_sift_keypoints_low( uns8b flags, trp_obj_t *obj, uns32b *cnt, uns8b *to_free );
 static uns32b trp_sift_euclidean_distance_square( uns8b *a1, uns8b *a2 );
 static void trp_sift_keypoints_two_min( trp_sift_keypoint_t *kp1, uns32b cnt1,
                                         trp_sift_keypoint_t *kp2, uns32b cnt2,
@@ -116,7 +116,7 @@ static trp_obj_t *trp_sift_nth( uns32b n, trp_sift_t *obj )
                      NULL );
 }
 
-static trp_sift_keypoint_t *trp_sift_keypoints_low( trp_obj_t *obj, uns32b *cnt, uns8b *to_free )
+static trp_sift_keypoint_t *trp_sift_keypoints_low( uns8b flags, trp_obj_t *obj, uns32b *cnt, uns8b *to_free )
 {
     static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     trp_pix_color_t *c;
@@ -140,12 +140,36 @@ static trp_sift_keypoint_t *trp_sift_keypoints_low( trp_obj_t *obj, uns32b *cnt,
         pthread_mutex_unlock( &mut );
         return NULL;
     }
-    for ( j = 0 ; j < h ; j++ )
-        for ( i = 0 ; i < w ; i++, c++ )
-            image->pixels[ j * image->stride + i ] =
-                ( 0.212639005871510 * (float)( c->red ) +
-                  0.715168678767756 * (float)( c->green ) +
-                  0.072192315360734 * (float)( c->blue ) ) / 255.0;
+    if ( flags & 1 ) {
+        float v, vmin = 1.0, vmax = 0.0, *dst;
+
+        for ( j = 0, dst = image->pixels ; j < h ; j++, dst += image->stride )
+            for ( i = 0 ; i < w ; i++, c++ ) {
+                v = dst[ i ] =
+                    ( 0.212639005871510 * (float)( c->red ) +
+                      0.715168678767756 * (float)( c->green ) +
+                      0.072192315360734 * (float)( c->blue ) ) / 255.0;
+                if ( v < vmin )
+                    vmin = v;
+                if ( v > vmax )
+                    vmax = v;
+            }
+//        fprintf( stderr, "[ %f , %f ]\n", vmin, vmax );
+        vmax -= vmin;
+        if ( vmax && ( vmax < 1.0 ) )
+            for ( j = 0, dst = image->pixels ; j < h ; j++, dst += image->stride )
+                for ( i = 0 ; i < w ; i++, c++ )
+                    dst[ i ] = ( dst[ i ] - vmin ) / vmax;
+    } else {
+        float *dst;
+
+        for ( j = 0, dst = image->pixels ; j < h ; j++, dst += image->stride )
+            for ( i = 0 ; i < w ; i++, c++ )
+                dst[ i ] =
+                    ( 0.212639005871510 * (float)( c->red ) +
+                      0.715168678767756 * (float)( c->green ) +
+                      0.072192315360734 * (float)( c->blue ) ) / 255.0;
+    }
     kpt = GetKeypoints( image );
     DestroyAllResources();
     pthread_mutex_unlock( &mut );
@@ -228,7 +252,7 @@ trp_obj_t *trp_sift_features( trp_obj_t *pix )
     uns32b cnt;
     uns8b to_free;
 
-    if ( ( kp = trp_sift_keypoints_low( pix, &cnt, &to_free ) ) == NULL )
+    if ( ( kp = trp_sift_keypoints_low( 0, pix, &cnt, &to_free ) ) == NULL )
         return UNDEF;
     if ( to_free == 0 )
         return pix;
@@ -254,9 +278,9 @@ trp_obj_t *trp_sift_match( trp_obj_t *obj1, trp_obj_t *obj2, trp_obj_t *threshol
             return UNDEF;
     } else
         thresh = 0.68;
-    if ( ( kp1 = trp_sift_keypoints_low( obj1, &cnt1, &to_free1 ) ) == NULL )
+    if ( ( kp1 = trp_sift_keypoints_low( 0, obj1, &cnt1, &to_free1 ) ) == NULL )
         return UNDEF;
-    if ( ( kp2 = trp_sift_keypoints_low( obj2, &cnt2, &to_free2 ) ) == NULL ) {
+    if ( ( kp2 = trp_sift_keypoints_low( 0, obj2, &cnt2, &to_free2 ) ) == NULL ) {
         if ( to_free1 )
             free( kp1 );
         return UNDEF;

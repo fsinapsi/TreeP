@@ -167,40 +167,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun pix-cv-scale (pix w h flags) net pix-cv-scale)
-(defnet pix-cv-scale (pix w h flags @res)
-        (set w (rint w))
-        (set h (rint h))
-        (set @res (pix-create w h))
-        (alt    (cv-pix-warp-affine pix @res
-                        (cv-get-affine-transform 0 0 0 0
-                                (- (width pix) 1) 0 (- w 1) 0
-                                0 (- (height pix) 1) 0 (- h 1) ) flags )
-                (seq    (close @res)
-                        (fail) )))
-
-(defun pix-cv-scale-nearest-neighbour (pix w h)
-        (pix-cv-scale pix w h (cmacro CV_INTER_NN)) )
-
-(defun pix-cv-scale-bilinear (pix w h)
-        (pix-cv-scale pix w h (cmacro CV_INTER_LINEAR)) )
-
-(defun pix-cv-scale-bicubic (pix w h)
-        (pix-cv-scale pix w h (cmacro CV_INTER_CUBIC)) )
-
-(defun pix-cv-scale-area (pix w h)
-        (pix-cv-scale pix w h (cmacro CV_INTER_AREA)) )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun pix-affine-cairo (pix xx xy yx yy) net pix-affine-cairo)
 (defnet pix-affine-cairo (pix xx xy yx yy @pix)
         (deflocal w h xmin xmax ymin ymax o cr raw)
@@ -359,17 +325,17 @@
         (deflocal feat cr i raw)
 
         (set feat (sift-features pix))
-        (<> feat undef)
-        (set cr (cairo-svg-surface-create-for-stream (width pix) (height pix)))
-        (cairo-set-antialias cr (cmacro CAIRO_ANTIALIAS_BEST))
-        (cairo-set-line-width-and-color cr 1 color)
-        (for i in 0 .. (- (length feat) 1) do
-                (set raw <feat i>)
-                (cairo-draw-arrow cr
-                        <raw 0> <raw 1>
-                        (rad->deg -<raw 3>)
-                        (* <raw 2> 5) ))
-        (pix-draw-and-close-cairo pix cr) )
+        (if (<> feat undef)
+        then    (set cr (cairo-svg-surface-create-for-stream (width pix) (height pix)))
+                (cairo-set-antialias cr (cmacro CAIRO_ANTIALIAS_BEST))
+                (cairo-set-line-width-and-color cr 1 color)
+                (for i in 0 .. (- (length feat) 1) do
+                        (set raw <feat i>)
+                        (cairo-draw-arrow cr
+                                <raw 0> <raw 1>
+                                (rad->deg -<raw 3>)
+                                (* <raw 2> 5) ))
+                (pix-draw-and-close-cairo pix cr) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

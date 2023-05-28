@@ -161,7 +161,6 @@
 (defun sqlite3 () <_kv "sqlite3">)
 (defun wn () <_kv "wn">)
 (defun avcodec () <_kv "avcodec">)
-(defun cv () <_kv "cv">)
 (defun mgl () <_kv "mgl">)
 (defun lept () <_kv "lept">)
 (defun cgraph () <_kv "cgraph">)
@@ -200,7 +199,7 @@
         [ "gtk" "iup" "thread" "license" "gcrypt" "suf"
           "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
           "pix" "webp" "qoi" "openjp2" "jbig2" "rsvg" "sail" "sift"
-          "curl" "sqlite3" "wn" "avcodec" "cv" "mgl"
+          "curl" "sqlite3" "wn" "avcodec" "mgl"
           "lept" "cgraph" "cairo" "microhttpd" "sdl" "chess" ])
 
 (defnet init-globals ()
@@ -372,7 +371,6 @@
                         (+ (pkg-config-cflags "libavformat") (pkg-config-cflags "libavcodec")
                            (pkg-config-cflags "libavutil") (pkg-config-cflags "libswscale")
                            (pkg-config-cflags "libavfilter") ) "" )
-                  (if (cv) (pkg-config-cflags "opencv") "")
                   " -o " (pathquote exepath)
                   " " (pathquote cpath)
                   (if (= ipath undef) "" (+ " " (pathquote ipath)))
@@ -407,7 +405,6 @@
                         (+ " -ltrpavcodec" (pkg-config-libs "libavformat") (pkg-config-libs "libavcodec")
                            (pkg-config-libs "libavutil") (pkg-config-libs "libswscale")
                            (pkg-config-libs "libavfilter") ) "" )
-                  (if (cv) (+ " -ltrpcv" (pkg-config-libs "opencv")) "")
                   (if (mgl) " -ltrpmgl -lmgl" "")
                   (if (lept) (+ " -ltrplept" (pkg-config-libs "lept")) "")
                   (if (cgraph) (+ " -ltrpcgraph" (pkg-config-libs "libgvc")) "")
@@ -562,13 +559,11 @@
 (defnet conflicts ()
         (if (and (gtk) (iup))
         then    (error "conflict: GTK2 vs IUP") )
-   ;     (if (and (cv) (iup))
-   ;     then    (error "conflict: CV (GTK2) vs IUP") )
         (skip) )
 
 (defnet dependences ()
         (if (or (webp) (qoi) (openjp2) (jbig2) (rsvg) (sail) (sift)
-                (gtk) (iup) (avcodec) (mgl) (lept) (cv) )
+                (gtk) (iup) (avcodec) (mgl) (lept) )
         then    (flag-true "pix") ))
 
 (defnet parse-pass ()
@@ -899,8 +894,6 @@
         then    (print-header (str-load-static "../trpwn/trpwn.h")) )
         (if (avcodec)
         then    (print-header (str-load-static "../trpavcodec/trpavcodec.h")) )
-        (if (cv)
-        then    (print-header (str-load-static "../trpcv/trpcv.h")) )
         (if (mgl)
         then    (print-header (str-load-static "../trpmgl/trpmgl.h")) )
         (if (lept)
@@ -1038,8 +1031,7 @@
                      "  if(trp_magic_init())exit(-1);\n" "" ) (if (exif)
                      "  if(trp_exif_init())exit(-1);\n" "" ) (if (sqlite3)
                      "  if(trp_sqlite3_init())exit(-1);\n" "" ) (if (avcodec)
-                     "  if(trp_av_init())exit(-1);\n" "" ) (if (cv)
-                     "  if(trp_cv_init())exit(-1);\n" "" ) (if (mgl)
+                     "  if(trp_av_init())exit(-1);\n" "" ) (if (mgl)
                      "  if(trp_mgl_init())exit(-1);\n" "" ) (if (lept)
                      "  if(trp_lept_init())exit(-1);\n" "" ) (if (cgraph)
                      "  if(trp_ag_init())exit(-1);\n" "" ) (if (cairo)

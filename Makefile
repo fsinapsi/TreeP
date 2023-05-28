@@ -119,7 +119,6 @@ endif
 	( cd trpcgraph && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpcairo && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpmicrohttpd && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-	( cd trpcv && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 #	( cd trpmgl && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 
 clean:
@@ -159,7 +158,6 @@ clean:
 	( cd trpcgraph && make clean )
 	( cd trpcairo && make clean )
 	( cd trpmicrohttpd && make clean )
-	( cd trpcv && make clean )
 	( cd trpmgl && make clean )
 
 cleanall:	clean
