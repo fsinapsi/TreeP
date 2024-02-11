@@ -1,7 +1,7 @@
 
 myname=	 avi
 mylibs=	 ../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
-myobjs=	 trp$(myname).o avilib.o platform_posix.o
+myobjs=	 trp$(myname).o avilib.o
 
 CFLAGS= `cat ../.cflags`
 LDFLAGS= `cat ../.ldflags`

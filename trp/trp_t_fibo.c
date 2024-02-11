@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,43 +18,128 @@
 
 #include "trp.h"
 
+static void trp_fibo_size_add( uns32b *sz, trp_fibo_node_t *x, trp_fibo_node_t *x_first );
+static void trp_fibo_encode_add( uns8b **buf, trp_fibo_node_t *x, trp_fibo_node_t *x_first );
 static uns8b trp_fibo_check( trp_obj_t *h );
 static uns8b trp_fibo_node_check( trp_obj_t *h );
-static uns8b trp_fibo_node_connected_check( trp_obj_t *h );
 static uns8b trp_fibo_cmp( trp_fibo_t *h, trp_obj_t *x, trp_obj_t *y );
+static void trp_fibo_queue_add( trp_obj_t *res, trp_fibo_node_t *x, trp_fibo_node_t *x_first );
 static void trp_fibo_insert_low( trp_obj_t *h, trp_fibo_node_t *x );
 static void trp_fibo_link( trp_fibo_node_t *y, trp_fibo_node_t *x );
 static void trp_fibo_consolidate( trp_fibo_t *h );
 static void trp_fibo_cut( trp_fibo_t *h, trp_fibo_node_t *x, trp_fibo_node_t *y );
 static void trp_fibo_cascading_cut( trp_fibo_t *h, trp_fibo_node_t *y );
+static void trp_fibo_merge_add( trp_obj_t *h, trp_fibo_node_t *x, trp_fibo_node_t *x_first );
 
 uns8b trp_fibo_print( trp_print_t *p, trp_fibo_t *obj )
 {
-    uns8b buf[ 11 ];
-
     if ( trp_print_char_star( p, "#fibo " ) )
         return 1;
     if ( obj->sottotipo ) {
-        if ( trp_print_char_star( p, "node (children=" ) )
+        trp_obj_t *fibo = ((trp_fibo_node_t *)obj)->fibo;
+
+        if ( trp_print_char_star( p, "node" ) )
             return 1;
-        sprintf( buf, "%u", ((trp_fibo_node_t *)obj)->degree );
-        if ( trp_print_char_star( p, buf ) )
-            return 1;
+        if ( fibo ) {
+            if ( trp_print_char_star( p, " (children=" ) )
+                return 1;
+            if ( trp_print_sig64( p, ((trp_fibo_node_t *)obj)->degree ) )
+                return 1;
+            if ( trp_print_char_star( p, ", member of " ) )
+                return 1;
+            if ( trp_fibo_print( p, (trp_fibo_t *)fibo ) )
+                return 1;
+        } else {
+            if ( trp_print_char_star( p, " (detached" ) )
+                return 1;
+        }
     } else {
         if ( trp_print_char_star( p, "heap (length=" ) )
             return 1;
-        sprintf( buf, "%u", obj->n );
-        if ( trp_print_char_star( p, buf ) )
+        if ( trp_print_sig64( p, obj->len ) )
             return 1;
     }
     return trp_print_char_star( p, ")#" );
+}
+
+uns32b trp_fibo_size( trp_fibo_t *obj )
+{
+    uns32b sz;
+
+    if ( obj->sottotipo )
+        return trp_special_size( (trp_special_t *)UNDEF );
+    if ( obj->cmp != ((trp_funptr_t *)(trp_funptr_less_obj()))->f )
+        return trp_special_size( (trp_special_t *)UNDEF );
+    sz = 1 + 4;
+    if ( obj->len )
+        trp_fibo_size_add( &sz, obj->min, obj->min );
+    return sz;
+}
+
+static void trp_fibo_size_add( uns32b *sz, trp_fibo_node_t *x, trp_fibo_node_t *x_first )
+{
+    extern uns32b trp_size_internal( trp_obj_t * );
+
+    *sz += trp_size_internal( x->key ) + trp_size_internal( x->obj );
+    if ( x->left && ( x->left != x_first ) )
+        trp_fibo_size_add( sz, x->left, x_first );
+    if ( x->child )
+        trp_fibo_size_add( sz, x->child, x->child );
+}
+
+void trp_fibo_encode( trp_fibo_t *obj, uns8b **buf )
+{
+    uns32b *p;
+
+    if ( obj->sottotipo ) {
+        trp_special_encode( (trp_special_t *)UNDEF, buf );
+        return;
+    }
+    if ( obj->cmp != ((trp_funptr_t *)(trp_funptr_less_obj()))->f ) {
+        trp_special_encode( (trp_special_t *)UNDEF, buf );
+        return;
+    }
+    **buf = TRP_FIBO;
+    ++(*buf);
+    p = (uns32b *)(*buf);
+    *p = norm32( obj->len );
+    (*buf) += 4;
+    trp_fibo_encode_add( buf, obj->min, obj->min );
+}
+
+static void trp_fibo_encode_add( uns8b **buf, trp_fibo_node_t *x, trp_fibo_node_t *x_first )
+{
+    extern void trp_encode_internal( trp_obj_t *, uns8b ** );
+
+    trp_encode_internal( x->key, buf );
+    trp_encode_internal( x->obj, buf );
+    if ( x->left && ( x->left != x_first ) )
+        trp_fibo_encode_add( buf, x->left, x_first );
+    if ( x->child )
+        trp_fibo_encode_add( buf, x->child, x->child );
+}
+
+trp_obj_t *trp_fibo_decode( uns8b **buf )
+{
+    extern trp_obj_t *trp_decode_internal( uns8b ** );
+    trp_obj_t *res = trp_fibo( NULL ), *key, *obj;
+    uns32b len;
+
+    len = norm32( *((uns32b *)(*buf)) );
+    (*buf) += 4;
+    for ( ; len ; len-- ) {
+        key = trp_decode_internal( buf );
+        obj = trp_decode_internal( buf );
+        (void)trp_fibo_insert( res, key, obj );
+    }
+    return res;
 }
 
 trp_obj_t *trp_fibo_length( trp_fibo_t *obj )
 {
     if ( obj->sottotipo )
         return ((trp_fibo_node_t *)obj)->key;
-    return trp_sig64( obj->n );
+    return trp_sig64( obj->len );
 }
 
 trp_obj_t *trp_fibo_width( trp_fibo_node_t *obj )
@@ -79,7 +164,7 @@ trp_obj_t *trp_fibo( trp_obj_t *cmp )
     h = trp_gc_malloc( sizeof( trp_fibo_t ) );
     h->tipo = TRP_FIBO;
     h->sottotipo = 0;
-    h->n = 0;
+    h->len = 0;
     h->min = NULL;
     h->cmp = ( (trp_funptr_t *)cmp )->f;
     return (trp_obj_t *)h;
@@ -91,20 +176,12 @@ static uns8b trp_fibo_check( trp_obj_t *h )
         return 1;
     return ( ((trp_fibo_t *)h)->sottotipo ) ? 1 : 0;
 }
+
 static uns8b trp_fibo_node_check( trp_obj_t *h )
 {
     if ( h->tipo != TRP_FIBO )
         return 1;
     return ( ((trp_fibo_t *)h)->sottotipo ) ? 0 : 1;
-}
-
-static uns8b trp_fibo_node_connected_check( trp_obj_t *h )
-{
-    if ( h->tipo != TRP_FIBO )
-        return 1;
-    if ( ((trp_fibo_t *)h)->sottotipo )
-        return ( ((trp_fibo_node_t *)h)->marked < 2 ) ? 0 : 1;
-    return 1;
 }
 
 static uns8b trp_fibo_cmp( trp_fibo_t *h, trp_obj_t *x, trp_obj_t *y )
@@ -116,6 +193,27 @@ static uns8b trp_fibo_cmp( trp_fibo_t *h, trp_obj_t *x, trp_obj_t *y )
     return ( ( h->cmp )( x, y ) == TRP_TRUE ) ? 1 : 0;
 }
 
+trp_obj_t *trp_fibo_queue( trp_obj_t *h )
+{
+    trp_obj_t *res;
+
+    if ( trp_fibo_check( h ) )
+        return UNDEF;
+    res= trp_queue();
+    if ( ((trp_fibo_t *)h)->len )
+        trp_fibo_queue_add( res, ((trp_fibo_t *)h)->min, ((trp_fibo_t *)h)->min );
+    return res;
+}
+
+static void trp_fibo_queue_add( trp_obj_t *res, trp_fibo_node_t *x, trp_fibo_node_t *x_first )
+{
+    trp_queue_put( res, (trp_obj_t *)x );
+    if ( x->left && ( x->left != x_first ) )
+        trp_fibo_queue_add( res, x->left, x_first );
+    if ( x->child )
+        trp_fibo_queue_add( res, x->child, x->child );
+}
+
 trp_obj_t *trp_fibo_first( trp_obj_t *h )
 {
     if ( trp_fibo_check( h ) )
@@ -124,14 +222,27 @@ trp_obj_t *trp_fibo_first( trp_obj_t *h )
     return h ? h : UNDEF;
 }
 
-trp_obj_t *trp_fibo_key( trp_obj_t *x )
+/*
+ * rende l'oggetto di tipo TRP_FIBO
+ * di cui fa parte il nodo x
+ */
+
+trp_obj_t *trp_fibo_fibo( trp_obj_t *x )
+{
+    if ( trp_fibo_node_check( x ) )
+        return UNDEF;
+    x = (trp_obj_t *)( ((trp_fibo_node_t *)x)->fibo );
+    return x ? x : UNDEF;
+}
+
+trp_obj_t *trp_fibo_get_key( trp_obj_t *x )
 {
     if ( trp_fibo_node_check( x ) )
         return UNDEF;
     return ((trp_fibo_node_t *)x)->key;
 }
 
-trp_obj_t *trp_fibo_obj( trp_obj_t *x )
+trp_obj_t *trp_fibo_get_obj( trp_obj_t *x )
 {
     if ( trp_fibo_node_check( x ) )
         return UNDEF;
@@ -147,6 +258,7 @@ trp_obj_t *trp_fibo_insert( trp_obj_t *h, trp_obj_t *key, trp_obj_t *obj )
     x = trp_gc_malloc( sizeof( trp_fibo_node_t ) );
     x->tipo = TRP_FIBO;
     x->sottotipo = 1;
+    x->fibo = (void *)h;
     x->key = key;
     x->obj = obj ? obj : UNDEF;
     trp_fibo_insert_low( h, x );
@@ -177,7 +289,7 @@ static void trp_fibo_insert_low( trp_obj_t *h, trp_fibo_node_t *x )
         x->right = x;
         ((trp_fibo_t *)h)->min = x;
     }
-    ((trp_fibo_t *)h)->n++;
+    ((trp_fibo_t *)h)->len++;
 }
 
 // make y a child of x
@@ -207,7 +319,7 @@ static void trp_fibo_link( trp_fibo_node_t *y, trp_fibo_node_t *x )
 
 static void trp_fibo_consolidate( trp_fibo_t *h )
 {
-    int dn = (int)( log( h->n ) / log( 2 ) ) + 1, i, d;
+    int dn = (int)( log( h->len ) / log( 2 ) ) + 1, i, d;
     trp_obj_t *min_key;
     trp_fibo_node_t *w  = h->min; /* the first node we will consolidate */
     trp_fibo_node_t *f = w->left; /* the final node in this heap we will consolidate */
@@ -326,13 +438,13 @@ trp_obj_t *trp_fibo_extract( trp_obj_t *h )
         ((trp_fibo_t *)h)->min = z->right;
         trp_fibo_consolidate( ((trp_fibo_t *)h) );
     }
-    ((trp_fibo_t *)h)->n--;
+    ((trp_fibo_t *)h)->len--;
+    z->fibo = NULL;
     z->p = NULL;
     z->child = NULL;
     z->left = NULL;
     z->right = NULL;
     z->degree = 0;
-    z->marked = 2;
     return (trp_obj_t *)z;
 }
 
@@ -375,13 +487,18 @@ static void trp_fibo_cascading_cut( trp_fibo_t *h, trp_fibo_node_t *y )
             y->marked = 1;
 }
 
-uns8b trp_fibo_decrease_key( trp_obj_t *h, trp_obj_t *x, trp_obj_t *key )
+uns8b trp_fibo_decrease_key( trp_obj_t *x, trp_obj_t *key )
 {
+    trp_obj_t *h = trp_fibo_fibo( x );
     trp_fibo_node_t *y;
 
-    if ( trp_fibo_check( h ) || trp_fibo_node_connected_check( x ) )
-        return 1;
-    if ( trp_fibo_cmp( (trp_fibo_t *)h, key, ((trp_fibo_node_t *)x)->key ) == 0 )
+    if ( h == UNDEF ) {
+        if ( trp_fibo_node_check( x ) )
+            return 1;
+        ((trp_fibo_node_t *)x)->key = key;
+        return 0;
+    }
+    if ( trp_fibo_cmp( (trp_fibo_t *)h, ((trp_fibo_node_t *)x)->key, key ) )
         return 1;
     ((trp_fibo_node_t *)x)->key = key;
     // if x->key >= y->key, do nothing
@@ -397,25 +514,34 @@ uns8b trp_fibo_decrease_key( trp_obj_t *h, trp_obj_t *x, trp_obj_t *key )
     return 0;
 }
 
-uns8b trp_fibo_delete( trp_obj_t *h, trp_obj_t *x )
+uns8b trp_fibo_delete( trp_obj_t *x )
 {
+    trp_obj_t *h = trp_fibo_fibo( x );
     trp_obj_t *key;
 
-    if ( trp_fibo_node_connected_check( x ) )
+    if ( h == UNDEF )
         return 1;
     key = ((trp_fibo_node_t *)x)->key;
-    if ( trp_fibo_decrease_key( h, x, NULL ) )
+    if ( trp_fibo_decrease_key( x, NULL ) )
         return 1;
     (void)trp_fibo_extract( h );
     ((trp_fibo_node_t *)x)->key = key;
     return 0;
 }
 
-uns8b trp_fibo_set_key( trp_obj_t *h, trp_obj_t *x, trp_obj_t *key )
+uns8b trp_fibo_set_key( trp_obj_t *x, trp_obj_t *key )
 {
-    if ( trp_fibo_decrease_key( h, x, key ) == 0 )
+    trp_obj_t *h = trp_fibo_fibo( x );
+
+    if ( h == UNDEF ) {
+        if ( trp_fibo_node_check( x ) )
+            return 1;
+        ((trp_fibo_node_t *)x)->key = key;
         return 0;
-    if ( trp_fibo_decrease_key( h, x, NULL ) )
+    }
+    if ( trp_fibo_decrease_key( x, key ) == 0 )
+        return 0;
+    if ( trp_fibo_decrease_key( x, NULL ) )
         return 1;
     (void)trp_fibo_extract( h );
     ((trp_fibo_node_t *)x)->key = key;
@@ -423,20 +549,36 @@ uns8b trp_fibo_set_key( trp_obj_t *h, trp_obj_t *x, trp_obj_t *key )
     return 0;
 }
 
-/*
-
-trp_fibo_t *heapUnion( trp_fibo_t *h1, trp_fibo_t *h2 )
+uns8b trp_fibo_set_obj( trp_obj_t *x, trp_obj_t *obj )
 {
-    trp_fibo_t *h = makeFiboHeap();
+    if ( trp_fibo_node_check( x ) )
+        return 1;
+    ((trp_fibo_node_t *)x)->obj = obj;
+    return 0;
+}
 
-    if ( h1->min == NULL ) {
-        h->min = h2->min;
-    } else if ( h2->min == NULL ) {
-        h->min = h1->min;
+/*
+ * fonde due heap
+ * dopo l'operazione, h1 conterrà tutti i nodi che
+ * erano in h2, mentre h2 sarà un heap vuoto
+ */
+
+uns8b trp_fibo_merge( trp_obj_t *h1, trp_obj_t *h2 )
+{
+    if ( trp_fibo_check( h1 ) || trp_fibo_check( h2 ) || ( h1 == h2 ) )
+        return 1;
+    if ( ((trp_fibo_t *)h1)->cmp != ((trp_fibo_t *)h2)->cmp )
+        return 1;
+    if ( ((trp_fibo_t *)h2)->min == NULL )
+        return 0;
+    trp_fibo_merge_add( h1, ((trp_fibo_t *)h2)->min, ((trp_fibo_t *)h2)->min );
+    ((trp_fibo_t *)h1)->len += ((trp_fibo_t *)h2)->len;
+    if ( ((trp_fibo_t *)h1)->min == NULL ) {
+        ((trp_fibo_t *)h1)->min = ((trp_fibo_t *)h2)->min;
     } else {
-        trp_fibo_node_t *min_h1 = h1->min;
+        trp_fibo_node_t *min_h1 = ((trp_fibo_t *)h1)->min;
         trp_fibo_node_t *min_right_h1 = min_h1->right;
-        trp_fibo_node_t *min_h2 = h2->min;
+        trp_fibo_node_t *min_h2 = ((trp_fibo_t *)h2)->min;
         trp_fibo_node_t *min_right_h2 = min_h2->right;
 
         min_h1->right = min_right_h2;
@@ -445,13 +587,20 @@ trp_fibo_t *heapUnion( trp_fibo_t *h1, trp_fibo_t *h2 )
         min_h2->right = min_right_h1;
         min_right_h1->left = min_h2;
 
-        h->min = ( h1->min->key > h2->min->key ) ? h2->min : h1->min;
+        if ( trp_fibo_cmp( (trp_fibo_t *)h1, ((trp_fibo_t *)h2)->min->key, ((trp_fibo_t *)h1)->min->key ) )
+            ((trp_fibo_t *)h1)->min = ((trp_fibo_t *)h2)->min;
     }
-    trp_gc_free( h1 );
-    trp_gc_free( h2 );
-    h->n = h1->n + h2->n;
-    return h;
+    ((trp_fibo_t *)h2)->len = 0;
+    ((trp_fibo_t *)h2)->min = NULL;
+    return 0;
 }
 
-*/
+static void trp_fibo_merge_add( trp_obj_t *h, trp_fibo_node_t *x, trp_fibo_node_t *x_first )
+{
+    x->fibo = (void *)h;
+    if ( x->left && ( x->left != x_first ) )
+        trp_fibo_merge_add( h, x->left, x_first );
+    if ( x->child )
+        trp_fibo_merge_add( h, x->child, x->child );
+}
 

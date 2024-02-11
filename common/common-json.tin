@@ -1,0 +1,216 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun json-parse-path (path)
+        (json-parse (str-load path)) )
+
+(defun json-parse (s) net json-parse)
+(defnet json-parse (s @tree)
+        (stringp s)
+        (json-parse-expr s @tree)
+        (ltrim s ' ' '\t' '\r' '\n')
+        (= s "") )
+
+(defnet json-parse-expr (@s @tree)
+        (ltrim @s ' ' '\t' '\r' '\n')
+        (alt    (json-parse-assoc @s @tree)
+                (json-parse-array @s @tree)
+                (json-parse-string @s @tree)
+                (json-parse-special @s @tree)
+                (json-parse-number @s @tree) ))
+
+(defnet json-parse-assoc (@s @tree)
+        (deflocal a done first tree key)
+
+        (lmatch remove @s "{")
+        (set a (assoc))
+        (set @tree (json-new-node "assoc" a))
+        (set done false)
+        (set first true)
+        (repeat (ltrim @s ' ' '\t' '\r' '\n')
+                (opt    (lmatch remove @s "}")
+                        (set done true) )
+                until done
+                (if (not first)
+                then    (lmatch remove @s ",")
+                        (ltrim @s ' ' '\t' '\r' '\n') )
+                (json-parse-string @s tree)
+                (set key (json-val-node tree))
+                (ltrim @s ' ' '\t' '\r' '\n')
+                (lmatch remove @s ":")
+                (json-parse-expr @s tree)
+                (set <a key> tree)
+                (set first false) ))
+
+(defnet json-parse-array (@s @tree)
+        (deflocal done first tree)
+
+        (lmatch remove @s "[")
+        (set @tree (json-new-node "array" undef))
+        (set done false)
+        (set first true)
+        (repeat (ltrim @s ' ' '\t' '\r' '\n')
+                (opt    (lmatch remove @s "]")
+                        (set done true) )
+                until done
+                (if (not first)
+                then    (lmatch remove @s ",") )
+                (json-parse-expr @s tree)
+                (tree-append @tree tree)
+                (set first false) ))
+
+(defnet json-parse-string (@s @tree)
+        (deflocal s t i)
+
+        (lmatch remove @s "\"")
+        (set s "")
+        (repeat (search-and-cut "\"" @s t)
+                (inc s t)
+                (set i 0)
+                (opt*   (rmatch remove t "\\")
+                        (inc i) )
+                until (= (% i 2) 0)
+                (inc s "\"") )
+        (set @tree (json-new-node "string" (str-json-unescape s))) )
+
+(defnet json-parse-special (@s @tree)
+        (deflocal i)
+
+        (lmatch setidx i case remove @s "true" "false" "null")
+        (set @tree (json-new-node "special" <[ true false nil ] i>)) )
+
+(defnet json-parse-number (@s @tree)
+        (deflocal i c)
+
+        (set i 0)
+        (for c in @s do
+                until (in c [ ' ' '\t' '\r' '\n' ',' '}' ']' ])
+                (inc i) )
+        (> i 0)
+        (set c (str->num (sub 0 i @s)))
+        (rationalp c)
+        (set @s (sub i (maxint) @s))
+        (set @tree (json-new-node "number" c)) )
+
+(defun json-new-node (type val) net json-new-node)
+(defnet json-new-node (type val @node)
+        (deflocal a)
+
+        (set a (array 2))
+        (set <a 0> type)
+        (set <a 1> val)
+        (set @node (tree a)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun json-is-this-type (a type)
+        (= <a 0> type) )
+
+(defun json-is-this-type-node (node type)
+        (json-is-this-type (tree-get node) type) )
+
+(defun json-val (a)
+        <a 1> )
+
+(defun json-val-node (node)
+        (json-val (tree-get node)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun json-dump (node) net json-dump)
+(defnet json-dump (node @s)
+        (deflocal a val i)
+
+        (treep node)
+        (set a (tree-get node))
+        (set val <a 1>)
+        (case <a 0> of
+                "assoc"         (seq    (set @s "{")
+                                        (for i in val do
+                                                (if (> (for-pos) 0)
+                                                then    (inc @s ",") )
+                                                (inc @s "\"" (str-json-escape (car i))
+                                                        "\":" (json-dump (cdr i)) ))
+                                        (inc @s "}") )
+                "array"         (seq    (set @s "[")
+                                        (for i in node do
+                                                (if (> (for-pos) 0)
+                                                then    (inc @s ",") )
+                                                (inc @s (json-dump i)) )
+                                        (inc @s "]") )
+                "string"        (set @s (+ "\"" (str-json-escape val) "\""))
+                "special"       (seq    (in val [ true false nil ] i)
+                                        (set @s <[ "true" "false" "null" ] i>) )
+                "number"        (set @s (sprint val)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun json-make-assoc (a) net json-make-assoc)
+(defnet json-make-assoc (a @tree)
+        (assocp a)
+        (set @tree (json-new-node "assoc" a)) )
+
+(defun json-make-array (a) net json-make-array)
+(defnet json-make-array (a @tree)
+        (deflocal node)
+
+        (set @tree (json-new-node "array" undef))
+        (for node in a do
+                (tree-append @tree node) ))
+
+(defun json-make-string (s) net json-make-string)
+(defnet json-make-string (s @tree)
+        (stringp s)
+        (set @tree (json-new-node "string" s)) )
+
+(defun json-make-special (v) net json-make-special)
+(defnet json-make-special (v @tree)
+        (in v [ true false nil ])
+        (set @tree (json-new-node "special" v)) )
+
+(defun json-make-number (c) net json-make-number)
+(defnet json-make-number (c @tree)
+        (rationalp c)
+        (set @tree (json-new-node "number" c)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

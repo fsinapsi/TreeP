@@ -1,8 +1,8 @@
 
 (defstart misc)
 
-(defun gcry-md5sum (obj) (gcry-md-hash (cmacro GCRY_MD_MD5) obj))
-(defun gcry-sha1sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA1) obj))
+(defun gcry-md5sum (obj) (gcry-md-hash-fast (cmacro GCRY_MD_MD5) obj))
+(defun gcry-sha1sum (obj) (gcry-md-hash-fast (cmacro GCRY_MD_SHA1) obj))
 
 (defun test-md5 ()
         (= (nostatic (gcry-md5sum "testmd5"))
@@ -20,6 +20,13 @@
                         (tree "figlio del primo figlio") )
                 (tree "secondo figlio") ))
 
+(defun my-tree-swap (t i1 i2) net my-tree-swap)
+(defnet my-tree-swap (t i1 i2 @t)
+        ; questo è un modo per clonare un albero
+        ; (per non modificare l'albero originale)
+        (set @t (uncompress (compress t 0)))
+        (tree-swap @t i1 i2) )
+
 (defnet misc ()
         (deflocal now)
 
@@ -33,7 +40,7 @@
                 "test md5sum: " (if (test-md5) "OK" "FALLITO!") nl
                 "test sha1sum: " (if (test-sha1) "OK" "FALLITO!") nl
                 nl
-                "la data in cui mori' Galois (era giovedi'): "
+                "la data in cui morì Galois (era giovedì): "
                         (date-arpa (data-morte-galois)) nl
                 "(da allora sono trascorsi "
                         (- now (data-morte-galois)) " secondi)" nl
@@ -41,7 +48,7 @@
                 "data/ora di sistema: " now nl
                 "timezone = " (timezone) nl
                 "adesso in formato arpa = " (date-arpa now) nl
-                "tra dieci miliardi di secondi sara' esattamente "
+                "tra dieci miliardi di secondi sarà esattamente "
                         (date-arpa (date-gmt (+ now 10000000000))) nl
                 "dieci miliardi di secondi fa era esattamente "
                         (date-arpa (date-gmt (- now 10000000000))) nl
@@ -50,7 +57,7 @@
                 nl
                 (albero) nl
                 nl
-                (tree-swap (albero) 0 1) nl
+                (my-tree-swap (albero) 0 1) nl
                 nl
                 "free bytes/heap size: " (free-bytes) '/' (heap-size) nl ))
 

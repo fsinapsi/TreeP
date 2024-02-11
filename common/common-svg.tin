@@ -102,6 +102,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun svg-scale (svg x-scale y-scale) net svg-scale)
+(defnet svg-scale (svg x-scale y-scale @raw)
+        (deflocal w h cr)
+
+        (set w (rsvg-width svg))
+        (set h (rsvg-height svg))
+        (set cr (cairo-svg-surface-create-for-stream (* w x-scale) (* h y-scale)))
+        (cairo-scale cr x-scale y-scale)
+        (cairo-set-source-surface cr svg 0 0)
+        (set @raw (cairo-flush-and-close-raw cr)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun svg-add-margin (svg ml mr mt mb) net svg-add-margin)
 (defnet svg-add-margin (svg ml mr mt mb @raw)
         (deflocal cr pix w h)
@@ -217,9 +238,10 @@
                 "abcdefghijklmnopqrstuvwxyz" nl
                 "ÀÁÈÉÌÍÒÓÙÚÂÃÄÅÆÇÊËÎÏÐÑÔÕÖ×ØÛÜÝÞß" nl
                 "àáèéìíòóùúâãäåæçêëîïðñôõö÷øûüýþÿ" nl
+                "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω" nl
                 "0123456789+-×/±⋅*≤<=>≥¼½¾⁰¹²³⁴⁵⁶⁷⁸⁹ⁱ⁺⁻⁼⁽⁾" nl
                 " !¡?¿:;,.©®™℠@~#%&^_\"´'`“”‘’„|\\()[]{}«»" nl
-                "€¢$£¤¥¦§¨°ªº¬¯µ¶·¸ﬁﬂ…⏎" )
+                "€¢$£¤¥¦§¨°ªº¬¯µ¶·¸ﬁﬂ…⏎ℕℤℚℝℂℙ" )
                 avail-chars )))
         (if (stringp fname)
         then    (set raw1 (svg-text-font undef (blue) fname))

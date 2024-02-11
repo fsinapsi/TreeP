@@ -46,6 +46,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; il modo più semplice di clonare un oggetto
+
+(defun clone-obj (obj) net clone-obj)
+(defnet clone-obj (obj @obj)
+        (deflocal raw)
+
+        (set raw (compress obj 0))
+        (set @obj (uncompress raw))
+        (close raw) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun gcry-md5sum (obj) (gcry-md-hash (cmacro GCRY_MD_MD5) obj))
 (defun gcry-sha1sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA1) obj))
 (defun gcry-sha256sum (obj) (gcry-md-hash (cmacro GCRY_MD_SHA256) obj))
@@ -983,7 +1003,8 @@
         (clr @addr)
         (mktmpdir tmpdir)
         (opt    (set tmppath (+ tmpdir "/a"))
-                (set cmd (+ "wget ipinfo.io/ip -O " tmppath))
+                ;(set cmd (+ "wget ipinfo.io/ip -O " tmppath))
+                (set cmd (+ "wget http://checkip.amazonaws.com -O " tmppath))
                 (system cmd " >/dev/null 2>/dev/null &")
                 (set cnt 0)
                 (repeat (sleep 0.05)

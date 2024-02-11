@@ -985,11 +985,18 @@
 (defnet iup-text-buffer-append (buf msg)
         (iup-text-buffer-append-color buf undef msg) )
 
+(defnet iup-text-buffer-append-nl (buf)
+        (iup-text-buffer-append buf "\n") )
+
 (defnet iup-text-buffer-append-color (buf color msg)
         (deflocal i j)
 
+        (if (not (stringp msg))
+        then    (set msg (sprint msg)) )
         (set j (utf8-length msg))
-        (integerp j)
+        (if (not (integerp j))
+        then    (set msg (iso->utf8 msg))
+                (set j (utf8-length msg)) )
         (inc <buf 0> msg)
         (set i <buf 1>)
         (inc j i)

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,29 +95,6 @@
 #include <gc/cord_pos.h>
 #include <gc/ec.h>
 
-/*
- definizioni inerenti gli alberi avl -- inizio
- */
-
-struct node {
-    char *name;
-    void *vlue;
-    struct tree *tree;
-    struct node *root;
-    struct node *next, *prev;
-    struct node *left, *rght;
-    unsigned char dpth;
-};
-
-struct tree {
-    struct node *root;
-    struct node *frst, *last;
-};
-
-/*
- definizioni inerenti gli alberi avl -- fine
- */
-
 enum {
     TRP_SPECIAL = 0,
     TRP_RAW,
@@ -134,14 +111,14 @@ enum {
     TRP_STACK,
     TRP_CORD,
     TRP_TREE,
-    TRP_MATRIX,
+    TRP_DGRAPH,
     TRP_FUNPTR,
     TRP_NETPTR,
     TRP_THREAD,
     TRP_CURL,
     TRP_PIX,
     TRP_ASSOC,
-    TRP_MYSQL,
+    TRP_SET,
     TRP_SQLITE3,
     TRP_AUD,
     TRP_VID,
@@ -308,15 +285,31 @@ typedef struct {
 
 typedef struct {
     uns8b tipo;
-    trp_obj_t *root;
-    trp_queue_t children;
+    trp_obj_t *val;
+    trp_obj_t *parent;
+    trp_array_t *children;
 } trp_tree_t;
 
 typedef struct {
     uns8b tipo;
+    uns8b sottotipo;
     uns32b len;
-    struct tree t;
+    uns32b link_cnt;
+    void *root_nodes;
+    trp_obj_t *names;
+} trp_dgraph_t;
+
+typedef struct {
+    uns8b tipo;
+    uns32b len;
+    void *root;
 } trp_assoc_t;
+
+typedef struct {
+    uns8b tipo;
+    uns32b len;
+    void *root;
+} trp_set_t;
 
 typedef struct {
     uns8b tipo;
@@ -340,6 +333,7 @@ typedef struct {
 typedef struct trp_fibo_node_t {
     uns8b tipo;
     uns8b sottotipo;
+    void *fibo;
     trp_obj_t *key;
     trp_obj_t *obj;
     struct trp_fibo_node_t *p;
@@ -353,7 +347,7 @@ typedef struct trp_fibo_node_t {
 typedef struct {
     uns8b tipo;
     uns8b sottotipo;
-    uns32b n; /* the number of nodes */
+    uns32b len;
     trp_fibo_node_t *min; /* pointer pointing to min key in the heap */
     objfun_t cmp;
 } trp_fibo_t;
@@ -442,7 +436,10 @@ trp_obj_t *trp_booleanp( trp_obj_t *obj );
 #define trp_queuep(p) (((p)->tipo==TRP_QUEUE)?TRP_TRUE:TRP_FALSE)
 #define trp_arrayp(p) (((p)->tipo==TRP_ARRAY)?TRP_TRUE:TRP_FALSE)
 #define trp_assocp(p) (((p)->tipo==TRP_ASSOC)?TRP_TRUE:TRP_FALSE)
+#define trp_setp(p) (((p)->tipo==TRP_SET)?TRP_TRUE:TRP_FALSE)
 #define trp_treep(p) (((p)->tipo==TRP_TREE)?TRP_TRUE:TRP_FALSE)
+#define trp_dgraphp(p) (((p)->tipo==TRP_DGRAPH)?TRP_TRUE:TRP_FALSE)
+#define trp_fibop(p) (((p)->tipo==TRP_FIBO)?TRP_TRUE:TRP_FALSE)
 #define trp_pixp(p) (((p)->tipo==TRP_PIX)?TRP_TRUE:TRP_FALSE)
 #define trp_threadp(p) (((p)->tipo==TRP_THREAD)?TRP_TRUE:TRP_FALSE)
 #define trp_gtkp(p) (((p)->tipo==TRP_GTK)?TRP_TRUE:TRP_FALSE)
@@ -464,6 +461,7 @@ uns8b trp_print_dump_raw( trp_obj_t *stream, trp_obj_t *raw );
 uns8b trp_print_obj( trp_print_t *p, trp_obj_t *obj );
 uns8b trp_print_chars( trp_print_t *p, uns8b *s, uns32b cnt );
 uns8b trp_print_char_star( trp_print_t *p, uns8b *s );
+uns8b trp_print_sig64( trp_print_t *p, sig64b val );
 uns8b trp_print_char( trp_print_t *p, uns8b c );
 
 trp_obj_t *trp_equal( trp_obj_t *o1, trp_obj_t *o2 );
@@ -495,10 +493,12 @@ void trp_convert_slash( uns8b *p );
 wchar_t *trp_utf8_to_wc( const uns8b *p );
 uns8b *trp_wc_to_utf8( const wchar_t *wp );
 FILE *trp_fopen( const char *path, const char *mode );
+int trp_open( const char *path, int oflag );
 uns8b *trp_get_short_path_name( uns8b *path );
 #else
 #define trp_convert_slash(p)
 #define trp_fopen(p,m) fopen(p,m)
+#define trp_open(p,m) open(p,m)
 #define trp_get_short_path_name(p) (p)
 #endif
 trp_obj_t *trp_uname();
@@ -520,6 +520,7 @@ trp_obj_t *trp_ftime( trp_obj_t *path );
 trp_obj_t *trp_fsize( trp_obj_t *path );
 uns8b trp_utime( trp_obj_t *path, trp_obj_t *actime, trp_obj_t *modtime );
 trp_obj_t *trp_directory( trp_obj_t *obj );
+trp_obj_t *trp_directory_ext( trp_obj_t *obj );
 trp_obj_t *trp_getenv( trp_obj_t *obj );
 uns8b trp_sleep( trp_obj_t *sec );
 trp_obj_t *trp_lstat_mode( trp_obj_t *path );
@@ -541,6 +542,7 @@ trp_obj_t *trp_ipv4_address();
 trp_obj_t *trp_system( trp_obj_t *obj, ... );
 trp_obj_t *trp_getpid();
 trp_obj_t *trp_fork();
+trp_obj_t *trp_sysinfo();
 trp_obj_t *trp_ratio2uns64b( trp_obj_t *obj );
 void trp_print_rusage_diff( char *msg );
 
@@ -734,6 +736,7 @@ trp_obj_t *trp_math_acos( trp_obj_t *n );
 trp_obj_t *trp_math_tan( trp_obj_t *n );
 trp_obj_t *trp_math_sin( trp_obj_t *n );
 trp_obj_t *trp_math_cos( trp_obj_t *n );
+trp_obj_t *trp_math_lyapunov( trp_obj_t *seq, trp_obj_t *a, trp_obj_t *b, trp_obj_t *iter );
 
 uns8b trp_list_print( trp_print_t *p, trp_cons_t *obj );
 uns32b trp_list_size( trp_cons_t *obj );
@@ -763,6 +766,7 @@ trp_obj_t *trp_array_length( trp_array_t *obj );
 trp_obj_t *trp_array_nth( uns32b n, trp_array_t *obj );
 trp_obj_t *trp_array_sub( uns32b start, uns32b len, trp_array_t *obj );
 uns8b trp_array_in( trp_obj_t *obj, trp_array_t *seq, uns32b *pos, uns32b nth );
+trp_obj_t *trp_array_ext_internal( trp_obj_t *default_val, uns32b incr, uns32b len );
 trp_obj_t *trp_array_ext( trp_obj_t *default_val, trp_obj_t *incr, trp_obj_t *len );
 trp_obj_t *trp_array_multi( trp_obj_t *default_val, trp_obj_t *len, ... );
 uns8b trp_array_insert( trp_obj_t *a, trp_obj_t *pos, trp_obj_t *obj, ... );
@@ -841,8 +845,10 @@ trp_obj_t *trp_cord_max_suffix( trp_obj_t *s1, trp_obj_t *s2 );
 trp_obj_t *trp_cord_max_suffix_case( trp_obj_t *s1, trp_obj_t *s2 );
 trp_obj_t *trp_cord_load( trp_obj_t *path );
 trp_obj_t *trp_cord_tile( trp_obj_t *len, ... );
+sig32b trp_cord_utf8_next( uns8b *p );
 trp_obj_t *trp_cord_utf8_tile( trp_obj_t *len, ... );
 trp_obj_t *trp_cord_utf8_head( trp_obj_t *s, trp_obj_t *len );
+trp_obj_t *trp_cord_utf8_max_valid_prefix( trp_obj_t *s );
 trp_obj_t *trp_cord_utf8_toupper( trp_obj_t *s, ... );
 trp_obj_t *trp_cord_utf8_tolower( trp_obj_t *s, ... );
 trp_obj_t *trp_cord_subsequencep( trp_obj_t *s1, trp_obj_t *s2 );
@@ -873,10 +879,58 @@ trp_obj_t *trp_tree_equal( trp_tree_t *o1, trp_tree_t *o2 );
 trp_obj_t *trp_tree_less( trp_tree_t *o1, trp_tree_t *o2 );
 trp_obj_t *trp_tree_length( trp_tree_t *t );
 trp_obj_t *trp_tree_nth( uns32b n, trp_tree_t *obj );
-trp_obj_t *trp_tree( trp_obj_t *root, trp_obj_t *child, ... );
-trp_obj_t *trp_tree_list( trp_obj_t *root, trp_obj_t *children );
+trp_obj_t *trp_tree( trp_obj_t *val, ... );
+trp_obj_t *trp_tree_get( trp_obj_t *obj );
 trp_obj_t *trp_tree_root( trp_obj_t *obj );
-trp_obj_t *trp_tree_swap( trp_obj_t *obj,  trp_obj_t *i,  trp_obj_t *j );
+trp_obj_t *trp_tree_level( trp_obj_t *obj );
+trp_obj_t *trp_tree_parent( trp_obj_t *obj );
+trp_obj_t *trp_tree_children( trp_obj_t *obj );
+trp_obj_t *trp_tree_pos( trp_obj_t *obj );
+trp_obj_t *trp_tree_node_cnt( trp_obj_t *obj );
+uns8b trp_tree_set( trp_obj_t *obj, trp_obj_t *val );
+uns8b trp_tree_insert( trp_obj_t *obj, trp_obj_t *pos, trp_obj_t *child );
+uns8b trp_tree_append( trp_obj_t *obj, trp_obj_t *child );
+uns8b trp_tree_detach( trp_obj_t *obj, trp_obj_t *pos );
+uns8b trp_tree_replace( trp_obj_t *obj, trp_obj_t *pos, trp_obj_t *new_obj );
+uns8b trp_tree_swap( trp_obj_t *obj, trp_obj_t *pos1, trp_obj_t *pos2 );
+
+uns8b trp_dgraph_print( trp_print_t *p, trp_dgraph_t *obj );
+uns32b trp_dgraph_size( trp_dgraph_t *obj );
+void trp_dgraph_encode( trp_dgraph_t *obj, uns8b **buf );
+trp_obj_t *trp_dgraph_decode( uns8b **buf );
+trp_obj_t *trp_dgraph_length( trp_dgraph_t *obj );
+trp_obj_t *trp_dgraph();
+trp_obj_t *trp_dgraph_first( trp_obj_t *g );
+trp_obj_t *trp_dgraph_queue( trp_obj_t *g );
+trp_obj_t *trp_dgraph_queue_out( trp_obj_t *n );
+trp_obj_t *trp_dgraph_queue_in( trp_obj_t *n );
+trp_obj_t *trp_dgraph_dgraph( trp_obj_t *n );
+trp_obj_t *trp_dgraph_node( trp_obj_t *g, trp_obj_t *val, trp_obj_t *name );
+trp_obj_t *trp_dgraph_is_node( trp_obj_t *n );
+trp_obj_t *trp_dgraph_out_cnt( trp_obj_t *n );
+trp_obj_t *trp_dgraph_in_cnt( trp_obj_t *n );
+trp_obj_t *trp_dgraph_get_val( trp_obj_t *n );
+uns8b trp_dgraph_set_val( trp_obj_t *n, trp_obj_t *val );
+trp_obj_t *trp_dgraph_get_name( trp_obj_t *n );
+uns8b trp_dgraph_set_name( trp_obj_t *n, trp_obj_t *name );
+trp_obj_t *trp_dgraph_get_node( trp_obj_t *g, trp_obj_t *name );
+trp_obj_t *trp_dgraph_get_id( trp_obj_t *n );
+trp_obj_t *trp_dgraph_get_node_by_id( trp_obj_t *g, trp_obj_t *id );
+uns8b trp_dgraph_link( trp_obj_t *n1, trp_obj_t *n2, trp_obj_t *val );
+uns8b trp_dgraph_link_acyclic( trp_obj_t *n1, trp_obj_t *n2, trp_obj_t *val );
+trp_obj_t *trp_dgraph_can_reach( trp_obj_t *n1, trp_obj_t *n2 );
+trp_obj_t *trp_dgraph_get_link_val( trp_obj_t *n1, trp_obj_t *n2 );
+uns8b trp_dgraph_set_link_val( trp_obj_t *n1, trp_obj_t *n2, trp_obj_t *val );
+uns8b trp_dgraph_detach( trp_obj_t *n1, trp_obj_t *n2 );
+trp_obj_t *trp_dgraph_succ_cnt( trp_obj_t *n );
+trp_obj_t *trp_dgraph_pred_cnt( trp_obj_t *n );
+trp_obj_t *trp_dgraph_root_if_is_tree( trp_obj_t *g );
+trp_obj_t *trp_dgraph_is_tree( trp_obj_t *g );
+trp_obj_t *trp_dgraph_queue_succ( trp_obj_t *n );
+trp_obj_t *trp_dgraph_queue_pred( trp_obj_t *n );
+trp_obj_t *trp_dgraph_connected_cnt( trp_obj_t *n );
+trp_obj_t *trp_dgraph_is_connected( trp_obj_t *g );
+trp_obj_t *trp_dgraph_is_acyclic( trp_obj_t *g );
 
 uns8b trp_assoc_print( trp_print_t *p, trp_assoc_t *obj );
 uns32b trp_assoc_size( trp_assoc_t *obj );
@@ -891,8 +945,23 @@ uns8b trp_assoc_set( trp_obj_t *obj, trp_obj_t *key, trp_obj_t *val );
 uns8b trp_assoc_inc( trp_obj_t *obj, trp_obj_t *key, trp_obj_t *val );
 uns8b trp_assoc_clr( trp_obj_t *obj, trp_obj_t *key );
 trp_obj_t *trp_assoc_get( trp_obj_t *obj, trp_obj_t *key );
-trp_obj_t *trp_assoc_list( trp_obj_t *obj );
+trp_obj_t *trp_assoc_queue( trp_obj_t *obj );
 trp_obj_t *trp_assoc_root( trp_obj_t *obj );
+
+uns8b trp_set_print( trp_print_t *p, trp_set_t *obj );
+uns32b trp_set_size( trp_set_t *obj );
+void trp_set_encode( trp_set_t *obj, uns8b **buf );
+trp_obj_t *trp_set_decode( uns8b **buf );
+trp_obj_t *trp_set_equal( trp_set_t *o1, trp_set_t *o2 );
+trp_obj_t *trp_set_length( trp_set_t *obj );
+uns8b trp_set_in( trp_obj_t *obj, trp_set_t *seq, uns32b *pos, uns32b nth );
+trp_obj_t *trp_set_cat( trp_set_t *obj, va_list args );
+trp_obj_t *trp_set( trp_obj_t *x, ... );
+uns8b trp_set_insert( trp_obj_t *s, ... );
+trp_obj_t *trp_set_queue( trp_obj_t *s );
+uns8b trp_set_remove( trp_obj_t *s, trp_obj_t *x );
+trp_obj_t *trp_set_intersection( trp_obj_t *s, ... );
+trp_obj_t *trp_set_difference( trp_obj_t *s1, trp_obj_t *s2 );
 
 uns8b trp_funptr_print( trp_print_t *p, trp_funptr_t *obj );
 trp_obj_t *trp_funptr_equal( trp_funptr_t *o1, trp_funptr_t *o2 );
@@ -918,16 +987,23 @@ trp_obj_t *trp_regexec( trp_obj_t *re, trp_obj_t *txt, trp_obj_t *flags );
 uns8b trp_regexec_test( trp_obj_t *re, trp_obj_t *txt );
 
 uns8b trp_fibo_print( trp_print_t *p, trp_fibo_t *obj );
+uns32b trp_fibo_size( trp_fibo_t *obj );
+void trp_fibo_encode( trp_fibo_t *obj, uns8b **buf );
+trp_obj_t *trp_fibo_decode( uns8b **buf );
 trp_obj_t *trp_fibo_length( trp_fibo_t *obj );
 trp_obj_t *trp_fibo_width( trp_fibo_node_t *obj );
 trp_obj_t *trp_fibo( trp_obj_t *cmp );
+trp_obj_t *trp_fibo_queue( trp_obj_t *h );
 trp_obj_t *trp_fibo_first( trp_obj_t *h );
-trp_obj_t *trp_fibo_key( trp_obj_t *x );
-trp_obj_t *trp_fibo_obj( trp_obj_t *x );
+trp_obj_t *trp_fibo_fibo( trp_obj_t *x );
+trp_obj_t *trp_fibo_get_key( trp_obj_t *x );
+trp_obj_t *trp_fibo_get_obj( trp_obj_t *x );
 trp_obj_t *trp_fibo_insert( trp_obj_t *h, trp_obj_t *key, trp_obj_t *obj );
 trp_obj_t *trp_fibo_extract( trp_obj_t *h );
-uns8b trp_fibo_decrease_key( trp_obj_t *h, trp_obj_t *x, trp_obj_t *key );
-uns8b trp_fibo_delete( trp_obj_t *h, trp_obj_t *x );
-uns8b trp_fibo_set_key( trp_obj_t *h, trp_obj_t *x, trp_obj_t *key );
+uns8b trp_fibo_decrease_key( trp_obj_t *x, trp_obj_t *key );
+uns8b trp_fibo_delete( trp_obj_t *x );
+uns8b trp_fibo_set_key( trp_obj_t *x, trp_obj_t *key );
+uns8b trp_fibo_set_obj( trp_obj_t *x, trp_obj_t *obj );
+uns8b trp_fibo_merge( trp_obj_t *h1, trp_obj_t *h2 );
 
 #endif /* !__trp__h */

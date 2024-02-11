@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
 */
 
 #include "trp.h"
+#include "avl_tree.h"
+#ifdef MINGW
+#include <windows.h>
+#endif
 
 #define TRP_PRINT_BUF_SIZE 512
 
@@ -29,6 +33,17 @@ typedef struct {
     trp_obj_t *val;
     void *next;
 } trp_queue_elem;
+
+typedef struct {
+    struct avl_tree_node node;
+    uns8b *key;
+    trp_obj_t *val;
+} trp_assoc_item_t;
+
+typedef struct {
+    struct avl_tree_node node;
+    trp_obj_t *val;
+} trp_set_item_t;
 
 uns8b trp_print( trp_obj_t *obj, ... )
 {
@@ -51,7 +66,11 @@ uns8b trp_print( trp_obj_t *obj, ... )
         res = trp_print_flush( &p );
     trp_print_unlock( TRP_STDOUT );
     va_end( args );
-    return res;
+    /*
+     * è meglio che print non fallisca mai...
+     * return res;
+     */
+    return 0;
 }
 
 uns8b trp_fprint( trp_obj_t *stream, trp_obj_t *obj, ... )
@@ -138,6 +157,37 @@ trp_obj_t *trp_sprint_list( trp_obj_t *l, trp_obj_t *divider )
             if ( i )
                 trp_print_obj( &p, divider );
             trp_print_obj( &p, ((trp_array_t *)l)->data[ i ] );
+        }
+        break;
+    case TRP_ASSOC:
+        {
+            struct avl_tree_node *node;
+
+            node = avl_tree_first_in_order( (struct avl_tree_node *)(((trp_assoc_t *)l)->root) );
+            for ( i = 0 ; i < ((trp_assoc_t *)l)->len ; i++ ) {
+                if ( i )
+                    trp_print_obj( &p, divider );
+                trp_print_chars( &p, "[", 1 );
+                trp_print_chars( &p, ((trp_assoc_item_t *)(node->dummy))->key,
+                                     strlen( ((trp_assoc_item_t *)(node->dummy))->key ) );
+                trp_print_chars( &p, " . ", 3 );
+                trp_print_obj( &p, ((trp_assoc_item_t *)(node->dummy))->val );
+                trp_print_chars( &p, "]", 1 );
+                node = avl_tree_next_in_order( node );
+            }
+        }
+        break;
+    case TRP_SET:
+        {
+            struct avl_tree_node *node;
+
+            node = avl_tree_first_in_order( (struct avl_tree_node *)(((trp_set_t *)l)->root) );
+            for ( i = 0 ; i < ((trp_set_t *)l)->len ; i++ ) {
+                if ( i )
+                    trp_print_obj( &p, divider );
+                trp_print_obj( &p, ((trp_set_item_t *)(node->dummy))->val );
+                node = avl_tree_next_in_order( node );
+            }
         }
         break;
     default:
@@ -238,6 +288,23 @@ uns8b trp_print_char_star( trp_print_t *p, uns8b *s )
     return 0;
 }
 
+uns8b trp_print_sig64( trp_print_t *p, sig64b val )
+{
+    extern void trp_math_sig64_to_mpz( sig64b val, mpz_t mp );
+    mpz_t mp;
+    int len;
+    uns8b *buf;
+    uns8b res;
+
+    mpz_init( mp );
+    trp_math_sig64_to_mpz( val, mp );
+    len = gmp_asprintf( (char **)&buf, "%Zd", mp );
+    mpz_clear( mp );
+    res = trp_print_chars( p, buf, len );
+    trp_gc_free( buf );
+    return res;
+}
+
 uns8b trp_print_char( trp_print_t *p, uns8b c )
 {
     if ( p->buf ) {
@@ -278,7 +345,40 @@ static uns8b trp_print_flush( trp_print_t *p )
 #endif
             }
         } else
+#ifdef MINGW
+            if ( ( p->fp == stdout ) || ( p->fp == stderr ) ) {
+                HANDLE h;
+                DWORD written = 0;
+
+                if ( p->fp == stdout )
+                    h = GetStdHandle( STD_OUTPUT_HANDLE );
+                else
+                    h = GetStdHandle( STD_ERROR_HANDLE );
+                if ( ( h == 0 ) || ( h == INVALID_HANDLE_VALUE ) )
+                    return 1;
+                if ( p->cnt == TRP_PRINT_BUF_SIZE ) {
+                    while ( off + 4 <= p->cnt ) {
+                        i = trp_cord_utf8_next( p->buf + off );
+                        if ( i < 1 )
+                            break;
+                        off += i;
+                    }
+                    if ( off == 0 )
+                        return 1;
+                } else
+                    off = p->cnt;
+                WriteConsoleA( h, p->buf, off, &written, NULL );
+                if ( ( written <= 0 ) || ( written > p->cnt ) )
+                    return 1;
+                p->cnt -= written;
+                if ( p->cnt )
+                    memmove( p->buf, p->buf + written, p->cnt );
+                return 0;
+            }
             i = fwrite( p->buf + off, 1, p->cnt, p->fp );
+#else
+            i = fwrite( p->buf + off, 1, p->cnt, p->fp );
+#endif
         if ( i < 0 )
             return 1;
         p->cnt -= i;

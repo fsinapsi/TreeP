@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,5 +73,7 @@ trp_obj_t *trp_av_first_ts( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_get_filter( trp_obj_t *fmtctx );
 uns8b trp_av_set_filter( trp_obj_t *fmtctx, trp_obj_t *descr );
 uns8b trp_av_set_filter_rows( trp_obj_t *fmtctx, trp_obj_t *mode );
+trp_obj_t *trp_av_decoder_name_list();
+trp_obj_t *trp_av_encoder_name_list();
 
 #endif /* !__trpavcodec__h */

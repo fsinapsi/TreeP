@@ -2,8 +2,6 @@
 ;;; testgtk.trp
 ;;;
 
-(use cv)
-
 (include "common.tin")
 
 (defstart testgtk)

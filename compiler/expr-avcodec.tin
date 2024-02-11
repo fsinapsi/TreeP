@@ -54,6 +54,8 @@
           [ "get-buf-content"           1 1 ]
           [ "first-ts"                  1 2 ]
           [ "get-filter"                1 1 ]
+          [ "decoder-name-list"         0 0 ]
+          [ "encoder-name-list"         0 0 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

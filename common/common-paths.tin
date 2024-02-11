@@ -29,6 +29,33 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun realpath-soft (path) net realpath-soft)
+(defnet realpath-soft (path @path)
+        (deflocal s t)
+
+        (set s "")
+        (opt*   (search "//" path t)
+                (inc s (sub 0 t path))
+                (set path (sub (+ t 1) (maxint) path)) )
+        (inc s path)
+        (find-and-replace s "/./" "/")
+        (set @path "")
+        (opt*   (search-and-cut "/../" s t)
+                (inc @path t)
+                (search "/" @path t (maxint))
+                (set @path (sub 0 (+ t 1) @path)) )
+        (inc @path s) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defnet mkdirhier (path)
         (deflocal s i)
 
@@ -252,27 +279,53 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun directory-ext-is-unknown (l) (= <l 1> 0))
+(defun directory-ext-is-fifo (l) (= <l 1> 1))
+(defun directory-ext-is-chr (l) (= <l 1> 2))
+(defun directory-ext-is-dir (l) (= <l 1> 4))
+(defun directory-ext-is-blk (l) (= <l 1> 6))
+(defun directory-ext-is-reg (l) (= <l 1> 8))
+(defun directory-ext-is-lnk (l) (= <l 1> 10))
+(defun directory-ext-is-sock (l) (= <l 1> 12))
+(defun directory-ext-is-wht (l) (= <l 1> 14))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defnet filesystem-visit (path cback udata)
         (filesystem-visit-limit path cback udata (maxint)) )
 
 (defnet filesystem-visit-limit (path cback udata max-level)
-        (pathexists path)
         (truep (isdir path))
         (filesystem-visit-low path cback udata (path-separator path) 0 max-level) )
 
 (defnet filesystem-visit-low (path cback udata s level max-level)
-        (deflocal c e p r d)
+        (deflocal c i e p r d reg dir)
 
         (set c (if (rmatch path s) "" s))
         (set r (array 0))
         (if (< level max-level)
         then    (set d (array 0)) )
-        (for e in (directory path) do
+        (for i in (directory-ext path) do
+                (set e <i 2>)
                 (if (not (in e [ "." ".." ]))
                 then    (set p (+ path c e))
-                        (if (isreg p)
+                        (if (directory-ext-is-unknown i)
+                        then    (set dir (lstat-mode p))
+                                (set reg (isreg dir))
+                                (set dir (isdir dir))
+                        else    (set reg (directory-ext-is-reg i))
+                                (set dir (directory-ext-is-dir i)) )
+                        (if reg
                         then    (array-append r (cons p e))
-                        else    (if (and (isdir p) (< level max-level))
+                        else    (if (and dir (< level max-level))
                                 then    (array-append d e) ))))
         (sort r (funptr lesscdr))
         (for e in r do
@@ -282,6 +335,44 @@
                 (inc level)
                 (for e in d do
                         (filesystem-visit-low (+ path c e) cback udata s level max-level) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun tree-directory (path) net tree-directory)
+(defnet tree-directory (path @tree)
+        (deflocal name)
+
+        (truep (isdir path))
+        (alt    (seq    (set path (realpath path))
+                        (stringp path)
+                        (set name (fullpath->name path)) )
+                (set name path) )
+        (tree-directory-rec path name (path-separator path) @tree) )
+
+(defnet tree-directory-rec (path name s @tree)
+        (deflocal c i e p dir sub)
+
+        (set c (if (rmatch path s) "" s))
+        (set @tree (tree name))
+        (for i in (directory-ext path) do
+                (set e <i 2>)
+                (if (not (in e [ "." ".." ]))
+                then    (set p (+ path c e))
+                        (if (directory-ext-is-unknown i)
+                        then    (set dir (isdir p))
+                        else    (set dir (directory-ext-is-dir i)) )
+                        (if dir
+                        then    (tree-directory-rec p e s sub)
+                                (tree-append @tree sub)
+                        else    (tree-append @tree (tree e)) ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -574,6 +665,8 @@
                 (seq    (search case "ISO Media" m)
                         (alt    (seq    (search case "AVIF Image" m)
                                         (set @ext "avif") )
+                                (seq    (search case "HEIF Image" m)
+                                        (set @ext "heic") )
                                 (path-suggest-extension-permissive path [ "mov" "3gp" "m4a" ] @ext)
                                 (set @ext "mp4") ))
                 (seq    (search case "RIFF (little-endian) data" m)
@@ -649,6 +742,9 @@
                 (seq    (search case "gzip compressed data" m)
                         (alt    (path-suggest-extension-permissive path [ "tgz" "xoj" "xopp" ] @ext)
                                 (set @ext "gz") ))
+                (seq    (search case "xar archive compressed" m)
+                        (alt    ;(path-suggest-extension-permissive path [ "pkg" ] @ext)
+                                (set @ext "xar") ))
                 (seq    (search case "brotli compressed data" m)
                         (set @ext "br") )
                 (seq    (search case "bzip2 compressed data" m)
@@ -747,9 +843,9 @@
                         (alt    (seq    (= (path-extension path) "")
                                         (set @ext "") )
                                 (path-suggest-extension-permissive path
-                                        [ "txt" "cue" "log" "srt" "bat" "avs" "mfl" "pgn" "fen"
+                                        [ "txt" "cue" "log" "srt" "vtt" "bat" "avs" "mfl" "pgn" "fen"
                                           "c" "h" "cpp" "cc" "pas" "hs" "go" "clp" "l" "ss"
-                                          "java" "sh" ] @ext )))
+                                          "java" "sh" "dot" ] @ext )))
                 (seq    (= m "data")
                         (rmatch case path ".ts")
                         (set @ext "ts") )))

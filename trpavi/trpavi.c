@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -386,25 +386,25 @@ trp_obj_t *trp_avi_video_bitrate( trp_obj_t *obj )
 trp_obj_t *trp_avi_video_min_keyint( trp_obj_t *obj )
 {
     avi_t *avi = trp_avi_get( obj );
-    uns32b i;
+    unsigned long i;
 
     if ( avi == NULL )
         return UNDEF;
     if ( AVI_keyframes( avi, &i, NULL ) < 0 )
         return UNDEF;
-    return trp_sig64( i );
+    return trp_sig64( (sig64b)i );
 }
 
 trp_obj_t *trp_avi_video_max_keyint( trp_obj_t *obj )
 {
     avi_t *avi = trp_avi_get( obj );
-    uns32b i;
+    unsigned long i;
 
     if ( avi == NULL )
         return UNDEF;
     if ( AVI_keyframes( avi, NULL, &i ) < 0 )
         return UNDEF;
-    return trp_sig64( i );
+    return trp_sig64( (sig64b)i );
 }
 
 trp_obj_t *trp_avi_video_frame_is_keyframe( trp_obj_t *obj, trp_obj_t *frame )
@@ -422,6 +422,8 @@ trp_obj_t *trp_avi_video_frame_is_keyframe( trp_obj_t *obj, trp_obj_t *frame )
 
 trp_obj_t *trp_avi_video_read( trp_obj_t *obj, trp_obj_t *frame )
 {
+    return UNDEF;
+#if 0
     avi_t *avi = trp_avi_get( obj );
     trp_raw_t *raw;
     char *vidbuf = NULL;
@@ -443,10 +445,14 @@ trp_obj_t *trp_avi_video_read( trp_obj_t *obj, trp_obj_t *frame )
     raw->unc_len = 0;
     raw->data = vidbuf;
     return (trp_obj_t *)raw;
+#endif
 }
 
 uns8b trp_avi_video_read_test( trp_obj_t *obj, trp_obj_t *raw, trp_obj_t *frame )
 {
+    return 1;
+
+#if 0
     avi_t *avi = trp_avi_get( obj );
     char *vidbuf;
     uns32b fno;
@@ -461,6 +467,7 @@ uns8b trp_avi_video_read_test( trp_obj_t *obj, trp_obj_t *raw, trp_obj_t *frame 
         return 1;
     bytes = ((trp_raw_t *)raw)->len;
     return ( AVI_read_video( avi, &vidbuf, &bytes, &keyframe, fno ) == -1 ) ? 1 : 0;
+#endif
 }
 
 trp_obj_t *trp_avi_parse_junk( trp_obj_t *obj, trp_obj_t *size )

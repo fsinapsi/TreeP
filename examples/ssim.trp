@@ -2,8 +2,6 @@
 (defun dimblock-default () 16)
 (defun radius-default () 8)
 
-(use cv)
-
 (include "common.tin")
 
 (defstart ssim)

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 #include "../trp/trp.h"
 #include "./trpcurl.h"
-#include <curl/curl.h>
 
-#define TRP_CURL_STRINGS_FIELDNO 9
+#define TRP_CURL_STRINGS_FIELDNO 10
 
 typedef union {
     uns8b *str[ TRP_CURL_STRINGS_FIELDNO ];
@@ -29,6 +28,7 @@ typedef union {
         uns8b *url;
         uns8b *postfields;
         uns8b *proxy;
+        uns8b *pre_proxy;
         uns8b *sslcert;
         uns8b *ssl_cipher_list;
         uns8b *cainfo;
@@ -490,6 +490,11 @@ uns8b trp_curl_easy_setopt_postfields( trp_obj_t *curl, trp_obj_t *s )
                                                   &( trp_curl_strings(curl).postfields ) );
 }
 
+uns8b trp_curl_easy_setopt_postfieldsize_large( trp_obj_t *curl, trp_obj_t *val )
+{
+    return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_POSTFIELDSIZE_LARGE );
+}
+
 static size_t trp_curl_cback_receive( void *p, size_t size, size_t nmemb, void *curl )
 {
     uns8bfun_t f = ((trp_netptr_t *)( ((trp_curl_t *)curl)->transfer_cback_net ))->f;
@@ -521,7 +526,7 @@ uns8b trp_curl_easy_setopt_writefunction( trp_obj_t *curl, trp_obj_t *net, trp_o
         ((trp_curl_t *)curl)->transfer_raw = trp_raw( ZERO );
     ((trp_curl_t *)curl)->transfer_data = data;
     ((trp_curl_t *)curl)->transfer_rem = -1;
-    return ( curl_easy_setopt( c, CURLOPT_UPLOAD, (long)0 ) ||
+    return ( /* curl_easy_setopt( c, CURLOPT_UPLOAD, (long)0 ) || può dare fastidio! */
              curl_easy_setopt( c, CURLOPT_WRITEDATA, curl ) ||
              curl_easy_setopt( c, CURLOPT_WRITEFUNCTION, trp_curl_cback_receive ) ) ? 1 : 0;
 }
@@ -634,6 +639,16 @@ uns8b trp_curl_easy_setopt_proxy( trp_obj_t *curl, trp_obj_t *val )
                                                   &( trp_curl_strings(curl).proxy ) );
 }
 
+uns8b trp_curl_easy_setopt_pre_proxy( trp_obj_t *curl, trp_obj_t *val )
+{
+    CURL *c = trp_curl_get( curl );
+
+    if ( c == NULL )
+        return 1;
+    return trp_curl_easy_setopt_strings_internal( c, val, CURLOPT_PRE_PROXY,
+                                                  &( trp_curl_strings(curl).pre_proxy ) );
+}
+
 uns8b trp_curl_easy_setopt_proxyport( trp_obj_t *curl, trp_obj_t *val )
 {
     return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_PROXYPORT );
@@ -677,6 +692,11 @@ uns8b trp_curl_easy_setopt_autoreferer( trp_obj_t *curl, trp_obj_t *set_on_off )
 uns8b trp_curl_easy_setopt_referer( trp_obj_t *curl, trp_obj_t *val )
 {
     return trp_curl_easy_setopt_copied_string_internal( curl, val, CURLOPT_REFERER );
+}
+
+uns8b trp_curl_easy_setopt_accept_encoding( trp_obj_t *curl, trp_obj_t *val )
+{
+    return trp_curl_easy_setopt_copied_string_internal( curl, val, CURLOPT_ACCEPT_ENCODING );
 }
 
 uns8b trp_curl_easy_setopt_useragent( trp_obj_t *curl, trp_obj_t *val )
@@ -874,6 +894,11 @@ uns8b trp_curl_easy_setopt_httpheader( trp_obj_t *curl, ... )
     return res;
 }
 
+uns8b trp_curl_easy_setopt_header( trp_obj_t *curl, trp_obj_t *set_on_off )
+{
+    return trp_curl_easy_setopt_boolean_internal( curl, set_on_off, CURLOPT_HEADER );
+}
+
 uns8b trp_curl_easy_setopt_stderr( trp_obj_t *curl, trp_obj_t *val )
 {
     CURL *c = trp_curl_get( curl );
@@ -943,6 +968,31 @@ uns8b trp_curl_easy_setopt_fresh_connect( trp_obj_t *curl, trp_obj_t *set_on_off
 uns8b trp_curl_easy_setopt_forbid_reuse( trp_obj_t *curl, trp_obj_t *set_on_off )
 {
     return trp_curl_easy_setopt_boolean_internal( curl, set_on_off, CURLOPT_FORBID_REUSE );
+}
+
+uns8b trp_curl_easy_setopt_tcp_keepalive( trp_obj_t *curl, trp_obj_t *set_on_off )
+{
+    return trp_curl_easy_setopt_boolean_internal( curl, set_on_off, CURLOPT_TCP_KEEPALIVE );
+}
+
+uns8b trp_curl_easy_setopt_tcp_nodelay( trp_obj_t *curl, trp_obj_t *set_on_off )
+{
+    return trp_curl_easy_setopt_boolean_internal( curl, set_on_off, CURLOPT_TCP_NODELAY );
+}
+
+uns8b trp_curl_easy_setopt_http_version( trp_obj_t *curl, trp_obj_t *val )
+{
+    return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_HTTP_VERSION );
+}
+
+uns8b trp_curl_easy_setopt_expect_100_timeout_ms( trp_obj_t *curl, trp_obj_t *val )
+{
+    return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_EXPECT_100_TIMEOUT_MS  );
+}
+
+uns8b trp_curl_easy_setopt_use_ssl( trp_obj_t *curl, trp_obj_t *val )
+{
+    return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_USE_SSL );
 }
 
 uns8b trp_curl_easy_setopt_low_speed( trp_obj_t *curl, trp_obj_t *speed_limit, trp_obj_t *speed_time )

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ extern trp_obj_t *trp_decode_internal( uns8b **buf );
 
 static uns32b trp_array_max( trp_array_t *a );
 static uns8b trp_array_pos_is_invalid( trp_obj_t *a, trp_obj_t *pos, uns32b *val, uns8b shift );
-static trp_obj_t *trp_array_ext_internal( trp_obj_t *default_val, uns32b incr, uns32b len );
 static trp_obj_t *trp_array_multi_rec( trp_obj_t *default_val, trp_obj_t *l );
 static uns8b trp_array_incdec_multi_low( trp_obj_t *a, trp_obj_t *pos, va_list args, objfun_t fun );
 static uns8b trp_array_sort_low( trp_obj_t *a, trp_obj_t *cmp, uns8bfun_t alg );
@@ -181,7 +180,7 @@ static uns8b trp_array_pos_is_invalid( trp_obj_t *a, trp_obj_t *pos, uns32b *val
     return 0;
 }
 
-static trp_obj_t *trp_array_ext_internal( trp_obj_t *default_val, uns32b incr, uns32b len )
+trp_obj_t *trp_array_ext_internal( trp_obj_t *default_val, uns32b incr, uns32b len )
 {
     trp_array_t *obj;
 

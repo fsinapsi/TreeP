@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@ static void trp_cord_match_clear( trp_cord_match_t *m );
 static int trp_cord_trim_cback( uns8b c, trp_cord_trim_t *m );
 static trp_obj_t *trp_cord_trim_internal( uns8b flags, trp_obj_t *s, va_list args );
 static trp_obj_t *trp_cord_max_fix_basic( uns8b flags, trp_obj_t *s1, trp_obj_t *s2 );
-static sig32b trp_cord_utf8_next( uns8b *p );
 static uns8b trp_cord_decode_scoring_matrix( trp_obj_t *scoring_matrix, sig32b *sm );
 static sig32b trp_cord_amino_index( uns8b amino );
 static trp_obj_t *trp_cord_alignment_score_low( trp_obj_t *s1, trp_obj_t *s2, trp_obj_t *gap_opening_penalty, trp_obj_t *gap_extension_penalty, trp_obj_t *scoring_matrix );
@@ -1225,7 +1224,7 @@ trp_obj_t *trp_cord_tile( trp_obj_t *len, ... )
     return trp_cord_cons( CORD_balance( CORD_ec_to_cord( x ) ), l );
 }
 
-static sig32b trp_cord_utf8_next( uns8b *p )
+sig32b trp_cord_utf8_next( uns8b *p )
 {
     if ( p[ 0 ] == 0 )
         return 0;
@@ -1315,6 +1314,23 @@ trp_obj_t *trp_cord_utf8_head( trp_obj_t *s, trp_obj_t *len )
     }
     trp_csprint_free( c );
     return trp_sig64( res );
+}
+
+trp_obj_t *trp_cord_utf8_max_valid_prefix( trp_obj_t *s )
+{
+    uns8b *c = trp_csprint( s );
+    uns32b i;
+    sig32b n;
+
+    for ( i = 0 ; ; i += n ) {
+        n = trp_cord_utf8_next( c + i );
+        if ( n < 1 )
+            break;
+    }
+    c[ i ] = '\0';
+    s = trp_cord( c );
+    trp_csprint_free( c );
+    return s;
 }
 
 trp_obj_t *trp_cord_utf8_toupper( trp_obj_t *s, ... )

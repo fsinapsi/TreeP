@@ -1,0 +1,487 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet epub-open (path tmp)
+        (deflocal mimetype)
+
+        (minizip-unzip path tmp)
+        (inc tmp "mimetype")
+        (set mimetype (str-load tmp))
+        (alt    (= mimetype "application/epub+zip")
+                (seq    (lmatch case mimetype "application/epub+zip")
+                        (str-save tmp "application/epub+zip")
+                        (print "[WRN] mimetype scritto male" nl) )
+                (seq    (print "[ERR] il file viene decompresso ma " \
+                               "è privo di mimetype corretto" nl )
+                        (fail) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet epub-save (path tmp)
+        (opt (remove path))
+        (minizip-zip path (+ tmp "mimetype") "mimetype" 0)
+        (filesystem-visit tmp (netptr epub-save-cb) (cons tmp path)) )
+
+(defnet epub-save-cb (path name udata)
+        (set name path)
+        (lmatch remove name (car udata))
+        (if (<> name "mimetype")
+        then    (minizip-zip (cdr udata) path name 9) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-opf-path (path) net epub-opf-path)
+(defnet epub-opf-path (path @opfpath)
+        (deflocal node)
+
+        (set node (xml-parse-path (+ path "META-INF/container.xml")))
+        (treep node)
+        (set @opfpath <(xml-attributes (xml-get-first-found-tag node "rootfile")) "full-path">)
+        (stringp @opfpath)
+        (set @opfpath (+ path (str-decode-url @opfpath))) )
+
+(defun epub-opf (path) net epub-opf)
+(defnet epub-opf (path @opf)
+        (deflocal opfpath basepath)
+
+        (set opfpath (epub-opf-path path))
+        (stringp opfpath)
+        (set @opf (xml-parse-path opfpath))
+        (treep @opf)
+        (set basepath opfpath)
+        (rmatch remove basepath (fullpath->name basepath))
+        (set <(tree-get @opf) 1> (list opfpath basepath path)) )
+
+(defnet epub-save-opf (opf)
+        (str-save (epub-opfpath opf) (xml-dump opf)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-opfpath (opf)
+        <(tree-get opf) 1 0> )
+
+(defun epub-basepath (opf)
+        <(tree-get opf) 1 1> )
+
+(defun epub-tmppath (opf)
+        <(tree-get opf) 1 2> )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-content (opf) net epub-content)
+(defnet epub-content (opf @a)
+        (set @a (assoc))
+        (filesystem-visit (epub-tmppath opf) (netptr epub-content-cb) @a) )
+
+(defnet epub-content-cb (path name a)
+        (set <a path> true) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-metadata (opf) net epub-metadata)
+(defnet epub-metadata (opf @a)
+        (deflocal node child-node a q n i)
+
+        (set node (xml-get-first-found-tag opf "metadata"))
+        (treep node)
+        (set @a (assoc))
+        (for child-node in node do
+                (set a (tree-get child-node))
+                (if (and (= <a 0> "[tag]") (not (in <a 1> [ "manifest" "spine" "guide" ])))
+                then    (set q <@a <a 1>>)
+                        (if (= q undef)
+                        then    (set q (queue))
+                                (set <@a <a 1>> q) )
+                        (for n in child-node do
+                                (set i (tree-get n))
+                                (if (or (= <i 0> "[comment]") (and (= <i 0> "[text]") (= (ltrim <i 1> ' ' '\t' '\r' '\n') "")))
+                                then    (tree-detach n) ))
+                        (case (tree-node-cnt child-node) of
+                                1       (clr a)
+                                2       (seq    (set n <child-node 0>)
+                                                (set a (tree-get n))
+                                                (if (= <a 0> "[text]")
+                                                then    (set a <a 1>)
+                                                else    (if (xml-is-this-tag a "![")
+                                                        then    (set a n)
+                                                        else    (print "[WRN] metadata non riconosciuto" nl) )))
+                                default (seq    (print "[WRN] metadata non riconosciuto (" <a 1> ")" nl)
+                                                (clr a) ))
+                        (queue-put q (cons (xml-attributes child-node) a)) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-manifest (opf) net epub-manifest)
+(defnet epub-manifest (opf @a)
+        (deflocal path node child-node a)
+
+        (set node (xml-get-first-found-tag opf "manifest"))
+        (treep node)
+        (set path (epub-basepath opf))
+        (set @a (assoc))
+        (for child-node in node do
+                (if (xml-is-this-tag-node child-node "item")
+                then    (set a (xml-attributes child-node))
+                        (if (stringp <a "id">)
+                        then    (set <@a <a "id">> a)
+                                (assoc-clr a "id")
+                                (if (stringp <a "href">)
+                                then    (set <a "href"> (realpath-soft (+ path (str-decode-url <a "href">))))
+                                else    (print "[WRN] rilevato item privo di href nel manifest" nl) )
+                        else    (print "[WRN] rilevato item privo di id nel manifest" nl) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-paths (opf) net epub-paths)
+(defnet epub-paths (opf @q)
+        (deflocal manifest i path)
+
+        (set manifest (epub-manifest opf))
+        (assocp manifest)
+        (set @q (queue))
+        (for i in manifest do
+                (set path <(cdr i) "href">)
+                (if (stringp path)
+                then    (queue-put @q path) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-text-paths (opf) net epub-text-paths)
+(defnet epub-text-paths (opf @q)
+        (deflocal manifest node child-node id i)
+
+        (set manifest (epub-manifest opf))
+        (assocp manifest)
+        (set node (xml-get-first-found-tag opf "spine"))
+        (treep node)
+        (set @q (queue))
+        (for child-node in node do
+                (if (xml-is-this-tag-node child-node "itemref")
+                then    (set id <(xml-attributes child-node) "idref">)
+                        (stringp id)
+                        (set i <manifest id "href">)
+                        (if (stringp i)
+                        then    (queue-put @q i)
+                        else    (print "[WRN] id '" id "' specificato nel tag spine non trovato nel manifest" nl) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-toc-path (opf)
+        <<(epub-manifest opf)
+                <(xml-attributes (xml-get-first-found-tag opf "spine"))
+                        "toc" >>
+                "href" >)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-cover-path (opf) net epub-cover-path)
+(defnet epub-cover-path (opf @path)
+        (deflocal node q a found manifest p s)
+
+        (alt    (seq    (set q <(epub-metadata opf) "meta">)
+                        (queuep q)
+                        (set found false)
+                        (while (> (length q) 0) do
+                                (set a (car (queue-get q)))
+                                (set found (= <a "name"> "cover"))
+                                until found )
+                        (truep found)
+                        (set manifest (epub-manifest opf))
+                        (assocp manifest)
+                        (set @path <manifest <a "content"> "href">)
+                        (epub-cover-path-check-and-resolve @path) )
+                (seq    (set node (xml-get-first-found-tag opf "guide"))
+                        (treep node)
+                        (set found false)
+                        (for q in node do
+                                (if (xml-is-this-tag-node q "reference")
+                                then    (set a (xml-attributes q))
+                                        (set found (= <a "type"> "cover")) )
+                                until found )
+                        (truep found)
+                        (set p <a "href">)
+                        (stringp p)
+                        (set @path (realpath-soft (+ (epub-basepath opf) (str-decode-url p))))
+                        (epub-cover-path-check-and-resolve @path) )
+                (seq    ; altro tentativo:
+                        ; se nel manifest esiste un id "cover" (o simile)
+                        ; probabilmente quel file è la copertina o permette
+                        ; di ricavarla...
+                        (set manifest (epub-manifest opf))
+                        (assocp manifest)
+                        (set @path <manifest "cover" "href">)
+                        (if (not (stringp @path))
+                        then    (set found false)
+                                (for q in manifest do
+                                        (set found (search case "cov" (car q)))
+                                        until found )
+                                (truep found)
+                                (set @path <(cdr q) "href">) )
+                        (epub-cover-path-check-and-resolve @path) )))
+
+(defnet epub-cover-path-check-and-resolve (@path)
+        (deflocal node a i p path)
+
+        (stringp @path)
+        (if (not (rmatch case @path ".jpg" ".jpeg" ".png" ".gif" ".svg"))
+        then    (set node (xml-parse-path @path))
+                (treep node)
+                (set a (xml-images node))
+                (for i in a do
+                        (set p (car i))
+                        (if (rmatch case p ".jpg" ".jpeg" ".png" ".gif" ".svg")
+                        then    (set path p)
+                        else    (assoc-clr a p) ))
+                (= (length a) 1)
+                (rmatch remove @path (fullpath->name @path))
+                (set @path (realpath-soft (+ @path (str-decode-url path))))
+                (stringp @path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-dump-text (opf) net epub-dump-text)
+(defnet epub-dump-text (opf @s)
+        (deflocal q node s)
+
+        (set q (epub-text-paths opf))
+        (queuep q)
+        (set @s "")
+        (while (> (length q) 0) do
+                (set node (xml-parse-path (queue-get q)))
+                (treep node)
+                (set s (xml-get-text (xml-get-body node)))
+                (stringp s)
+                (if (<> s "")
+                then    (inc @s s nl) )))
+
+(defun epub-dump-text-path (path) net epub-dump-text-path)
+(defnet epub-dump-text-path (path @s)
+        (deflocal tmp)
+
+        (set path (realpath path))
+        (mktmpdir tmp)
+        (opt    (epub-open path tmp)
+                (set @s (epub-dump-text (epub-opf tmp))) )
+        (rmhier tmp) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun epub-get-metadata-interpret (s) net epub-get-metadata-interpret)
+(defnet epub-get-metadata-interpret (s @s)
+        (deflocal node t u v)
+
+        (find-and-replace s "&lt;" "<")
+        (find-and-replace s "&gt;" ">")
+
+        ; questo hack gestisce il caso dei tag <p> non chiusi
+        (if (and (search case "<p>" s) (not (search case "</p>" s)))
+        then    (set v "")
+                (set t s)
+                (set s "")
+                (opt*   (search-and-cut-case "<p>" t u)
+                        (inc s u v "<p>")
+                        (set v "</p>") )
+                (inc s t v) )
+
+        ; questo hack gestisce il caso dei tag <br> non chiusi
+        (if (and (search case "<br>" s) (not (search case "</br>" s)))
+        then    (set t s)
+                (set s "")
+                (opt*   (search-and-cut-case "<br>" t u)
+                        (inc s u "<br/>") )
+                (inc s t) )
+
+        (set node (xml-parse s))
+        (if (treep node)
+        then    (set s (xml-get-text node)) )
+
+        (set @s s) )
+
+(defun epub-get-metadata-field (opf field) net epub-get-metadata-field)
+(defnet epub-get-metadata-field (opf field @s)
+        (deflocal q)
+
+        (set q <(epub-metadata opf) field>)
+        (queuep q)
+        (= (length q) 1)
+        (set @s (cdr (queue-get q)))
+        (if (stringp @s)
+        then    (set @s (epub-get-metadata-interpret @s))
+        else    (treep @s)
+                (truep (xml-is-this-tag-node @s "!["))
+                (set @s <@s 2>)
+                (lmatch case remove @s "<![CDATA[")
+                (rmatch remove @s "]]>")
+                (set @s (xml-parse @s))
+                (treep @s)
+                (set @s (xml-get-text @s)) ))
+
+(defnet epub-set-metadata-field (opf field s)
+        (deflocal node child-node found a)
+
+        (set node (xml-get-first-found-tag opf "metadata"))
+        (treep node)
+        (set found false)
+        (for child-node in node do
+                (set found (xml-is-this-tag-node child-node field))
+                until found )
+        (truep found)
+        (= (length child-node) 1)
+        (if (search "\n" s)
+        then    (set s (+ "<div>" (find-and-replace s "\n" "<br/>") "</div>")) )
+        (tree-replace child-node 0 (xml-new-node-text-no-html-entities s)) )
+
+(defun epub-get-title (opf)
+        (epub-get-metadata-field opf "title") )
+
+(defun epub-get-description (opf)
+        (epub-get-metadata-field opf "description") )
+
+(defun epub-get-language (opf)
+        (epub-get-metadata-field opf "language") )
+
+(defun epub-get-publisher (opf)
+        (epub-get-metadata-field opf "publisher") )
+
+(defnet epub-set-title (opf s)
+        (epub-set-metadata-field opf "title" s) )
+
+(defnet epub-set-description (opf s)
+        (epub-set-metadata-field opf "description" s) )
+
+(defnet epub-set-language (opf s)
+        (epub-set-metadata-field opf "language" s) )
+
+(defnet epub-set-publisher (opf s)
+        (epub-set-metadata-field opf "publisher" s) )
+
+(defun epub-get-authors (opf) net epub-get-authors)
+(defnet epub-get-authors (opf @q)
+        (deflocal q i a s)
+
+        (set @q (queue))
+        (set q <(epub-metadata opf) "creator">)
+        (if (queuep q)
+        then    (while (> (length q) 0) do
+                        (set i (queue-get q))
+                        (set a (car i))
+                        (set s (cdr i))
+                        (if (stringp s)
+                        then    (set s (epub-get-metadata-interpret s))
+                                (set i <a "opf:role">)
+                                (if (and (or (= i undef) (= i "aut")) (not (in s @q)))
+                                then    (queue-put @q s) )))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

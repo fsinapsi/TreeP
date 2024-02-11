@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -85,8 +85,8 @@ static int my_RBSPtoSODB( uns8b *buf, int last_byte_pos )
     for ( ctr_bit = buf[ last_byte_pos - 1 ] & ( 0x01 << bitoffset ) ;
           ctr_bit == 0 ;
           ctr_bit = buf[ last_byte_pos - 1 ] & ( 0x01 << bitoffset ) )
-        if( ++bitoffset == 8 ) {
-            if( last_byte_pos == 0 )
+        if ( ++bitoffset == 8 ) {
+            if ( last_byte_pos == 0 )
                 return -1;
             /*
              if( last_byte_pos == 0 )
@@ -103,13 +103,13 @@ static int my_EBSPtoRBSP( uns8b *buf, uns32b size )
 {
     uns32b i, j, count = 0;
 
-    for( i = j = 0 ; i < size ; i++ ) {
+    for ( i = j = 0 ; i < size ; i++ ) {
         if ( ( count == 2 ) && ( buf[ i ] == 0x03 ) ) {
             i++;
             count = 0;
         }
         buf[ j++ ] = buf[ i ];
-        if( buf[ i ] == 0 )
+        if ( buf[ i ] == 0 )
             count++;
         else
             count = 0;
@@ -121,10 +121,10 @@ static uns32b avc_next_start_code( uns8b *buf, uns32b size )
 {
     uns32b i, count = 0;
 
-    for( i = 0 ; i < size ; i++ ) {
-        if ( ( count == 3 ) && ( buf[ i ] == 0x01 ) )
+    for ( i = 0 ; i < size ; i++ ) {
+        if ( ( ( count == 2 ) || ( count == 3 ) ) && ( buf[ i ] == 0x01 ) )
             return i + 1;
-        if( buf[ i ] == 0 )
+        if ( buf[ i ] == 0 )
             count++;
         else
             count = 0;

@@ -29,6 +29,7 @@
 (include "expr-iup.tin")
 (include "expr-thread.tin")
 (include "expr-license.tin")
+(include "expr-str.tin")
 (include "expr-gcrypt.tin")
 (include "expr-chess.tin")
 (include "expr-suf.tin")
@@ -163,8 +164,11 @@
         then    (set _expr_const_val q)
                 (set _expr_const true)
         else    (if (last-pass)
-                then    (if (or (= b undef) (and (= @nargs a) (= b (+ a 1))))
-                        then    (inc _expr_code (if (> @nargs 0) "," "") "NULL") )
+                then    (if (= b undef)
+                        then    (inc _expr_code (if (> @nargs 0) "," "") "NULL")
+                        else    (while (< @nargs b) do
+                                        (inc _expr_code (if (> @nargs 0) "," "") "NULL")
+                                        (inc @nargs) ))
                         (if (<> post undef)
                         then    (inc _expr_code post) ))
                 (set _expr_const false)
@@ -329,6 +333,7 @@
                                         (expr-iup _tokenval)
                                         (expr-thread _tokenval)
                                         (expr-license _tokenval)
+                                        (expr-str _tokenval)
                                         (expr-gcrypt _tokenval)
                                         (expr-chess _tokenval)
                                         (expr-suf _tokenval)
@@ -439,7 +444,7 @@
                                 then    (error "(for-pos) is not defined")
                                 else    (chiusa)
                                         (if (last-pass)
-                                        then    (set _expr_code (+ _expr_code "trp_for_pos(t" _lastfor ')')) ))
+                                        then    (inc _expr_code "trp_for_pos(t" _lastfor ')') ))
 
                 "lang"          (seq    (chiusa)
                                         (if (last-pass)
@@ -529,6 +534,8 @@
                 "tile"          (exprseq-basic 1 undef "trp_cord_tile(" ')')
                 "utf8-tile"     (exprseq-basic 1 undef "trp_cord_utf8_tile(" ')')
                 "utf8-head"     (expr-static-fun const-state 2 2 "cord_utf8_head")
+                "utf8-max-valid-prefix"
+                                (exprseq-basic 1 1 "trp_cord_utf8_max_valid_prefix(" ')')
                 "utf8-toupper"  (exprseq-basic 1 undef "trp_cord_utf8_toupper(" ')')
                 "utf8-tolower"  (exprseq-basic 1 undef "trp_cord_utf8_tolower(" ')')
                 "subsequencep"  (expr-static-fun const-state 2 2 "cord_subsequencep")
@@ -612,20 +619,74 @@
                 "stack"         (exprseq-basic 0 0 "trp_stack(" ')')
                 "pop"           (exprseq-basic 1 1 "trp_stack_pop(" ')')
 
-                "tree"          (expr-static-fun const-state 1 undef "tree")
-                "treel"         (expr-static-fun const-state 2 2 "tree_list")
-                "root"          (exprseq-basic 1 1 "trp_tree_root(" ')')
-                "tree-swap"     (exprseq-basic 3 3 "trp_tree_swap(" ')')
+                "tree"          (exprseq-basic 0 undef "trp_tree(" ')')
+                "tree-get"      (exprseq-basic 1 1 "trp_tree_get(" ')')
+                "tree-root"     (exprseq-basic 1 1 "trp_tree_root(" ')')
+                "tree-level"    (exprseq-basic 1 1 "trp_tree_level(" ')')
+                "tree-parent"   (exprseq-basic 1 1 "trp_tree_parent(" ')')
+                "tree-children" (exprseq-basic 1 1 "trp_tree_children(" ')')
+                "tree-pos"      (exprseq-basic 1 1 "trp_tree_pos(" ')')
+                "tree-node-cnt" (exprseq-basic 1 1 "trp_tree_node_cnt(" ')')
+
+                "dgraph"        (exprseq-basic 0 0 "trp_dgraph(" ')')
+                "dgraph-first"  (exprseq-basic 1 1 "trp_dgraph_first(" ')')
+                "dgraph-queue"  (exprseq-basic 1 1 "trp_dgraph_queue(" ')')
+                "dgraph-queue-in"
+                                (exprseq-basic 1 1 "trp_dgraph_queue_in(" ')')
+                "dgraph-queue-out"
+                                (exprseq-basic 1 1 "trp_dgraph_queue_out(" ')')
+                "dgraph-dgraph" (exprseq-basic 1 1 "trp_dgraph_dgraph(" ')')
+                "dgraph-node"   (exprseq-basic 1 3 "trp_dgraph_node(" ')')
+                "dgraph-is-node"(exprseq-basic 1 1 "trp_dgraph_is_node(" ')')
+                "dgraph-out-cnt"(exprseq-basic 1 1 "trp_dgraph_out_cnt(" ')')
+                "dgraph-in-cnt" (exprseq-basic 1 1 "trp_dgraph_in_cnt(" ')')
+                "dgraph-get-val"(exprseq-basic 1 1 "trp_dgraph_get_val(" ')')
+                "dgraph-get-name"
+                                (exprseq-basic 1 1 "trp_dgraph_get_name(" ')')
+                "dgraph-get-node"
+                                (exprseq-basic 2 2 "trp_dgraph_get_node(" ')')
+                "dgraph-get-id" (exprseq-basic 1 1 "trp_dgraph_get_id(" ')')
+                "dgraph-get-node-by-id"
+                                (exprseq-basic 2 2 "trp_dgraph_get_node_by_id(" ')')
+                "dgraph-can-reach"
+                                (exprseq-basic 2 2 "trp_dgraph_can_reach(" ')')
+                "dgraph-get-link-val"
+                                (exprseq-basic 2 2 "trp_dgraph_get_link_val(" ')')
+                "dgraph-succ-cnt"
+                                (exprseq-basic 1 1 "trp_dgraph_succ_cnt(" ')')
+                "dgraph-pred-cnt"
+                                (exprseq-basic 1 1 "trp_dgraph_pred_cnt(" ')')
+                "dgraph-root-if-is-tree"
+                                (exprseq-basic 1 1 "trp_dgraph_root_if_is_tree(" ')')
+                "dgraph-is-tree"(exprseq-basic 1 1 "trp_dgraph_is_tree(" ')')
+                "dgraph-queue-succ"
+                                (exprseq-basic 1 1 "trp_dgraph_queue_succ(" ')')
+                "dgraph-queue-pred"
+                                (exprseq-basic 1 1 "trp_dgraph_queue_pred(" ')')
+                "dgraph-connected-cnt"
+                                (exprseq-basic 1 1 "trp_dgraph_connected_cnt(" ')')
+                "dgraph-is-connected"
+                                (exprseq-basic 1 1 "trp_dgraph_is_connected(" ')')
+                "dgraph-is-acyclic"
+                                (exprseq-basic 1 1 "trp_dgraph_is_acyclic(" ')')
 
                 "assoc"         (exprseq-basic 0 0 "trp_assoc(" ')')
                 "assoc-get"     (expr-assoc-get)
-                "assoc-list"    (exprseq-basic 1 1 "trp_assoc_list(" ')')
+                "assoc-queue"   (exprseq-basic 1 1 "trp_assoc_queue(" ')')
                 "assoc-root"    (exprseq-basic 1 1 "trp_assoc_root(" ')')
 
+                "set"           (exprseq-basic 0 undef "trp_set(" ')')
+                "set-queue"     (exprseq-basic 1 1 "trp_set_queue(" ')')
+                "set-intersection"
+                                (exprseq-basic 1 undef "trp_set_intersection(" ')')
+                "set-difference"(exprseq-basic 2 2 "trp_set_difference(" ')')
+
                 "fibo"          (exprseq-basic 0 1 "trp_fibo(" ')')
+                "fibo-queue"    (exprseq-basic 1 1 "trp_fibo_queue(" ')')
                 "fibo-first"    (exprseq-basic 1 1 "trp_fibo_first(" ')')
-                "fibo-key"      (exprseq-basic 1 1 "trp_fibo_key(" ')')
-                "fibo-obj"      (exprseq-basic 1 1 "trp_fibo_obj(" ')')
+                "fibo-fibo"     (exprseq-basic 1 1 "trp_fibo_fibo(" ')')
+                "fibo-get-key"  (exprseq-basic 1 1 "trp_fibo_get_key(" ')')
+                "fibo-get-obj"  (exprseq-basic 1 1 "trp_fibo_get_obj(" ')')
                 "fibo-insert"   (exprseq-basic 2 3 "trp_fibo_insert(" ')')
                 "fibo-extract"  (exprseq-basic 1 1 "trp_fibo_extract(" ')')
 
@@ -649,8 +710,10 @@
                 "system"        (exprseq-basic 1 undef "trp_system(" ')')
                 "getpid"        (exprseq-basic 0 0 "trp_getpid(" ')')
                 "fork"          (exprseq-basic 0 0 "trp_fork(" ')')
+                "sysinfo"       (exprseq-basic 0 0 "trp_sysinfo(" ')')
                 "ratio->uns64b" (exprseq-basic 1 1 "trp_ratio2uns64b(" ')')
                 "directory"     (exprseq-basic 0 1 "trp_directory(" ')')
+                "directory-ext" (exprseq-basic 0 1 "trp_directory_ext(" ')')
                 "getenv"        (exprseq-basic 1 1 "trp_getenv(" ')')
 
                 "maxint"        (seq    (chiusa)
@@ -700,6 +763,7 @@
                 "tan"           (expr-static-fun const-state 1 1 "math_tan")
                 "sin"           (expr-static-fun const-state 1 1 "math_sin")
                 "cos"           (expr-static-fun const-state 1 1 "math_cos")
+                "lyapunov"      (exprseq-basic 3 4 "trp_math_lyapunov(" ')')
                 default         (fail) ))
 
 (defnet expr-user-defined (const-state name)
@@ -1073,10 +1137,6 @@
                                                                 (set cst (cons i cst)) ))
                         "car"                   (set cst (car (queue-get _expr_const_val)))
                         "cdr"                   (set cst (cdr (queue-get _expr_const_val)))
-                        "tree"                  (seq    (set i (queue-get _expr_const_val))
-                                                        (set cst (treel i _expr_const_val)) )
-                        "tree_list"             (set cst (treel <_expr_const_val 0>
-                                                                <_expr_const_val 1> ))
                         "raw2str"               (if (= (length _expr_const_val) 1)
                                                 then    (set cst (raw->str (queue-get _expr_const_val)))
                                                 else    (set cst (raw->str <_expr_const_val 0>

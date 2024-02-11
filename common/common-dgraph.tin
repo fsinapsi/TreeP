@@ -1,0 +1,405 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; mentre (dgraph-queue-out node) rende la coda dei successori di node in
+; ordine qualsiasi,
+; (dgraph-queue-out-sorted node) rende la coda dei successori di node
+; tenendo conto dell'eventuale presenza dell'attributo "order" sui link
+
+(defun dgraph-queue-out-sorted (node) net dgraph-queue-out-sorted)
+(defnet dgraph-queue-out-sorted (node @q)
+        (deflocal a succ i)
+
+        (set a (array (length node)))
+        (for succ in node do
+                (set i <(dgraph-get-link-val node succ) "order">)
+                (if (= i undef)
+                then    (set i (for-pos)) )
+                (set <a (for-pos)> (cons i succ)) )
+        (sort a (funptr lesscar))
+        (set @q (queue))
+        (for i in a do
+                (queue-put @q (cdr i)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; mentre (dgraph-queue g) rende la coda dei nodi di g in ordine qualsiasi,
+; (dgraph-queue-sorted g) rende la coda dei nodi di g
+; tenendo conto del fatto che g possa essere un albero, e in tal caso
+; rispetta l'ordine di una visita depth-first partendo dalla radice
+
+(defun dgraph-queue-sorted (g) net dgraph-queue-sorted)
+(defnet dgraph-queue-sorted (g @q)
+        (deflocal r)
+
+        (set r (dgraph-root-if-is-tree g))
+        (if (dgraph-is-node r)
+        then    (set @q (queue))
+                (dgraph-queue-sorted-rec r @q)
+        else    (set @q (dgraph-queue g)) ))
+
+(defnet dgraph-queue-sorted-rec (node q)
+        (deflocal succ)
+
+        (queue-put q node)
+        (for succ in (dgraph-queue-out-sorted node) do
+                (dgraph-queue-sorted-rec succ q) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; se il grafo è un albero, rende un effettivo albero equivalente
+
+(defun dgraph->tree (g) net dgraph->tree)
+(defnet dgraph->tree (g @node)
+        (deflocal r)
+
+        (set r (dgraph-root-if-is-tree g))
+        (dgraph-is-node r)
+        (set @node (tree (dgraph-get-val r)))
+        (dgraph->tree-rec r @node) )
+
+(defnet dgraph->tree-rec (g-node t-node)
+        (deflocal g-child t-child)
+
+        (for g-child in (dgraph-queue-out-sorted g-node) do
+                (set t-child (tree (dgraph-get-val g-child)))
+                (tree-append t-node t-child)
+                (dgraph->tree-rec g-child t-child) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun dgraph->dot (g options) net dgraph->dot)
+(defnet dgraph->dot (g options @s)
+        (deflocal qnodes node succ)
+
+        (dgraphp g)
+        (not (dgraph-is-node g))
+        (set @s "")
+        (inc @s "digraph G {" nl
+                "  graph [];" nl )
+        (dgraph->dot-attributes g options @s)
+        (set qnodes (dgraph-queue-sorted g))
+        (for node in qnodes do
+                (inc @s "    n" (dgraph-get-id node) " [")
+                (dgraph->dot-node-attributes node @s)
+                (inc @s "];" nl) )
+        (for node in qnodes do
+                (for succ in (dgraph-queue-out-sorted node) do
+                        (inc @s "    n" (dgraph-get-id node) " -> n" (dgraph-get-id succ) " [")
+                        (dgraph->dot-link-attributes node succ @s)
+                        (inc @s "];" nl )))
+        (inc @s "}" nl) )
+
+(defun dgraph->dot-default-options ()
+        [ [ "layout" . "dot" ]
+          [ "bgcolor" . "transparent" ]
+          [ "esep" . 0.4 ]
+          [ "splines" . true ]
+          [ "overlap" . "voronoi" ]
+          [ "overlap_shrink" . true ] ])
+
+(defun dgraph->dot-attributes ()
+        [ "layout" "bgcolor" "ranksep" "rankdir"
+          "esep" "splines" "overlap" "overlap_shrink" ])
+
+(defun dgraph->dot-node-attributes ()
+        [ "label" "shape" "style" "color" "fillcolor" ])
+
+(defun dgraph->dot-link-attributes ()
+        [ "labelfontsize" "labelangle" "labeldistance"
+          "label" "taillabel" "headlabel" "dir" ])
+
+(defun dgraph->dot-get-assoc (a) net dgraph->dot-get-assoc)
+(defnet dgraph->dot-get-assoc (a @a)
+        (alt    (seq    (assocp a)
+                        (set @a a) )
+                (seq    (listp a)
+                        (set @a (list->assoc a))
+                        (assocp @a) )
+                (set @a (assoc)) ))
+
+(defnet dgraph->dot-attributes (g a @s)
+        (deflocal attr v)
+
+        (set a (dgraph->dot-get-assoc a))
+        (for v in (dgraph->dot-default-options) do
+                (if (= <a (car v)> undef)
+                then    (set <a (car v)> (cdr v)) ))
+        (in <a "layout"> [ "dot" "neato" "fdp" "sfdp" "twopi" "circo" ])
+        (for attr in (dgraph->dot-attributes) do
+                (set v <a attr>)
+                (if (<> v undef)
+                then    (inc @s "    " attr "=" (dgraph->dot-quote v) ";") )))
+
+(defnet dgraph->dot-node-attributes (node @s)
+        (deflocal a attr v sep)
+
+        (set a (dgraph->dot-get-assoc (dgraph-get-val node)))
+        (alt    (<> <a "label"> undef)
+                (seq    (set v (dgraph-get-name node))
+                        (<> v undef)
+                        (set <a "label"> v) )
+                (seq    (set v (dgraph-get-val node))
+                        (<> v undef)
+                        (not (assocp v))
+                        (set <a "label"> v) )
+                (set <a "label"> "") )
+        (set sep "")
+        (for attr in (dgraph->dot-node-attributes) do
+                (set v <a attr>)
+                (if (<> v undef)
+                then    (inc @s sep attr "=" (dgraph->dot-quote v))
+                        (set sep ",") )))
+
+(defnet dgraph->dot-link-attributes (node succ @s)
+        (deflocal a attr v sep)
+
+        (set a (dgraph->dot-get-assoc (dgraph-get-link-val node succ)))
+        (alt    (<> <a "label"> undef)
+                (seq    (set v (dgraph-get-link-val node succ))
+                        (<> v undef)
+                        (not (assocp v))
+                        (set <a "label"> v) )
+                (set <a "label"> "") )
+        (set sep "")
+        (for attr in (dgraph->dot-link-attributes) do
+                (set v <a attr>)
+                (if (<> v undef)
+                then    (inc @s sep attr "=" (dgraph->dot-quote v))
+                        (set sep ",") )))
+
+(defun dgraph->dot-quote (v) net dgraph->dot-quote)
+(defnet dgraph->dot-quote (v @s)
+        (if (booleanp v)
+        then    (set v (if v "true" "false"))
+        else (if (colorp v)
+        then    (set v (+ "#" (dgraph->dot-quote-byte (pix-color-red v))
+                              (dgraph->dot-quote-byte (pix-color-green v))
+                              (dgraph->dot-quote-byte (pix-color-blue v))
+                              (dgraph->dot-quote-byte (pix-color-alpha v)) ))
+        else (if (rationalp v)
+        then    (set v (approx6 v)) )))
+        (if (not (stringp v))
+        then    (set v (sprint v)) )
+        (set @s (+ "\"" (find-and-replace (str-split (find-and-replace v "\"" "\\\"") 20) "\n" "\\n") "\"")) )
+
+(defun dgraph->dot-quote-byte (b) (sprint (hexdigit0 (div b 0x10)) (hexdigit0 (% b 0x10))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun dgraph->svg (g options) net dgraph->svg)
+(defnet dgraph->svg (g options @raw)
+        (deflocal dot)
+
+        (set dot (dgraph->dot g options))
+        (stringp dot)
+        (set @raw (ag-dot2svg dot)) )
+
+(defun dgraph->pix (g options) net dgraph->pix)
+(defnet dgraph->pix (g options @pix)
+        (deflocal raw)
+
+        (set raw (dgraph->svg g options))
+        (rawp raw)
+        (set @pix (rsvg-load raw 1.4))
+        (close raw) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet dgraph-save-svg (path g options)
+        (deflocal raw)
+
+        (set raw (dgraph->svg g options))
+        (rawp raw)
+        (alt    (raw-save path raw)
+                (seq    (close raw)
+                        (fail) ))
+        (close raw) )
+
+(defnet dgraph-save-png (path g options)
+        (deflocal pix)
+
+        (set pix (dgraph->pix g options))
+        (pixp pix)
+        (alt    (pix-save-png pix path)
+                (seq    (close pix)
+                        (fail) ))
+        (close pix) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; input: p (nodo di un grafo g);
+; i valori degli archi di g devono essere razionali positivi;
+; output: albero contenente tutti i nodi raggiungibili da p in un cammino
+; di costo minimo (il costo del cammino da p al nodo è nell'unico arco
+; entrante nel nodo)
+
+(defun dgraph-dijkstra (p) net dgraph-dijkstra)
+(defnet dgraph-dijkstra (p @g)
+        (deflocal g q dist node succ dns)
+
+        (set g (dgraph-dgraph p))
+        (dgraphp g)
+        (set @g (dgraph))
+        (set q (fibo))
+        (dgraph-dijkstra-update @g q p 0 undef)
+        (repeat (set dist (fibo-extract q))
+                (set node (fibo-get-obj dist))
+                (set dist (fibo-get-key dist))
+                (for succ in node do
+                        (set dns (dgraph-get-link-val node succ))
+                        (rationalp dns)
+                        (> dns 0)
+                        (dgraph-dijkstra-update @g q succ (+ dist dns) node) )
+                until (= (length q) 0) )
+        (for succ in @g do
+                (set dist (dgraph-get-val succ))
+                (set node <dist 1>)
+                (if (<> node undef)
+                then    (dgraph-link (dgraph-get-node @g (sprint (dgraph-get-id node))) succ (fibo-get-key <dist 0>)) )
+                (dgraph-set-val succ (dgraph-get-val <dist 2>)) )
+        (for succ in @g do
+                (dgraph-set-name succ undef) ))
+
+(defnet dgraph-dijkstra-update (g q node dist prev)
+        (deflocal node-id g-node a)
+
+        (set node-id (sprint (dgraph-get-id node)))
+        (set g-node (dgraph-get-node g node-id))
+        (if (= g-node undef)
+        then    (set a (array 3))
+                (set <a 0> (fibo-insert q dist node))
+                (set <a 1> prev)
+                (set <a 2> node)
+                (skip (dgraph-node g a node-id))
+        else    (set a (dgraph-get-val g-node))
+                (if (< dist (fibo-get-key <a 0>))
+                then    (fibo-decrease-key <a 0> dist)
+                        (set <a 1> prev) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; input: p (nodo di un grafo g);
+; i valori degli archi di g devono essere razionali (anche negativi);
+; output: albero contenente tutti i nodi raggiungibili da p in un cammino
+; di costo minimo (il costo del cammino da p al nodo è nell'unico arco
+; entrante nel nodo)
+
+(defun dgraph-bellman-ford (p) net dgraph-bellman-ford)
+(defnet dgraph-bellman-ford (p @g)
+        (deflocal g cnt unchanged n node succ dist)
+
+        (set g (dgraph-dgraph p))
+        (dgraphp g)
+        (set @g (dgraph))
+        (dgraph-bellman-ford-update @g p 0 undef)
+        (set cnt (length g))
+        (repeat (set unchanged true)
+                (for n in @g do
+                        (set dist (dgraph-get-val n))
+                        (set node <dist 2>)
+                        (set dist <dist 0>)
+                        (for succ in node do
+                                (opt    (dgraph-bellman-ford-update @g succ (+ dist (dgraph-get-link-val node succ)) node)
+                                        (set unchanged false) )))
+                until unchanged
+                (dec cnt)
+                ; se cnt == 0 allora abbiamo rilevato un ciclo di lunghezza negativa
+                ; e rendiamo undef
+                (> cnt 0) )
+        (for succ in @g do
+                (set dist (dgraph-get-val succ))
+                (set node <dist 1>)
+                (if (<> node undef)
+                then    (dgraph-link (dgraph-get-node @g (sprint (dgraph-get-id node))) succ <dist 0>) )
+                (dgraph-set-val succ (dgraph-get-val <dist 2>)) )
+        (for succ in @g do
+                (dgraph-set-name succ undef) ))
+
+(defnet dgraph-bellman-ford-update (g node dist prev)
+        (deflocal node-id g-node a)
+
+        (set node-id (sprint (dgraph-get-id node)))
+        (set g-node (dgraph-get-node g node-id))
+        (if (= g-node undef)
+        then    (set a (array 3))
+                (set <a 2> node)
+                (skip (dgraph-node g a node-id))
+        else    (set a (dgraph-get-val g-node))
+                (< dist <a 0>) )
+        (set <a 0> dist)
+        (set <a 1> prev) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ static unsigned long int trp_math_prec( uns8b flags, unsigned long int prec );
 static uns8b trp_math_randseed( trp_obj_t *inseed, gmp_randstate_t **outstate, trp_obj_t **outseed );
 static gmp_randstate_t *trp_math_randstate();
 static trp_obj_t *trp_math_is_negative_internal( trp_obj_t *obj );
-static void trp_math_sig64_to_mpz( sig64b val, mpz_t mp );
+void trp_math_sig64_to_mpz( sig64b val, mpz_t mp );
 static void trp_math_obj_to_mpq( trp_obj_t *obj, mpq_t mq );
 static trp_obj_t *trp_math_result_from_mpz_ext( mpz_t mp, int must_clear );
 #define trp_math_result_from_mpz(mp) trp_math_result_from_mpz_ext(mp,1)
@@ -50,18 +50,7 @@ static void trp_math_sqrt_internal( mpq_t op, mpq_t res );
 
 uns8b trp_sig64_print( trp_print_t *p, trp_sig64_t *obj )
 {
-    mpz_t mp;
-    int len;
-    uns8b *buf;
-    uns8b res;
-
-    mpz_init( mp );
-    trp_math_sig64_to_mpz( obj->val, mp );
-    len = gmp_asprintf( (char **)&buf, "%Zd", mp );
-    mpz_clear( mp );
-    res = trp_print_chars( p, buf, len );
-    trp_gc_free( buf );
-    return res;
+    return trp_print_sig64( p, obj->val );
 }
 
 uns8b trp_mpi_print( trp_print_t *p, trp_mpi_t *obj )
@@ -674,7 +663,7 @@ static trp_obj_t *trp_math_is_negative_internal( trp_obj_t *obj )
     return res;
 }
 
-static void trp_math_sig64_to_mpz( sig64b val, mpz_t mp )
+void trp_math_sig64_to_mpz( sig64b val, mpz_t mp )
 {
     uns64b v;
     uns8b neg;
@@ -1922,5 +1911,38 @@ trp_obj_t *trp_math_cos( trp_obj_t *n )
     if ( trp_cast_double( n, &dn ) )
         return UNDEF;
     return trp_double( cos( dn ) );
+}
+
+trp_obj_t *trp_math_lyapunov( trp_obj_t *seq, trp_obj_t *a, trp_obj_t *b, trp_obj_t *iter )
+{
+    uns8b *c = trp_csprint( seq ), *d;
+    uns32b i, n;
+    double ab[ 2 ], x = 0.4, col = 0.0, r;
+
+    if ( trp_cast_double( a, &( ab[ 0 ] ) ) || trp_cast_double( b, &( ab[ 1 ] ) ) )
+        return UNDEF;
+    if ( iter ) {
+        if ( trp_cast_uns32b( iter, &n ) )
+            return UNDEF;
+    } else
+        n = 2000;
+    for ( i = 0 ; i < n ; i++ ) {
+        for ( d = c ; *d ; d++ ) {
+            r = ab[ ( *d == 'a' ) ? 0 : 1 ];
+            x = r * x * ( 1 - x );
+            if ( x == 0.5 ) {
+                trp_csprint_free( c );
+                return UNO;
+            }
+            col += log( fabs( r - 2 * r * x ) );
+        }
+    }
+    trp_csprint_free( c );
+    if ( col > 0 )
+        return ZERO;
+    col = 0.5 - col / ( ( (double)n ) / 100.0 );
+    if ( col > 254 )
+        return UNO;
+    return (trp_sig64)( 255 - (uns8b)col );
 }
 

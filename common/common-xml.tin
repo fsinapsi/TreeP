@@ -1,0 +1,492 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-parse-path (path)
+        (xml-parse (str-load path)) )
+
+(defun xml-parse (s) net xml-parse)
+(defnet xml-parse (s @g)
+        (stringp s)
+        (set @g (xml-new-node-tag "fake" "" ""))
+        (xml-parse-low s @g) )
+
+(defnet xml-parse-low (s act-node)
+        (deflocal q a tag tag-beg tag-end body i j k)
+
+        (set q (xml-parse-tags s))
+        (<> q undef)
+        (set i 0)
+        (while (> (length q) 0) do
+                (set a (queue-get q))
+                (set tag <a 0>)
+                (set j <a 1>)
+                (if (> j i)
+                then    (tree-append act-node (xml-new-node-text (sub i (- j i) s))) )
+                (set k <a 2>)
+                (set body (sub j (- k j) s))
+                (case tag of
+                        "!--"   (seq    (search "-->" body j)
+                                        (inc j 3) )
+                        "!["    (seq    (search "]>" body j)
+                                        (inc j 2) )
+                        "?xml"  (seq    (search "?>" body j)
+                                        (inc j 2) )
+                        default (seq    (opt (search-and-cut ":" tag j))
+                                        (search ">" body j)
+                                        (inc j) ))
+                (set tag-beg (sub 0 j body))
+                (set body (sub j (maxint) body))
+                (if (= body "")
+                then    (set tag-end "") ; il tag si chiude da solo
+                else    (search "<" body j (maxint))
+                        (set tag-end (sub j (maxint) body))
+                        (set body (sub 0 j body)) )
+                (if (= tag "!--")
+                then    (set j (xml-new-node-comment tag-beg))
+                else    (set j (xml-new-node-tag tag tag-beg tag-end)) )
+                (tree-append act-node j)
+                (if (<> body "")
+                then    (xml-parse-low body j) )
+                (set i k) )
+        (if (< i (length s))
+        then    (tree-append act-node (xml-new-node-text (sub i (maxint) s))) ))
+
+(defun xml-parse-tags (s) net xml-parse-tags)
+(defnet xml-parse-tags (s @q)
+        (deflocal err st pos tagpos tag a i)
+
+        (set @q (queue))
+        (set err (array default false 1))
+        (set st (stack))
+        (set pos 0)
+        (opt*   (search-and-cut "<" s tag)
+                (inc pos (length tag))
+                (set tagpos pos)
+                (if (lmatch case s "!--" "![" "?xml")
+                then    (if (lmatch s "!--")
+                        then    (search-and-cut "-->" s tag)
+                                (inc pos (length tag) 4)
+                                (set tag "!--")
+                        else (if (lmatch s "![")
+                        then    (search-and-cut "]>" s tag)
+                                (inc pos (length tag) 3)
+                                (set tag "![")
+                        else    (search-and-cut "?>" s tag)
+                                (inc pos (length tag) 3)
+                                (set tag "?xml") ))
+                else    (search-and-cut ">" s tag)
+                        (inc pos (length tag) 2)
+                        (find-and-replace tag "\n" " ")
+                        (find-and-replace tag "\r" " ")
+                        (ltrim tag ' ' '\t')
+                        (rtrim tag ' ' '\t') )
+                (alt    (seq    (lmatch remove tag "/")
+                                (set a (pop st))
+                                (if (= <a 0> (utf8-tolower tag))
+                                then    (set <a 2> pos)
+                                else    (set <err 0> true) ))
+                        (seq    (alt    (search-and-cut " " tag i)
+                                        (seq    (set i tag)
+                                                (opt (rmatch remove i "/")) ))
+                                (set a (array 3))
+                                (set <a 0> (utf8-tolower i))
+                                (set <a 1> tagpos)
+                                (if (= (length st) 0)
+                                then    (queue-put @q a) )
+                                (if (or (rmatch tag "/") (not (in <a 0 0> 'a' .. 'z')))
+                                then    (set <a 2> pos)
+                                else    (push st a) )))
+                (not <err 0>) )
+        (not <err 0>)
+        (= (length st) 0) )
+
+(defun xml-new-node-text (text)
+        (xml-new-node "[text]" (str-decode-html-entities-utf8 text) undef undef) )
+
+(defun xml-new-node-text-no-html-entities (text)
+        (xml-new-node "[text]" text undef undef) )
+
+(defun xml-new-node-tag (tag tag-beg tag-end)
+        (xml-new-node "[tag]" tag tag-beg tag-end) )
+
+(defun xml-new-node-comment (text)
+        (xml-new-node "[comment]" text undef undef) )
+
+(defun xml-new-node-copy (node) net xml-new-node-copy)
+(defnet xml-new-node-copy (node @node)
+        (deflocal a)
+
+        (set a (tree-get node))
+        (set @node (xml-new-node <a 0> <a 1> <a 2> <a 3>)) )
+
+(defun xml-new-node (type field1 field2 field3) net xml-new-node)
+(defnet xml-new-node (type field1 field2 field3 @node)
+        (deflocal a)
+
+        (set a (array 4))
+        (set <a 0> type)
+        (set <a 1> field1)
+        (set <a 2> field2)
+        (set <a 3> field3)
+        (set @node (tree a)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-is-text (a)
+        (= <a 0> "[text]") )
+
+(defun xml-is-text-node (node)
+        (xml-is-text (tree-get node)) )
+
+(defun xml-is-tag (a)
+        (= <a 0> "[tag]") )
+
+(defun xml-is-tag-node (node)
+        (xml-is-tag (tree-get node)) )
+
+(defun xml-is-comment (a)
+        (= <a 0> "[comment]") )
+
+(defun xml-is-comment-node (node)
+        (xml-is-comment (tree-get node)) )
+
+(defun xml-is-this-tag (a tag)
+        (and (= <a 0> "[tag]") (= <a 1> tag)) )
+
+(defun xml-is-this-tag-node (node tag)
+        (xml-is-this-tag (tree-get node) tag) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet xml-remove-comments (node)
+        (deflocal child-node)
+
+        (if (xml-is-comment-node node)
+        then    (tree-detach node)
+        else    (for child-node in node do
+                        (xml-remove-comments child-node) )))
+
+(defun xml-comments-count (node) net xml-comments-count)
+(defnet xml-comments-count (node @n)
+        (deflocal child-node)
+
+        (if (xml-is-comment-node node)
+        then    (set @n 1)
+        else    (set @n 0)
+                (for child-node in node do
+                        (inc @n (xml-comments-count child-node)) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-attributes (node) net xml-attributes)
+(defnet xml-attributes (node @a)
+        (deflocal s t i attr pcl)
+
+        (set @a (assoc))
+        (opt    (set s (tree-get node))
+                (= <s 0> "[tag]")
+                (set s <s 2>)
+                (stringp s)
+                (set s (str-uniform-blanks s))
+                (opt*   (alt    (seq    (search-and-cut "=\"" s t)
+                                        (not (search "='" t))
+                                        (set pcl "\"") )
+                                (seq    (search-and-cut "='" s t)
+                                        (set pcl "'") ))
+                        (search " " t i (maxint))
+                        (set attr (utf8-tolower (sub (+ i 1) (maxint) t)))
+                        (search-and-cut pcl s t)
+                        (set <@a attr> (str-decode-html-entities-utf8 t)) )))
+
+(defun xml-anchor (node)
+        <(xml-attributes node) "id"> )
+
+(defun xml-link (node)
+        <(xml-attributes node) "href"> )
+
+(defun xml-links (node) net xml-links)
+(defnet xml-links (node @a)
+        (set @a (assoc))
+        (xml-links-rec node @a) )
+
+(defnet xml-links-rec (node a)
+        (deflocal child-node p)
+
+        (set p (xml-link node))
+        (if (stringp p)
+        then    (set <a p> true) )
+        (for child-node in node do
+                (xml-links-rec child-node a) ))
+
+(defun xml-images (node) net xml-images)
+(defnet xml-images (node @a)
+        (set @a (assoc))
+        (xml-images-rec node @a) )
+
+(defnet xml-images-rec (node a)
+        (deflocal child-node p)
+
+        (if (xml-is-this-tag-node node "img")
+        then    (set p <(xml-attributes node) "src">)
+                (if (stringp p)
+                then    (set <a p> true) ))
+        (for child-node in node do
+                (xml-images-rec child-node a) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-tags (node)
+        (xml-tags-low node false) )
+
+(defun xml-tags-include-node (node)
+        (xml-tags-low node true) )
+
+(defun xml-tags-low (node include-node) net xml-tags-low)
+(defnet xml-tags-low (node include-node @a)
+        (deflocal s)
+
+        (set @a (assoc))
+        (if include-node
+        then    (set s (tree-get node))
+                (if (= <s 0> "[tag]")
+                then    (assoc-inc @a <s 1>) ))
+        (xml-tags-low-low node @a) )
+
+(defnet xml-tags-low-low (node a)
+        (deflocal child-node s)
+
+        (for child-node in node do
+                (set s (tree-get child-node))
+                (if (= <s 0> "[tag]")
+                then    (assoc-inc a <s 1>)
+                        (xml-tags-low-low child-node a) )))
+
+(defun xml-tags-array (node) net xml-tags-array)
+(defnet xml-tags-array (node @a)
+        (set @a (assoc->array (xml-tags node)))
+        (sort @a (funptr lesscar)) )
+
+(defun xml-tags-count (node) net xml-tags-count)
+(defnet xml-tags-count (node @n)
+        (deflocal child-node)
+
+        (set @n 0)
+        (for child-node in node do
+                (if (xml-is-tag-node child-node)
+                then    (inc @n 1 (xml-tags-count child-node)) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-dump (node) net xml-dump)
+(defnet xml-dump (node @s)
+        (deflocal child-node s)
+
+        (treep node)
+        (set s (tree-get node))
+        (case <s 0> of
+                "[text]"        (set @s (str-encode-html-entities <s 1>))
+                "[tag]"         (seq    (set @s <s 2>)
+                                        (for child-node in node do
+                                                (inc @s (xml-dump child-node)) )
+                                        (inc @s <s 3>) )
+                "[comment]"     (set @s <s 1>) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-get-first-found-tag (node tag) net xml-get-first-found-tag)
+(defnet xml-get-first-found-tag (node tag @node)
+        (deflocal child-node)
+
+        (if (xml-is-this-tag-node node tag)
+        then    (set @node node)
+        else    (for child-node in node do
+                        (set @node (xml-get-first-found-tag child-node tag))
+                        until (treep @node) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-get-text (node)
+        (str-clean-ext (xml-get-text-rec node)) )
+
+(defun xml-get-text-rec (node) net xml-get-text-rec)
+(defnet xml-get-text-rec (node @s)
+        (deflocal child-node s tag)
+
+        (set s (tree-get node))
+        (if (= <s 0> "[text]")
+        then    (set @s (str-uniform-blanks <s 1>))
+        else    (set @s "")
+                (if (= <s 0> "[tag]")
+                then    (set tag <s 1>)
+                        (for child-node in node do
+                                (inc @s (xml-get-text-rec child-node)) )
+                        (if (not (in tag (xml-inline-tags)))
+                        then    (set @s (+ "\n" @s "\n")) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-get-detagged-text (node) net xml-get-detagged-text)
+(defnet xml-get-detagged-text (node @s)
+        (deflocal child-node s)
+
+        (set s (tree-get node))
+        (if (= <s 0> "[text]")
+        then    (set @s <s 1>)
+        else    (set @s "")
+                (if (= <s 0> "[tag]")
+                then    (for child-node in node do
+                                (inc @s (xml-get-detagged-text child-node)) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-get-head-tail-text (node) net xml-get-head-tail-text)
+(defnet xml-get-head-tail-text (node @s)
+        (deflocal s head tail)
+
+        (set s (xml-get-detagged-text node))
+        (alt    (lmatch set head s " " " " "\t" "\r" "\n")
+                (set head "") )
+        (alt    (seq    (>= (length s) 2)
+                        (rmatch set tail s " " " " "\t" "\r" "\n") )
+                (set tail "") )
+        (set @s (cons head tail)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet xml-subst-tag (node from to-beg to-end)
+        (deflocal child-node s)
+
+        (set s (tree-get node))
+        (if (and (= <s 0> "[tag]") (= <s 2> from))
+        then    (set <s 2> to-beg)
+                (set <s 3> to-end) )
+        (for child-node in node do
+                (xml-subst-tag child-node from to-beg to-end) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-get-body (node)
+        (xml-get-first-found-tag node "body") )
+
+(defun xml-get-navmap (node)
+        (xml-get-first-found-tag node "navmap") )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun xml-inline-tags ()
+        [ "fake" "span" "a" "img" "i" "b" "em" "strong" "u"
+          "sup" "sub" "font" "small" ])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

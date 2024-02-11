@@ -19,13 +19,13 @@
         (flag-true "gcrypt") )
 
 (defun expr-gcrypt-table ()
-        [ [ "version"           0 0 ]
-          [ "permute"           3 3 ]
-          [ "permute-inv"       3 3 ]
-          [ "stego-extract"     2 2 ]
-          [ "md-hash"           2 2 ]
-          [ "md-hash-fast"      2 2 ]
-          [ "md-hash-file"      2 2 ]
+        [ [ "version"                   0 0 ]
+          [ "permute"                   3 3 ]
+          [ "permute-inv"               3 3 ]
+          [ "stego-extract"             2 2 ]
+          [ "md-hash"                   2 2 ]
+          [ "md-hash-fast"              2 2 ]
+          [ "md-hash-file"              2 2 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

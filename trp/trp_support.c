@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "trp.h"
+#include "avl_tree.h"
 
 static uns32b      _trp_const_n = 0;
 static trp_raw_t  *_trp_const_r = NULL;
@@ -31,6 +32,35 @@ typedef struct {
 } trp_queue_elem;
 
 typedef struct {
+    uns8b tipo;
+    uns8b sottotipo;
+    void *dgraph;
+    uns8b *name;
+    trp_obj_t *val;
+    uns32b len_in;
+    uns32b len_out;
+    struct avl_tree_node *root_out;
+    struct avl_tree_node *root_in;
+    struct avl_tree_node *node;
+} trp_dgraph_node_t;
+
+typedef struct {
+    struct avl_tree_node node;
+    trp_obj_t *n;
+} trp_dgraph_link_out_t;
+
+typedef struct {
+    struct avl_tree_node node;
+    uns8b *key;
+    trp_obj_t *val;
+} trp_assoc_item_t;
+
+typedef struct {
+    struct avl_tree_node node;
+    trp_obj_t *val;
+} trp_set_item_t;
+
+typedef struct {
     trp_obj_t **var;
     trp_obj_t *act;
     trp_obj_t *target;
@@ -43,6 +73,9 @@ typedef struct {
     uns32b pos;
     sig16b chstep;
 } trp_for_t;
+
+static void trp_for_init_fibo_add_queue( trp_obj_t *q, trp_fibo_node_t *x, trp_fibo_node_t *x_first );
+static void trp_for_init_fibo_add_stack( trp_obj_t *s, trp_fibo_node_t *x, trp_fibo_node_t *x_first );
 
 void trp_const_init( uns32b n, trp_raw_t r[], uns8b *c[], uns64b cst_totsize )
 {
@@ -269,6 +302,8 @@ uns8b trp_for_init( trp_obj_t **fst, trp_obj_t **var, trp_obj_t *from, trp_obj_t
             }
         }
     } else {
+        if ( from->tipo == TRP_TREE )
+            from = (trp_obj_t *)( ((trp_tree_t *)from)->children );
         switch ( from->tipo ) {
         case TRP_CONS:
             f = trp_gc_malloc( sizeof( trp_for_t ) );
@@ -356,42 +391,152 @@ uns8b trp_for_init( trp_obj_t **fst, trp_obj_t **var, trp_obj_t *from, trp_obj_t
             if ( ((trp_assoc_t *)from)->len == 0 )
                 return 1;
             else {
-                struct node *n = ((trp_assoc_t *)from)->t.root;
-                struct node *stk[ 256 ];
-                int d = 0;
+                struct avl_tree_node *node;
 
                 f = trp_gc_malloc( sizeof( trp_for_t ) );
                 f->step = NULL;
+                f->cordpos = NULL;
                 f->queue = trp_queue();
                 f->stack = NULL;
-                f->cordpos = NULL;
-                for ( f->act = NULL ; ; ) {
-                    if ( n == NULL ) {
-                        if ( d == 0 )
+                if ( rev ) {
+                    node = avl_tree_last_in_order( (struct avl_tree_node *)(((trp_assoc_t *)from)->root) );
+                    f->act = trp_cons( trp_cord( ((trp_assoc_item_t *)(node->dummy))->key ),
+                                       ((trp_assoc_item_t *)(node->dummy))->val );
+                    for ( ; ; ) {
+                        node = avl_tree_prev_in_order( node );
+                        if ( node == NULL )
                             break;
-                        n = stk[ --d ];
+                        trp_queue_put( f->queue, trp_cons( trp_cord( ((trp_assoc_item_t *)(node->dummy))->key ),
+                                                           ((trp_assoc_item_t *)(node->dummy))->val ) );
                     }
-                    if ( f->act )
-                        trp_queue_put( f->queue, trp_cons( trp_cord( n->name ), (trp_obj_t *)( n->vlue ) ) );
-                    else
-                        f->act = trp_cons( trp_cord( n->name ), (trp_obj_t *)( n->vlue ) );
+                } else {
+                    node = avl_tree_first_in_order( (struct avl_tree_node *)(((trp_assoc_t *)from)->root) );
+                    f->act = trp_cons( trp_cord( ((trp_assoc_item_t *)(node->dummy))->key ),
+                                       ((trp_assoc_item_t *)(node->dummy))->val );
+                    for ( ; ; ) {
+                        node = avl_tree_next_in_order( node );
+                        if ( node == NULL )
+                            break;
+                        trp_queue_put( f->queue, trp_cons( trp_cord( ((trp_assoc_item_t *)(node->dummy))->key ),
+                                                           ((trp_assoc_item_t *)(node->dummy))->val ) );
+                    }
+                }
+            }
+            break;
+        case TRP_SET:
+            if ( ((trp_set_t *)from)->len == 0 )
+                return 1;
+            else {
+                struct avl_tree_node *node;
+
+                f = trp_gc_malloc( sizeof( trp_for_t ) );
+                f->step = NULL;
+                f->cordpos = NULL;
+                f->queue = trp_queue();
+                f->stack = NULL;
+                if ( rev ) {
+                    node = avl_tree_last_in_order( (struct avl_tree_node *)(((trp_set_t *)from)->root) );
+                    f->act = ((trp_set_item_t *)(node->dummy))->val;
+                    for ( ; ; ) {
+                        node = avl_tree_prev_in_order( node );
+                        if ( node == NULL )
+                            break;
+                        trp_queue_put( f->queue, ((trp_set_item_t *)(node->dummy))->val );
+                    }
+                } else {
+                    node = avl_tree_first_in_order( (struct avl_tree_node *)(((trp_set_t *)from)->root) );
+                    f->act = ((trp_set_item_t *)(node->dummy))->val;
+                    for ( ; ; ) {
+                        node = avl_tree_next_in_order( node );
+                        if ( node == NULL )
+                            break;
+                        trp_queue_put( f->queue, ((trp_set_item_t *)(node->dummy))->val );
+                    }
+                }
+            }
+            break;
+        case TRP_DGRAPH:
+            if ( ((trp_dgraph_t *)from)->sottotipo ) {
+                if ( ((trp_dgraph_node_t *)from)->len_out == 0 )
+                    return 1;
+                else {
+                    struct avl_tree_node *node;
+
+                    f = trp_gc_malloc( sizeof( trp_for_t ) );
+                    f->step = NULL;
+                    f->cordpos = NULL;
+                    f->queue = trp_queue();
+                    f->stack = NULL;
                     if ( rev ) {
-                        if ( n->rght ) {
-                            if ( n->left )
-                                stk[ d++ ] = n->left;
-                            n = n->rght;
-                        } else {
-                            n = n->left;
+                        node = avl_tree_last_in_order( ((trp_dgraph_node_t *)from)->root_out );
+                        f->act = ((trp_dgraph_link_out_t *)(node->dummy))->n;
+                        for ( ; ; ) {
+                            node = avl_tree_prev_in_order( node );
+                            if ( node == NULL )
+                                break;
+                            trp_queue_put( f->queue, ((trp_dgraph_link_out_t *)(node->dummy))->n );
                         }
                     } else {
-                        if ( n->left ) {
-                            if ( n->rght )
-                                stk[ d++ ] = n->rght;
-                            n = n->left;
-                        } else {
-                            n = n->rght;
+                        node = avl_tree_first_in_order( ((trp_dgraph_node_t *)from)->root_out );
+                        f->act = ((trp_dgraph_link_out_t *)(node->dummy))->n;
+                        for ( ; ; ) {
+                            node = avl_tree_next_in_order( node );
+                            if ( node == NULL )
+                                break;
+                            trp_queue_put( f->queue, ((trp_dgraph_link_out_t *)(node->dummy))->n );
                         }
                     }
+                }
+            } else {
+                if ( ((trp_dgraph_t *)from)->len == 0 )
+                    return 1;
+                else {
+                    struct avl_tree_node *node;
+
+                    f = trp_gc_malloc( sizeof( trp_for_t ) );
+                    f->step = NULL;
+                    f->cordpos = NULL;
+                    f->queue = trp_queue();
+                    f->stack = NULL;
+                    if ( rev ) {
+                        node = avl_tree_last_in_order( (struct avl_tree_node *)(((trp_dgraph_t *)from)->root_nodes) );
+                        f->act = (trp_obj_t *)(node->dummy);
+                        for ( ; ; ) {
+                            node = avl_tree_prev_in_order( node );
+                            if ( node == NULL )
+                                break;
+                            trp_queue_put( f->queue, (trp_obj_t *)(node->dummy) );
+                        }
+                    } else {
+                        node = avl_tree_first_in_order( (struct avl_tree_node *)(((trp_dgraph_t *)from)->root_nodes) );
+                        f->act = (trp_obj_t *)(node->dummy);
+                        for ( ; ; ) {
+                            node = avl_tree_next_in_order( node );
+                            if ( node == NULL )
+                                break;
+                            trp_queue_put( f->queue, (trp_obj_t *)(node->dummy) );
+                        }
+                    }
+                }
+            }
+            break;
+        case TRP_FIBO:
+            if ( ((trp_fibo_t *)from)->len == 0 )
+                return 1;
+            else {
+                f = trp_gc_malloc( sizeof( trp_for_t ) );
+                f->step = NULL;
+                f->cordpos = NULL;
+                if ( rev ) {
+                    f->queue = NULL;
+                    f->stack = trp_stack();
+                    trp_for_init_fibo_add_stack( f->stack, ((trp_fibo_t *)from)->min, ((trp_fibo_t *)from)->min );
+                    f->act = trp_stack_pop( f->stack );
+                } else {
+                    f->queue = trp_queue();
+                    f->stack = NULL;
+                    trp_for_init_fibo_add_queue( f->queue, ((trp_fibo_t *)from)->min, ((trp_fibo_t *)from)->min );
+                    f->act = trp_queue_get( f->queue );
                 }
             }
             break;
@@ -419,6 +564,24 @@ uns8b trp_for_init( trp_obj_t **fst, trp_obj_t **var, trp_obj_t *from, trp_obj_t
     f->pos = 0;
     *fst = (trp_obj_t *)f;
     return 0;
+}
+
+static void trp_for_init_fibo_add_queue( trp_obj_t *q, trp_fibo_node_t *x, trp_fibo_node_t *x_first )
+{
+    trp_queue_put( q, (trp_obj_t *)x );
+    if ( x->left && ( x->left != x_first ) )
+        trp_for_init_fibo_add_queue( q, x->left, x_first );
+    if ( x->child )
+        trp_for_init_fibo_add_queue( q, x->child, x->child );
+}
+
+static void trp_for_init_fibo_add_stack( trp_obj_t *s, trp_fibo_node_t *x, trp_fibo_node_t *x_first )
+{
+    trp_stack_push( s, (trp_obj_t *)x );
+    if ( x->left && ( x->left != x_first ) )
+        trp_for_init_fibo_add_stack( s, x->left, x_first );
+    if ( x->child )
+        trp_for_init_fibo_add_stack( s, x->child, x->child );
 }
 
 uns8b trp_for_next( trp_obj_t **fst )

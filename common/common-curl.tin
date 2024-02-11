@@ -12,10 +12,12 @@
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36" )
         ;"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12" )
 
-(defun curl-create-default (useragent) net curl-create-default)
-(defnet curl-create-default (useragent @c)
+(defun curl-create-default (useragent proxy) net curl-create-default)
+(defnet curl-create-default (useragent proxy @c)
         (set @c (curl-easy-init))
         (<> @c undef)
+        (if (stringp proxy)
+        then    (curl-easy-setopt-proxy @c proxy) )
         (curl-easy-setopt-ssl-verifypeer @c false)
         ;(curl-easy-setopt-capath @c "cacert.pem")
         (curl-easy-setopt-followlocation @c true)
@@ -33,26 +35,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun download-as-string (url)
-        (download-as-string-low undef url) )
+        (download-as-string-low undef undef url) )
 
-(defun download-as-string-low (useragent url) net download-as-string-low)
-(defnet download-as-string-low (useragent url @str)
+(defun download-as-string-low (useragent proxy url) net download-as-string-low)
+(defnet download-as-string-low (useragent proxy url @str)
         (deflocal c)
 
-        (curl-create-default useragent c)
+        (curl-create-default useragent proxy c)
         (alt    (download-as-string-curl c url @str)
                 (seq    (close c)
                         (fail) ))
         (close c) )
 
 (defun download-as-raw (url)
-        (download-as-raw-low undef url) )
+        (download-as-raw-low undef undef url) )
 
-(defun download-as-raw-low (useragent url) net download-as-raw-low)
-(defnet download-as-raw-low (useragent url @raw)
+(defun download-as-raw-low (useragent proxy url) net download-as-raw-low)
+(defnet download-as-raw-low (useragent proxy url @raw)
         (deflocal c)
 
-        (curl-create-default useragent c)
+        (curl-create-default useragent proxy c)
         (alt    (download-as-raw-curl c url @raw)
                 (seq    (close c)
                         (fail) ))
@@ -105,10 +107,10 @@
 (defnet download-as-file (url path)
         (download-as-file-low undef url path) )
 
-(defnet download-as-file-low (useragent url path)
+(defnet download-as-file-low (useragent proxy url path)
         (deflocal c)
 
-        (curl-create-default useragent c)
+        (curl-create-default useragent proxy c)
         (alt    (download-as-file-curl c url path)
                 (seq    (close c)
                         (fail) ))

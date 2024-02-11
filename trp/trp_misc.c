@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@
 #include <io.h>
 #include <windows.h>
 #include <direct.h>
+#include <fcntl.h>
 #else
+#include <sys/sysinfo.h>
 #include <sys/utsname.h>
 #include <sys/resource.h>
 #include <sys/ioctl.h>
@@ -112,6 +114,18 @@ FILE *trp_fopen( const char *path, const char *mode )
     trp_gc_free( wpath );
     trp_gc_free( wmode );
     return fp;
+}
+
+int trp_open( const char *path, int oflag )
+{
+    wchar_t *wpath;
+    int fd;
+
+    if ( ( wpath = trp_utf8_to_wc( path ) ) == NULL )
+        return -1;
+    fd = _wopen( wpath, oflag | _O_BINARY );
+    trp_gc_free( wpath );
+    return fd;
 }
 
 uns8b *trp_get_short_path_name( uns8b *path )
@@ -659,6 +673,36 @@ trp_obj_t *trp_directory( trp_obj_t *obj )
     return res;
 }
 
+trp_obj_t *trp_directory_ext( trp_obj_t *obj )
+{
+    trp_obj_t *res;
+    DIR *d;
+    struct dirent *de;
+
+    if ( obj ) {
+        uns8b *cpath = trp_csprint( obj );
+
+        if ( *cpath ) {
+            d = opendir( cpath );
+            trp_csprint_free( cpath );
+        } else {
+            return UNDEF;
+        }
+    } else {
+        d = opendir( "." );
+    }
+    if ( d == NULL )
+        return UNDEF;
+    res = trp_queue();
+    while ( de = readdir( d ) )
+        trp_queue_put( res, trp_list( trp_sig64( de->d_ino ),
+                                      trp_sig64( de->d_type ),
+                                      trp_cord( de->d_name ),
+                                      NULL ) );
+    closedir( d );
+    return res;
+}
+
 #else
 
 trp_obj_t *trp_directory( trp_obj_t *obj )
@@ -691,6 +735,45 @@ trp_obj_t *trp_directory( trp_obj_t *obj )
     while ( de = _wreaddir( d ) )
         if ( p = trp_wc_to_utf8( de->d_name ) ) {
             trp_queue_put( res, trp_cord( p ) );
+            trp_gc_free( p );
+        }
+    _wclosedir( d );
+    return res;
+}
+
+trp_obj_t *trp_directory_ext( trp_obj_t *obj )
+{
+    trp_obj_t *res;
+    _WDIR *d;
+    struct _wdirent *de;
+    uns8b *p;
+    wchar_t *wp;
+
+    if ( obj ) {
+        uns8b *cpath = trp_csprint( obj );
+
+        if ( ( wp = trp_utf8_to_wc_path( cpath ) ) == NULL ) {
+            trp_csprint_free( cpath );
+            return UNDEF;
+        }
+        trp_csprint_free( cpath );
+        d = _wopendir( wp );
+        trp_gc_free( wp );
+    } else {
+        if ( ( wp = trp_utf8_to_wc( "." ) ) == NULL )
+            return UNDEF;
+        d = _wopendir( wp );
+        trp_gc_free( wp );
+    }
+    if ( d == NULL )
+        return UNDEF;
+    res = trp_queue();
+    while ( de = _wreaddir( d ) )
+        if ( p = trp_wc_to_utf8( de->d_name ) ) {
+            trp_queue_put( res, trp_list( trp_sig64( de->d_ino ), /* sempre 0 */
+                                          ZERO, /* DT_UNKNOWN */
+                                          trp_cord( p ),
+                                          NULL ) );
             trp_gc_free( p );
         }
     _wclosedir( d );
@@ -1071,6 +1154,34 @@ trp_obj_t *trp_fork()
     else
         GC_atfork_child();
     return trp_sig64( pid );
+#endif
+}
+
+trp_obj_t *trp_sysinfo()
+{
+#ifdef MINGW
+    return UNDEF;
+#else
+    struct sysinfo info;
+
+    if ( sysinfo( &info ) )
+        return UNDEF;
+    return trp_list( trp_sig64( info.uptime ),
+                     trp_list( trp_sig64( info.loads[ 0 ] ),
+                               trp_sig64( info.loads[ 1 ] ),
+                               trp_sig64( info.loads[ 2 ] ),
+                               NULL ),
+                     trp_sig64( info.totalram ),
+                     trp_sig64( info.freeram ),
+                     trp_sig64( info.sharedram ),
+                     trp_sig64( info.bufferram ),
+                     trp_sig64( info.totalswap ),
+                     trp_sig64( info.freeswap ),
+                     trp_sig64( info.procs ),
+                     trp_sig64( info.totalhigh ),
+                     trp_sig64( info.freehigh ),
+                     trp_sig64( info.mem_unit ),
+                     NULL );
 #endif
 }
 

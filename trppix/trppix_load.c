@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ uns8bfun_t _trp_pix_load_openjp2 = NULL;
 uns8bfun_t _trp_pix_load_jbig2 = NULL;
 uns8bfun_t _trp_pix_load_rsvg = NULL;
 uns8bfun_t _trp_pix_load_lept = NULL;
+uns8bfun_t _trp_pix_load_heif = NULL;
 uns8bfun_t _trp_pix_load_sail = NULL;
 uns8bfun_t _trp_pix_load_cv = NULL;
 uns8bfun_t _trp_pix_load_webp_memory = NULL;
@@ -32,6 +33,7 @@ uns8bfun_t _trp_pix_load_openjp2_memory = NULL;
 uns8bfun_t _trp_pix_load_jbig2_memory = NULL;
 uns8bfun_t _trp_pix_load_rsvg_memory = NULL;
 uns8bfun_t _trp_pix_load_lept_memory = NULL;
+uns8bfun_t _trp_pix_load_heif_memory = NULL;
 uns8bfun_t _trp_pix_load_sail_memory = NULL;
 uns8bfun_t _trp_pix_load_cv_memory = NULL;
 
@@ -49,6 +51,7 @@ enum {
     TRP_PIX_JBIG2,
     TRP_PIX_RSVG,
     TRP_PIX_LEPT,
+    TRP_PIX_HEIF,
     TRP_PIX_SAIL,
     TRP_PIX_CV,
     TRP_PIX_MAX /* lasciarlo sempre per ultimo */
@@ -68,6 +71,7 @@ static uns8b *_trp_pix_decoder[ TRP_PIX_MAX ] = {
     "jbig2",
     "svg",
     "lept",
+    "heif",
     "sail",
     "cv"
 };
@@ -242,6 +246,11 @@ trp_obj_t *trp_pix_load_low( uns8b *cpath )
             sottotipo = TRP_PIX_LEPT + 1;
             notdone = 0;
         }
+    if ( notdone && _trp_pix_load_heif )
+        if ( ( _trp_pix_load_heif )( cpath, &w, &h, &data ) == 0 ) {
+            sottotipo = TRP_PIX_HEIF + 1;
+            notdone = 0;
+        }
     if ( notdone && _trp_pix_load_sail )
         if ( ( _trp_pix_load_sail )( cpath, &w, &h, &data ) == 0 ) {
             sottotipo = TRP_PIX_SAIL + 1;
@@ -329,6 +338,11 @@ trp_obj_t *trp_pix_load_memory_low( uns8b *idata, uns32b isize )
     if ( notdone && _trp_pix_load_lept_memory  )
         if ( ( _trp_pix_load_lept_memory )( idata, isize, &w, &h, &data ) == 0 ) {
             sottotipo = TRP_PIX_LEPT + 1;
+            notdone = 0;
+        }
+    if ( notdone && _trp_pix_load_heif_memory  )
+        if ( ( _trp_pix_load_heif_memory )( idata, isize, &w, &h, &data ) == 0 ) {
+            sottotipo = TRP_PIX_HEIF + 1;
             notdone = 0;
         }
     if ( notdone && _trp_pix_load_sail_memory  )

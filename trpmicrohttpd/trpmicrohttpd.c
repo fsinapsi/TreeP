@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -135,12 +135,9 @@ static enum MHD_Result trp_mhd_cback( void *cls,
             if ( page->tipo == TRP_CORD ) {
                 uns8b *path = CORD_to_char_star( ( (trp_cord_t *)page )->c );
                 int fd;
-#ifdef MINGW
-                wchar_t *wpath;
 
-                wpath = trp_utf8_to_wc( path );
-                fd = _wopen( wpath, _O_RDONLY );
-                trp_gc_free( wpath );
+                fd = trp_open( path, O_RDONLY );
+#ifdef MINGW
                 if ( fd >= 0 ) {
                     struct _stati64 st;
 
@@ -149,7 +146,6 @@ static enum MHD_Result trp_mhd_cback( void *cls,
                             response = MHD_create_response_from_fd64( st.st_size, fd );
                 }
 #else
-                fd = open( path, O_RDONLY );
                 if ( fd >= 0 ) {
                     struct stat st;
 

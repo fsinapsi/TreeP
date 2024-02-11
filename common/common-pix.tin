@@ -17,6 +17,9 @@
 (defun blue ()       (pix-color 0x00 0x00 0xff))
 (defun darkgreen ()  (pix-color 0x1a 0x83 0x2b))
 (defun purple ()     (pix-color 0xff 0x00 0xff))
+(defun brown ()      (pix-color 0xa5 0x2a 0x2a))
+(defun yellow ()     (pix-color 0xff 0xff 0x00))
+(defun cyan ()       (pix-color 0x00 0xff 0xff))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

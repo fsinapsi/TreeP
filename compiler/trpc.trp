@@ -140,7 +140,9 @@
 (defun iup () <_kv "iup">)
 (defun thread () <_kv "thread">)
 (defun license () <_kv "license">)
+(defun str () <_kv "str">)
 (defun gcrypt () <_kv "gcrypt">)
+(defun minizip () <_kv "minizip">)
 (defun suf () <_kv "suf">)
 (defun aud () <_kv "aud">)
 (defun vid () <_kv "vid">)
@@ -155,6 +157,7 @@
 (defun openjp2 () <_kv "openjp2">)
 (defun jbig2 () <_kv "jbig2">)
 (defun rsvg () <_kv "rsvg">)
+(defun heif () <_kv "heif">)
 (defun sail () <_kv "sail">)
 (defun sift () <_kv "sift">)
 (defun curl () <_kv "curl">)
@@ -196,10 +199,10 @@
 (defnet flag-false (lib) (set <_kv lib> false))
 
 (defun libs-list ()
-        [ "gtk" "iup" "thread" "license" "gcrypt" "suf"
-          "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
-          "pix" "webp" "qoi" "openjp2" "jbig2" "rsvg" "sail" "sift"
-          "curl" "sqlite3" "wn" "avcodec" "mgl"
+        [ "gtk" "iup" "thread" "license" "str" "gcrypt" "minizip"
+          "suf" "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
+          "pix" "webp" "qoi" "openjp2" "jbig2" "rsvg" "heif" "sail"
+          "sift" "curl" "sqlite3" "wn" "avcodec" "mgl"
           "lept" "cgraph" "cairo" "microhttpd" "sdl" "chess" ])
 
 (defnet init-globals ()
@@ -382,7 +385,9 @@
                                 " -ltrpiup -liup -lgdi32 -lcomctl32 -lcomdlg32 -lole32 -luuid"
                                 " -ltrpiup -liup" ) "" )
                   (if (license) " -ltrplicense" "")
+                  (if (str) " -ltrpstr" "")
                   (if (gcrypt) " -ltrpgcrypt -lgcrypt -lgpg-error" "")
+                  (if (minizip) " -ltrpminizip -lminizip" "")
                   (if (suf) " -ltrpsuf" "")
                   (if (aud) " -ltrpaud" "")
                   (if (vid) " -ltrpvid" "")
@@ -396,6 +401,7 @@
                   (if (openjp2) (+ " -ltrpopenjp2" (pkg-config-libs "libopenjp2") (pkg-config-libs "lcms2")) "")
                   (if (jbig2) (+ " -ltrpjbig2" (pkg-config-libs "jbig2dec")) "")
                   (if (rsvg) (+ " -ltrprsvg" (pkg-config-libs "librsvg-2.0")) "")
+                  (if (heif) (+ " -ltrpheif" (pkg-config-libs "libheif")) "")
                   (if (sail) (+ " -ltrpsail" (pkg-config-libs "libsail")) "")
                   (if (sift) " -ltrpsift -lgomp -lstdc++" "")
                   (if (curl) (+ " -ltrpcurl" (pkg-config-libs "libcurl")) "")
@@ -562,8 +568,8 @@
         (skip) )
 
 (defnet dependences ()
-        (if (or (webp) (qoi) (openjp2) (jbig2) (rsvg) (sail) (sift)
-                (gtk) (iup) (avcodec) (mgl) (lept) )
+        (if (or (webp) (qoi) (openjp2) (jbig2) (rsvg) (heif) (sail)
+                (sift) (gtk) (iup) (avcodec) (mgl) (lept) )
         then    (flag-true "pix") ))
 
 (defnet parse-pass ()
@@ -852,8 +858,12 @@
         then    (print-header (str-load-static "../trpthread/trpthread.h")) )
         (if (license)
         then    (print-header (str-load-static "../trplicense/trplicense.h")) )
+        (if (str)
+        then    (print-header (str-load-static "../trpstr/trpstr.h")) )
         (if (gcrypt)
         then    (print-header (str-load-static "../trpgcrypt/trpgcrypt.h")) )
+        (if (minizip)
+        then    (print-header (str-load-static "../trpminizip/trpminizip.h")) )
         (if (suf)
         then    (print-header (str-load-static "../trpsuf/trpsuf.h")) )
         (if (aud)
@@ -882,6 +892,8 @@
         then    (print-header (str-load-static "../trpjbig2/trpjbig2.h")) )
         (if (rsvg)
         then    (print-header (str-load-static "../trprsvg/trprsvg.h")) )
+        (if (heif)
+        then    (print-header (str-load-static "../trpheif/trpheif.h")) )
         (if (sail)
         then    (print-header (str-load-static "../trpsail/trpsail.h")) )
         (if (sift)
@@ -1016,7 +1028,8 @@
                      "  if(trp_qoi_init())exit(-1);\n" "" ) (if (openjp2)
                      "  if(trp_openjp2_init())exit(-1);\n" "" ) (if (jbig2)
                      "  if(trp_jbig2_init())exit(-1);\n" "" ) (if (rsvg)
-                     "  if(trp_rsvg_init())exit(-1);\n" "" ) (if (sail)
+                     "  if(trp_rsvg_init())exit(-1);\n" "" ) (if (heif)
+                     "  if(trp_heif_init())exit(-1);\n" "" ) (if (sail)
                      "  if(trp_sail_init())exit(-1);\n" "" ) (if (sift)
                      "  if(trp_sift_init())exit(-1);\n" "" ) (if (curl)
                      "  if(trp_curl_init())exit(-1);\n" "" ) (if (thread)
@@ -1082,7 +1095,8 @@
                      "  trp_cairo_quit();\n" "" ) (if (gcrypt)
                      "  trp_gcry_quit();\n" "" ) (if (sqlite3)
                      "  trp_sqlite3_quit();\n" "" ) (if (pix)
-                     "  trp_pix_quit();\n" "" ) (if (curl)
+                     "  trp_pix_quit();\n" "" ) (if (heif)
+                     "  trp_heif_quit();\n" "" ) (if (curl)
                      "  trp_curl_quit();\n" "" ) (if (sdl)
                      "  trp_sdl_quit();\n" "" ) (if (magic)
                      "  trp_magic_quit();\n" "" ) (if (thread)

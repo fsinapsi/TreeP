@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2023 Frank Sinapsi
+    Copyright (C) 2008-2024 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,14 +45,14 @@ uns8b *_trp_tipo_descr[ TRP_MAX_T ] = {
     "TRP_STACK",
     "TRP_CORD",
     "TRP_TREE",
-    "TRP_MATRIX",
+    "TRP_DGRAPH",
     "TRP_FUNPTR",
     "TRP_NETPTR",
     "TRP_THREAD",
     "TRP_CURL",
     "TRP_PIX",
     "TRP_ASSOC",
-    "TRP_MYSQL",
+    "TRP_SET",
     "TRP_SQLITE3",
     "TRP_AUD",
     "TRP_VID",
@@ -87,14 +87,14 @@ uns8bfun_t _trp_print_fun[ TRP_MAX_T ] = {
     trp_stack_print,
     trp_cord_print,
     trp_tree_print,
-    trp_default_print, /* matrix */
+    trp_dgraph_print,
     trp_funptr_print,
     trp_netptr_print,
     trp_default_print, /* thread */
     trp_default_print, /* curl */
     trp_default_print, /* pix */
     trp_assoc_print,
-    trp_default_print, /* mysql */
+    trp_set_print,
     trp_default_print, /* sqlite3 */
     trp_default_print, /* aud */
     trp_default_print, /* vid */
@@ -129,14 +129,14 @@ uns32bfun_t _trp_size_fun[ TRP_MAX_T ] = {
     trp_stack_size,
     trp_cord_size,
     trp_tree_size,
-    trp_special_size, /* matrix */
+    trp_dgraph_size,
     trp_special_size, /* funptr */
     trp_special_size, /* netptr */
     trp_special_size, /* thread */
     trp_special_size, /* curl */
     trp_special_size, /* pix */
     trp_assoc_size,
-    trp_special_size, /* mysql */
+    trp_set_size,
     trp_special_size, /* sqlite3 */
     trp_special_size, /* aud */
     trp_special_size, /* vid */
@@ -149,7 +149,7 @@ uns32bfun_t _trp_size_fun[ TRP_MAX_T ] = {
     trp_special_size, /* mgl */
     trp_special_size, /* iup */
     trp_special_size, /* regex */
-    trp_special_size, /* fibo */
+    trp_fibo_size,
     trp_special_size, /* chess */
     trp_special_size, /* cairo */
     trp_special_size  /* mhd */
@@ -171,14 +171,14 @@ voidfun_t _trp_encode_fun[ TRP_MAX_T ] = {
     trp_stack_encode,
     trp_cord_encode,
     trp_tree_encode,
-    trp_default_encode, /* matrix */
+    trp_dgraph_encode,
     trp_default_encode, /* funptr */
     trp_default_encode, /* netptr */
     trp_default_encode, /* thread */
     trp_default_encode, /* curl */
     trp_default_encode, /* pix */
     trp_assoc_encode,
-    trp_default_encode, /* mysql */
+    trp_set_encode,
     trp_default_encode, /* sqlite3 */
     trp_default_encode, /* aud */
     trp_default_encode, /* vid */
@@ -191,7 +191,7 @@ voidfun_t _trp_encode_fun[ TRP_MAX_T ] = {
     trp_default_encode, /* mgl */
     trp_default_encode, /* iup */
     trp_default_encode, /* regex */
-    trp_default_encode, /* fibo */
+    trp_fibo_encode,
     trp_default_encode, /* chess */
     trp_default_encode, /* cairo */
     trp_default_encode  /* mhd */
@@ -213,14 +213,14 @@ objfun_t _trp_decode_fun[ TRP_MAX_T ] = {
     trp_stack_decode,
     trp_cord_decode,
     trp_tree_decode,
-    trp_special_decode, /* matrix */
+    trp_dgraph_decode,
     trp_special_decode, /* funptr */
     trp_special_decode, /* netptr */
     trp_special_decode, /* thread */
     trp_special_decode, /* curl */
     trp_special_decode, /* pix */
     trp_assoc_decode,
-    trp_special_decode, /* mysql */
+    trp_set_decode,
     trp_special_decode, /* sqlite3 */
     trp_special_decode, /* aud */
     trp_special_decode, /* vid */
@@ -233,7 +233,7 @@ objfun_t _trp_decode_fun[ TRP_MAX_T ] = {
     trp_special_decode, /* mgl */
     trp_special_decode, /* iup */
     trp_special_decode, /* regex */
-    trp_special_decode, /* fibo */
+    trp_fibo_decode,
     trp_special_decode, /* chess */
     trp_special_decode, /* cairo */
     trp_special_decode  /* mhd */
@@ -255,14 +255,14 @@ objfun_t _trp_equal_fun[ TRP_MAX_T ] = {
     trp_stack_equal,
     trp_cord_equal,
     trp_tree_equal,
-    trp_default_relation, /* matrix */
+    trp_default_relation, /* dgraph */
     trp_funptr_equal,
     trp_netptr_equal,
     trp_default_relation, /* thread */
     trp_default_relation, /* curl */
     trp_default_relation, /* pix */
     trp_assoc_equal,
-    trp_default_relation, /* mysql */
+    trp_set_equal,
     trp_default_relation, /* sqlite3 */
     trp_default_relation, /* aud */
     trp_default_relation, /* vid */
@@ -297,14 +297,14 @@ objfun_t _trp_less_fun[ TRP_MAX_T ] = {
     trp_default_relation, /* stack */
     trp_cord_less,
     trp_tree_less,
-    trp_default_relation, /* matrix */
+    trp_default_relation, /* dgraph */
     trp_funptr_less,
     trp_netptr_less,
     trp_default_relation, /* thread */
     trp_default_relation, /* curl */
     trp_default_relation, /* pix */
     trp_default_relation, /* assoc */
-    trp_default_relation, /* mysql */
+    trp_default_relation, /* set */
     trp_default_relation, /* sqlite3 */
     trp_default_relation, /* aud */
     trp_default_relation, /* vid */
@@ -339,14 +339,14 @@ uns8bfun_t _trp_close_fun[ TRP_MAX_T ] = {
     trp_default_close, /* stack */
     trp_default_close, /* cord */
     trp_default_close, /* tree */
-    trp_default_close, /* matrix */
+    trp_default_close, /* dgraph */
     trp_default_close, /* funptr */
     trp_default_close, /* netptr */
     trp_default_close, /* thread */
     trp_default_close, /* curl */
     trp_default_close, /* pix */
     trp_default_close, /* assoc */
-    trp_default_close, /* mysql */
+    trp_default_close, /* set */
     trp_default_close, /* sqlite3 */
     trp_default_close, /* aud */
     trp_default_close, /* vid */
@@ -381,14 +381,14 @@ objfun_t _trp_length_fun[ TRP_MAX_T ] = {
     trp_stack_length,
     trp_cord_length,
     trp_tree_length,
-    trp_default_obj, /* matrix */
+    trp_dgraph_length,
     trp_funptr_length,
     trp_netptr_length,
     trp_default_obj, /* thread */
     trp_default_obj, /* curl */
     trp_default_obj, /* pix */
     trp_assoc_length,
-    trp_default_obj, /* mysql */
+    trp_set_length,
     trp_default_obj, /* sqlite3 */
     trp_default_obj, /* aud */
     trp_default_obj, /* vid */
@@ -423,14 +423,14 @@ objfun_t _trp_width_fun[ TRP_MAX_T ] = {
     trp_default_obj,
     trp_default_obj,
     trp_default_obj,
-    trp_default_obj, /* matrix */
+    trp_default_obj, /* dgraph */
     trp_default_obj,
     trp_default_obj,
     trp_default_obj, /* thread */
     trp_default_obj, /* curl */
     trp_default_obj, /* pix */
     trp_default_obj, /* assoc */
-    trp_default_obj, /* mysql */
+    trp_default_obj, /* set */
     trp_default_obj, /* sqlite3 */
     trp_default_obj, /* aud */
     trp_default_obj, /* vid */
@@ -465,14 +465,14 @@ objfun_t _trp_height_fun[ TRP_MAX_T ] = {
     trp_default_obj,
     trp_default_obj,
     trp_default_obj,
-    trp_default_obj, /* matrix */
+    trp_default_obj, /* dgraph */
     trp_default_obj,
     trp_default_obj,
     trp_default_obj, /* thread */
     trp_default_obj, /* curl */
     trp_default_obj, /* pix */
     trp_assoc_height,
-    trp_default_obj, /* mysql */
+    trp_default_obj, /* set */
     trp_default_obj, /* sqlite3 */
     trp_default_obj, /* aud */
     trp_default_obj, /* vid */
@@ -507,14 +507,14 @@ objfun_t _trp_nth_fun[ TRP_MAX_T ] = {
     trp_stack_nth,
     trp_cord_nth,
     trp_tree_nth,
-    trp_default_nth, /* matrix */
+    trp_default_nth, /* dgraph */
     trp_default_nth, /* funptr */
     trp_default_nth, /* netptr */
     trp_default_nth, /* thread */
     trp_default_nth, /* curl */
     trp_default_nth, /* pix */
     trp_default_nth, /* assoc --- implementata nella funzione stessa */
-    trp_default_nth, /* mysql */
+    trp_default_nth, /* set */
     trp_default_nth, /* sqlite3 */
     trp_default_nth, /* aud */
     trp_default_nth, /* vid */
@@ -549,14 +549,14 @@ objfun_t _trp_sub_fun[ TRP_MAX_T ] = {
     trp_default_sub, /* stack */
     trp_cord_sub,
     trp_default_sub, /* tree */
-    trp_default_sub, /* matrix */
+    trp_default_sub, /* dgraph */
     trp_default_sub, /* funptr */
     trp_default_sub, /* netptr */
     trp_default_sub, /* thread */
     trp_default_sub, /* curl */
     trp_default_sub, /* pix */
     trp_default_sub, /* assoc */
-    trp_default_sub, /* mysql */
+    trp_default_sub, /* set */
     trp_default_sub, /* sqlite3 */
     trp_default_sub, /* aud */
     trp_default_sub, /* vid */
@@ -591,14 +591,14 @@ objfun_t _trp_cat_fun[ TRP_MAX_T ] = {
     trp_default_cat, /* stack */
     trp_cord_cat,
     trp_default_cat, /* tree */
-    trp_default_cat, /* matrix */
+    trp_default_cat, /* dgraph */
     trp_default_cat, /* funptr */
     trp_default_cat, /* netptr */
     trp_default_cat, /* thread */
     trp_default_cat, /* curl */
     trp_default_cat, /* pix */
     trp_default_cat, /* assoc */
-    trp_default_cat, /* mysql */
+    trp_set_cat,
     trp_default_cat, /* sqlite3 */
     trp_default_cat, /* aud */
     trp_default_cat, /* vid */
@@ -633,14 +633,14 @@ uns8bfun_t _trp_in_fun[ TRP_MAX_T ] = {
     trp_stack_in,
     trp_cord_in,
     trp_default_in, /* tree */
-    trp_default_in, /* matrix */
+    trp_default_in, /* dgraph */
     trp_default_in, /* funptr */
     trp_default_in, /* netptr */
     trp_default_in, /* thread */
     trp_default_in, /* curl */
     trp_default_in, /* pix */
     trp_assoc_in, /* assoc */
-    trp_default_in, /* mysql */
+    trp_set_in,
     trp_default_in, /* sqlite3 */
     trp_default_in, /* aud */
     trp_default_in, /* vid */

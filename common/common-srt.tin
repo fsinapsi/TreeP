@@ -59,6 +59,67 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun vtt-parse (s) net vtt-parse)
+(defnet vtt-parse (s @a)
+        (deflocal l i seca secb txt a)
+
+        (stringp s)
+        (set @a (array 0))
+        (opt (lmatch remove s (utf8-bom)))
+        (if (not (utf8p s))
+        then    (set s (iso->utf8 s)) )
+        (repeat (clr i)
+                (repeat (str-readline s l)
+                        until (= l undef)
+                        (str-remove-blanks l)
+                        (opt (search " --> " l i))
+                        until (integerp i) )
+                until (= l undef)
+                (opt    (search-and-cut "align" l txt)
+                        (set l txt)
+                        (str-remove-blanks l) )
+                (set seca (srt-timestamp->s (sub 0 i l)))
+                (rationalp seca)
+                (>= seca 0)
+                (set secb (srt-timestamp->s (sub (+ i 5) (maxint) l)))
+                (rationalp secb)
+                (>= secb 0)
+                (set txt "")
+                (repeat (str-readline s l)
+                        until (= l undef)
+                        until (= l "")
+                        (str-remove-blanks l)
+                        (if (<> l "")
+                        then    (inc txt (if (= txt "") "" nl) l) ))
+                (opt*   (search-and-cut "<c>" txt l)
+                        (set i (length l))
+                        (>= i 14)
+                        (dec i 14)
+                        (= <l i> '<')
+                        (= <l (+ i 13)> '>')
+                        (rationalp (srt-timestamp->s (sub (+ i 1) 12 l)))
+                        (set l (sub 0 i l))
+                        (search-and-cut "</c>" txt i)
+                        (set txt (+ l i txt)) )
+                (if (<> txt "")
+                then    (set a (array 4))
+                        (set <a 0> (+ (length @a) 1))
+                        (set <a 1> seca)
+                        (set <a 2> secb)
+                        (set <a 3> txt)
+                        (array-append @a a) )
+                until (= l undef) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun srt-dump (a) net srt-dump)
 (defnet srt-dump (a @s)
         (deflocal i)
@@ -90,7 +151,8 @@
         (search ":" s i)
         (inc @sec (* 60 (str->num (sub 0 i s))))
         (set s (sub (+ i 1) (maxint) s))
-        (search "," s i)
+        (alt    (search "," s i)
+                (search "." s i) )
         (inc @sec (str->num (sub 0 i s)))
         (set s (sub (+ i 1) (maxint) s))
         (<> s "")
@@ -229,10 +291,51 @@
         (for n in 0 .. (- (length a) 1) rev do
                 (set txt <a n 3>)
                 (find-and-replace txt "&gt;" "")
+                (find-and-replace txt "&lt;" "")
                 (str-remove-blanks txt)
                 (if (= txt "")
                 then    (array-remove a n)
                 else    (set <a n 3> txt) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;
+;;; da usare solo dopo (srt-fix-timestamps a)
+;;; in caso di sottotitoli vtt
+;;;
+
+(defun srt-split (a) net srt-split)
+(defnet srt-split (a @b)
+        (deflocal c d t l i)
+
+        (set @b (array 0))
+        (for c in a do
+                (set t <c 3>)
+                (repeat (str-readline t l)
+                        until (= l undef)
+                        (set i (length @b))
+                        (alt    (seq    (> i 0)
+                                        (dec i)
+                                        (= l <@b i 3>)
+                                        (= (- <c 1> <@b i 2>) 0.001)
+                                        (set <@b i 2> <c 2>) )
+                                (seq    (set d (array 4))
+                                        (array-append @b d)
+                                        (set <d 0> (+ i 1))
+                                        (set <d 1> <c 1>)
+                                        (set <d 2> <c 2>)
+                                        (set <d 3> l)
+                                        (if (> i 0)
+                                        then    (dec i)
+                                                (set <@b i 2> (max 0 (min <@b i 2> (- <c 1> 0.001)))) ))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

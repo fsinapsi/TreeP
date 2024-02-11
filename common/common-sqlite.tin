@@ -87,11 +87,11 @@
                                 (seq    (print "errore: non capisco la sintassi del comando (index)" nl)
                                         (fail) ))))
         (inc @s "digraph g {" nl
-                "layout=sfdp;" nl
+                "graph [bgcolor=\"#FFFFFF00\",ranksep=1.5,rankdir=\"TB\"];" nl
+                "layout=neato;" nl
                 "splines=true;" nl
                 "overlap=voronoi;" nl
-                "graph [" nl "ranksep=1.5;rankdir=\"TB\"" nl
-                "];" nl )
+                "overlap_shrink=true;" nl )
         (set s (queue))
         (for table in q do
                 (inc @s "node" <asc table "cp"> " [shape=record,label=\"{" table)

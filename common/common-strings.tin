@@ -378,3 +378,55 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun str-clean-ext (text) net str-clean-ext)
+(defnet str-clean-ext (text @text)
+        (deflocal s i)
+
+        (stringp text)
+        (set text (str-clean text))
+        (find-and-replace text " - " " – ")
+        (set s text)
+        (set text "")
+        (opt*   (search-and-cut "\"" s i)
+                (inc text i)
+                (alt    (seq    (or (= text "") (rmatch text "\n" "(" " " "'" "’"))
+                                (search-and-cut "\"" s i)
+                                (or (= s "") (lmatch s "\n" ")" " " "." "," ";" ":" "!" "?"))
+                                (inc text "“" i "”") )
+                        (inc text "\"") ))
+        (inc text s)
+        (set s text)
+        (set text "")
+        (opt*   (search-and-cut "'" s i)
+                (inc text i)
+                (alt    (seq    (or     (and    (rmatch case text "d" "l" "n" "s" "t")
+                                                (lmatch case s "a" "e" "i" "o" "u" "h") )
+                                        (and    (rmatch case text "c" "d" "m" "s" "t" "v")
+                                                (lmatch case s "er") )
+                                        (and    (rmatch case text "h")
+                                                (lmatch case s "a" "e" "i") )
+                                        (and    (rmatch case text "z")
+                                                (lmatch case s "o") )
+                                        (and    (rmatch case text "t")
+                                                (lmatch case s "s") )
+                                        (and    (rmatch text " ")
+                                                (lmatch s "1" "2" "3" "4" "5" "6" "7" "8" "9") )
+                                        (rmatch case text " po")
+                                        (lmatch s "è")
+                                        (and    (rmatch case text "fa" "di")
+                                                (lmatch s " ") ))
+                                (inc text "’") )
+                        (inc text "'") ))
+        (inc text s)
+        (set @text text) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
