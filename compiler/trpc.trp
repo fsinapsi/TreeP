@@ -368,7 +368,7 @@
                   (if _mingw " -DMINGW -D__WORDSIZE=64" "")
                   (if _win32 " -DMINGW -D__WORDSIZE=32 -I/usr/i686-w64-mingw32/include -I/usr/local/mingw-w64/32/include" "")
                   (if _win64 " -DMINGW -D__WORDSIZE=64 -I/usr/x86_64-w64-mingw32/include -I/usr/local/mingw-w64/64/include" "")
-                  (if mswin " -mms-bitfields" " -fPIC -I/usr/local/include -I/opt/local/include")
+                  (if mswin " -mms-bitfields -I/usr/local/include" " -fPIC -I/usr/local/include -I/opt/local/include")
                   (if (gtk) (pkg-config-cflags "gtk+-2.0") "")
                   (if (iup) " -I/usr/local/include/iup" "")
                   (if (cairo) (pkg-config-cflags "cairo") "")
