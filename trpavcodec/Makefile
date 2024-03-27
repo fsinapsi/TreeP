@@ -4,33 +4,26 @@ mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o
 
 CFLAGS= `cat ../.cflags`
-ifeq ($(TARGET), Linux)
-CFLAGS+= `pkg-config --cflags libavformat`
-CFLAGS+= `pkg-config --cflags libavcodec`
-CFLAGS+= `pkg-config --cflags libavutil`
-CFLAGS+= `pkg-config --cflags libswscale`
-CFLAGS+= `pkg-config --cflags libavfilter`
-endif
-ifeq ($(TARGET), MSYS_NT-6.1-7601)
-CFLAGS+= `pkg-config --cflags libavformat`
-CFLAGS+= `pkg-config --cflags libavcodec`
-CFLAGS+= `pkg-config --cflags libavutil`
-CFLAGS+= `pkg-config --cflags libswscale`
-CFLAGS+= `pkg-config --cflags libavfilter`
-endif
 ifeq ($(TARGET), i686-w64-mingw32)
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags libavformat`
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags libavcodec`
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags libavutil`
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags libswscale`
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags libavfilter`
-endif
+else
 ifeq ($(TARGET), x86_64-w64-mingw32)
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags libavformat`
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags libavcodec`
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags libavutil`
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags libswscale`
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags libavfilter`
+else
+CFLAGS+= `pkg-config --cflags libavformat`
+CFLAGS+= `pkg-config --cflags libavcodec`
+CFLAGS+= `pkg-config --cflags libavutil`
+CFLAGS+= `pkg-config --cflags libswscale`
+CFLAGS+= `pkg-config --cflags libavfilter`
+endif
 endif
 LDFLAGS= `cat ../.ldflags`
 

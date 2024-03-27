@@ -278,3 +278,24 @@ trp_obj_t *trp_set_difference( trp_obj_t *s1, trp_obj_t *s2 )
     return s;
 }
 
+trp_obj_t *trp_set_are_disjoint( trp_obj_t *s1, trp_obj_t *s2 )
+{
+    struct avl_tree_node *node;
+
+    if ( ( s1->tipo != TRP_SET ) || ( s2->tipo != TRP_SET ) )
+        return UNDEF;
+    if ( ((trp_set_t *)s2)->len < ((trp_set_t *)s1)->len ) {
+        trp_obj_t *tmp = s1;
+        s1 = s2;
+        s2 = tmp;
+    }
+    for ( node = avl_tree_first_in_order( (struct avl_tree_node *)(((trp_set_t *)s1)->root) ) ;
+          node ;
+          node = avl_tree_next_in_order( node ) )
+        if ( avl_tree_lookup( (struct avl_tree_node *)(((trp_set_t *)s2)->root),
+                              (void *)(((trp_set_item_t *)(node->dummy))->val),
+                              trp_set_less_l ) )
+            return TRP_FALSE;
+    return TRP_TRUE;
+}
+

@@ -78,6 +78,7 @@
           [ "setopt-append"                     2 2 ]
           [ "setopt-ftp-account"                1 2 ]
           [ "setopt-maxconnects"                2 2 ]
+          [ "setopt-timeout-ms"                 2 2 ]
           [ "setopt-fresh-connect"              2 2 ]
           [ "setopt-forbid-reuse"               2 2 ]
           [ "setopt-tcp-keepalive"              2 2 ]

@@ -1,7 +1,17 @@
 
-all:	  	trpc
+ifeq ($(shell uname -s), Linux)
+PRGNAME = trpc
+OPT1 =
+OPT2 =
+else
+PRGNAME = trpc.exe
+OPT1 = -DMINGW
+OPT2 = -lregex
+endif
 
-trpc:		trpc.trp lex.tin expr.tin test.tin \
+all:	$(PRGNAME)
+
+$(PRGNAME):	trpc.trp lex.tin expr.tin test.tin \
 		expr-gtk.tin expr-iup.tin expr-thread.tin expr-license.tin \
 		expr-str.tin expr-gcrypt.tin expr-chess.tin expr-sqlite3.tin \
 		expr-pix.tin expr-sift.tin expr-curl.tin expr-aud.tin \
@@ -19,16 +29,22 @@ trpc:		trpc.trp lex.tin expr.tin test.tin \
 	trpc trpc.trp
 
 clean:
-	rm -f *~ trpc.exe trpc.log
+	rm -f *~ trpc.log
 
 cleanall:	clean
-	rm -f trpc trpc-compile.sh trpc.c
+	rm -f $(PRGNAME) trpc-compile.sh trpc.c
 
+ifeq ($(shell uname -s), Linux)
 install:	all ../.installbin
-	sudo cp -f trpc `cat ../.installbin`
+	cp -f $(PRGNAME) `cat ../.installbin`
+else
+install:	all ../.installbin
+	cp -f $(PRGNAME) `cat ../.installbin`
+endif
 
-bootstrap:	trpc-compile.sh trpc.c
-	sh trpc-compile.sh
+bootstrap:	trpc.c
+	gcc -O3 -pipe -Wno-pointer-sign $(OPT1) -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC -I/usr/local/include -I/opt/local/include -o $(PRGNAME) trpc.c -L/usr/local/lib -L/opt/local/lib -ltrprsvg `pkg-config librsvg-2.0 --libs` -ltrppix `pkg-config libpng --libs` -ljpeg -lgif -ltrp -lgmp `pkg-config bdw-gc --libs` -lz -lm $(OPT2)
+	strip -s $(PRGNAME)
 
 ../.installbin:
 	( cd .. && make dumpflags )

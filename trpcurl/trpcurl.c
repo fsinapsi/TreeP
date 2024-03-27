@@ -955,9 +955,14 @@ uns8b trp_curl_easy_setopt_ftp_account( trp_obj_t *curl, trp_obj_t *val )
     return trp_curl_easy_setopt_copied_string_internal( curl, val, CURLOPT_FTP_ACCOUNT );
 }
 
-uns8b trp_curl_easy_setopt_ftp_maxconnects( trp_obj_t *curl, trp_obj_t *val )
+uns8b trp_curl_easy_setopt_maxconnects( trp_obj_t *curl, trp_obj_t *val )
 {
     return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_MAXCONNECTS );
+}
+
+uns8b trp_curl_easy_setopt_timeout_ms( trp_obj_t *curl, trp_obj_t *val )
+{
+    return trp_curl_easy_setopt_long_internal( curl, val, CURLOPT_TIMEOUT_MS );
 }
 
 uns8b trp_curl_easy_setopt_fresh_connect( trp_obj_t *curl, trp_obj_t *set_on_off )

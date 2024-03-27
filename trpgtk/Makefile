@@ -21,17 +21,14 @@ myobjs+= trpgtk_drag.o
 myobjs+= trpgtk_image_graph.o
 
 CFLAGS= `cat ../.cflags`
-ifeq ($(TARGET), Linux)
-CFLAGS+= `pkg-config --cflags gtk+-2.0`
-endif
-ifeq ($(TARGET), MSYS_NT-6.1-7601)
-CFLAGS+= `pkg-config --cflags gtk+-2.0`
-endif
 ifeq ($(TARGET), i686-w64-mingw32)
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags gtk+-2.0`
-endif
+else
 ifeq ($(TARGET), x86_64-w64-mingw32)
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags gtk+-2.0`
+else
+CFLAGS+= `pkg-config --cflags gtk+-2.0`
+endif
 endif
 LDFLAGS= `cat ../.ldflags`
 

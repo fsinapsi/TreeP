@@ -183,8 +183,8 @@
                         (set @res true) )
                 (set @res false) ))
 
-(defnet paths-have-the-same-content (path1 path2 @samesize @dbit @dbyt)
-        (deflocal rem f1 f2 raw1 raw2 c1 c2 i j k)
+(defnet paths-have-the-same-content (path1 path2 @samesize @dbit)
+        (deflocal rem f1 f2 raw1 raw2 i)
 
         (alt    (seq    (paths-have-the-same-size-low path1 path2 rem)
                         (set f1 (fopenro path1))
@@ -196,28 +196,15 @@
                         (set raw1 (raw 65536))
                         (set raw2 (raw 65536))
                         (set @dbit 0)
-                        (set @dbyt 0)
                         (opt*   (> rem 0)
                                 (set i (raw-read raw1 f1))
                                 (= i (raw-read raw2 f2))
                                 (dec rem i)
-                                (if (<> raw1 raw2)
-                                then    (for j in 1 .. i do
-                                                (set c1 <raw1 (for-pos)>)
-                                                (set c2 <raw2 (for-pos)>)
-                                                (if (<> c1 c2)
-                                                then    (inc @dbyt)
-                                                        (set c1 (length c1))
-                                                        (set c2 (length c2))
-                                                        (for k in 1 .. 8 do
-                                                                (if (<> (% c1 2) (% c2 2))
-                                                                then    (inc @dbit) )
-                                                                (set c1 (div c1 2))
-                                                                (set c2 (div c2 2)) )))))
+                                (inc @dbit (raw-cmp raw1 raw2 i)) )
                         (close raw1 raw2 f1 f2)
                         (set @samesize true) )
                 (seq    (set @samesize false)
-                        (clr @dbit @dbyt) )))
+                        (clr @dbit) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

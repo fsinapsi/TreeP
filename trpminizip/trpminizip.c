@@ -25,6 +25,7 @@
 #include <windows.h>
 #include <direct.h>
 #include <fcntl.h>
+#include <iowin32.h>
 #else
 #include <sys/sysinfo.h>
 #include <sys/utsname.h>
@@ -239,9 +240,23 @@ uns8b trp_minizip_zip( trp_obj_t *zip_path, trp_obj_t *src_path, trp_obj_t *str_
         goto zipexit;
     zip64 = ( len >= 0xffffffff ) ? 1 : 0;
 
+#ifdef MINGW
+    {
+        zlib_filefunc64_def ffunc;
+        uns8b *wpath = (uns8b *)trp_utf8_to_wc_path( zpath );
+
+        trp_csprint_free( zpath );
+        zpath = wpath;
+        fill_win32_filefunc64W( &ffunc );
+        if ( ( zf = zipOpen2_64( zpath, 2, NULL, &ffunc ) ) == NULL )
+            if ( ( zf = zipOpen2_64( zpath, 0, NULL, &ffunc ) ) == NULL )
+                goto zipexit;
+    }
+#else
     if ( ( zf = zipOpen64( zpath, 2 ) ) == NULL )
         if ( ( zf = zipOpen64( zpath, 0 ) ) == NULL )
             goto zipexit;
+#endif
 
     if ( ( buf = malloc( size_buf ) ) == NULL )
         goto zipexit;
@@ -278,7 +293,11 @@ zipexit:
         fclose( fp );
     if ( buf )
         free( buf );
+#ifdef MINGW
+    trp_gc_free( zpath );
+#else
     trp_csprint_free( zpath );
+#endif
     trp_csprint_free( spath );
     trp_csprint_free( store );
     return res;
@@ -306,8 +325,21 @@ uns8b trp_minizip_unzip( trp_obj_t *zip_path, trp_obj_t *dst_path )
     if ( dpath_len == 0 )
         goto unzipexit;
 
+#ifdef MINGW
+    {
+        zlib_filefunc64_def ffunc;
+        uns8b *wpath = (uns8b *)trp_utf8_to_wc_path( zpath );
+
+        trp_csprint_free( zpath );
+        zpath = wpath;
+        fill_win32_filefunc64W( &ffunc );
+        if ( ( uf = unzOpen2_64( zpath , &ffunc ) ) == NULL )
+            goto unzipexit;
+    }
+#else
     if ( ( uf = unzOpen64( zpath ) ) == NULL )
         goto unzipexit;
+#endif
 
     if ( unzGetGlobalInfo64( uf, &gi ) != UNZ_OK )
         goto unzipexit;
@@ -375,7 +407,11 @@ unzipexit:
         free( buf );
     if ( dest_path )
         free( dest_path );
+#ifdef MINGW
+    trp_gc_free( zpath );
+#else
     trp_csprint_free( zpath );
+#endif
     trp_csprint_free( dpath );
     return res;
 }

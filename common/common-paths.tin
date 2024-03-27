@@ -719,6 +719,8 @@
                         (set @ext "wv") )
                 (seq    (search case "Java archive data" m)
                         (set @ext "jar") )
+                (seq    (search case "Android package" m)
+                        (set @ext "apk") )
                 (seq    (alt    (lmatch case m "tar archive")
                                 (search case " tar archive" m)
                                 (search case "\ntar archive" m) )

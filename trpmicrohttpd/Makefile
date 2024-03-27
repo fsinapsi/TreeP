@@ -4,17 +4,14 @@ mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o
 
 CFLAGS= `cat ../.cflags`
-ifeq ($(TARGET), Linux)
-CFLAGS+= `pkg-config --cflags libmicrohttpd`
-endif
-ifeq ($(TARGET), MSYS_NT-6.1-7601)
-CFLAGS+= `pkg-config --cflags libmicrohttpd`
-endif
 ifeq ($(TARGET), i686-w64-mingw32)
 CFLAGS+= `i686-w64-mingw32-pkg-config --cflags libmicrohttpd`
-endif
+else
 ifeq ($(TARGET), x86_64-w64-mingw32)
 CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags libmicrohttpd`
+else
+CFLAGS+= `pkg-config --cflags libmicrohttpd`
+endif
 endif
 LDFLAGS= `cat ../.ldflags`
 

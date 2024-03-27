@@ -3,7 +3,16 @@ myname=	sdl
 mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o
 
-CFLAGS= `cat ../.cflags` `pkg-config --cflags sdl2`
+CFLAGS= `cat ../.cflags`
+ifeq ($(TARGET), i686-w64-mingw32)
+CFLAGS+= `i686-w64-mingw32-pkg-config --cflags sdl2`
+else
+ifeq ($(TARGET), x86_64-w64-mingw32)
+CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags sdl2`
+else
+CFLAGS+= `pkg-config --cflags sdl2`
+endif
+endif
 LDFLAGS= `cat ../.ldflags`
 
 all:			$(mylibs)

@@ -425,6 +425,7 @@
                 "queuep"        (exprseq-basic 1 1 "trp_queuep(" ')')
                 "arrayp"        (exprseq-basic 1 1 "trp_arrayp(" ')')
                 "assocp"        (exprseq-basic 1 1 "trp_assocp(" ')')
+                "setp"          (exprseq-basic 1 1 "trp_setp(" ')')
                 "treep"         (exprseq-basic 1 1 "trp_treep(" ')')
                 "pixp"          (exprseq-basic 1 1 "trp_pixp(" ')')
                 "threadp"       (exprseq-basic 1 1 "trp_threadp(" ')')
@@ -676,10 +677,13 @@
                 "assoc-root"    (exprseq-basic 1 1 "trp_assoc_root(" ')')
 
                 "set"           (exprseq-basic 0 undef "trp_set(" ')')
+                "set-static"    (expr-static-fun const-state 1 undef "set")
                 "set-queue"     (exprseq-basic 1 1 "trp_set_queue(" ')')
                 "set-intersection"
                                 (exprseq-basic 1 undef "trp_set_intersection(" ')')
                 "set-difference"(exprseq-basic 2 2 "trp_set_difference(" ')')
+                "set-are-disjoint"
+                                (exprseq-basic 2 2 "trp_set_are_disjoint(" ')')
 
                 "fibo"          (exprseq-basic 0 1 "trp_fibo(" ')')
                 "fibo-queue"    (exprseq-basic 1 1 "trp_fibo_queue(" ')')
@@ -707,6 +711,7 @@
                 "raw-load"      (exprseq-basic 1 1 "trp_raw_load(" ')')
                 "raw-load-static"
                                 (expr-raw-load-static const-state)
+                "raw-cmp"       (exprseq-basic 2 3 "trp_raw_cmp(" ')')
                 "system"        (exprseq-basic 1 undef "trp_system(" ')')
                 "getpid"        (exprseq-basic 0 0 "trp_getpid(" ')')
                 "fork"          (exprseq-basic 0 0 "trp_fork(" ')')
@@ -1137,6 +1142,9 @@
                                                                 (set cst (cons i cst)) ))
                         "car"                   (set cst (car (queue-get _expr_const_val)))
                         "cdr"                   (set cst (cdr (queue-get _expr_const_val)))
+                        "set"                   (seq    (set cst (set))
+                                                        (for i in _expr_const_val do
+                                                                (set-insert cst i) ))
                         "raw2str"               (if (= (length _expr_const_val) 1)
                                                 then    (set cst (raw->str (queue-get _expr_const_val)))
                                                 else    (set cst (raw->str <_expr_const_val 0>

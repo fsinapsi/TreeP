@@ -523,3 +523,33 @@ trp_obj_t *trp_raw_load( trp_obj_t *path )
     return res;
 }
 
+trp_obj_t *trp_raw_cmp( trp_obj_t *raw1, trp_obj_t *raw2, trp_obj_t *cnt )
+{
+    uns32b l, m;
+    sig64b res;
+    uns64b cx, *p1x, *p2x;
+    uns8b c, *p1, *p2;
+
+    if ( ( raw1->tipo != TRP_RAW ) || ( raw2->tipo != TRP_RAW ) )
+        return UNDEF;
+    if ( cnt ) {
+        if ( trp_cast_uns32b( cnt, &l ) )
+            return UNDEF;
+        if ( ( l > ((trp_raw_t *)raw1)->len ) || ( l > ((trp_raw_t *)raw2)->len ) )
+            return UNDEF;
+    } else
+        l = TRP_MIN( ((trp_raw_t *)raw1)->len, ((trp_raw_t *)raw2)->len );
+    res = 0;
+    p1x = (uns64b *)(((trp_raw_t *)raw1)->data);
+    p2x = (uns64b *)(((trp_raw_t *)raw2)->data);
+    for ( m = l >> 3 ; m ; m-- )
+        for ( cx = (*p1x++) ^ (*p2x++) ; cx ; cx &= ( cx - 1 ) )
+            res++;
+    p1 = (uns8b *)p1x;
+    p2 = (uns8b *)p2x;
+    for ( m = l & 7 ; m ; m-- )
+        for ( c = (*p1++) ^ (*p2++) ; c ; c &= ( c - 1 ) )
+            res++;
+    return trp_sig64( res );
+}
+

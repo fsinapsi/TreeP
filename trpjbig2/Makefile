@@ -4,17 +4,14 @@ mylibs=	../libs/libtrp$(myname).a ../libs/libtrp$(myname).so
 myobjs=	trp$(myname).o
 
 CFLAGS= `cat ../.cflags`
-ifeq ($(TARGET), Linux)
-CFLAGS+= `pkg-config --cflags jbig2dec`
-endif
-ifeq ($(TARGET), MSYS_NT-6.1-7601)
-CFLAGS+= `pkg-config --cflags jbig2dec`
-endif
 ifeq ($(TARGET), i686-w64-mingw32)
-CFLAGS+= `i686-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/32/lib/pkgconfig/jbig2dec.pc`
-endif
+CFLAGS+= `i686-w64-mingw32-pkg-config --cflags /usr/local/mingw-w64/32/lib/pkgconfig/jbig2dec.pc`
+else
 ifeq ($(TARGET), x86_64-w64-mingw32)
-CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags /home/frank/wd/programming/mingw-w64/64/lib/pkgconfig/jbig2dec.pc`
+CFLAGS+= `x86_64-w64-mingw32-pkg-config --cflags /usr/local/mingw-w64/64/lib/pkgconfig/jbig2dec.pc`
+else
+CFLAGS+= `pkg-config --cflags jbig2dec`
+endif
 endif
 LDFLAGS= `cat ../.ldflags`
 

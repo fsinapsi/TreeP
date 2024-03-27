@@ -70,7 +70,7 @@ wchar_t *trp_utf8_to_wc( const uns8b *p )
     return wp;
 }
 
-static wchar_t *trp_utf8_to_wc_path( uns8b *cpath )
+wchar_t *trp_utf8_to_wc_path( uns8b *cpath )
 {
     uns32b l = strlen( cpath );
 

@@ -105,7 +105,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet download-as-file (url path)
-        (download-as-file-low undef url path) )
+        (download-as-file-low undef undef url path) )
 
 (defnet download-as-file-low (useragent proxy url path)
         (deflocal c)

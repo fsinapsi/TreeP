@@ -1,7 +1,7 @@
 
 LOCAL_LINUX = /usr/local
-LOCAL_WIN_32 = /home/frank/wd/programming/mingw-w64/32
-LOCAL_WIN_64 = /home/frank/wd/programming/mingw-w64/64
+LOCAL_WIN_32 = /usr/local/mingw-w64/32
+LOCAL_WIN_64 = /usr/local/mingw-w64/64
 
 ifeq ($(TARGET), i686-w64-mingw32)
 CC = i686-w64-mingw32-gcc
@@ -32,6 +32,11 @@ CFLAGS += -mms-bitfields
 CFLAGS += -DMINGW -D__WORDSIZE=32
 CFLAGS += -I/usr/local/include -I/mingw32/include
 endif
+ifeq ($(TARGET), MINGW64_NT-10.0-22631)
+CFLAGS += -mms-bitfields
+CFLAGS += -DMINGW -D__WORDSIZE=64
+CFLAGS += -I/usr/local/include -I/opt/local/include
+endif
 ifeq ($(TARGET), i686-w64-mingw32)
 CFLAGS += -mms-bitfields
 CFLAGS += -DMINGW -D__WORDSIZE=32
@@ -57,6 +62,11 @@ install:	rts
 endif
 
 ifeq ($(TARGET), MSYS_NT-6.1-7601)
+install:	rts
+	cp -f libs/libtrp* $(PREFIX)/lib
+endif
+
+ifeq ($(TARGET), MINGW64_NT-10.0-22631)
 install:	rts
 	cp -f libs/libtrp* $(PREFIX)/lib
 endif
@@ -92,8 +102,8 @@ rts:		dumpflags
 	( cd trpopenjp2 && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpjbig2 && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trprsvg && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
-ifeq ($(TARGET), Linux)
 	( cd trpheif && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+ifeq ($(TARGET), Linux)
 	( cd trpsail && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 endif
 	( cd trpsift && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )

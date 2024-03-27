@@ -88,24 +88,43 @@
                         (ltrim tag ' ' '\t')
                         (rtrim tag ' ' '\t') )
                 (alt    (seq    (lmatch remove tag "/")
-                                (set a (pop st))
-                                (if (= <a 0> (utf8-tolower tag))
-                                then    (set <a 2> pos)
-                                else    (set <err 0> true) ))
+                                (set tag (utf8-tolower tag))
+                                (repeat (set a (pop st))
+                                        until (= <a 0> tag)
+                                        (if (not (in <a 0> (xml-parse-tags-to-ignore)))
+                                        then    ;(print "PASSA: " a " - " tag nl)
+                                                (set <err 0> true) )
+                                        until <err 0> )
+                                (if (not <err 0>)
+                                then    (set <a 2> pos) ))
                         (seq    (alt    (search-and-cut " " tag i)
                                         (seq    (set i tag)
                                                 (opt (rmatch remove i "/")) ))
                                 (set a (array 3))
                                 (set <a 0> (utf8-tolower i))
                                 (set <a 1> tagpos)
+                                (set <a 2> pos)
+                                (xml-parse-tags-clean-stack st)
                                 (if (= (length st) 0)
                                 then    (queue-put @q a) )
-                                (if (or (rmatch tag "/") (not (in <a 0 0> 'a' .. 'z')))
-                                then    (set <a 2> pos)
-                                else    (push st a) )))
+                                (if (and (not (rmatch tag "/")) (in <a 0 0> 'a' .. 'z'))
+                                then    (push st a) )))
                 (not <err 0>) )
         (not <err 0>)
+        (xml-parse-tags-clean-stack st)
         (= (length st) 0) )
+
+(defnet xml-parse-tags-clean-stack (st)
+        (deflocal a)
+
+        (opt*   (> (length st) 0)
+                (set a (pop st))
+                (if (not (in <a 0> (xml-parse-tags-to-ignore)))
+                then    (push st a)
+                        (fail) )))
+
+(defun xml-parse-tags-to-ignore ()
+        [ "meta" "link" "style" "img" "input" "col" ])
 
 (defun xml-new-node-text (text)
         (xml-new-node "[text]" (str-decode-html-entities-utf8 text) undef undef) )
@@ -300,11 +319,6 @@
                 then    (assoc-inc a <s 1>)
                         (xml-tags-low-low child-node a) )))
 
-(defun xml-tags-array (node) net xml-tags-array)
-(defnet xml-tags-array (node @a)
-        (set @a (assoc->array (xml-tags node)))
-        (sort @a (funptr lesscar)) )
-
 (defun xml-tags-count (node) net xml-tags-count)
 (defnet xml-tags-count (node @n)
         (deflocal child-node)
@@ -352,6 +366,7 @@
 (defnet xml-get-first-found-tag (node tag @node)
         (deflocal child-node)
 
+        (treep node)
         (if (xml-is-this-tag-node node tag)
         then    (set @node node)
         else    (for child-node in node do
@@ -477,8 +492,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun xml-inline-tags ()
-        [ "fake" "span" "a" "img" "i" "b" "em" "strong" "u"
-          "sup" "sub" "font" "small" ])
+        (set-static "fake" "span" "a" "img" "i" "b" "em" "strong" "u"
+                    "sup" "sub" "font" "small" ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

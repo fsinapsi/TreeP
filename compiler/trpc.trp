@@ -23,6 +23,7 @@
         _log
         _win32
         _win64
+        _mingw
         _f
         _fstack
         _fnames
@@ -182,7 +183,7 @@
         (set @s " `")
         (if (or _win32 _win64)
         then    (inc @s (if _win32 "i686-w64-mingw32-pkg-config" "x86_64-w64-mingw32-pkg-config"))
-                (set path (+ "/home/frank/wd/programming/mingw-w64/" (if _win32 32 64) "/lib/pkgconfig/" package ".pc"))
+                (set path (+ "/usr/local/mingw-w64/" (if _win32 32 64) "/lib/pkgconfig/" package ".pc"))
                 (if (pathexists path)
                 then    (inc @s " " path)
                 else    (inc @s " " package) )
@@ -207,6 +208,7 @@
 
 (defnet init-globals ()
         (set _kv (assoc))
+        (set _mingw (mingw))
         (set-precision (default-math-precision))
         (set <_kv "cdate"> (now))
         (set _cstack (stack))
@@ -271,15 +273,15 @@
                         default         (if (lmatch (argv i) "-L")
                                         then    (queue-put @libpaths (sub 2 (maxint) (argv i)))
                                         else    (set @tpath (argv i)) )))
-        (if (or (= @tpath undef) (and @win32 @win64))
+        (if (or (= @tpath undef) (and @win32 @win64) (and _mingw (or @win32 @win64)))
         then    (error (+ "usage: " (app-name) " [ -O0 | ... | -O4 ] [ -g ] [ -static ] [ -c ] [ -f ] [ -d ] [ -w ] [ -win32 | -win64 ] [ -l ] [ -L<path> ] <path>")) )
 
         (if @win32
         then    (queue-put @libpaths "/usr/i686-w64-mingw32/lib")
-                (queue-put @libpaths "/home/frank/wd/programming/mingw-w64/32/lib")
+                (queue-put @libpaths "/usr/local/mingw-w64/32/lib")
         else (if @win64
         then    (queue-put @libpaths "/usr/x86_64-w64-mingw32/lib")
-                (queue-put @libpaths "/home/frank/wd/programming/mingw-w64/64/lib")
+                (queue-put @libpaths "/usr/local/mingw-w64/64/lib")
         else    (queue-put @libpaths "/usr/local/lib")
                 (queue-put @libpaths "/opt/local/lib") )))
 
@@ -289,7 +291,7 @@
 
         (init-globals)
         (parse-args tpath optim debug _cstatic conly overw _expr_const_optimize nomwin _win32 _win64 wunus log libpaths)
-        (set mswin (or _win32 _win64))
+        (set mswin (or _mingw _win32 _win64))
         (if (not (pathexists tpath))
         then    (error (+ tpath ": file not found")) )
         (alt    (seq    (set epath tpath)
@@ -363,8 +365,9 @@
                   (if (darwin) " -headerpad_max_install_names" "")
                   (if (and mswin (or (gtk) (iup)) (not nomwin)) " -mwindows" "")
                   " -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
-                  (if _win32 " -DMINGW -D__WORDSIZE=32 -I/usr/i686-w64-mingw32/include -I/home/frank/wd/programming/mingw-w64/32/include" "")
-                  (if _win64 " -DMINGW -D__WORDSIZE=64 -I/usr/x86_64-w64-mingw32/include -I/home/frank/wd/programming/mingw-w64/64/include" "")
+                  (if _mingw " -DMINGW -D__WORDSIZE=64" "")
+                  (if _win32 " -DMINGW -D__WORDSIZE=32 -I/usr/i686-w64-mingw32/include -I/usr/local/mingw-w64/32/include" "")
+                  (if _win64 " -DMINGW -D__WORDSIZE=64 -I/usr/x86_64-w64-mingw32/include -I/usr/local/mingw-w64/64/include" "")
                   (if mswin " -mms-bitfields" " -fPIC -I/usr/local/include -I/opt/local/include")
                   (if (gtk) (pkg-config-cflags "gtk+-2.0") "")
                   (if (iup) " -I/usr/local/include/iup" "")
@@ -402,7 +405,7 @@
                   (if (jbig2) (+ " -ltrpjbig2" (pkg-config-libs "jbig2dec")) "")
                   (if (rsvg) (+ " -ltrprsvg" (pkg-config-libs "librsvg-2.0")) "")
                   (if (heif) (+ " -ltrpheif" (pkg-config-libs "libheif")) "")
-                  (if (sail) (+ " -ltrpsail" (pkg-config-libs "libsail")) "")
+                  (if (sail) (+ " -ltrpsail" (pkg-config-libs "sail")) "")
                   (if (sift) " -ltrpsift -lgomp -lstdc++" "")
                   (if (curl) (+ " -ltrpcurl" (pkg-config-libs "libcurl")) "")
                   (if (sqlite3) " -ltrpsqlite3 -lsqlite3" "")
@@ -432,7 +435,9 @@
                 (close _dst)
         else    (inc _pass)
                 (print (app-name) ": pass " _pass " (cc)..." nl)
-                (system i)
+                (if _mingw
+                then    (system "sh -c \"" i "\"")
+                else    (system i) )
                 (if (<> strip-command "")
                 then    (system strip-command) )
                 (if (<> ipath undef)
@@ -474,17 +479,17 @@
 
         (if _win32
         then    (set ldd "i686-w64-mingw32-ldd")
-                (set dllpath (homepathp "wd/programming/mingw-w64/32/bin/"))
+                (set dllpath "/usr/local/mingw-w64/32/bin/")
         else    (set ldd "x86_64-w64-mingw32-ldd")
-                (set dllpath (homepathp "wd/programming/mingw-w64/64/bin/")) )
+                (set dllpath "/usr/local/mingw-w64/64/bin/") )
         (set q (queue))
         (set a (assoc))
         (set notfound (assoc))
         (queue-put q path)
         (if (magic)
-        then    (fprint _log "cp " (homepathp "wd/programming/mingw-w64/magic.mgc") " ." nl) )
+        then    (fprint _log "cp /usr/local/mingw-w64/magic.mgc ." nl) )
         (if (cgraph)
-        then    (fprint _log "cp " (homepathp "wd/programming/mingw-w64/config6") " ." nl)
+        then    (fprint _log "cp /usr/local/mingw-w64/config6 ." nl)
                 (for m in [ "libgvplugin_core-6.dll" "libgvplugin_dot_layout-6.dll"
                             "libgvplugin_neato_layout-6.dll" "libgvplugin_pango-6.dll" ] do
                         (dump-required-dlls-add m (+ dllpath m) q a notfound) ))

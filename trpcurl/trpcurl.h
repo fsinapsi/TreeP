@@ -92,7 +92,8 @@ uns8b trp_curl_easy_setopt_ssh_private_keyfile( trp_obj_t *curl, trp_obj_t *val 
 uns8b trp_curl_easy_setopt_dirlistonly( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_append( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_ftp_account( trp_obj_t *curl, trp_obj_t *val );
-uns8b trp_curl_easy_setopt_ftp_maxconnects( trp_obj_t *curl, trp_obj_t *val );
+uns8b trp_curl_easy_setopt_maxconnects( trp_obj_t *curl, trp_obj_t *val );
+uns8b trp_curl_easy_setopt_timeout_ms( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_fresh_connect( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_forbid_reuse( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_tcp_keepalive( trp_obj_t *curl, trp_obj_t *set_on_off );

@@ -491,6 +491,7 @@ trp_obj_t *trp_for_pos( trp_obj_t *fst );
 #ifdef MINGW
 void trp_convert_slash( uns8b *p );
 wchar_t *trp_utf8_to_wc( const uns8b *p );
+wchar_t *trp_utf8_to_wc_path( uns8b *cpath );
 uns8b *trp_wc_to_utf8( const wchar_t *wp );
 FILE *trp_fopen( const char *path, const char *mode );
 int trp_open( const char *path, int oflag );
@@ -581,6 +582,7 @@ trp_obj_t *trp_raw_read( trp_obj_t *raw, trp_obj_t *stream, trp_obj_t *cnt );
 trp_obj_t *trp_raw_write( trp_obj_t *raw, trp_obj_t *stream, trp_obj_t *cnt );
 trp_obj_t *trp_raw2str( trp_obj_t *raw, trp_obj_t *cnt );
 trp_obj_t *trp_raw_load( trp_obj_t *path );
+trp_obj_t *trp_raw_cmp( trp_obj_t *raw1, trp_obj_t *raw2, trp_obj_t *cnt );
 
 uns8b trp_char_print( trp_print_t *p, trp_char_t *obj );
 uns32b trp_char_size( trp_char_t *obj );
@@ -962,6 +964,7 @@ trp_obj_t *trp_set_queue( trp_obj_t *s );
 uns8b trp_set_remove( trp_obj_t *s, trp_obj_t *x );
 trp_obj_t *trp_set_intersection( trp_obj_t *s, ... );
 trp_obj_t *trp_set_difference( trp_obj_t *s1, trp_obj_t *s2 );
+trp_obj_t *trp_set_are_disjoint( trp_obj_t *s1, trp_obj_t *s2 );
 
 uns8b trp_funptr_print( trp_print_t *p, trp_funptr_t *obj );
 trp_obj_t *trp_funptr_equal( trp_funptr_t *o1, trp_funptr_t *o2 );
