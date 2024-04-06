@@ -181,7 +181,7 @@
                         then    (set <@a <a "id">> a)
                                 (assoc-clr a "id")
                                 (if (stringp <a "href">)
-                                then    (set <a "href"> (realpath-soft (+ path (str-decode-url <a "href">))))
+                                then    (set <a "href"> (path-fix (+ path (str-decode-url <a "href">))))
                                 else    (print "[WRN] rilevato item privo di href nel manifest" nl) )
                         else    (print "[WRN] rilevato item privo di id nel manifest" nl) ))))
 
@@ -311,7 +311,7 @@
                         (truep found)
                         (set p <a "href">)
                         (stringp p)
-                        (set @path (realpath-soft (+ (epub-basepath opf) (str-decode-url p))))
+                        (set @path (path-fix (+ (epub-basepath opf) (str-decode-url p))))
                         (epub-cover-path-check-and-resolve @path) )
                 (seq    ; altro tentativo:
                         ; se nel manifest esiste un id "cover" (o simile)
@@ -344,7 +344,7 @@
                         else    (assoc-clr a p) ))
                 (= (length a) 1)
                 (rmatch remove @path (fullpath->name @path))
-                (set @path (realpath-soft (+ @path (str-decode-url path))))
+                (set @path (path-fix (+ @path (str-decode-url path))))
                 (stringp @path) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -444,7 +444,7 @@
 
 (defun iup-choose-file-low (self title type directory filename extfilter multiple showhidden) net iup-choose-file-low)
 (defnet iup-choose-file-low (self title type directory filename extfilter multiple showhidden @path)
-        (deflocal dlg i j)
+        (deflocal dlg i)
 
         (in type [ "OPEN" "SAVE" "DIR" ])
         (if (<> type "SAVE")
@@ -454,14 +454,12 @@
                         (if (<> i filename)
                         then    (set directory (fullpath->dir filename))
                                 (set filename i) )))
-        (alt    (seq    (stringp directory)
-                        (set i (sprint (path-separator directory)))
+        (alt    (seq    (path-fix directory directory)
                         (while (or (not (pathexists directory))
                                    (not (isdir (realpath directory))) ) do
-                                (search i directory j (maxint))
-                                (set directory (sub 0 j directory)) )
-                        (if (not (rmatch directory i))
-                        then    (inc directory i) ))
+                                (search "/" directory i (maxint))
+                                (set directory (sub 0 i directory)) )
+                        (path-fix-dir directory directory) )
                 (set directory (currpath)) )
         (set dlg (iup-file-dlg))
         (iup-set-dlg-parent self dlg)
@@ -484,11 +482,10 @@
 
         (if (= (iup-get-int dlg "STATUS") -1)
         then    (clr @path)
-        else    (set @path (iup-get-str-attribute dlg "VALUE"))
+        else    (set @path (path-fix (iup-get-str-attribute dlg "VALUE")))
                 (if (= type "DIR")
-                then    (set i (path-separator @path))
-                        (if (not (rmatch @path i))
-                        then    (inc @path i) )))
+                then    (if (not (rmatch @path '/'))
+                        then    (inc @path "/") )))
 
         (close dlg) )
 

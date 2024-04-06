@@ -8,35 +8,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun path-separator (path)
-        (if (clinux) '/'
-        (if (cmingw) (if (search "/" path) '/' '\\')
-        '/' )))
+; per semplificare gli algoritmi, un path ha sempre '/' come separatore
+; ed è garantito che è sempre singolo e che non contiene "/./" e "/../"
 
-(defun realpathifexists (path) net realpathifexists)
-(defnet realpathifexists (path @path)
-        (set @path (realpath path))
-        (if (not (stringp @path))
-        then    (set @path path) ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun realpath-soft (path) net realpath-soft)
-(defnet realpath-soft (path @path)
+(defun path-fix (path) net path-fix)
+(defnet path-fix (path @path)
         (deflocal s t)
 
+        (stringp path)
+        (find-and-replace path "\\" "/")
         (set s "")
-        (opt*   (search "//" path t)
-                (inc s (sub 0 t path))
-                (set path (sub (+ t 1) (maxint) path)) )
+        (opt*   (search-and-cut "//" path t)
+                (inc s t "/")
+                (ltrim path '/') )
         (inc s path)
         (find-and-replace s "/./" "/")
         (set @path "")
@@ -45,6 +29,60 @@
                 (search "/" @path t (maxint))
                 (set @path (sub 0 (+ t 1) @path)) )
         (inc @path s) )
+
+; path-fix-dir è come path-fix ma garantisce che il path termini con '/'
+
+(defun path-fix-dir (path) net path-fix-dir)
+(defnet path-fix-dir (path @path)
+        (path-fix path @path)
+        (if (not (rmatch @path "/"))
+        then    (inc @path "/") ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun path-parent (path) net path-parent)
+(defnet path-parent (path @path)
+        (deflocal drive i)
+
+        (path-fix path path)
+        (rtrim path '/')
+        (alt    (seq    (= <path 1> ':')
+                        (or (in <path 0> 'a' .. 'z') (in <path 0> 'A' .. 'Z'))
+                        (set drive (sub 0 2 path))
+                        (set path (sub 2 (maxint) path)) )
+                (set drive "") )
+        (search "/" path i (maxint))
+        (set @path (+ drive (sub 0 i path) "/")) )
+
+(defun path-ancestors (path) net path-ancestors)
+(defnet path-ancestors (path @l)
+        (set @l nil)
+        (opt*   (path-parent path path)
+                (list-push @l path) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun realpathifexists (path) net realpathifexists)
+(defnet realpathifexists (path @path)
+        (set @path path)
+        (opt    (set @path (realpath @path))
+                (path-fix @path @path) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -57,29 +95,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet mkdirhier (path)
-        (deflocal s i)
+        (deflocal i)
 
-        (set s (path-separator path))
-        (rtrim path s)
+        (path-fix path path)
         (if (not (pathexists path))
-        then    (search (sprint s) path i (maxint))
-                (mkdirhier (sub 0 (+ i 1) path))
+        then    (for i in (path-ancestors path) do
+                        (if (not (pathexists i))
+                        then    (mkdir i) ))
                 (mkdir path) ))
 
 (defnet rmhier (path)
-        (deflocal s p)
+        (deflocal p)
 
-        (set s (path-separator path))
-        (rtrim path s)
+        (path-fix path path)
+        (rtrim path '/')
         (<> path "")
         (if (cmingw)
         then    (not (rmatch path ":")) )
         (if (pathexists path)
-        then    (set s (sprint s))
-                (if (isdir path)
+        then    (if (isdir path)
                 then    (for p in (directory path) do
                                 (if (and (<> p ".") (<> p ".."))
-                                then    (rmhier (+ path s p)) )))
+                                then    (rmhier (+ path "/" p)) )))
                 (remove path) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -116,14 +153,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun currpath () net currpath)
-(defnet currpath (@path)
-        (deflocal i)
-
-        (set @path (cwd))
-        (set i (path-separator @path))
-        (if (not (rmatch @path i))
-        then    (inc @path i) ))
+(defun currpath ()
+        (path-fix-dir (cwd)) )
 
 (defun currpathp (p) (+ (currpath) p))
 
@@ -142,15 +173,12 @@
         (deflocal i)
 
         (set @path (argv 0))
-        (alt    (seq    (search (sprint (path-separator @path)) @path i (maxint))
-                        (set @path (sub 0 i @path)) )
-                (set @path (currpath)) )
-        (set @path (realpathifexists @path))
-        (if (not (pathexists @path))
-        then    (set @path (currpath)) )
-        (set i (path-separator @path))
-        (if (not (rmatch @path i))
-        then    (inc @path i) ))
+        (alt    (seq    (path-fix @path @path)
+                        (search "/" @path i (maxint))
+                        (set @path (realpathifexists (sub 0 i @path)))
+                        (pathexists @path)
+                        (path-fix-dir @path @path) )
+                (set @path (currpath)) ))
 
 (defun callpathp (p) (+ (callpath) p))
 
@@ -166,8 +194,6 @@
 
 (defun homepath () net homepath)
 (defnet homepath (@path)
-        (deflocal i)
-
         (if (clinux)
         then    (set @path (getenv "HOME"))
         else    (if (cmingw)
@@ -178,9 +204,7 @@
         (if (not (pathexists @path))
         then    (set @path (callpath)) )
         (set @path (realpathifexists @path))
-        (set i (path-separator @path))
-        (if (not (rmatch @path i))
-        then    (inc @path i) ))
+        (path-fix-dir @path @path) )
 
 (defun homepathp (p) (+ (homepath) p))
 
@@ -196,14 +220,10 @@
 
 (defun datapath () net datapath)
 (defnet datapath (@path)
-        (deflocal i)
-
         (set @path (homepathp ".treep"))
         (if (not (pathexists @path))
         then    (mkdir @path) )
-        (set i (path-separator @path))
-        (if (not (rmatch @path i))
-        then    (inc @path i) ))
+        (path-fix-dir @path @path) )
 
 (defun datapathp (p) (+ (datapath) p))
 
@@ -219,8 +239,6 @@
 
 (defun tmppath () net tmppath)
 (defnet tmppath (@path)
-        (deflocal i)
-
         (if (clinux)
         then    (set @path "/tmp")
         else    (if (cmingw)
@@ -229,9 +247,7 @@
         (if (not (pathexists @path))
         then    (set @path (callpath)) )
         (set @path (realpathifexists @path))
-        (set i (path-separator @path))
-        (if (not (rmatch @path i))
-        then    (inc @path i) ))
+        (path-fix-dir @path @path) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -249,15 +265,16 @@
 (defnet mktmpdir-data (@path)
         (deflocal dir)
 
-        (set dir (datapath))
-        (set dir (+ dir "tmp" (path-separator dir)))
+        (set dir (datapathp "tmp/"))
         (mkdirhier dir)
         (mktmpdir-low @path dir) )
 
 (defnet mktmpdir-low (@path dir)
         (deflocal prefix i)
 
-        (set prefix (+ dir (random-alphanumeric-string 4)))
+        (path-fix dir dir)
+        (rtrim dir '/')
+        (set prefix (+ dir "/" (random-alphanumeric-string 4)))
         (set i 0)
         (repeat (set @path (+ prefix (int->str i 4 '0')))
                 (alt    (seq    (not (pathexists @path))
@@ -265,9 +282,7 @@
                                 (set i 0) )
                         (inc i) )
                 until (= i 0) )
-        (set i (path-separator @path))
-        (if (not (rmatch @path i))
-        then    (inc @path i) ))
+        (path-fix-dir @path @path) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -304,12 +319,16 @@
 
 (defnet filesystem-visit-limit (path cback udata max-level)
         (truep (isdir path))
-        (filesystem-visit-low path cback udata (path-separator path) 0 max-level) )
+        (filesystem-visit-low path cback udata 0 max-level) )
 
-(defnet filesystem-visit-low (path cback udata s level max-level)
+(defnet filesystem-visit-low (path cback udata level max-level)
+        (path-fix path path)
+        (filesystem-visit-low-low path cback udata level max-level) )
+
+(defnet filesystem-visit-low-low (path cback udata level max-level)
         (deflocal c i e p r d reg dir)
 
-        (set c (if (rmatch path s) "" s))
+        (set c (if (rmatch path '/') "" "/"))
         (set r (array 0))
         (if (< level max-level)
         then    (set d (array 0)) )
@@ -334,7 +353,7 @@
         then    (sort d)
                 (inc level)
                 (for e in d do
-                        (filesystem-visit-low (+ path c e) cback udata s level max-level) )))
+                        (filesystem-visit-low-low (+ path c e) cback udata level max-level) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -350,17 +369,18 @@
 (defnet tree-directory (path @tree)
         (deflocal name)
 
+        (path-fix path path)
         (truep (isdir path))
         (alt    (seq    (set path (realpath path))
                         (stringp path)
                         (set name (fullpath->name path)) )
                 (set name path) )
-        (tree-directory-rec path name (path-separator path) @tree) )
+        (tree-directory-rec path name @tree) )
 
-(defnet tree-directory-rec (path name s @tree)
+(defnet tree-directory-rec (path name @tree)
         (deflocal c i e p dir sub)
 
-        (set c (if (rmatch path s) "" s))
+        (set c (if (rmatch path '/') "" "/"))
         (set @tree (tree name))
         (for i in (directory-ext path) do
                 (set e <i 2>)
@@ -370,31 +390,9 @@
                         then    (set dir (isdir p))
                         else    (set dir (directory-ext-is-dir i)) )
                         (if dir
-                        then    (tree-directory-rec p e s sub)
+                        then    (tree-directory-rec p e sub)
                                 (tree-append @tree sub)
                         else    (tree-append @tree (tree e)) ))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun path-ancestors (path) net path-ancestors)
-(defnet path-ancestors (path @l)
-        (deflocal sep i)
-
-        (set sep (path-separator (currpath)))
-        (rtrim path sep)
-        (set @l nil)
-        (set sep (sprint sep))
-        (opt*   (search sep path i (maxint))
-                (set path (sub 0 i path))
-                (list-push @l (+ path sep)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -408,24 +406,24 @@
 
 (defun search-path-default (rpath) net search-path-default)
 (defnet search-path-default (rpath @path)
-        (deflocal sep q a p pp i)
+        (deflocal q a p pp i)
 
-        (set sep (path-separator (currpath)))
-        (ltrim rpath sep)
+        (path-fix rpath rpath)
+        (ltrim rpath '/')
         (set q (queue))
         (set a (assoc))
         (for i in (list (currpath)
                         (callpath)
-                        (homepathp (+ "wd" sep "programming"))
+                        (homepathp (+ "wd/programming"))
                         (datapath) ) do
                 (queue-put q i) )
         (clr @path)
         (while (> (length q) 0) do
                 (set p (queue-get q))
-                (opt    (rtrim p sep)
+                (opt    (rtrim p '/')
                         (= <a p> undef)
                         (set <a p> true)
-                        (inc p sep)
+                        (inc p '/')
                         (pathexists p)
                         (truep (isdir p))
                         (set pp (+ p rpath))
@@ -543,20 +541,17 @@
 (defnet fullpath->name (path @name)
         (deflocal i)
 
-        (stringp path)
-        (alt    (seq    (search (sprint (path-separator path)) path i (maxint))
+        (path-fix path path)
+        (alt    (seq    (search "/" path i (maxint))
                         (set @name (sub (+ i 1) (maxint) path)) )
                 (set @name path) ))
 
 (defun fullpath->dir (path) net fullpath->dir)
 (defnet fullpath->dir (path @path)
-        (deflocal i)
-
-        (stringp path)
-        (set i (path-separator @path))
+        (path-fix path path)
         (rmatch remove path (fullpath->name path))
-        (if (and (<> path "") (not (rmatch path i)))
-        then    (inc path i) )
+        (if (and (<> path "") (not (rmatch path "/")))
+        then    (inc path "/") )
         (set @path path) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
