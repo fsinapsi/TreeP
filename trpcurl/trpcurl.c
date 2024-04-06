@@ -55,7 +55,6 @@ typedef struct {
 
 #define trp_curl_strings(c) (((trp_curl_t *)(c))->s.name)
 
-static void trp_curl_free( void *ptr );
 static uns8b trp_curl_print( trp_print_t *p, trp_curl_t *obj );
 static uns8b trp_curl_close( trp_curl_t *obj );
 static uns8b trp_curl_close_basic( uns8b flags, trp_curl_t *obj );
@@ -71,22 +70,12 @@ static size_t trp_curl_cback_receive( void *p, size_t size, size_t nmemb, void *
 static size_t trp_curl_cback_send( void *p, size_t size, size_t nmemb, void *curl );
 static int trp_curl_cback_progress( void *curl, sig64b dltotal, sig64b dlnow, sig64b ultotal, sig64b ulnow );
 
-static void trp_curl_free( void *ptr )
-{
-    trp_gc_free( ptr );
-}
-
 uns8b trp_curl_init()
 {
     extern uns8bfun_t _trp_print_fun[];
     extern uns8bfun_t _trp_close_fun[];
 
-    if ( curl_global_init_mem( CURL_GLOBAL_ALL,
-                               GC_malloc,
-                               trp_curl_free,
-                               GC_realloc,
-                               trp_gc_strdup,
-                               trp_gc_calloc ) ) {
+    if ( curl_global_init( CURL_GLOBAL_ALL ) ) {
         fprintf( stderr, "Initialization of libcurl failed\n" );
         return 1;
     }

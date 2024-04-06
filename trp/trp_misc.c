@@ -157,7 +157,7 @@ uns8b *trp_get_short_path_name( uns8b *path )
 trp_obj_t *trp_uname()
 {
 #ifdef MINGW
-    return trp_cord( "MINGW32_NT-5.1" );
+    return trp_cord( "MINGW64_NT" );
 #else
     trp_obj_t *res;
     uns8b *buf;
@@ -268,26 +268,19 @@ trp_obj_t *trp_realpath( trp_obj_t *obj )
     trp_obj_t *res;
     uns8b *cpath = trp_csprint( obj );
     wchar_t *wp, *wq;
-    uns32b l;
 
     wp = trp_utf8_to_wc_path( cpath );
     trp_csprint_free( cpath );
     if ( wp == NULL )
         return UNDEF;
-    if ( ( l = GetFullPathNameW( wp, 0, NULL, NULL ) ) == 0 ) {
-        trp_gc_free( wp );
+    wq = _wfullpath( NULL, wp, 1 );
+    trp_gc_free( wp );
+    if ( wq == NULL )
         return UNDEF;
-    }
-    wq = trp_gc_malloc_atomic( l * sizeof( wchar_t ) );
-    if ( GetFullPathNameW( wp, l, wq, NULL ) == 0 ) {
-        trp_gc_free( wp );
-        trp_gc_free( wq );
+    cpath = trp_wc_to_utf8( wq );
+    free( wq );
+    if ( cpath == NULL )
         return UNDEF;
-    }
-    if ( ( cpath = trp_wc_to_utf8( wq ) ) == NULL ) {
-        trp_gc_free( wq );
-        return UNDEF;
-    }
     trp_convert_slash( cpath );
     res = trp_cord( cpath );
     trp_gc_free( cpath );

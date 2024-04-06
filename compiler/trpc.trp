@@ -452,7 +452,7 @@
 (defnet create-icon (epath @ipath)
         (deflocal rcpath f)
 
-        (alt    (not (or _win32 _win64))
+        (alt    (not (or _mingw _win32 _win64))
                 (= _icon undef)
                 (seq    (set rcpath (+ epath "-icon.rc"))
                         (set @ipath (+ epath "-icon.o"))
@@ -460,7 +460,7 @@
                         (<> f undef)
                         (fprint f "1 ICON \"" _icon "\"")
                         (close f)
-                        (system (if _win32 "i686-w64-mingw32-windres" "x86_64-w64-mingw32-windres") " " (pathquote rcpath) " " (pathquote @ipath))
+                        (system (if _mingw "windres" (if _win32 "i686-w64-mingw32-windres" "x86_64-w64-mingw32-windres")) " " (pathquote rcpath) " " (pathquote @ipath))
                         (remove rcpath) )
                 (error "creation of icon failed") ))
 

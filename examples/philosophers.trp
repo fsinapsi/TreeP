@@ -4,7 +4,7 @@
 ;;; concorrente dei filosofi a cena di Dijkstra
 ;;;
 ;;; (nota: questa versione non evita la starvation...
-;;; come va modificato per garantire l`impossibilita` di
+;;; come va modificato per garantire l'impossibilità di
 ;;; starvation?)
 ;;;
 
@@ -62,7 +62,7 @@
         (% (- i 1) n) )
 
 ;;;
-;;; modifica le disponibilita` per il filosofo i
+;;; modifica le disponibilità per il filosofo i
 ;;;
 
 (defnet aggiorna-libere (libere i inc)
@@ -137,7 +137,7 @@
         (set libere (array default 2 n))
 
         ; creo un array che indica se il
-        ; filosofo i-esimo e` in attesa di
+        ; filosofo i-esimo è in attesa di
         ; prendere le forchette
 
         (set in-attesa (array default false n))
@@ -160,7 +160,7 @@
         then
                 ; le risorse libere per il filosofo
                 ; i-esimo sono 2, quindi possiamo
-                ; dargli l`ok
+                ; dargli l'ok
 
                 (send "ok" to filosofo)
 
@@ -194,7 +194,7 @@
                 ; (dx/sx) dobbiamo controllare: (a) se tali
                 ; risorse sono tornate a essere 2; (b) se
                 ; tale vicino era in attesa; in tal caso
-                ; possiamo dargli l`ok...
+                ; possiamo dargli l'ok...
 
                 (if (and (= <libere j> 2)
                          <in-attesa j> )

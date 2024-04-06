@@ -16,7 +16,7 @@
         then    (usage) )
         (set n (str->num (argv 1)))
         (if (or (not (integerp n)) (< n 1))
-        then    (print (argv 1) " non e' un numero intero positivo valido" nl)
+        then    (print (argv 1) " non è un numero intero positivo valido" nl)
                 (exit -2) )
         (sposta n "A" "B" "C") )
 

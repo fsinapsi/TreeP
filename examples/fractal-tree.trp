@@ -1,55 +1,76 @@
 
+(include "common.tin")
+
 (defstart fractal-tree)
 
-(defnet main-destroy (win)
-        (close win)
-        (gtk-main-quit) )
+(defglobal _img)
 
-(defnet clicked (event btn x y im a)
-        (set <a 12> -<a 12>) )
-
-(defnet update (im a)
-        (set <a 13> (% (+ <a 13> <a 12>) 12))
-        (gtk-image-set-from-pixbuf im <a <a 13>>) )
-
-(defnet setup ()
-        (deflocal win eb im a)
-
-        (set a (array 14))
-        (set <a  0> (pix-load-static "pics/tree00.png"))
-        (set <a  1> (pix-load-static "pics/tree01.png"))
-        (set <a  2> (pix-load-static "pics/tree02.png"))
-        (set <a  3> (pix-load-static "pics/tree03.png"))
-        (set <a  4> (pix-load-static "pics/tree04.png"))
-        (set <a  5> (pix-load-static "pics/tree05.png"))
-        (set <a  6> (pix-load-static "pics/tree06.png"))
-        (set <a  7> (pix-load-static "pics/tree07.png"))
-        (set <a  8> (pix-load-static "pics/tree08.png"))
-        (set <a  9> (pix-load-static "pics/tree09.png"))
-        (set <a 10> (pix-load-static "pics/tree10.png"))
-        (set <a 11> (pix-load-static "pics/tree11.png"))
-        (set <a 12> 1)
-        (set <a 13> 0)
-
-        (set win (gtk-window-new))
-        (gtk-window-set-title win "A Fractal TreeP")
-        (gtk-container-set-border-width win 50)
-        (gtk-signal-connect win "destroy" (netptr main-destroy) undef)
-
-                (set eb (gtk-event-box-new))
-                (gtk-container-add win eb)
-
-                (set im (gtk-image-new-from-pixbuf <a 0>))
-                (gtk-container-add eb im)
-
-                (gtk-signal-connect eb "button-press-event"
-                        (netptr clicked) im a )
-
-        (gtk-timeout-add (netptr update) 0.1 im a)
-        (gtk-window-set-position win (cmacro GTK_WIN_POS_CENTER))
-        (gtk-widget-show-all win) )
+(defnet init-global ()
+        (set _img (array 0))
+        (array-append _img (pix-load-static "pics/tree00.png"))
+        (array-append _img (pix-load-static "pics/tree01.png"))
+        (array-append _img (pix-load-static "pics/tree02.png"))
+        (array-append _img (pix-load-static "pics/tree03.png"))
+        (array-append _img (pix-load-static "pics/tree04.png"))
+        (array-append _img (pix-load-static "pics/tree05.png"))
+        (array-append _img (pix-load-static "pics/tree06.png"))
+        (array-append _img (pix-load-static "pics/tree07.png"))
+        (array-append _img (pix-load-static "pics/tree08.png"))
+        (array-append _img (pix-load-static "pics/tree09.png"))
+        (array-append _img (pix-load-static "pics/tree10.png"))
+        (array-append _img (pix-load-static "pics/tree11.png"))
+        (array-append _img 1)
+        (array-append _img 0) )
 
 (defnet fractal-tree ()
-        (setup)
-        (gtk-main) )
+        (deflocal dlg timer)
+
+        (init-global)
+
+        (set dlg (iup-dialog (gui-setup-main)))
+        (iup-set-attribute-handle undef "PARENTDIALOG" dlg)
+        (iup-set-str-attribute dlg "TITLE" "A Fractal TreeP")
+        (iup-set-callback dlg "CLOSE_CB" (netptr gui-close))
+        ;(iup-set-callback dlg "K_ANY" (netptr gui-kb-cb))
+        (iup-set-bool dlg "FULLSCREEN" false)
+
+        (iup-show dlg)
+
+        (set timer (iup-timer))
+        (iup-set-callback timer "ACTION_CB" (netptr gui-idle-cb))
+        (iup-set-int timer "TIME" 100)
+        (iup-set-bool timer "RUN" true)
+
+        (iup-main-loop)
+
+        (iup-set-bool timer "RUN" false)
+        (close timer dlg) )
+
+(defnet gui-close (self)
+        (fail) )
+
+(defun gui-setup-main () net gui-setup-main)
+(defnet gui-setup-main (@wid)
+        (deflocal img)
+
+        (set @wid (iup-label))
+        (iup-set-callback @wid "BUTTON_CB" (netptr gui-button-cb))
+        (array-append _img @wid)
+        (set img (iup-image-rgba <_img 0>))
+        (array-append _img img)
+        (iup-set-attribute-handle @wid "IMAGE" img) )
+
+(defnet gui-idle-cb (self)
+        (deflocal img)
+
+        (set <_img 13> (% (+ <_img 13> <_img 12>) 12))
+        (set img (iup-image-rgba <_img <_img 13>>))
+        (iup-set-attribute-handle <_img 14> "IMAGE" img)
+        (close <_img 15>)
+        (set <_img 15> img) )
+
+(defnet gui-button-cb (self btn prs x y status)
+        (opt    (= btn 49)
+                (= prs 1)
+                (set <_img 12> -<_img 12>) ))
 

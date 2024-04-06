@@ -21,25 +21,25 @@
                 "1/3 (approssimato con double) = " (approximate (/ 1 3)) nl
                 "2/3 (esatto) = " (/ 2 3) nl
                 nl
-                "L'eventuale carattere finale '&' indica che e' stata stampata" nl
-                "un'approssimazione, anche nel caso in cui il numero e' rappresentato" nl
+                "L'eventuale carattere finale '&' indica che è stata stampata" nl
+                "un'approssimazione, anche nel caso in cui il numero è rappresentato" nl
                 "internamente in modo esatto." nl
-                "Se il carattere '&' manca, cio' che e' stato stampato rispecchia" nl
+                "Se il carattere '&' manca, ciò che è stato stampato rispecchia" nl
                 "in modo esatto la rappresentazione interna del numero." nl
                 nl
                 "sqrt(2) * sqrt(2) = " (nostatic (* (sqrt 2) (sqrt 2))) nl
                 nl )
         (set-precision 200)
         (print  "La radice di 2 viene rappresentata con un razionale, e quindi" nl
-                "la rappresentazione interna e' necessariamente approssimata." nl
-                "L'errore di approssimazione puo' essere ridotto a piacere," nl
+                "la rappresentazione interna è necessariamente approssimata." nl
+                "L'errore di approssimazione può essere ridotto a piacere," nl
                 "aumentando la precisione." nl
                 nl
                 "precision = " (precision) nl
                 nl
                 "sqrt(2) * sqrt(2) = " (nostatic (* (sqrt 2) (sqrt 2))) nl
                 nl
-                "Notare che stavolta e' stata stampata un'approssimazione per" nl
+                "Notare che stavolta è stata stampata un'approssimazione per" nl
                 "eccesso, infatti:" nl
                 nl
                 "floor(sqrt(2) * sqrt(2)) = " (nostatic (floor (* (sqrt 2) (sqrt 2)))) nl
@@ -73,7 +73,7 @@
                 nl
                 "500! = " (fac 500) nl
                 nl
-                "I numeri non hanno limiti predefiniti (purche' sia disponibile" nl
+                "I numeri non hanno limiti predefiniti (purché sia disponibile" nl
                 "abbastanza memoria per immagazzinarli)." nl
                 "Esistono anche due costanti predefinite:" nl
                 nl

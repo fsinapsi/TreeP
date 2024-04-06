@@ -27,11 +27,6 @@ ifeq ($(TARGET), Linux)
 CFLAGS += -fPIC
 CFLAGS += -I/usr/local/include -I/opt/local/include
 endif
-ifeq ($(TARGET), MSYS_NT-6.1-7601)
-CFLAGS += -mms-bitfields
-CFLAGS += -DMINGW -D__WORDSIZE=32
-CFLAGS += -I/usr/local/include -I/mingw32/include
-endif
 ifeq ($(TARGET), MINGW64_NT-10.0-22631)
 CFLAGS += -mms-bitfields
 CFLAGS += -DMINGW -D__WORDSIZE=64
@@ -59,11 +54,6 @@ ifeq ($(TARGET), Linux)
 install:	rts
 	cp -f libs/libtrp* $(PREFIX)/lib
 	ldconfig
-endif
-
-ifeq ($(TARGET), MSYS_NT-6.1-7601)
-install:	rts
-	cp -f libs/libtrp* $(PREFIX)/lib
 endif
 
 ifeq ($(TARGET), MINGW64_NT-10.0-22631)
