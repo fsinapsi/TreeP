@@ -48,8 +48,9 @@ static uns8b trp_pix_load_heif_low( uns8b *cpath, uns8b *idata, uns32b isize, un
     struct heif_image_handle *handle;
     struct heif_image *img;
     uns8b *p;
-    size_t size;
+    const uns8b *q;
     int stride;
+    uns32b i, j;
     uns8b res = 1;
 
     if ( ( ctx = heif_context_alloc() ) == NULL )
@@ -66,14 +67,14 @@ static uns8b trp_pix_load_heif_low( uns8b *cpath, uns8b *idata, uns32b isize, un
     if ( heif_decode_image( handle, &img, heif_colorspace_RGB, heif_chroma_interleaved_RGBA, NULL ).code )
         goto uscita2;
     *w = heif_image_handle_get_width( handle );
-    *h = heif_image_handle_get_width( handle );
-    size = ( ( *w * *h ) << 2 );
-    if ( ( *data = malloc( size ) ) == NULL )
+    *h = heif_image_handle_get_height( handle );
+    j = *w << 2;
+    if ( ( *data = malloc( *h * j ) ) == NULL )
         goto uscita3;
-    /*
-     * stride deve essere sempre pari a ( *w << 2 )
-     */
-    memcpy( *data, heif_image_get_plane_readonly( img, heif_channel_interleaved, &stride ), size );
+    p = *data;
+    q = heif_image_get_plane_readonly( img, heif_channel_interleaved, &stride );
+    for ( i = 0 ; i < *h ; i++, p += j, q += stride )
+        memcpy( p, q, j );
     res = 0;
 uscita3:
     heif_image_release( img );
