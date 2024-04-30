@@ -162,6 +162,7 @@ trp_obj_t *trp_magic_file( trp_obj_t *path )
     trp_obj_t *res = UNDEF;
     FILE *fp;
     uns8b *s;
+    int fd;
     uns32b si, sl;
     uns8b m[ 80 ];
 
@@ -181,17 +182,20 @@ trp_obj_t *trp_magic_file( trp_obj_t *path )
         return UNDEF;
     }
     sl = fread( m, 1, 80, fp );
+    fclose( fp );
     if ( ( res = trp_magic_hack_pre( m, sl ) ) != UNDEF ) {
-        fclose( fp );
         trp_csprint_free( s );
         return res;
     }
-    fseek( fp, 0, SEEK_SET );
+    if ( ( fd = trp_open( s, O_RDONLY ) ) == -1 ) {
+        trp_csprint_free( s );
+        return UNDEF;
+    }
     trp_magic_lock();
     if ( _trp_magic )
-        res = trp_magic_internal( magic_descriptor( _trp_magic, fileno( fp ) ) );
+        res = trp_magic_internal( magic_descriptor( _trp_magic, fd ) );
     trp_magic_unlock();
-    fclose( fp );
+    close( fd );
     if ( res == UNDEF ) {
         res = trp_magic_hack_post( m, sl );
         if ( res == UNDEF ) {
