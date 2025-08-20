@@ -42,9 +42,15 @@ install:	all ../.installbin
 	cp -f $(PRGNAME) `cat ../.installbin`
 endif
 
+ifeq ($(shell uname -s), Linux)
 bootstrap:	trpc.c
-	gcc -O3 -pipe -Wno-pointer-sign $(OPT1) -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC -I/usr/local/include -I/opt/local/include -o $(PRGNAME) trpc.c -L/usr/local/lib -L/opt/local/lib -ltrprsvg `pkg-config librsvg-2.0 --libs` -ltrppix `pkg-config libpng --libs` -ljpeg -lgif -ltrp -lgmp `pkg-config bdw-gc --libs` -lz -lm $(OPT2)
+	gcc -O3 -pipe -Wno-incompatible-pointer-types -Wno-pointer-sign -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC -I/usr/local/include -I/opt/local/include -o $(PRGNAME) trpc.c -L/usr/local/lib -L/opt/local/lib -ltrprsvg `pkg-config librsvg-2.0 --libs` -ltrppix `pkg-config libpng --libs` -ljpeg -lgif -ltrp -lgmp `pkg-config bdw-gc --libs` -lz -lm
 	strip -s $(PRGNAME)
+else
+bootstrap:	trpc.c
+	gcc -O3 -pipe -Wno-incompatible-pointer-types -Wno-pointer-sign -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DMINGW -D__WORDSIZE=64 -mms-bitfields -I/usr/local/include -o $(PRGNAME) trpc.c -L/usr/local/lib -L/opt/local/lib -ltrprsvg `pkg-config librsvg-2.0 --libs` -ltrppix `pkg-config libpng --libs` -ljpeg -lgif -ltrp -lgmp `pkg-config bdw-gc --libs` -lz -lm -lregex
+	strip -s $(PRGNAME)
+endif
 
 ../.installbin:
 	( cd .. && make dumpflags )
