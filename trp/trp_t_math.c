@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1076,7 +1076,7 @@ trp_obj_t *trp_math_probab_isprime( trp_obj_t *obj, trp_obj_t *reps )
 
 static int trp_math_isprime_low( mpz_t mp )
 {
-    extern int aks();
+    extern int aks( ... );
     int prime;
 
     if ( mpz_sgn( mp ) < 0 )

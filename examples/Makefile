@@ -13,7 +13,7 @@ clean:
 	rm -f *~ *.c *.exe *.txt *.db *.png *.ppm thumbnails.jpg *.zip fractal-tree $(PRG)
 
 misc:		misc.trp
-	trpc -f misc.trp
+	trpc -f -w misc.trp
 
 hanoi:		hanoi.trp
 	trpc -f hanoi.trp

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -551,5 +551,26 @@ trp_obj_t *trp_raw_cmp( trp_obj_t *raw1, trp_obj_t *raw2, trp_obj_t *cnt )
         for ( c = (*p1++) ^ (*p2++) ; c ; c &= ( c - 1 ) )
             res++;
     return trp_sig64( res );
+}
+
+uns8b trp_raw_swap( trp_obj_t *raw )
+{
+    uns32b l;
+    uns8b *p, c;
+
+    if ( raw->tipo != TRP_RAW )
+        return 1;
+    l = ((trp_raw_t *)raw)->len;
+    if ( l & 1 )
+        return 1;
+    p = (uns8b *)(((trp_raw_t *)raw)->data);
+    while ( l ) {
+        c = p[ 0 ];
+        p[ 0 ] = p[ 1 ];
+        p[ 1 ] = c;
+        p += 2;
+        l -= 2;
+    }
+    return 0;
 }
 

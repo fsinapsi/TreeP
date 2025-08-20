@@ -28,6 +28,7 @@
           [ "encode-url"                1 undef ]
           [ "json-unescape"             1 undef ]
           [ "json-escape"               1 undef ]
+          [ "fields"                    2 2 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

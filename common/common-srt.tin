@@ -9,11 +9,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun srt-parse (s) net srt-parse)
-(defnet srt-parse (s @a)
+(defnet srt-parse (s @srt)
         (deflocal l n i seca secb txt a)
 
         (stringp s)
-        (set @a (array 0))
+        (set @srt (array 0))
         (opt (lmatch remove s (utf8-bom)))
         (if (not (utf8p s))
         then    (set s (iso->utf8 s)) )
@@ -42,11 +42,11 @@
                         (inc txt (if (= txt "") "" nl) l) )
                 (if (<> txt "")
                 then    (set a (array 4))
+                        (array-append @srt a)
                         (set <a 0> n)
                         (set <a 1> seca)
                         (set <a 2> secb)
-                        (set <a 3> txt)
-                        (array-append @a a) )
+                        (set <a 3> txt) )
                 until (= l undef) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -60,11 +60,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun vtt-parse (s) net vtt-parse)
-(defnet vtt-parse (s @a)
+(defnet vtt-parse (s @srt)
         (deflocal l i seca secb txt a)
 
         (stringp s)
-        (set @a (array 0))
+        (set @srt (array 0))
         (opt (lmatch remove s (utf8-bom)))
         (if (not (utf8p s))
         then    (set s (iso->utf8 s)) )
@@ -103,11 +103,11 @@
                         (set txt (+ l i txt)) )
                 (if (<> txt "")
                 then    (set a (array 4))
-                        (set <a 0> (+ (length @a) 1))
+                        (array-append @srt a)
+                        (set <a 0> (length @srt))
                         (set <a 1> seca)
                         (set <a 2> secb)
-                        (set <a 3> txt)
-                        (array-append @a a) )
+                        (set <a 3> txt) )
                 until (= l undef) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -120,16 +120,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun srt-dump (a) net srt-dump)
-(defnet srt-dump (a @s)
+(defun srt-dump (srt) net srt-dump)
+(defnet srt-dump (srt @s)
         (deflocal i)
 
         (set @s "")
-        (for i in a do
+        (for i in srt do
                 (inc @s <i 0> nl
                         (srt-s->timestamp <i 1>) " --> " (srt-s->timestamp <i 2>) nl
                         <i 3> nl
                         nl )))
+
+(defun srt-dump-fix-counts (srt) net srt-dump-fix-counts)
+(defnet srt-dump-fix-counts (srt @s)
+        (deflocal i)
+
+        (set @s "")
+        (for i in srt do
+                (inc @s (+ (for-pos) 1) nl
+                        (srt-s->timestamp <i 1>) " --> " (srt-s->timestamp <i 2>) nl
+                        <i 3> nl
+                        nl )))
+
+(defun srt-dump-text-only (srt) net srt-dump-text-only)
+(defnet srt-dump-text-only (srt @s)
+        (deflocal i)
+
+        (set @s "")
+        (for i in srt do
+                (inc @s <i 3> nl) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -145,16 +164,17 @@
 (defnet srt-timestamp->s (s @sec)
         (deflocal i)
 
-        (search ":" s i)
-        (set @sec (* 3600 (str->num (sub 0 i s))))
-        (set s (sub (+ i 1) (maxint) s))
-        (search ":" s i)
-        (inc @sec (* 60 (str->num (sub 0 i s))))
-        (set s (sub (+ i 1) (maxint) s))
+        (set @sec 0)
+        (opt    (search ":" s i)
+                (set @sec (* 60 (str->num (str-remove-blanks (sub 0 i s)))))
+                (set s (sub (+ i 1) (maxint) s))
+                (opt    (search ":" s i)
+                        (set @sec (* 60 (+ @sec (str->num (str-remove-blanks (sub 0 i s))))))
+                        (set s (sub (+ i 1) (maxint) s)) ))
         (alt    (search "," s i)
                 (search "." s i) )
-        (inc @sec (str->num (sub 0 i s)))
-        (set s (sub (+ i 1) (maxint) s))
+        (inc @sec (str->num (str-remove-blanks (sub 0 i s))))
+        (set s (str-remove-blanks (sub (+ i 1) (maxint) s)))
         (<> s "")
         (inc @sec (/ (str->num s) (pow 10 (length s)))) )
 
@@ -182,11 +202,76 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet srt-fix-counts (a)
+(defnet srt-is-correct (srt)
+        (deflocal i prv1 prv2)
+
+        (arrayp srt)
+        (> (length srt) 0)
+        (set prv1 -1)
+        (set prv2 -1)
+        (for i in srt do
+                (> <i 1> prv1)
+                (>= <i 2> prv2)
+                (< <i 1> <i 2>)
+                (set prv1 <i 1>)
+                (set prv2 <i 2>) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun srt-join (srt1 srt2) net srt-join)
+(defnet srt-join (srt1 srt2 @srt)
+        (deflocal i j a)
+
+        (set @srt (array (+ (length srt1) (length srt2))))
+        (set i 0)
+        (for j in srt1 do
+                (set a (array 4))
+                (set <@srt i> a)
+                (inc i)
+                (set <a 0> <j 0>)
+                (set <a 1> <j 1>)
+                (set <a 2> <j 2>)
+                (set <a 3> <j 3>) )
+        (for j in srt2 do
+                (set a (array 4))
+                (set <@srt i> a)
+                (inc i)
+                (set <a 0> <j 0>)
+                (set <a 1> <j 1>)
+                (set <a 2> <j 2>)
+                (set <a 3> <j 3>) )
+        (sort @srt (funptr less1)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet srt-linear (srt a b c d)
         (deflocal i)
 
-        (for i in a do
-                (set <i 0> (+ (for-pos) 1)) ))
+        (for i in srt do
+                (set <i 1> (linear <i 1> a b c d))
+                (set <i 2> (linear <i 2> a b c d)) ))
+
+(defnet srt-linear-change-fps (srt fps-from fps-to)
+        (srt-linear srt 0 fps-to 0 fps-from) )
+
+(defnet srt-shift (srt shift)
+        (srt-linear srt 0 1 shift (+ 1 shift)) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,17 +283,76 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet srt-fix-timestamps (a)
+(defun srt-rows (s) net srt-rows)
+(defnet srt-rows (s @a)
+        (deflocal t)
+
+        (set @a (array 0))
+        (repeat (str-readline s t)
+                until (= t undef)
+                (array-append @a t) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet srt-single-row (srt)
+        (deflocal i b c r l j t lprv tprv)
+
+        (srt-is-correct srt)
+        (for i in 0 .. (- (length srt) 1) rev do
+                (set b <srt i>)
+                (set r (srt-rows <b 3>))
+                (if (> (length r) 1)
+                then    (array-remove srt i)
+                        (set l (- (length <b 3>) (- (length r) 1)))
+                        (set lprv 0)
+                        (set tprv <b 1>)
+                        (for j in r do
+                                (inc lprv (length j))
+                                (set t (linear lprv 0 l <b 1> <b 2>))
+                                (set c (array 4))
+                                (array-insert srt (+ i (for-pos)) c)
+                                (set <c 0> i)
+                                (set <c 1> tprv)
+                                (set <c 2> t)
+                                (set <c 3> j)
+                                (set tprv t) )))
+        (srt-is-correct srt)
+        (for i in 1 .. (- (length srt) 1) rev do
+                (if (and (= <srt i 3> <srt (- i 1) 3>)
+                         (< (- <srt i 1> <srt (- i 1) 2>) 0.1) )
+                then    (set <srt (- i 1) 2> <srt i 2>)
+                        (array-remove srt i) ))
+        (srt-is-correct srt) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet srt-fix-timestamps (srt)
         (deflocal i)
 
-        (for i in 0 .. (- (length a) 1) do
-                (if (= i (- (length a) 1))
-                then    (if (<= <a i 2> <a i 1>)
-                        then    (set <a i 2> (+ <a i 1> 1)) )
-                else    ;(print (+ i 1) ": " (< <a i 1> <a (+ i 1) 1>) nl)
-                        (< <a i 1> <a (+ i 1) 1>) ; FIXME
-                        (if (or (<= <a i 2> <a i 1>) (>= <a i 2> <a (+ i 1) 1>))
-                        then    (set <a i 2> (- <a (+ i 1) 1> 0.001)) ))))
+        (for i in 0 .. (- (length srt) 1) do
+                (if (= i (- (length srt) 1))
+                then    (if (<= <srt i 2> <srt i 1>)
+                        then    (set <srt i 2> (+ <srt i 1> 1)) )
+                else    ;(print (+ i 1) ": " (< <srt i 1> <srt (+ i 1) 1>) nl)
+                        (< <srt i 1> <srt (+ i 1) 1>) ; FIXME
+                        (if (or (<= <srt i 2> <srt i 1>) (>= <srt i 2> <srt (+ i 1) 1>))
+                        then    (set <srt i 2> (- <srt (+ i 1) 1> 0.001)) ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -220,82 +364,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet srt-linear (a p q)
-        (deflocal i)
+(defnet srt-detag-all (srt)
+        (deflocal n t)
 
-        (for i in a do
-                (set <i 1> (+ (* <i 1> p) q))
-                (set <i 2> (+ (* <i 2> p) q)) ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defnet srt-detag (a tag)
-        (deflocal s1 s2 n txt)
-
-        (set s1 (+ "<" tag ">"))
-        (set s2 (+ "</" tag ">"))
-        (for n in 0 .. (- (length a) 1) rev do
-                (set txt <a n 3>)
-                (find-and-replace txt s1 "")
-                (find-and-replace txt s2 "")
-                (str-remove-blanks txt)
-                (if (= txt "")
-                then    (array-remove a n)
-                else    (set <a n 3> txt) )))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defnet srt-detag-font (a)
-        (deflocal n i txt)
-
-        (for n in 0 .. (- (length a) 1) rev do
-                (set txt <a n 3>)
-                (find-and-replace txt "</font>" "")
-                (opt*   (search "<font color=\"#" txt i)
-                        (= (sub (+ i 20) 2 txt) "\">")
-                        (set txt (+ (sub 0 i txt) (sub (+ i 22) (maxint) txt))) )
-                (str-remove-blanks txt)
-                (if (= txt "")
-                then    (array-remove a n)
-                else    (set <a n 3> txt) )))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defnet srt-detag-gt (a)
-        (deflocal n i txt)
-
-        (for n in 0 .. (- (length a) 1) rev do
-                (set txt <a n 3>)
-                (find-and-replace txt "&gt;" "")
-                (find-and-replace txt "&lt;" "")
-                (str-remove-blanks txt)
-                (if (= txt "")
-                then    (array-remove a n)
-                else    (set <a n 3> txt) )))
+        (for n in 0 .. (- (length srt) 1) rev do
+                (set t (xml-parse <srt n 3>))
+                (if (treep t)
+                then    (set t (xml-get-detagged-text t))
+                        (if (= t "")
+                        then    (array-remove srt n)
+                        else    (set <srt n 3> t) ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

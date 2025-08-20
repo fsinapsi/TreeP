@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,5 +28,6 @@ trp_obj_t *trp_str_decode_url( trp_obj_t *s, ... );
 trp_obj_t *trp_str_encode_url( trp_obj_t *s, ... );
 trp_obj_t *trp_str_json_unescape( trp_obj_t *s, ... );
 trp_obj_t *trp_str_json_escape( trp_obj_t *s, ... );
+trp_obj_t *trp_str_fields( trp_obj_t *s, trp_obj_t *sep );
 
 #endif /* !__trpstr__h */

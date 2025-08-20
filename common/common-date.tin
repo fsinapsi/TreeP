@@ -74,7 +74,8 @@
 (defun str->date (s) net str->date)
 (defnet str->date (s @d)
         (alt    (str->date1 s @d)
-                (str->date2 s @d) ))
+                (str->date2 s @d)
+                (str->date3 s @d) ))
 
 (defnet str->date1 (s @d)
         (case (length s) of
@@ -126,6 +127,28 @@
                 (seq    (set aa (str->num s))
                         (integerp aa)
                         (set @d (date aa mm gg)) ))
+        (datep @d) )
+
+(defnet str->date3 (s @d)
+        (deflocal gg mm aa)
+
+        (set aa s)
+        (opt    (search-and-cut "-" s aa)
+                (set mm s)
+                (opt    (search-and-cut "-" s mm)
+                        (set gg s) ))
+        (if (stringp gg)
+        then    (set gg (str->num gg))
+                (integerp gg) )
+        (if (stringp mm)
+        then    (set mm (str->num mm))
+                (integerp mm) )
+        (set aa (str->num aa))
+        (if (integerp mm)
+        then    (if (integerp gg)
+                then    (set @d (date aa mm gg))
+                else    (set @d (date aa mm)) )
+        else    (set @d (date aa)) )
         (datep @d) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

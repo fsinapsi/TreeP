@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -183,6 +183,16 @@ trp_obj_t *trp_magic_file( trp_obj_t *path )
     }
     sl = fread( m, 1, 80, fp );
     fclose( fp );
+    if ( ( si >= 4 ) && ( sl >= 2 ) ) {
+        if ( ( strcmp( s + si - 4, ".zip" ) == 0 ) ||
+             ( strcmp( s + si - 4, ".cbz" ) == 0 ) )
+            if ( memcmp( m, "PK", 2 ) == 0 )
+                res = trp_cord( "Zip archive data" );
+        if ( res != UNDEF ) {
+            trp_csprint_free( s );
+            return res;
+        }
+    }
     if ( ( res = trp_magic_hack_pre( m, sl ) ) != UNDEF ) {
         trp_csprint_free( s );
         return res;

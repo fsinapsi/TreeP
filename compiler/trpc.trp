@@ -149,6 +149,7 @@
 (defun vid () <_kv "vid">)
 (defun avi () <_kv "avi">)
 (defun id3tag () <_kv "id3tag">)
+(defun dbf () <_kv "dbf">)
 (defun magic () <_kv "magic">)
 (defun exif () <_kv "exif">)
 (defun quirc () <_kv "quirc">)
@@ -201,7 +202,7 @@
 
 (defun libs-list ()
         [ "gtk" "iup" "thread" "license" "str" "gcrypt" "minizip"
-          "suf" "aud" "vid" "avi" "id3tag" "magic" "exif" "quirc"
+          "suf" "aud" "vid" "avi" "id3tag" "dbf" "magic" "exif" "quirc"
           "pix" "webp" "qoi" "openjp2" "jbig2" "rsvg" "heif" "sail"
           "sift" "curl" "sqlite3" "wn" "avcodec" "mgl"
           "lept" "cgraph" "cairo" "microhttpd" "sdl" "chess" ])
@@ -361,6 +362,7 @@
 
         (set i (+ (cc) " -O" optim " -pipe"
                   (if debug " -g" "")
+                  " -Wno-incompatible-pointer-types"
                   " -Wno-pointer-sign"
                   (if (darwin) " -headerpad_max_install_names" "")
                   (if (and mswin (or (gtk) (iup)) (not nomwin)) " -mwindows" "")
@@ -371,8 +373,8 @@
                   (if mswin " -mms-bitfields -I/usr/local/include" " -fPIC -I/usr/local/include -I/opt/local/include")
                   (if (gtk) (pkg-config-cflags "gtk+-2.0") "")
                   (if (iup) " -I/usr/local/include/iup" "")
-                  (if (cairo) (pkg-config-cflags "cairo") "")
-                  (if (cairo) (pkg-config-cflags "freetype2") "")
+                  (if (cairo)
+                        (+ (pkg-config-cflags "cairo") (pkg-config-cflags "freetype2") ) "" )
                   (if (avcodec)
                         (+ (pkg-config-cflags "libavformat") (pkg-config-cflags "libavcodec")
                            (pkg-config-cflags "libavutil") (pkg-config-cflags "libswscale")
@@ -396,6 +398,7 @@
                   (if (vid) " -ltrpvid" "")
                   (if (avi) " -ltrpavi" "")
                   (if (id3tag) " -ltrpid3tag -lid3tag" "")
+                  (if (dbf) " -ltrpdbf" "")
                   (if (magic) (+ " -ltrpmagic" (pkg-config-libs "libmagic")) "")
                   (if (exif) (+ " -ltrpexif" (pkg-config-libs "libexif")) "")
                   (if (quirc) " -ltrpquirc -lqrencode" "")
@@ -879,6 +882,8 @@
         then    (print-header (str-load-static "../trpavi/trpavi.h")) )
         (if (id3tag)
         then    (print-header (str-load-static "../trpid3tag/trpid3tag.h")) )
+        (if (dbf)
+        then    (print-header (str-load-static "../trpdbf/trpdbf.h")) )
         (if (magic)
         then    (print-header (str-load-static "../trpmagic/trpmagic.h")) )
         (if (exif)
@@ -1045,7 +1050,8 @@
                      "  if(trp_vid_init())exit(-1);\n" "" ) (if (avi)
                      "  if(trp_avi_init())exit(-1);\n" "" ) (if (license)
                      "  if(trp_license_init())exit(-1);\n" "" ) (if (gcrypt)
-                     "  if(trp_gcry_init())exit(-1);\n" "" ) (if (magic)
+                     "  if(trp_gcry_init())exit(-1);\n" "" ) (if (dbf)
+                     "  if(trp_dbf_init())exit(-1);\n" "" ) (if (magic)
                      "  if(trp_magic_init())exit(-1);\n" "" ) (if (exif)
                      "  if(trp_exif_init())exit(-1);\n" "" ) (if (sqlite3)
                      "  if(trp_sqlite3_init())exit(-1);\n" "" ) (if (avcodec)

@@ -87,10 +87,14 @@
                                 (seq    (print "errore: non capisco la sintassi del comando (index)" nl)
                                         (fail) ))))
         (inc @s "digraph g {" nl
-                "graph [bgcolor=\"#FFFFFF00\",ranksep=1.5,rankdir=\"TB\"];" nl
+                "graph [];" nl
                 "layout=neato;" nl
+                "bgcolor=transparent;" nl
+                ;"esep=0.4;" nl
+                "normalize=true;" nl
                 "splines=true;" nl
-                "overlap=voronoi;" nl
+                "overlap=prism;" nl
+                "overlap_scaling=-3.8;" nl
                 "overlap_shrink=true;" nl )
         (set s (queue))
         (for table in q do

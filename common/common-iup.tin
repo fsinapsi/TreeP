@@ -60,7 +60,7 @@
         (iup-set-str-attribute wid attribute (if val "YES" "NO")) )
 
 (defun iup-get-bool (wid attribute)
-        (= (iup-get-str-attribute wid attribute) "ON") )
+        (in (iup-get-str-attribute wid attribute) [ "YES" "ON" ]) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -209,7 +209,7 @@
                 (set padding "0x0")
                 (set spacing 0) )
         (iup-set-callback @wid "ACTION" cback)
-        (set img (iup-image-rgba iconpix))
+        (set img (iup-image-rgba-hacked iconpix))
         (iup-set-attribute-handle @wid "IMAGE" img)
         (iup-set-str-attribute @wid "PADDING" padding)
         (iup-set-int @wid "SPACING" spacing)
@@ -1310,6 +1310,28 @@
 
 (defun iup-progress-aborted (dlg)
         (= (iup-get-int dlg "TRP_ABORTED") 1) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-image-rgba-hacked (pix) net iup-image-rgba-hacked)
+(defnet iup-image-rgba-hacked (pix @img)
+        (deflocal hpix)
+
+        (pixp pix)
+        (set hpix (pix-create (+ 4 (width pix)) (+ 4 (height pix))))
+        (pixp hpix)
+        (pix-draw-box hpix 0 0 (width hpix) (height hpix) (pix-color 0 0 0 0))
+        (pix-draw-pix hpix 0 2 pix)
+        (set @img (iup-image-rgba hpix))
+        (close hpix) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

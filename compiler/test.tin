@@ -22,6 +22,7 @@
 (include "test-curl.tin")
 (include "test-sqlite3.tin")
 (include "test-avcodec.tin")
+(include "test-dbf.tin")
 (include "test-magic.tin")
 (include "test-mgl.tin")
 (include "test-lept.tin")
@@ -77,6 +78,7 @@
                                                         (test-curl name)
                                                         (test-sqlite3 name)
                                                         (test-avcodec name)
+                                                        (test-dbf name)
                                                         (test-magic name)
                                                         (test-mgl name)
                                                         (test-lept name)
@@ -293,6 +295,8 @@
                 "fibo-set-key"  (exprseq-ext 2 2 "  if(trp_fibo_set_key(" "))")
                 "fibo-set-obj"  (exprseq-ext 2 2 "  if(trp_fibo_set_obj(" "))")
                 "fibo-merge"    (exprseq-ext 2 2 "  if(trp_fibo_merge(" "))")
+
+                "raw-swap"      (exprseq-ext 1 1 "  if(trp_raw_swap(" "))")
 
                 default         (fail) ))
 

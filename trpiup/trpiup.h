@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,9 +26,32 @@
 #define K_csRIGHT iup_XkeyCtrl(K_sRIGHT)
 #define K_csUP iup_XkeyCtrl(K_sUP)
 #define K_csDOWN iup_XkeyCtrl(K_sDOWN)
+#define K_csA iup_XkeyShift(K_cA)
+#define K_csB iup_XkeyShift(K_cB)
+#define K_csC iup_XkeyShift(K_cC)
 #define K_csD iup_XkeyShift(K_cD)
+#define K_csE iup_XkeyShift(K_cE)
+#define K_csF iup_XkeyShift(K_cF)
+#define K_csG iup_XkeyShift(K_cG)
+#define K_csH iup_XkeyShift(K_cH)
+#define K_csI iup_XkeyShift(K_cI)
+#define K_csJ iup_XkeyShift(K_cJ)
+#define K_csK iup_XkeyShift(K_cK)
+#define K_csL iup_XkeyShift(K_cL)
+#define K_csM iup_XkeyShift(K_cM)
+#define K_csN iup_XkeyShift(K_cN)
+#define K_csO iup_XkeyShift(K_cO)
+#define K_csP iup_XkeyShift(K_cP)
+#define K_csQ iup_XkeyShift(K_cQ)
+#define K_csR iup_XkeyShift(K_cR)
 #define K_csS iup_XkeyShift(K_cS)
+#define K_csT iup_XkeyShift(K_cT)
+#define K_csU iup_XkeyShift(K_cU)
 #define K_csV iup_XkeyShift(K_cV)
+#define K_csW iup_XkeyShift(K_cW)
+#define K_csX iup_XkeyShift(K_cX)
+#define K_csY iup_XkeyShift(K_cY)
+#define K_csZ iup_XkeyShift(K_cZ)
 
 uns8b trp_iup_init( int *argc, char ***argv );
 void trp_iup_quit();

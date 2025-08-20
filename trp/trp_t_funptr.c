@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,11 @@ uns8b trp_funptr_print( trp_print_t *p, trp_funptr_t *obj )
         return 1;
     if ( trp_print_obj( p, obj->name ) )
         return 1;
-    return trp_print_char( p, '#' );
+    if ( trp_print_char_star( p, " (" ) )
+        return 1;
+    if ( trp_print_sig64( p, obj->nargs ) )
+        return 1;
+    return trp_print_char_star( p, ")#" );
 }
 
 trp_obj_t *trp_funptr_equal( trp_funptr_t *o1, trp_funptr_t *o2 )

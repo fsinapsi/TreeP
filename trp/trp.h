@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -136,6 +136,7 @@ enum {
     TRP_CHESS,
     TRP_CAIRO,
     TRP_MHD,
+    TRP_DBF,
     TRP_MAX_T /* lasciarlo sempre per ultimo */
 };
 
@@ -183,12 +184,12 @@ typedef struct {
     uns8b tipo;
 } trp_obj_t;
 
-typedef void (*voidfun_t)();
-typedef int (*intfun_t)();
-typedef flt64b (*doublefun_t)();
-typedef uns8b (*uns8bfun_t)();
-typedef uns32b (*uns32bfun_t)();
-typedef trp_obj_t * (*objfun_t)();
+typedef void (*voidfun_t)( ... );
+typedef int (*intfun_t)( ... );
+typedef flt64b (*doublefun_t)( ... );
+typedef uns8b (*uns8bfun_t)( ... );
+typedef uns32b (*uns32bfun_t)( ... );
+typedef trp_obj_t * (*objfun_t)( ... );
 
 typedef struct {
     uns8b tipo;
@@ -584,6 +585,7 @@ trp_obj_t *trp_raw_write( trp_obj_t *raw, trp_obj_t *stream, trp_obj_t *cnt );
 trp_obj_t *trp_raw2str( trp_obj_t *raw, trp_obj_t *cnt );
 trp_obj_t *trp_raw_load( trp_obj_t *path );
 trp_obj_t *trp_raw_cmp( trp_obj_t *raw1, trp_obj_t *raw2, trp_obj_t *cnt );
+uns8b trp_raw_swap( trp_obj_t *raw );
 
 uns8b trp_char_print( trp_print_t *p, trp_char_t *obj );
 uns32b trp_char_size( trp_char_t *obj );

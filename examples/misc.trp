@@ -1,15 +1,14 @@
 
+(include "common.tin")
+
 (defstart misc)
 
-(defun gcry-md5sum (obj) (gcry-md-hash-fast (cmacro GCRY_MD_MD5) obj))
-(defun gcry-sha1sum (obj) (gcry-md-hash-fast (cmacro GCRY_MD_SHA1) obj))
-
 (defun test-md5 ()
-        (= (nostatic (gcry-md5sum "testmd5"))
+        (= (nostatic (gcry-md5sum-fast "testmd5"))
            "32269ae63a25306bb46a03d6f38bd2b7" ))
 
 (defun test-sha1 ()
-        (= (nostatic (gcry-sha1sum "testsha1"))
+        (= (nostatic (gcry-sha1sum-fast "testsha1"))
            "1dee4b1affb249bc74c20379e60166366b71394f" ))
 
 (defun data-morte-galois () (date 1832 5 31))
@@ -36,6 +35,14 @@
                 "quando sono stato compilato: " (cdate) nl
                 "il sistema su cui sono stato compilato: " (cuname) nl
                 "il sistema su cui sto girando: " (uname) nl
+                "CC version (rts): " (sub 0 30 (cc-version)) nl
+                "GC version: " (gc-version) nl
+                "GMP version: " (gmp-version) nl
+                "IUP version: " (iup-version) nl
+                "IUP system: " (iup-get-global "SYSTEM") nl
+                (if (clinux) (+ "GTK version: " (iup-get-global "GTKVERSION") nl) "")
+                "IUP DEFAULTFONT: " (iup-get-global "DEFAULTFONT") nl
+                "libavcodec version: " (av-codec-version) "/" (av-avcodec-version) nl
                 nl
                 "test md5sum: " (if (test-md5) "OK" "FALLITO!") nl
                 "test sha1sum: " (if (test-sha1) "OK" "FALLITO!") nl

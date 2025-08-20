@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -499,8 +499,18 @@ static trp_obj_t *trp_pix_load_thumbnail_memory_low( trp_obj_t *raw, uns32b sw, 
             p = epeg_pixels_get( ep, 0, 0, www, hhh );
             epeg_close( ep );
         }
-    if ( p == NULL )
-        if ( trp_pix_load_png_memory( ((trp_raw_t *)raw)->data, ((trp_raw_t *)raw)->len, &www, &hhh, (uns8b **)( &p ) ) )
+    if ( p == NULL ) {
+        uns8b notdone = 1;
+
+        if ( trp_pix_load_png_memory( ((trp_raw_t *)raw)->data, ((trp_raw_t *)raw)->len, &www, &hhh, (uns8b **)( &p ) ) == 0 )
+            notdone = 0;
+        if ( notdone && _trp_pix_load_openjp2_memory )
+            if ( _trp_pix_load_openjp2_memory( ((trp_raw_t *)raw)->data, ((trp_raw_t *)raw)->len, &www, &hhh, (uns8b **)( &p ) ) == 0 )
+                notdone = 0;
+        if ( notdone && _trp_pix_load_webp_memory )
+            if ( _trp_pix_load_webp_memory( ((trp_raw_t *)raw)->data, ((trp_raw_t *)raw)->len, &www, &hhh, (uns8b **)( &p ) ) == 0 )
+                notdone = 0;
+        if ( notdone )
             p = NULL;
         else {
             ws = www;
@@ -515,6 +525,7 @@ static trp_obj_t *trp_pix_load_thumbnail_memory_low( trp_obj_t *raw, uns32b sw, 
                 }
             }
         }
+    }
     if ( p == NULL )
         if ( sw * sh * 3 == c ) {
             uns8b *d;

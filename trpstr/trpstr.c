@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -475,5 +475,31 @@ trp_obj_t *trp_str_json_escape( trp_obj_t *s, ... )
         s = UNDEF;
     trp_csprint_free( c );
     return s;
+}
+
+trp_obj_t *trp_str_fields( trp_obj_t *s, trp_obj_t *sep )
+{
+    trp_obj_t *res;
+    uns32b pos1, pos2;
+    uns8b ssep;
+    CORD c;
+    CORD_pos i;
+
+    if ( ( s->tipo != TRP_CORD ) ||
+         ( sep->tipo != TRP_CHAR ) )
+        return UNDEF;
+    c = ((trp_cord_t *)s)->c;
+    ssep = ((trp_char_t *)sep)->c;
+    res = trp_array_ext_internal( UNDEF, 10, 0 );
+    pos1 = pos2 = 0;
+    CORD_FOR( i, c ) {
+        if ( CORD_pos_fetch( i ) == ssep ) {
+            (void)trp_array_insert( res, NULL, trp_cord_sub( pos1, pos2 - pos1, (trp_cord_t *)s ), NULL );
+            pos1 = pos2 + 1;
+        }
+        pos2++;
+    }
+    (void)trp_array_insert( res, NULL, trp_cord_sub( pos1, pos2 - pos1, (trp_cord_t *)s ), NULL );
+    return res;
 }
 

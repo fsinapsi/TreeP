@@ -22,7 +22,7 @@ endif
 
 CFLAGS ?= -O3 -pipe # -g
 CFLAGS += -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-CFLAGS += -Wno-parentheses -Wno-unused-result -Wno-pointer-sign
+CFLAGS += -Wfatal-errors -Wno-parentheses -Wno-unused-result -Wno-incompatible-pointer-types -Wno-pointer-sign
 ifeq ($(TARGET), Linux)
 CFLAGS += -fPIC
 CFLAGS += -I/usr/local/include -I/opt/local/include
@@ -117,6 +117,7 @@ endif
 	( cd trpexif && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpavcodec && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpid3tag && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
+	( cd trpdbf && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpmagic && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpgtk && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
 	( cd trpwn && make TARGET=$(TARGET) CC=$(CC) AR=$(AR) )
@@ -160,6 +161,7 @@ clean:
 	( cd trpexif && make clean )
 	( cd trpavcodec && make clean )
 	( cd trpid3tag && make clean )
+	( cd trpdbf && make clean )
 	( cd trpmagic && make clean )
 	( cd trpgtk && make clean )
 	( cd trpwn && make clean )
@@ -170,4 +172,3 @@ clean:
 
 cleanall:	clean
 	( cd compiler && make cleanall )
-

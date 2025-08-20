@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2024 Frank Sinapsi
+    Copyright (C) 2008-2025 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@
 #include "../trp/trp.h"
 #include "./trpiup.h"
 #include "../trppix/trppix_internal.h"
+#include <fontconfig/fontconfig.h>
 
 typedef struct {
     uns8b tipo;
     Ihandle *h;
 } trp_iup_t;
 
-typedef Ihandle * (*ihandle_t)();
+typedef Ihandle * (*ihandle_t)( ... );
 
 typedef struct {
     trp_obj_t *val;
@@ -52,6 +53,12 @@ uns8b trp_iup_init( int *argc, char ***argv )
     extern objfun_t _trp_width_fun[];
     extern objfun_t _trp_height_fun[];
 
+#ifndef MINGW
+    if ( FcInit() == FcFalse ) {
+        fprintf( stderr, "Initialization of IUP failed ( FcInit() )\n" );
+        return 1;
+    }
+#endif
     if ( IupOpen( argc, argv ) ) {
         fprintf( stderr, "Initialization of IUP failed\n" );
         return 1;

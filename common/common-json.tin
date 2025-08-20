@@ -214,3 +214,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun json-readable (node) net json-readable)
+(defnet json-readable (node @node)
+        (deflocal a val i)
+
+        (treep node)
+        (set a (tree-get node))
+        (set val <a 1>)
+        (case <a 0> of
+                "assoc"         (seq    (set @node (tree "ASSOC"))
+                                        (for i in val do
+                                                (tree-append @node (tree (car i) (json-readable (cdr i)))) ))
+                "array"         (seq    (set @node (tree "ARRAY"))
+                                        (for i in node do
+                                                (tree-append @node (json-readable i)) ))
+                "string"        (set @node (json-make-string val))
+                "special"       (set @node (json-make-special val))
+                "number"        (set @node (json-make-number val)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

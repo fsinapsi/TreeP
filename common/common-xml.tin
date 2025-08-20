@@ -8,6 +8,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun xml-debug () false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun xml-parse-path (path)
         (xml-parse (str-load path)) )
 
@@ -36,6 +48,9 @@
                                         (inc j 3) )
                         "!["    (seq    (search "]>" body j)
                                         (inc j 2) )
+                        "!DOCTYPE"
+                                (seq    (search ">" body j)
+                                        (inc j 1) )
                         "?xml"  (seq    (search "?>" body j)
                                         (inc j 2) )
                         default (seq    (opt (search-and-cut ":" tag j))
@@ -53,62 +68,90 @@
                 else    (set j (xml-new-node-tag tag tag-beg tag-end)) )
                 (tree-append act-node j)
                 (if (<> body "")
-                then    (xml-parse-low body j) )
+                then    (if (in tag [ "style" "script" ])
+                        then    (tree-append j (xml-new-node-raw body))
+                        else    (xml-parse-low body j) ))
                 (set i k) )
         (if (< i (length s))
         then    (tree-append act-node (xml-new-node-text (sub i (maxint) s))) ))
 
 (defun xml-parse-tags (s) net xml-parse-tags)
 (defnet xml-parse-tags (s @q)
-        (deflocal err st pos tagpos tag a i)
+        (deflocal err st pos tagpos tag a i j saved-s saved-pos tocheck notrec)
 
         (set @q (queue))
         (set err (array default false 1))
         (set st (stack))
         (set pos 0)
-        (opt*   (search-and-cut "<" s tag)
-                (inc pos (length tag))
+        (opt*   (search-and-cut "<" s i)
+                (inc pos (length i))
+                (set saved-s s)
+                (set saved-pos pos)
+                (set tocheck false)
                 (set tagpos pos)
-                (if (lmatch case s "!--" "![" "?xml")
+                (if (= (length st) 0)
+                then    (set notrec false)
+                else    (set notrec (in <st 0 0> [ "style" "script" ])) )
+                (if (lmatch case s "!--" "![" "!doctype" "?xml")
                 then    (if (lmatch s "!--")
-                        then    (search-and-cut "-->" s tag)
-                                (inc pos (length tag) 4)
+                        then    (search-and-cut "-->" s i)
+                                (inc pos (length i) 4)
                                 (set tag "!--")
                         else (if (lmatch s "![")
-                        then    (search-and-cut "]>" s tag)
-                                (inc pos (length tag) 3)
+                        then    (search-and-cut "]>" s i)
+                                (inc pos (length i) 3)
                                 (set tag "![")
-                        else    (search-and-cut "?>" s tag)
-                                (inc pos (length tag) 3)
-                                (set tag "?xml") ))
+                        else (if (lmatch case s "!doctype")
+                        then    (search-and-cut ">" s i)
+                                (inc pos (length i) 2)
+                                (set tag "!DOCTYPE")
+                        else    (search-and-cut "?>" s i)
+                                (inc pos (length i) 3)
+                                (set tag "?xml") )))
                 else    (search-and-cut ">" s tag)
                         (inc pos (length tag) 2)
                         (find-and-replace tag "\n" " ")
                         (find-and-replace tag "\r" " ")
                         (ltrim tag ' ' '\t')
-                        (rtrim tag ' ' '\t') )
+                        (rtrim tag ' ' '\t')
+                        (set tocheck true) )
                 (alt    (seq    (lmatch remove tag "/")
                                 (set tag (utf8-tolower tag))
+                                (if notrec
+                                then    (= <st 0 0> tag) )
                                 (repeat (set a (pop st))
                                         until (= <a 0> tag)
                                         (if (not (in <a 0> (xml-parse-tags-to-ignore)))
-                                        then    ;(print "PASSA: " a " - " tag nl)
+                                        then    (if (xml-debug)
+                                                then    (print "xml-parse-tags fallito - atteso: </" <a 0> "> - arrivato: </" tag ">" nl) )
                                                 (set <err 0> true) )
                                         until <err 0> )
                                 (if (not <err 0>)
-                                then    (set <a 2> pos) ))
-                        (seq    (alt    (search-and-cut " " tag i)
+                                then    (if (xml-debug)
+                                        then    (print (tile (* 2 (length st))) "CLOSE TAG: #" tag "#" nl) )
+                                        (set <a 2> pos) ))
+                        (seq    (not notrec)
+                                (alt    (search-and-cut " " tag i)
                                         (seq    (set i tag)
                                                 (opt (rmatch remove i "/")) ))
+                                (set i (utf8-tolower i))
+                                (if tocheck
+                                then    (for j in i do
+                                                (or (in j 'a' .. 'z')
+                                                    (and (> (for-pos) 0) (or (in j [ ':' '-' ]) (in j '0' .. '9'))) )))
+                                (if (xml-debug)
+                                then    (print (tile (* 2 (length st))) "OPEN TAG: #" i "#" nl) )
                                 (set a (array 3))
-                                (set <a 0> (utf8-tolower i))
+                                (set <a 0> i)
                                 (set <a 1> tagpos)
                                 (set <a 2> pos)
                                 (xml-parse-tags-clean-stack st)
                                 (if (= (length st) 0)
                                 then    (queue-put @q a) )
                                 (if (and (not (rmatch tag "/")) (in <a 0 0> 'a' .. 'z'))
-                                then    (push st a) )))
+                                then    (push st a) ))
+                        (seq    (set s saved-s)
+                                (set pos (+ saved-pos 1)) ))
                 (not <err 0>) )
         (not <err 0>)
         (xml-parse-tags-clean-stack st)
@@ -124,7 +167,7 @@
                         (fail) )))
 
 (defun xml-parse-tags-to-ignore ()
-        [ "meta" "link" "style" "img" "input" "col" ])
+        [ "meta" "source" "base" "link" "style" "img" "input" "col" "br" "hr" ])
 
 (defun xml-new-node-text (text)
         (xml-new-node "[text]" (str-decode-html-entities-utf8 text) undef undef) )
@@ -137,6 +180,9 @@
 
 (defun xml-new-node-comment (text)
         (xml-new-node "[comment]" text undef undef) )
+
+(defun xml-new-node-raw (text)
+        (xml-new-node "[raw]" text undef undef) )
 
 (defun xml-new-node-copy (node) net xml-new-node-copy)
 (defnet xml-new-node-copy (node @node)
@@ -184,6 +230,12 @@
 (defun xml-is-comment-node (node)
         (xml-is-comment (tree-get node)) )
 
+(defun xml-is-raw (a)
+        (= <a 0> "[raw]") )
+
+(defun xml-is-raw-node (node)
+        (xml-is-raw (tree-get node)) )
+
 (defun xml-is-this-tag (a tag)
         (and (= <a 0> "[tag]") (= <a 1> tag)) )
 
@@ -217,6 +269,24 @@
         else    (set @n 0)
                 (for child-node in node do
                         (inc @n (xml-comments-count child-node)) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet xml-remove-this-tag (node tag)
+        (deflocal child-node)
+
+        (if (xml-is-this-tag-node node tag)
+        then    (tree-detach node)
+        else    (for child-node in node do
+                        (xml-remove-this-tag child-node tag) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -350,7 +420,8 @@
                                         (for child-node in node do
                                                 (inc @s (xml-dump child-node)) )
                                         (inc @s <s 3>) )
-                "[comment]"     (set @s <s 1>) ))
+                "[comment]"     (set @s <s 1>)
+                "[raw]"         (set @s <s 1>) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

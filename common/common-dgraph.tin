@@ -126,19 +126,21 @@
           [ "bgcolor" . "transparent" ]
           [ "esep" . 0.4 ]
           [ "splines" . true ]
-          [ "overlap" . "voronoi" ]
+          [ "overlap" . "prism" ]
+          [ "overlap_scaling" . -3 ]
           [ "overlap_shrink" . true ] ])
 
 (defun dgraph->dot-attributes ()
         [ "layout" "bgcolor" "ranksep" "rankdir"
-          "esep" "splines" "overlap" "overlap_shrink" ])
+          "esep" "splines" "overlap" "overlap_scaling"
+          "overlap_shrink" ])
 
 (defun dgraph->dot-node-attributes ()
         [ "label" "shape" "style" "color" "fillcolor" ])
 
 (defun dgraph->dot-link-attributes ()
         [ "labelfontsize" "labelangle" "labeldistance"
-          "label" "taillabel" "headlabel" "dir" ])
+          "label" "taillabel" "headlabel" "dir" "color" ])
 
 (defun dgraph->dot-get-assoc (a) net dgraph->dot-get-assoc)
 (defnet dgraph->dot-get-assoc (a @a)
@@ -160,7 +162,7 @@
         (for attr in (dgraph->dot-attributes) do
                 (set v <a attr>)
                 (if (<> v undef)
-                then    (inc @s "    " attr "=" (dgraph->dot-quote v) ";") )))
+                then    (inc @s "    " attr "=" (dgraph->dot-quote v) ";\n") )))
 
 (defnet dgraph->dot-node-attributes (node @s)
         (deflocal a attr v sep)
