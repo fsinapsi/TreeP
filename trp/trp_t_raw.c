@@ -574,3 +574,11 @@ uns8b trp_raw_swap( trp_obj_t *raw )
     return 0;
 }
 
+uns8b trp_raw_set( trp_obj_t *raw, trp_obj_t *c )
+{
+    if ( ( raw->tipo != TRP_RAW ) || ( c->tipo != TRP_CHAR ) )
+        return 1;
+    memset( (void *)(((trp_raw_t *)raw)->data), (int)(((trp_char_t *)c)->c), (size_t)(((trp_raw_t *)raw)->len) );
+    return 0;
+}
+

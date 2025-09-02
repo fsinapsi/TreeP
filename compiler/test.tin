@@ -297,6 +297,7 @@
                 "fibo-merge"    (exprseq-ext 2 2 "  if(trp_fibo_merge(" "))")
 
                 "raw-swap"      (exprseq-ext 1 1 "  if(trp_raw_swap(" "))")
+                "raw-set"       (exprseq-ext 2 2 "  if(trp_raw_set(" "))")
 
                 default         (fail) ))
 
