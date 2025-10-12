@@ -136,7 +136,7 @@ uns8b trp_webp_save( trp_obj_t *pix, trp_obj_t *path, trp_obj_t *quality )
     if ( ( pi = ((trp_pix_t *)pix)->map.p ) == NULL )
         return 1;
     if ( quality ) {
-        if ( trp_cast_double_range( quality, &quality_factor, 0.0, 100.0 ) )
+        if ( trp_cast_flt64b_range( quality, &quality_factor, 0.0, 100.0 ) )
             return 1;
     } else
         quality_factor = 100.0;
@@ -175,7 +175,7 @@ trp_obj_t *trp_webp_save_memory( trp_obj_t *pix, trp_obj_t *quality )
     if ( ( pi = ((trp_pix_t *)pix)->map.p ) == NULL )
         return UNDEF;
     if ( quality ) {
-        if ( trp_cast_double_range( quality, &quality_factor, 0.0, 100.0 ) )
+        if ( trp_cast_flt64b_range( quality, &quality_factor, 0.0, 100.0 ) )
             return UNDEF;
     } else
         quality_factor = 100.0;

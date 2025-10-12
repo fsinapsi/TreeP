@@ -106,6 +106,12 @@ trp_obj_t *trp_pix_box_stat( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj
 trp_obj_t *trp_pix_is_empty( trp_obj_t *pix, trp_obj_t *threshold );
 trp_obj_t *trp_pix_trim( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *threshold );
 trp_obj_t *trp_pix_trim_values( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *threshold );
+trp_obj_t *trp_pix_color_hue( trp_obj_t *pix, trp_obj_t *hue, trp_obj_t *saturation );
+uns8b trp_pix_color_hue_test( trp_obj_t *pix, trp_obj_t *hue, trp_obj_t *saturation );
+trp_obj_t *trp_pix_color_temperature_adm( trp_obj_t *pix, trp_obj_t *temperature, trp_obj_t *strength );
+uns8b trp_pix_color_temperature_adm_test( trp_obj_t *pix, trp_obj_t *temperature, trp_obj_t *strength );
+trp_obj_t *trp_pix_color_temperature_photodemon( trp_obj_t *pix, trp_obj_t *temperature, trp_obj_t *strength );
+uns8b trp_pix_color_temperature_photodemon_test( trp_obj_t *pix, trp_obj_t *temperature, trp_obj_t *strength );
 trp_obj_t *trp_pix_color_transfer( trp_obj_t *pixs, trp_obj_t *pixt );
 uns8b trp_pix_color_transfer_test( trp_obj_t *pixs, trp_obj_t *pixt );
 trp_obj_t *trp_pix_lab_distance( trp_obj_t *pix1, trp_obj_t *pix2 );

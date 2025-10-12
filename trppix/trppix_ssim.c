@@ -440,7 +440,7 @@ trp_obj_t *trp_pix_ssim( trp_obj_t *pix1, trp_obj_t *pix2, trp_obj_t *weights )
             return UNDEF;
         }
         for ( j = 0 ; j < s.win_w ; j++ ) {
-            if ( trp_cast_double( ((trp_array_t *)res)->data[ j ], &w ) ) {
+            if ( trp_cast_flt64b( ((trp_array_t *)res)->data[ j ], &w ) ) {
                 trp_gc_free( s.weights );
                 return UNDEF;
             }

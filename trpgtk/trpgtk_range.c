@@ -34,7 +34,7 @@ void trp_gtk_range_set_value( trp_obj_t *obj, trp_obj_t *val )
     GtkWidget *o = trp_gtk_get_widget( obj );
     double dval;
 
-    if ( o && ( trp_cast_double( val, &dval ) == 0 ) )
+    if ( o && ( trp_cast_flt64b( val, &dval ) == 0 ) )
         if ( GTK_IS_RANGE( o ) )
             gtk_range_set_value( (GtkRange *)o, dval );
 }

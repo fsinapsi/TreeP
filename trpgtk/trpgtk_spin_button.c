@@ -26,7 +26,7 @@ trp_obj_t *trp_gtk_spin_button_new( trp_obj_t *adj, trp_obj_t *climb_rate, trp_o
     uns32b d;
 
     if ( oo &&
-         ( !trp_cast_double( climb_rate, &cr ) ) &&
+         ( !trp_cast_flt64b( climb_rate, &cr ) ) &&
          ( !trp_cast_uns32b( digits, &d ) ) )
         if ( GTK_IS_ADJUSTMENT( oo ) ) {
             res = trp_gtk_widget( gtk_spin_button_new( (GtkAdjustment *)oo, cr, d ) );
@@ -39,9 +39,9 @@ trp_obj_t *trp_gtk_spin_button_new_with_range( trp_obj_t *min, trp_obj_t *max, t
 {
     double dmin, dmax, dstep;
 
-    if ( trp_cast_double( min, &dmin ) ||
-         trp_cast_double( max, &dmax ) ||
-         trp_cast_double( step, &dstep ) )
+    if ( trp_cast_flt64b( min, &dmin ) ||
+         trp_cast_flt64b( max, &dmax ) ||
+         trp_cast_flt64b( step, &dstep ) )
         return UNDEF;
     if ( dmin > dmax )
         return UNDEF;
@@ -53,7 +53,7 @@ void trp_gtk_spin_button_set_value( trp_obj_t *obj, trp_obj_t *val )
     GtkWidget *oo = trp_gtk_get_widget( obj );
     double v;
 
-    if ( oo && ( !trp_cast_double( val, &v ) ) )
+    if ( oo && ( !trp_cast_flt64b( val, &v ) ) )
         if ( GTK_IS_SPIN_BUTTON( oo ) )
             gtk_spin_button_set_value( (GtkSpinButton *)oo, v );
 }
@@ -98,7 +98,7 @@ void trp_gtk_spin_button_set_range( trp_obj_t *obj, trp_obj_t *min, trp_obj_t *m
     GtkWidget *oo = trp_gtk_get_widget( obj );
     double dmin, dmax;
 
-    if ( oo && ( !trp_cast_double( min, &dmin ) ) && ( !trp_cast_double( max, &dmax ) ) )
+    if ( oo && ( !trp_cast_flt64b( min, &dmin ) ) && ( !trp_cast_flt64b( max, &dmax ) ) )
         if ( GTK_IS_SPIN_BUTTON( oo ) )
             gtk_spin_button_set_range( (GtkSpinButton *)oo, dmin, dmax );
 }

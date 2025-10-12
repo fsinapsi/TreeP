@@ -52,7 +52,7 @@ void trp_gtk_progress_bar_set_fraction( trp_obj_t *obj, trp_obj_t *percent )
     GtkWidget *oo = trp_gtk_get_widget( obj );
     double p;
 
-    if ( oo && ( !trp_cast_double( percent, &p ) ) )
+    if ( oo && ( !trp_cast_flt64b( percent, &p ) ) )
         if ( GTK_IS_PROGRESS_BAR( oo ) )
             gtk_progress_bar_set_fraction( (GtkProgressBar *)oo, p );
 }
@@ -62,7 +62,7 @@ void trp_gtk_progress_bar_set_pulse_step( trp_obj_t *obj, trp_obj_t *percent )
     GtkWidget *oo = trp_gtk_get_widget( obj );
     double p;
 
-    if ( oo && ( !trp_cast_double( percent, &p ) ) )
+    if ( oo && ( !trp_cast_flt64b( percent, &p ) ) )
         if ( GTK_IS_PROGRESS_BAR( oo ) )
             gtk_progress_bar_set_pulse_step( (GtkProgressBar *)oo, p );
 }

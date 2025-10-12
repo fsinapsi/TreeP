@@ -125,8 +125,9 @@ trp_obj_t *trp_gtk_image_new_from_pixbuf( trp_obj_t *pix )
 trp_obj_t *trp_gtk_image_new_from_file( trp_obj_t *path )
 {
     uns8b *p = trp_csprint( path );
-    GdkPixbufAnimation *pbufanim;
     GdkPixbuf *pbuf;
+    /*
+    GdkPixbufAnimation *pbufanim;
 
     pbufanim = gdk_pixbuf_animation_new_from_file( p, NULL );
     if ( pbufanim ) {
@@ -141,6 +142,7 @@ trp_obj_t *trp_gtk_image_new_from_file( trp_obj_t *path )
                                                    (gpointer)pbufanim );
         return res;
     }
+    */
     pbuf = gdk_pixbuf_new_from_file( p, NULL );
     if ( pbuf ) {
         GtkWidget *z;

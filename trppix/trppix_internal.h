@@ -68,10 +68,6 @@ typedef struct {
 #define TRP_PIX_RGB_TO_GRAY_01_C(c) TRP_PIX_RGB_TO_GRAY_01((c)->red,(c)->green,(c)->blue)
 
 uns8b trp_pix_close( trp_pix_t *obj );
-uns8b *trp_pix_get_map( trp_pix_t *obj );
-#define trp_pix_get_mapp(o) trp_pix_get_map((trp_pix_t *)(o))
-#define trp_pix_get_mapt(o) ((uns32b *)(trp_pix_get_map((trp_pix_t *)(o))))
-#define trp_pix_get_mapc(o) ((trp_pix_color_t *)(trp_pix_get_map((trp_pix_t *)(o))))
 trp_obj_t *trp_pix_create_image_from_data( int must_copy, uns32b w, uns32b h, uns8b *data );
 trp_obj_t *trp_pix_create_basic( uns32b w, uns32b h );
 trp_obj_t *trp_pix_create_color( uns16b red, uns16b green, uns16b blue, uns16b alpha );
@@ -100,5 +96,17 @@ uns8b trp_pix_load_ptg_memory( uns8b *idata, uns32b isize, uns32b *w, uns32b *h,
 uns8b trp_pix_scale_low( uns32b wi, uns32b hi, uns8b *idata, uns32b wo, uns32b ho, uns8b **odata );
 uns8b trp_pix_rotate_low( trp_obj_t *pix, flt64b a, uns32b *wo, uns32b *ho, uns8b **data );
 trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, double xx, double yy, double ww, double hh );
+void trp_pix_ss_444_to_420jpeg( uns8b *buf, uns32b width, uns32b height );
+uns8b *trp_pix_trp2yuv( trp_obj_t *pix );
+uns8b trp_pix_yuv2trp( uns8b *yuv, trp_obj_t *pix );
+uns8b *trp_pix_get_map_low( trp_pix_t *obj );
+#define trp_pix_get_mapp(o) trp_pix_get_map_low((trp_pix_t *)(o))
+#define trp_pix_get_mapt(o) ((uns32b *)(trp_pix_get_map_low((trp_pix_t *)(o))))
+#define trp_pix_get_mapc(o) ((trp_pix_color_t *)(trp_pix_get_map_low((trp_pix_t *)(o))))
+#define trp_pix_is_not_valid(o) ((uns8b)(trp_pix_get_mapp(o)?0:1))
+void trp_pix_fclamp( flt64b *val );
+void trp_pix_fclamp_rgb( flt64b *r, flt64b *g, flt64b *b );
+#define trp_pix_iclamp255(v) (((v)<0)?0:(((v)>255)?255:(v)))
+trp_obj_t *trp_pix_clone( trp_obj_t *pix );
 
 #endif /* !__trppix_internal__h */

@@ -22,36 +22,33 @@
 
 static trp_obj_t *trp_pix_top_bottom_field( uns8b bottom, trp_obj_t *pix );
 static uns8b trp_pix_top_bottom_field_test( uns8b bottom, trp_obj_t *pix );
-static void trp_pix_colormod_set_table( uns8b tipo, uns8b *t, double v );
-static void trp_pix_colormod_basic( uns8b tipo, trp_pix_color_t *map, uns32b w, uns32b h, double vr, double vg, double vb );
+static void trp_pix_colormod_set_table( uns8b tipo, uns8b *t, flt64b v );
+static void trp_pix_colormod_basic( uns8b tipo, trp_pix_color_t *map, uns32b w, uns32b h, flt64b vr, flt64b vg, flt64b vb );
 
 trp_obj_t *trp_pix_point( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y )
 {
-    trp_pix_color_t *map;
-    double xx, yy;
+    trp_pix_color_t *map = trp_pix_get_mapc( pix );
+    flt64b xx, yy;
 
-    if ( ( pix->tipo != TRP_PIX ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) )
+    if ( ( map == NULL ) ||
+         trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) )
         return UNDEF;
-    if ( ( ((trp_pix_t *)pix)->map.p == NULL ) ||
-         ( xx < 0.0 ) || ( yy < 0.0 ) ||
-         ( xx > (double)( ((trp_pix_t *)pix)->w ) - 1.0 ) ||
-         ( yy > (double)( ((trp_pix_t *)pix)->h ) - 1.0 ) )
+    if ( ( xx < 0.0 ) || ( yy < 0.0 ) ||
+         ( xx > (flt64b)( ((trp_pix_t *)pix)->w ) - 1.0 ) ||
+         ( yy > (flt64b)( ((trp_pix_t *)pix)->h ) - 1.0 ) )
         return UNDEF;
-    map = ((trp_pix_t *)pix)->map.c + trp_pix_cast( xx ) + ((trp_pix_t *)pix)->w * trp_pix_cast( yy );
+    map = map + trp_pix_cast( xx ) + ((trp_pix_t *)pix)->w * trp_pix_cast( yy );
     return trp_pix_create_color( 257 * map->red, 257 * map->green,
                                  257 * map->blue, 257 * map->alpha );
 }
 
 static trp_obj_t *trp_pix_top_bottom_field( uns8b bottom, trp_obj_t *pix )
 {
-    trp_pix_color_t *p;
+    trp_pix_color_t *p = trp_pix_get_mapc( pix );
     uns32b w, h;
 
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ( p = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( p == NULL )
         return UNDEF;
     w = ((trp_pix_t *)pix)->w;
     h = ((trp_pix_t *)pix)->h;
@@ -81,12 +78,10 @@ trp_obj_t *trp_pix_bottom_field( trp_obj_t *pix )
 
 static uns8b trp_pix_top_bottom_field_test( uns8b bottom, trp_obj_t *pix )
 {
-    trp_pix_color_t *p, *q;
+    trp_pix_color_t *p = trp_pix_get_mapc( pix ), *q;
     uns32b w, h, w2, w4;
 
-    if ( pix->tipo != TRP_PIX )
-        return 1;
-    if ( ( p = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( p == NULL )
         return 1;
     w = ((trp_pix_t *)pix)->w;
     h = ((trp_pix_t *)pix)->h;
@@ -114,12 +109,12 @@ uns8b trp_pix_bottom_field_test( trp_obj_t *pix )
     return trp_pix_top_bottom_field_test( 1, pix );
 }
 
-trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, double xx, double yy, double ww, double hh )
+trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, flt64b xx, flt64b yy, flt64b ww, flt64b hh )
 {
-    trp_pix_color_t *p;
+    trp_pix_color_t *p = trp_pix_get_mapc( pix );
     uns32b pw, ph, sx, sy, sw, sh, sw4;
 
-    if ( ( p = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( p == NULL )
         return UNDEF;
     pw = ((trp_pix_t *)pix)->w;
     ph = ((trp_pix_t *)pix)->h;
@@ -131,7 +126,7 @@ trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, double xx, double yy, double ww, do
         hh += yy;
         yy = 0.0;
     }
-    if ( ( xx > (double)pw - 1.0 ) || ( yy > (double)ph - 1.0 ) ||
+    if ( ( xx > (flt64b)pw - 1.0 ) || ( yy > (flt64b)ph - 1.0 ) ||
          ( ww < 1.0 ) || ( hh < 1.0 ) )
         return UNDEF;
     sx = trp_pix_cast( xx );
@@ -154,35 +149,34 @@ trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, double xx, double yy, double ww, do
 
 trp_obj_t *trp_pix_crop( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *w, trp_obj_t *h )
 {
-    double xx, yy, ww, hh;
+    flt64b xx, yy, ww, hh;
 
-    if ( ( pix->tipo != TRP_PIX ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) ||
-         trp_cast_double( w, &ww ) ||
-         trp_cast_double( h, &hh ) )
+    if ( trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) ||
+         trp_cast_flt64b( w, &ww ) ||
+         trp_cast_flt64b( h, &hh ) )
         return UNDEF;
     return trp_pix_crop_low( pix, xx, yy, ww, hh );
 }
 
-static void trp_pix_colormod_set_table( uns8b tipo, uns8b *t, double v )
+static void trp_pix_colormod_set_table( uns8b tipo, uns8b *t, flt64b v )
 {
-    double td[ 256 ];
+    flt64b td[ 256 ];
     int i;
 
     switch ( tipo ) {
     case 0: /* brightness */
         for ( i = 0 ; i < 256 ; i++ )
-            td[ i ] = (double)i / 255.0 + v;
+            td[ i ] = (flt64b)i / 255.0 + v;
         break;
     case 1: /* contrast */
         for ( i = 0 ; i < 256 ; i++ )
-            td[ i ] = ( (double)i / 255.0 - 0.5 ) * v + 0.5;
+            td[ i ] = ( (flt64b)i / 255.0 - 0.5 ) * v + 0.5;
         break;
     case 2: /* gamma */
         v = 1.0 / v;
         for ( i = 0 ; i < 256 ; i++ )
-            td[ i ] = pow( (double)i / 255.0, v );
+            td[ i ] = pow( (flt64b)i / 255.0, v );
         break;
     }
     for ( i = 0 ; i < 256 ; i++ ) {
@@ -194,10 +188,10 @@ static void trp_pix_colormod_set_table( uns8b tipo, uns8b *t, double v )
     }
 }
 
-static void trp_pix_colormod_basic( uns8b tipo, trp_pix_color_t *map, uns32b w, uns32b h, double vr, double vg, double vb )
+static void trp_pix_colormod_basic( uns8b tipo, trp_pix_color_t *map, uns32b w, uns32b h, flt64b vr, flt64b vg, flt64b vb )
 {
     static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
-    static double oldvr[ 3 ] = { 0.0, 0.0, 0.0 }, oldvg[ 3 ] = { 0.0, 0.0, 0.0 }, oldvb[ 3 ] = { 0.0, 0.0, 0.0 };
+    static flt64b oldvr[ 3 ] = { 0.0, 0.0, 0.0 }, oldvg[ 3 ] = { 0.0, 0.0, 0.0 }, oldvb[ 3 ] = { 0.0, 0.0, 0.0 };
     static uns8b tr[ 3 ][ 256 ], tg[ 3 ][ 256 ], tb[ 3 ][ 256 ];
     uns32b i;
 
@@ -235,9 +229,9 @@ void trp_pix_colormod_init()
 
 uns8b trp_pix_brightness( trp_obj_t *pix, trp_obj_t *val )
 {
-    double v;
+    flt64b v;
 
-    if ( ( pix->tipo != TRP_PIX ) || trp_cast_double( val, &v ) )
+    if ( ( pix->tipo != TRP_PIX ) || trp_cast_flt64b_range( val, &v, -1.0, 1.0 ) )
         return 1;
     if ( ((trp_pix_t *)pix)->map.p == NULL )
         return 1;
@@ -249,12 +243,12 @@ uns8b trp_pix_brightness( trp_obj_t *pix, trp_obj_t *val )
 
 uns8b trp_pix_brightness_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, trp_obj_t *val_b )
 {
-    double vr, vg, vb;
+    flt64b vr, vg, vb;
 
     if ( ( pix->tipo != TRP_PIX ) ||
-         trp_cast_double( val_r, &vr ) ||
-         trp_cast_double( val_g, &vg ) ||
-         trp_cast_double( val_b, &vb ) )
+         trp_cast_flt64b_range( val_r, &vr, -1.0, 1.0 ) ||
+         trp_cast_flt64b_range( val_g, &vg, -1.0, 1.0 ) ||
+         trp_cast_flt64b_range( val_b, &vb, -1.0, 1.0 ) )
         return 1;
     if ( ((trp_pix_t *)pix)->map.p == NULL )
         return 1;
@@ -266,9 +260,9 @@ uns8b trp_pix_brightness_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g
 
 uns8b trp_pix_contrast( trp_obj_t *pix, trp_obj_t *val )
 {
-    double v;
+    flt64b v;
 
-    if ( ( pix->tipo != TRP_PIX ) || trp_cast_double( val, &v ) )
+    if ( ( pix->tipo != TRP_PIX ) || trp_cast_flt64b( val, &v ) )
         return 1;
     if ( ( ((trp_pix_t *)pix)->map.p == NULL ) || ( v < 0.0 ) )
         return 1;
@@ -280,12 +274,12 @@ uns8b trp_pix_contrast( trp_obj_t *pix, trp_obj_t *val )
 
 uns8b trp_pix_contrast_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, trp_obj_t *val_b )
 {
-    double vr, vg, vb;
+    flt64b vr, vg, vb;
 
     if ( ( pix->tipo != TRP_PIX ) ||
-         trp_cast_double( val_r, &vr ) ||
-         trp_cast_double( val_g, &vg ) ||
-         trp_cast_double( val_b, &vb ) )
+         trp_cast_flt64b( val_r, &vr ) ||
+         trp_cast_flt64b( val_g, &vg ) ||
+         trp_cast_flt64b( val_b, &vb ) )
         return 1;
     if ( ( ((trp_pix_t *)pix)->map.p == NULL ) ||
          ( vr < 0.0 ) || ( vg < 0.0 ) || ( vb < 0.0 ) )
@@ -298,9 +292,9 @@ uns8b trp_pix_contrast_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, 
 
 uns8b trp_pix_gamma( trp_obj_t *pix, trp_obj_t *val )
 {
-    double v;
+    flt64b v;
 
-    if ( ( pix->tipo != TRP_PIX ) || trp_cast_double( val, &v ) )
+    if ( ( pix->tipo != TRP_PIX ) || trp_cast_flt64b( val, &v ) )
         return 1;
     if ( ( ((trp_pix_t *)pix)->map.p == NULL ) || ( v <= 0.0 ) )
         return 1;
@@ -312,12 +306,12 @@ uns8b trp_pix_gamma( trp_obj_t *pix, trp_obj_t *val )
 
 uns8b trp_pix_gamma_rgb( trp_obj_t *pix, trp_obj_t *val_r, trp_obj_t *val_g, trp_obj_t *val_b )
 {
-    double vr, vg, vb;
+    flt64b vr, vg, vb;
 
     if ( ( pix->tipo != TRP_PIX ) ||
-         trp_cast_double( val_r, &vr ) ||
-         trp_cast_double( val_g, &vg ) ||
-         trp_cast_double( val_b, &vb ) )
+         trp_cast_flt64b( val_r, &vr ) ||
+         trp_cast_flt64b( val_g, &vg ) ||
+         trp_cast_flt64b( val_b, &vb ) )
         return 1;
     if ( ( ((trp_pix_t *)pix)->map.p == NULL ) ||
          ( vr <= 0.0 ) || ( vg <= 0.0 ) || ( vb <= 0.0 ) )

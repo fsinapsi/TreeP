@@ -18,7 +18,6 @@
 
 #include "./trppix_internal.h"
 
-#define TRP_PI 3.1415926535897932384626433832795029L
 #define TRP_PIX_ROTATE_ANGLE_MIN (0.18L/TRP_PI)
 
 #ifdef  TRP_BIG_ENDIAN

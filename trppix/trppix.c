@@ -233,13 +233,6 @@ static trp_obj_t *trp_pix_height( trp_pix_t *pix )
     return pix->map.p ? trp_sig64( pix->h ) : UNDEF;
 }
 
-uns8b *trp_pix_get_map( trp_pix_t *obj )
-{
-    if ( obj->tipo != TRP_PIX )
-        return NULL;
-    return obj->map.p;
-}
-
 trp_obj_t *trp_pix_create_image_from_data( int must_copy, uns32b w, uns32b h, uns8b *data )
 {
     trp_pix_t *pix;
@@ -405,10 +398,9 @@ uns8b trp_pix_set_color( trp_obj_t *pix, trp_obj_t *color )
     uns8b *p;
     uns16b r, g, b, a;
 
-    if ( pix->tipo != TRP_PIX )
+    if ( trp_pix_is_not_valid( pix ) )
         return 1;
-    if ( ( ((trp_pix_t *)pix)->map.p == NULL ) ||
-         trp_pix_decode_color( color, &r, &g, &b, &a ) )
+    if ( trp_pix_decode_color( color, &r, &g, &b, &a ) )
         return 1;
     ((trp_pix_t *)pix)->color.red = r;
     ((trp_pix_t *)pix)->color.green = g;
@@ -419,9 +411,7 @@ uns8b trp_pix_set_color( trp_obj_t *pix, trp_obj_t *color )
 
 trp_obj_t *trp_pix_get_color( trp_obj_t *pix )
 {
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ((trp_pix_t *)pix)->map.p == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     return trp_pix_create_color( ((trp_pix_t *)pix)->color.red,
                                  ((trp_pix_t *)pix)->color.green,

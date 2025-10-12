@@ -267,7 +267,7 @@ uns8b trp_iup_set_double( trp_obj_t *ih, trp_obj_t *name, trp_obj_t *value )
     double v;
 
     if ( ( ( h = trp_iup_check( ih ) ) == NULL ) ||
-         trp_cast_double( value, &v ) )
+         trp_cast_flt64b( value, &v ) )
         return 1;
     nn = trp_csprint( name );
     IupSetDouble( h, nn, v );

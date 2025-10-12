@@ -140,7 +140,7 @@ uns8b trp_sdl_playwav( trp_obj_t *path, trp_obj_t *volume )
     if ( trp_sdl_check() )
         return 1;
     if ( volume ) {
-        if ( trp_cast_double_range( volume, &vol, 0.0, 1.0 ) )
+        if ( trp_cast_flt64b_range( volume, &vol, 0.0, 1.0 ) )
             return 1;
     } else
         vol = 1.0;
@@ -175,7 +175,7 @@ uns8b trp_sdl_playwav_memory( trp_obj_t *raw, trp_obj_t *volume )
     if ( trp_sdl_raw2audiospec( (trp_raw_t *)raw, &wav_spec, &( a.len ), &( a.buf ) ) )
         return 1;
     if ( volume ) {
-        if ( trp_cast_double_range( volume, &vol, 0.0, 1.0 ) )
+        if ( trp_cast_flt64b_range( volume, &vol, 0.0, 1.0 ) )
             return 1;
     } else
         vol = 1.0;

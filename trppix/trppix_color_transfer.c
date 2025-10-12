@@ -21,32 +21,32 @@
 typedef struct {
     uns32b w;
     uns32b h;
-    double *map;
+    flt64b *map;
 } trp_pix_lab_t;
 
 static uns8b trp_pix_rgb2lab( trp_pix_t *pix, trp_pix_lab_t *lab,
-                              double *Lmean, double *amean, double *bmean,
-                              double *Lstdev, double *astdev, double *bstdev )
+                              flt64b *Lmean, flt64b *amean, flt64b *bmean,
+                              flt64b *Lstdev, flt64b *astdev, flt64b *bstdev )
 {
     uns8b *p;
-    double *q;
+    flt64b *q;
     uns32b w, h, n, i;
-    double rat = 1.0 / 3.0, sed = 16.0 / 116.0;
-    double r1, g1, b1, r2, g2, b2;
-    double Lm, am, bm, Ls, as, bs;
+    flt64b rat = 1.0 / 3.0, sed = 16.0 / 116.0;
+    flt64b r1, g1, b1, r2, g2, b2;
+    flt64b Lm, am, bm, Ls, as, bs;
 
     w = lab->w = pix->w;
     h = lab->h = pix->h;
     n = w * h;
-    if ( ( q = malloc( n * 3 * sizeof( double ) ) ) == NULL )
+    if ( ( q = malloc( n * 3 * sizeof( flt64b ) ) ) == NULL )
         return 1;
     lab->map = q;
     p = pix->map.p;
     Lm = am = bm = Ls = as = bs = 0.0;
     for ( i = n ; i ; i--, p++ ) {
-        r1 = (double)( *p++ ) / 255.0;
-        g1 = (double)( *p++ ) / 255.0;
-        b1 = (double)( *p++ ) / 255.0;
+        r1 = (flt64b)( *p++ ) / 255.0;
+        g1 = (flt64b)( *p++ ) / 255.0;
+        b1 = (flt64b)( *p++ ) / 255.0;
         r1 = ( r1 > 0.04045 ) ? pow( ( r1 + 0.055 ) / 1.055, 2.4 ) : r1 / 12.92;
         g1 = ( g1 > 0.04045 ) ? pow( ( g1 + 0.055 ) / 1.055, 2.4 ) : g1 / 12.92;
         b1 = ( b1 > 0.04045 ) ? pow( ( b1 + 0.055 ) / 1.055, 2.4 ) : b1 / 12.92;
@@ -66,22 +66,22 @@ static uns8b trp_pix_rgb2lab( trp_pix_t *pix, trp_pix_lab_t *lab,
         as += g1 * g1;
         bs += b1 * b1;
     }
-    *Lmean = Lm = Lm / (double)n;
-    *amean = am = am / (double)n;
-    *bmean = bm = bm / (double)n;
-    *Lstdev = sqrt( Ls / (double)n - Lm * Lm );
-    *astdev = sqrt( as / (double)n - am * am );
-    *bstdev = sqrt( bs / (double)n - bm * bm );
+    *Lmean = Lm = Lm / (flt64b)n;
+    *amean = am = am / (flt64b)n;
+    *bmean = bm = bm / (flt64b)n;
+    *Lstdev = sqrt( Ls / (flt64b)n - Lm * Lm );
+    *astdev = sqrt( as / (flt64b)n - am * am );
+    *bstdev = sqrt( bs / (flt64b)n - bm * bm );
     return 0;
 }
 
 static uns8b trp_pix_lab2rgb( trp_pix_lab_t *lab, trp_pix_t *pix )
 {
     uns8b *q;
-    double *p;
+    flt64b *p;
     uns32b w, h, i;
-    double rat = 1.0 / 2.4, sed = 16.0 / 116.0, rcu = pow( 0.008856, 1.0 / 3.0 );
-    double r1, g1, b1, r2, g2, b2;
+    flt64b rat = 1.0 / 2.4, sed = 16.0 / 116.0, rcu = pow( 0.008856, 1.0 / 3.0 );
+    flt64b r1, g1, b1, r2, g2, b2;
 
     w = lab->w;
     h = lab->h;
@@ -115,10 +115,10 @@ static uns8b trp_pix_lab2rgb( trp_pix_lab_t *lab, trp_pix_t *pix )
 static uns8b trp_pix_color_transfer_low( trp_pix_t *pixs, trp_pix_t *pixt )
 {
     trp_pix_lab_t slab, tlab;
-    double *p;
-    double sLm, sam, sbm, sLs, sas, sbs;
-    double tLm, tam, tbm, tLs, tas, tbs;
-    double Lr, ar, br, Lw, aw, bw;
+    flt64b *p;
+    flt64b sLm, sam, sbm, sLs, sas, sbs;
+    flt64b tLm, tam, tbm, tLs, tas, tbs;
+    flt64b Lr, ar, br, Lw, aw, bw;
     uns32b i;
     uns8b res;
 
@@ -152,23 +152,20 @@ trp_obj_t *trp_pix_color_transfer( trp_obj_t *pixs, trp_obj_t *pixt )
 {
     trp_obj_t *res;
 
-    if ( ( pixs->tipo != TRP_PIX ) || ( pixt->tipo != TRP_PIX ) )
+    if ( trp_pix_is_not_valid( pixs ) || trp_pix_is_not_valid( pixt ) )
         return UNDEF;
-    if ( ( ((trp_pix_t *)pixs)->map.c == NULL ) ||
-         ( ((trp_pix_t *)pixt)->map.c == NULL ) )
-        return UNDEF;
-    res = trp_pix_crop_low( pixs, 0.0, 0.0, (double)( ((trp_pix_t *)pixs)->w ), (double)( ((trp_pix_t *)pixs)->h ) );
+    res = trp_pix_clone( pixs );
     if ( res != UNDEF )
-        (void)trp_pix_color_transfer_low( (trp_pix_t *)res, (trp_pix_t *)pixt );
+        if ( trp_pix_color_transfer_low( (trp_pix_t *)res, (trp_pix_t *)pixt ) ) {
+            (void)trp_pix_close( (trp_pix_t *)res );
+            res = UNDEF;
+        }
     return res;
 }
 
 uns8b trp_pix_color_transfer_test( trp_obj_t *pixs, trp_obj_t *pixt )
 {
-    if ( ( pixs->tipo != TRP_PIX ) || ( pixt->tipo != TRP_PIX ) )
-        return 1;
-    if ( ( ((trp_pix_t *)pixs)->map.c == NULL ) ||
-         ( ((trp_pix_t *)pixt)->map.c == NULL ) )
+    if ( trp_pix_is_not_valid( pixs ) || trp_pix_is_not_valid( pixt ) )
         return 1;
     return trp_pix_color_transfer_low( (trp_pix_t *)pixs, (trp_pix_t *)pixt );
 }
@@ -176,17 +173,15 @@ uns8b trp_pix_color_transfer_test( trp_obj_t *pixs, trp_obj_t *pixt )
 trp_obj_t *trp_pix_lab_distance( trp_obj_t *pix1, trp_obj_t *pix2 )
 {
     trp_pix_lab_t lab1, lab2;
-    double *p1, *p2;
-    double L1, a1, b1, L2, a2, b2;
-    double deltaL, deltaa, deltab;
-    double tdist;
+    flt64b *p1, *p2;
+    flt64b L1, a1, b1, L2, a2, b2;
+    flt64b deltaL, deltaa, deltab;
+    flt64b tdist;
     uns32b n, i;
 
-    if ( ( pix1->tipo != TRP_PIX ) || ( pix2->tipo != TRP_PIX ) )
+    if ( trp_pix_is_not_valid( pix1 ) || trp_pix_is_not_valid( pix2 ) )
         return UNDEF;
-    if ( ( ((trp_pix_t *)pix1)->map.c == NULL ) ||
-         ( ((trp_pix_t *)pix2)->map.c == NULL ) ||
-         ( ((trp_pix_t *)pix1)->w != ((trp_pix_t *)pix2)->w ) ||
+    if ( ( ((trp_pix_t *)pix1)->w != ((trp_pix_t *)pix2)->w ) ||
          ( ((trp_pix_t *)pix1)->h != ((trp_pix_t *)pix2)->h ) )
         return UNDEF;
     if ( trp_pix_rgb2lab( (trp_pix_t *)pix1, &lab1, &L1, &a1, &b1, &L2, &a2, &b2 ) )
@@ -215,6 +210,6 @@ trp_obj_t *trp_pix_lab_distance( trp_obj_t *pix1, trp_obj_t *pix2 )
     }
     free( lab1.map );
     free( lab2.map );
-    return trp_double( tdist / (double)n );
+    return trp_double( tdist / (flt64b)n );
 }
 

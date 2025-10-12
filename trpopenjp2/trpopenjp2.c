@@ -651,11 +651,11 @@ static uns8b trp_openjp2_save_low( trp_obj_t *pix, trp_openjp2_data_t *odata, tr
         double rate;
 
         parameters.tcp_numlayers = 0;
-        if ( trp_cast_double_range( quality, &rate, 0.0, 99.0 ) ) {
+        if ( trp_cast_flt64b_range( quality, &rate, 0.0, 99.0 ) ) {
             for ( ; ; ) {
                 if ( quality->tipo != TRP_CONS )
                     goto error;
-                if ( trp_cast_double_range( ((trp_cons_t *)quality)->car, &rate, 0.0, 99.0 ) )
+                if ( trp_cast_flt64b_range( ((trp_cons_t *)quality)->car, &rate, 0.0, 99.0 ) )
                     goto error;
                 parameters.tcp_rates[ parameters.tcp_numlayers++ ] = rate;
                 quality = ((trp_cons_t *)quality)->cdr;

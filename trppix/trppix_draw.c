@@ -212,8 +212,8 @@ uns8b trp_pix_draw_pix( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t *s
     uns32b xdst, ydst, wdst, hdst, wsrco, wsrc, hsrc;
 
     if ( ( dst == src ) || ( src->tipo != TRP_PIX ) || ( dst->tipo != TRP_PIX ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) )
+         trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) )
         return 1;
     if ( ( ( pdst = ((trp_pix_t *)dst)->map.c ) == NULL ) ||
          ( ( psrc = ((trp_pix_t *)src)->map.c ) == NULL ) )
@@ -261,8 +261,8 @@ uns8b trp_pix_draw_pix_alpha( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_ob
     uns8b alpha, nalpha;
 
     if ( ( dst == src ) || ( src->tipo != TRP_PIX ) || ( dst->tipo != TRP_PIX ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) )
+         trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) )
         return 1;
     if ( ( ( pdst = ((trp_pix_t *)dst)->map.c ) == NULL ) ||
          ( ( psrc = ((trp_pix_t *)src)->map.c ) == NULL ) )
@@ -338,10 +338,10 @@ uns8b trp_pix_draw_box( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t *w
     uns8b r, g, b, a;
 
     if ( trp_pix_decode_color_uns8b( color, dst, &r, &g, &b, &a ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) ||
-         trp_cast_double( w, &ww ) ||
-         trp_cast_double( h, &hh ) )
+         trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) ||
+         trp_cast_flt64b( w, &ww ) ||
+         trp_cast_flt64b( h, &hh ) )
         return 1;
     if ( ( ww <= 0.0 ) || ( hh <= 0.0 ) )
         return 1;
@@ -355,8 +355,8 @@ uns8b trp_pix_draw_point( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t 
     uns8b r, g, b, a;
 
     if ( trp_pix_decode_color_uns8b( color, dst, &r, &g, &b, &a ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) )
+         trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) )
         return 1;
     trp_pix_draw_point_basic( dst, r, g, b, a, xx, yy );
     return 0;
@@ -368,10 +368,10 @@ uns8b trp_pix_draw_line( trp_obj_t *dst, trp_obj_t *x1, trp_obj_t *y1, trp_obj_t
     uns8b r, g, b, a;
 
     if ( trp_pix_decode_color_uns8b( color, dst, &r, &g, &b, &a ) ||
-         trp_cast_double( x1, &xx1 ) ||
-         trp_cast_double( y1, &yy1 ) ||
-         trp_cast_double( x2, &xx2 ) ||
-         trp_cast_double( y2, &yy2 ) )
+         trp_cast_flt64b( x1, &xx1 ) ||
+         trp_cast_flt64b( y1, &yy1 ) ||
+         trp_cast_flt64b( x2, &xx2 ) ||
+         trp_cast_flt64b( y2, &yy2 ) )
         return 1;
     trp_pix_draw_line_basic( dst, r, g, b, a, xx1, yy1, xx2, yy2, 0.0, 0.0 );
     return 0;
@@ -383,12 +383,12 @@ uns8b trp_pix_draw_dashed_line( trp_obj_t *dst, trp_obj_t *x1, trp_obj_t *y1, tr
     uns8b r, g, b, a;
 
     if ( trp_pix_decode_color_uns8b( color, dst, &r, &g, &b, &a ) ||
-         trp_cast_double( x1, &xx1 ) ||
-         trp_cast_double( y1, &yy1 ) ||
-         trp_cast_double( x2, &xx2 ) ||
-         trp_cast_double( y2, &yy2 ) ||
-         trp_cast_double( l1, &ll1 ) ||
-         trp_cast_double( l2, &ll2 ) )
+         trp_cast_flt64b( x1, &xx1 ) ||
+         trp_cast_flt64b( y1, &yy1 ) ||
+         trp_cast_flt64b( x2, &xx2 ) ||
+         trp_cast_flt64b( y2, &yy2 ) ||
+         trp_cast_flt64b( l1, &ll1 ) ||
+         trp_cast_flt64b( l2, &ll2 ) )
         return 1;
     if ( ( ll1 <= 0.0 ) || ( ll2 <= 0.0 ) )
         return 1;
@@ -402,9 +402,9 @@ uns8b trp_pix_draw_circle( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t
     uns8b r, g, b, a;
 
     if ( trp_pix_decode_color_uns8b( color, dst, &r, &g, &b, &a ) ||
-         trp_cast_double( x, &xx ) ||
-         trp_cast_double( y, &yy ) ||
-         trp_cast_double( rad, &rr ) )
+         trp_cast_flt64b( x, &xx ) ||
+         trp_cast_flt64b( y, &yy ) ||
+         trp_cast_flt64b( rad, &rr ) )
         return 1;
     if ( rr < 0 )
         return 1;

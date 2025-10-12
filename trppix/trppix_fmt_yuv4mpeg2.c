@@ -18,9 +18,6 @@
 
 #include "./trppix_internal.h"
 
-void trp_pix_ss_444_to_420jpeg( uns8b *buf, uns32b width, uns32b height );
-uns8b *trp_pix_pix2yuv( trp_obj_t *pix );
-
 uns8b trp_pix_save_yuv4mpeg2_init( trp_obj_t *width, trp_obj_t *height, trp_obj_t *framerate, trp_obj_t *aspect_ratio, trp_obj_t *f )
 {
     FILE *fp;
@@ -55,7 +52,7 @@ uns8b trp_pix_save_yuv4mpeg2( trp_obj_t *pix, trp_obj_t *f )
         f = trp_stdout();
     if ( ( fp = trp_file_writable_fp( f ) ) == NULL )
         return 1;
-    if ( ( p = trp_pix_pix2yuv( pix ) ) == NULL )
+    if ( ( p = trp_pix_trp2yuv( pix ) ) == NULL )
         return 1;
     w = ((trp_pix_t *)pix)->w;
     h = ((trp_pix_t *)pix)->h;

@@ -105,7 +105,7 @@ static void trp_gtk_graph_internal( int tipo, trp_vid_t *vid, trp_obj_t *im, trp
         break;
     case 1:
         trp_gtk_graph_calculate_max_avg_frame_size( vid );
-        if ( trp_cast_double( mag, &dmag ) ||
+        if ( trp_cast_flt64b( mag, &dmag ) ||
              trp_cast_uns32b( avrg_int, &avg_int ) ||
              ( vid->max_frame_size == -1 ) )
             return;
@@ -133,7 +133,7 @@ static void trp_gtk_graph_internal( int tipo, trp_vid_t *vid, trp_obj_t *im, trp
         if ( trp_cast_uns32b( v_size, &vbv_size ) ||
              trp_cast_uns32b( v_init, &vbv_init ) ||
              trp_cast_uns32b( v_rate, &vbv_rate ) ||
-             trp_cast_double( fps, &dmag ) ||
+             trp_cast_flt64b( fps, &dmag ) ||
              ( vid->cnt_vop == 0 ) )
             return;
         if ( dmag <= 0.0 )

@@ -1649,7 +1649,7 @@ trp_obj_t *trp_cord_weight2amino( trp_obj_t *weight )
     int i, best;
     double w, emax, e;
 
-    if ( trp_cast_double( weight, &w ) )
+    if ( trp_cast_flt64b( weight, &w ) )
         return UNDEF;
     emax = 0.01;
     best = -1;

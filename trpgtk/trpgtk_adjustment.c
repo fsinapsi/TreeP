@@ -22,12 +22,12 @@ trp_obj_t *trp_gtk_adjustment_new( trp_obj_t *value, trp_obj_t *lower, trp_obj_t
 {
     double dvalue, dlower, dupper, dstep_incr, dpage_incr, dpage_size;
 
-    if ( trp_cast_double( value, &dvalue ) ||
-         trp_cast_double( lower, &dlower ) ||
-         trp_cast_double( upper, &dupper ) ||
-         trp_cast_double( step_incr, &dstep_incr ) ||
-         trp_cast_double( page_incr, &dpage_incr ) ||
-         trp_cast_double( page_size, &dpage_size ) )
+    if ( trp_cast_flt64b( value, &dvalue ) ||
+         trp_cast_flt64b( lower, &dlower ) ||
+         trp_cast_flt64b( upper, &dupper ) ||
+         trp_cast_flt64b( step_incr, &dstep_incr ) ||
+         trp_cast_flt64b( page_incr, &dpage_incr ) ||
+         trp_cast_flt64b( page_size, &dpage_size ) )
         return UNDEF;
     return trp_gtk_widget( gtk_adjustment_new( dvalue, dlower, dupper, dstep_incr, dpage_incr, dpage_size ) );
 }
@@ -51,7 +51,7 @@ void trp_gtk_adjustment_set_value( trp_obj_t *obj, trp_obj_t *value )
     GtkWidget *w = trp_gtk_get_widget( obj );
     double dvalue;
 
-    if ( w && ( !trp_cast_double( value, &dvalue ) ) ) {
+    if ( w && ( !trp_cast_flt64b( value, &dvalue ) ) ) {
         if ( GTK_IS_SCROLLED_WINDOW( w ) )
             w = (GtkWidget *)gtk_scrolled_window_get_vadjustment( (GtkScrolledWindow *)w );
         if ( GTK_IS_ADJUSTMENT( w ) )

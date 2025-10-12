@@ -167,6 +167,7 @@ enum {
 #define trp_gc_free(p)
 #endif
 
+#define TRP_PI 3.1415926535897932384626433832795029L
 #define TRP_MAX(a,b) (((a)>=(b))?(a):(b))
 #define TRP_MIN(a,b) (((a)<=(b))?(a):(b))
 #define TRP_ABS(a) (((a)>=0.0)?(a):-(a))
@@ -405,8 +406,6 @@ uns8b trp_cast_sig64b_rint( trp_obj_t *obj, sig64b *val );
 uns8b trp_cast_sig64b_rint_range( trp_obj_t *obj, sig64b *val, sig64b min, sig64b max );
 uns8b trp_cast_flt64b( trp_obj_t *obj, flt64b *val );
 uns8b trp_cast_flt64b_range( trp_obj_t *obj, flt64b *val, flt64b min, flt64b max );
-#define trp_cast_double(a,b) trp_cast_flt64b(a,b)
-#define trp_cast_double_range(a,b,c,d) trp_cast_flt64b_range(a,b,c,d)
 
 void trp_arg_init( int argc, char *argv[] );
 trp_obj_t *trp_argc();

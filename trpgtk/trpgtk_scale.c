@@ -48,9 +48,9 @@ trp_obj_t *trp_gtk_hscale_new_with_range( trp_obj_t *min, trp_obj_t *max, trp_ob
 {
     double dmin, dmax, dstep;
 
-    if ( trp_cast_double( min, &dmin ) ||
-         trp_cast_double( max, &dmax ) ||
-         trp_cast_double( step, &dstep ) )
+    if ( trp_cast_flt64b( min, &dmin ) ||
+         trp_cast_flt64b( max, &dmax ) ||
+         trp_cast_flt64b( step, &dstep ) )
         return UNDEF;
     if ( dmin > dmax )
         return UNDEF;
@@ -61,9 +61,9 @@ trp_obj_t *trp_gtk_vscale_new_with_range( trp_obj_t *min, trp_obj_t *max, trp_ob
 {
     double dmin, dmax, dstep;
 
-    if ( trp_cast_double( min, &dmin ) ||
-         trp_cast_double( max, &dmax ) ||
-         trp_cast_double( step, &dstep ) )
+    if ( trp_cast_flt64b( min, &dmin ) ||
+         trp_cast_flt64b( max, &dmax ) ||
+         trp_cast_flt64b( step, &dstep ) )
         return UNDEF;
     if ( dmin > dmax )
         return UNDEF;

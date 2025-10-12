@@ -1731,7 +1731,7 @@ trp_obj_t *trp_math_pow( trp_obj_t *n, trp_obj_t *m )
         {
             double nn, mm;
 
-            if ( trp_cast_double( n, &nn ) || trp_cast_double( m, &mm ) )
+            if ( trp_cast_flt64b( n, &nn ) || trp_cast_flt64b( m, &mm ) )
                 return UNDEF;
             return trp_double( pow( nn, mm ) );
         }
@@ -1845,7 +1845,7 @@ trp_obj_t *trp_math_log( trp_obj_t *base, trp_obj_t *n )
 {
     double bbase, nn;
 
-    if ( trp_cast_double( base, &bbase ) || trp_cast_double( n, &nn ) )
+    if ( trp_cast_flt64b( base, &bbase ) || trp_cast_flt64b( n, &nn ) )
         return UNDEF;
     if ( ( bbase <= 0.0 ) || ( bbase == 1.0 ) || ( nn <= 0.0 ) )
         return UNDEF;
@@ -1856,7 +1856,7 @@ trp_obj_t *trp_math_atan( trp_obj_t *n )
 {
     double dn;
 
-    if ( trp_cast_double( n, &dn ) )
+    if ( trp_cast_flt64b( n, &dn ) )
         return UNDEF;
     return trp_double( atan( dn ) );
 }
@@ -1865,7 +1865,7 @@ trp_obj_t *trp_math_asin( trp_obj_t *n )
 {
     double dn;
 
-    if ( trp_cast_double( n, &dn ) )
+    if ( trp_cast_flt64b( n, &dn ) )
         return UNDEF;
     if ( ( dn > 1.0 ) || ( dn < -1.0 ) )
         return UNDEF;
@@ -1876,7 +1876,7 @@ trp_obj_t *trp_math_acos( trp_obj_t *n )
 {
     double dn;
 
-    if ( trp_cast_double( n, &dn ) )
+    if ( trp_cast_flt64b( n, &dn ) )
         return UNDEF;
     if ( ( dn > 1.0 ) || ( dn < -1.0 ) )
         return UNDEF;
@@ -1887,7 +1887,7 @@ trp_obj_t *trp_math_tan( trp_obj_t *n )
 {
     double dn;
 
-    if ( trp_cast_double( n, &dn ) )
+    if ( trp_cast_flt64b( n, &dn ) )
         return UNDEF;
     /*
      FIXME
@@ -1899,7 +1899,7 @@ trp_obj_t *trp_math_sin( trp_obj_t *n )
 {
     double dn;
 
-    if ( trp_cast_double( n, &dn ) )
+    if ( trp_cast_flt64b( n, &dn ) )
         return UNDEF;
     return trp_double( sin( dn ) );
 }
@@ -1908,7 +1908,7 @@ trp_obj_t *trp_math_cos( trp_obj_t *n )
 {
     double dn;
 
-    if ( trp_cast_double( n, &dn ) )
+    if ( trp_cast_flt64b( n, &dn ) )
         return UNDEF;
     return trp_double( cos( dn ) );
 }
@@ -1919,7 +1919,7 @@ trp_obj_t *trp_math_lyapunov( trp_obj_t *seq, trp_obj_t *a, trp_obj_t *b, trp_ob
     uns32b i, n;
     double ab[ 2 ], x = 0.4, col = 0.0, r;
 
-    if ( trp_cast_double( a, &( ab[ 0 ] ) ) || trp_cast_double( b, &( ab[ 1 ] ) ) )
+    if ( trp_cast_flt64b( a, &( ab[ 0 ] ) ) || trp_cast_flt64b( b, &( ab[ 1 ] ) ) )
         return UNDEF;
     if ( iter ) {
         if ( trp_cast_uns32b( iter, &n ) )

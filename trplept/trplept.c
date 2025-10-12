@@ -30,8 +30,6 @@ static uns8b trp_pix_load_lept_low( PIX *pixs, uns32b *w, uns32b *h, uns8b **dat
 static uns8b trp_pix_load_lept( uns8b *cpath, uns32b *w, uns32b *h, uns8b **data );
 static uns8b trp_pix_load_lept_memory( uns8b *idata, uns32b isize, uns32b *w, uns32b *h, uns8b **data );
 
-#define TRP_PI 3.1415926535897932384626433832795029L
-
 uns8b trp_lept_init()
 {
     extern uns8bfun_t _trp_pix_load_lept;
@@ -274,7 +272,7 @@ uns8b trp_lept_pix_unsharp_masking( trp_obj_t *pix, trp_obj_t *halfwidth, trp_ob
     PIX *pixs, *pixd;
 
     if ( trp_cast_uns32b_range( halfwidth, &hhalfwidth, 0, 1000 ) ||
-         trp_cast_double_range( fract, &ffract, 0.0, 10.0 ) )
+         trp_cast_flt64b_range( fract, &ffract, 0.0, 10.0 ) )
         return 1;
     if ( ( pixs = trp_lept_pix2PIX( pix ) ) == NULL )
         return 1;
@@ -385,7 +383,7 @@ uns8b trp_lept_pix_blend( trp_obj_t *dst, trp_obj_t *x, trp_obj_t *y, trp_obj_t 
 
     if ( trp_cast_sig64b_rint_range( x, &xx, -1000000, 1000000 ) ||
          trp_cast_sig64b_rint_range( y, &yy, -1000000, 1000000 ) ||
-         trp_cast_double_range( fract, &ffract, 0.0, 1.0 ) )
+         trp_cast_flt64b_range( fract, &ffract, 0.0, 1.0 ) )
         return 1;
     if ( trans_color ) {
         uns8b r, g, b, a;

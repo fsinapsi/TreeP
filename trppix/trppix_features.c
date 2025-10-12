@@ -68,27 +68,21 @@ uns8b trp_pix_has_alpha_low( trp_pix_t *pix )
 
 trp_obj_t *trp_pix_has_alpha( trp_obj_t *pix )
 {
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ((trp_pix_t *)pix)->map.c == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     return trp_pix_has_alpha_low( (trp_pix_t *)pix ) ? TRP_TRUE : TRP_FALSE;
 }
 
 trp_obj_t *trp_pix_grayp( trp_obj_t *pix )
 {
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ((trp_pix_t *)pix)->map.c == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     return ( ( trp_pix_colors_type( (trp_pix_t *)pix, 0 ) & 0xfffe ) == 0xfffe ) ? TRP_TRUE : TRP_FALSE;
 }
 
 trp_obj_t *trp_pix_bwp( trp_obj_t *pix )
 {
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ((trp_pix_t *)pix)->map.c == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     return ( trp_pix_colors_type( (trp_pix_t *)pix, 0 ) == 0xfffe ) ? TRP_TRUE : TRP_FALSE;
 }
@@ -114,9 +108,7 @@ trp_obj_t *trp_pix_get_luminance( trp_obj_t *pix )
     sig64b tot_r, tot_g, tot_b;
     uns32b n, i;
 
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ( map = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     tot_r = tot_g = tot_b = 0;
     n = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h;
@@ -140,9 +132,7 @@ trp_obj_t *trp_pix_get_contrast( trp_obj_t *pix )
     sig64b tot1, tot2;
     uns32b n, i, c;
 
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ( map = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     tot1 = tot2 = 0;
     n = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h;
@@ -164,9 +154,7 @@ trp_obj_t *trp_pix_gray_histogram( trp_obj_t *pix )
     trp_pix_color_t *c;
     uns32b i, h[ 256 ];
 
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ( c = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( trp_pix_is_not_valid( pix ) )
         return UNDEF;
     for ( i = 0 ; i < 256 ; i++ )
         h[ i ] = 0;

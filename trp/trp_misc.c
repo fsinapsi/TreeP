@@ -1182,7 +1182,7 @@ trp_obj_t *trp_ratio2uns64b( trp_obj_t *obj )
 {
     uns64b val;
 
-    if ( trp_cast_double( obj, (flt64b *)( &val ) ) )
+    if ( trp_cast_flt64b( obj, (flt64b *)( &val ) ) )
         return UNDEF;
     if ( val <= 0x7fffffffffffffffLL )
         return trp_sig64( val );
