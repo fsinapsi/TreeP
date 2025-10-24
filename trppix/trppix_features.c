@@ -104,11 +104,11 @@ trp_obj_t *trp_pix_color_count( trp_obj_t *pix, trp_obj_t *color )
 
 trp_obj_t *trp_pix_get_luminance( trp_obj_t *pix )
 {
-    trp_pix_color_t *map;
+    trp_pix_color_t *map = trp_pix_get_mapc( pix );
     sig64b tot_r, tot_g, tot_b;
     uns32b n, i;
 
-    if ( trp_pix_is_not_valid( pix ) )
+    if ( map == NULL )
         return UNDEF;
     tot_r = tot_g = tot_b = 0;
     n = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h;
@@ -127,12 +127,12 @@ trp_obj_t *trp_pix_get_luminance( trp_obj_t *pix )
 
 trp_obj_t *trp_pix_get_contrast( trp_obj_t *pix )
 {
+    trp_pix_color_t *map = trp_pix_get_mapc( pix );
     trp_obj_t *tn, *ttot1;
-    trp_pix_color_t *map;
     sig64b tot1, tot2;
     uns32b n, i, c;
 
-    if ( trp_pix_is_not_valid( pix ) )
+    if ( map == NULL )
         return UNDEF;
     tot1 = tot2 = 0;
     n = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h;
@@ -150,16 +150,16 @@ trp_obj_t *trp_pix_get_contrast( trp_obj_t *pix )
 
 trp_obj_t *trp_pix_gray_histogram( trp_obj_t *pix )
 {
+    trp_pix_color_t *map = trp_pix_get_mapc( pix );
     trp_array_t *obj;
-    trp_pix_color_t *c;
     uns32b i, h[ 256 ];
 
-    if ( trp_pix_is_not_valid( pix ) )
+    if ( map == NULL )
         return UNDEF;
     for ( i = 0 ; i < 256 ; i++ )
         h[ i ] = 0;
-    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ )
-        ++h[ TRP_PIX_RGB_TO_GRAY_C( c ) ];
+    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, map++ )
+        ++h[ TRP_PIX_RGB_TO_GRAY_C( map ) ];
     obj = trp_gc_malloc( sizeof( trp_array_t ) );
     obj->tipo = TRP_ARRAY;
     obj->incr = 1;
