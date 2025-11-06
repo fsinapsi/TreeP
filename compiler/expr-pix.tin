@@ -113,6 +113,9 @@
           [ "is-empty"                          1 2 ]
           [ "trim"                              2 3 ]
           [ "trim-values"                       2 3 ]
+          [ "color-hue"                         3 3 ]
+          [ "color-temperature-adm"             2 3 ]
+          [ "color-temperature-photodemon"      2 3 ]
           [ "color-transfer"                    2 2 ]
           [ "lab-distance"                      2 2 ]
         ] )
