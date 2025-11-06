@@ -938,7 +938,7 @@ uns8b trp_pix_rotate_low( trp_obj_t *pix, flt64b a, uns32b *wo, uns32b *ho, uns8
         a -= 360.0;
     while ( a < 0.0 )
         a += 360.0;
-    if ( a < TRP_PIX_ROTATE_ANGLE_MIN )
+    if ( ( a < TRP_PIX_ROTATE_ANGLE_MIN ) || ( ( 360.0 - a ) < TRP_PIX_ROTATE_ANGLE_MIN ) )
         aint = 0;
     else if ( TRP_ABS( a - 90.0 ) < TRP_PIX_ROTATE_ANGLE_MIN )
         aint = 90;

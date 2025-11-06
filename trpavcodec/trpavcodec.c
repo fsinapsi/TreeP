@@ -1524,13 +1524,13 @@ uns8b trp_av_set_filter( trp_obj_t *fmtctx, trp_obj_t *descr )
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context( (trp_avcodec_t *)fmtctx );
     AVCodecContext *dec_ctx;
     trp_avcodec_filter_t *filter;
-    AVFilterInOut *outputs, *inputs;
-    AVFilterGraph *filter_graph;
+    AVFilterInOut *outputs = NULL;
+    AVFilterInOut *inputs = NULL;
+    AVFilterGraph *filter_graph = NULL;
     AVFilterContext *buffersink_ctx;
     AVFilterContext *buffersrc_ctx;
-    uns8b *c;
+    uns8b *c = NULL;
     AVRational time_base;
-    enum AVPixelFormat pix_fmts[ 2 ];
 
     if ( fmt_ctx == NULL )
         return 1;
@@ -1538,53 +1538,34 @@ uns8b trp_av_set_filter( trp_obj_t *fmtctx, trp_obj_t *descr )
         trp_av_close_filter( (trp_avcodec_t *)fmtctx );
         return 0;
     }
-    if ( ( outputs = avfilter_inout_alloc() ) == NULL )
-        return 1;
-    if ( ( inputs = avfilter_inout_alloc() ) == NULL ) {
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
-    if ( ( filter_graph = avfilter_graph_alloc() ) == NULL ) {
-        avfilter_inout_free( &inputs );
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
+    if ( ( ( filter_graph = avfilter_graph_alloc() ) == NULL ) ||
+         ( ( inputs = avfilter_inout_alloc() ) == NULL ) ||
+         ( ( outputs = avfilter_inout_alloc() ) == NULL ) )
+        goto fail;
+
     dec_ctx = ((trp_avcodec_t *)fmtctx)->avctx;
     time_base = fmt_ctx->streams[ ((trp_avcodec_t *)fmtctx)->video_stream_idx ]->time_base;
 
-    snprintf( args, sizeof( args ),
-              "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
-              dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt,
-              time_base.num, time_base.den,
-              dec_ctx->sample_aspect_ratio.num, dec_ctx->sample_aspect_ratio.den );
+    /* buffer video source: the decoded frames from the decoder will be inserted here. */
+    snprintf(args, sizeof(args),
+            "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+            dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt,
+            time_base.num, time_base.den,
+            dec_ctx->sample_aspect_ratio.num, dec_ctx->sample_aspect_ratio.den);
 
-    if ( avfilter_graph_create_filter( &buffersrc_ctx, buffersrc, "in",
-                                       args, NULL, filter_graph ) < 0 ) {
-        avfilter_graph_free( &filter_graph );
-        avfilter_inout_free( &inputs );
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
+    if ( avfilter_graph_create_filter(&buffersrc_ctx, buffersrc, "in",
+                                      args, NULL, filter_graph) < 0 )
+        goto fail;
 
     /* buffer video sink: to terminate the filter chain. */
-    if ( avfilter_graph_create_filter( &buffersink_ctx, buffersink, "out",
-                                       NULL, NULL, filter_graph ) < 0 ) {
-        avfilter_graph_free( &filter_graph );
-        avfilter_inout_free( &inputs );
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
+    if ( ( buffersink_ctx = avfilter_graph_alloc_filter(filter_graph, buffersink, "out") ) == NULL )
+        goto fail;
 
-    pix_fmts[ 0 ] = dec_ctx->pix_fmt;
-    pix_fmts[ 1 ] = AV_PIX_FMT_NONE;
+    if ( av_opt_set(buffersink_ctx, "pixel_formats", av_get_pix_fmt_name( dec_ctx->pix_fmt ), AV_OPT_SEARCH_CHILDREN) < 0 )
+        goto fail;
 
-    if ( av_opt_set_int_list( buffersink_ctx, "pix_fmts", pix_fmts,
-                              AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN ) < 0 ) {
-        avfilter_graph_free( &filter_graph );
-        avfilter_inout_free( &inputs );
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
+    if ( avfilter_init_dict(buffersink_ctx, NULL) < 0 )
+        goto fail;
 
     /*
      * Set the endpoints for the filter graph. The filter_graph will
@@ -1615,24 +1596,13 @@ uns8b trp_av_set_filter( trp_obj_t *fmtctx, trp_obj_t *descr )
 
     c = trp_csprint( descr );
 
-    if ( avfilter_graph_parse_ptr( filter_graph, c,
-                                   &inputs, &outputs, NULL ) < 0 ) {
-        trp_csprint_free( c );
-        avfilter_graph_free( &filter_graph );
-        avfilter_inout_free( &inputs );
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
+    if ( ( avfilter_graph_parse_ptr( filter_graph, c, &inputs, &outputs, NULL ) ) < 0 )
+        goto fail;
+
+    if ( ( avfilter_graph_config( filter_graph, NULL ) ) < 0 )
+        goto fail;
 
     trp_csprint_free( c );
-
-    if ( avfilter_graph_config( filter_graph, NULL ) < 0 ) {
-        avfilter_graph_free( &filter_graph );
-        avfilter_inout_free( &inputs );
-        avfilter_inout_free( &outputs );
-        return 1;
-    }
-
     avfilter_inout_free( &inputs );
     avfilter_inout_free( &outputs );
 
@@ -1644,6 +1614,16 @@ uns8b trp_av_set_filter( trp_obj_t *fmtctx, trp_obj_t *descr )
     trp_av_close_filter( (trp_avcodec_t *)fmtctx );
     ((trp_avcodec_t *)fmtctx)->filter = filter;
     return 0;
+fail:
+    if ( c )
+        trp_csprint_free( c );
+    if ( filter_graph )
+        avfilter_graph_free( &filter_graph );
+    if ( inputs )
+        avfilter_inout_free( &inputs );
+    if ( outputs )
+        avfilter_inout_free( &outputs );
+    return 1;
 #else
     return 1;
 #endif

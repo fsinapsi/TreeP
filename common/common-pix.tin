@@ -170,6 +170,55 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun pix-rotate-hack (pix ang) net pix-rotate-hack)
+(defnet pix-rotate-hack (pix ang @pix)
+        (deflocal si co w h ww hh pc)
+
+        (set @pix (pix-rotate pix ang))
+        (set ang (* ang (/ (* (atan 1) 4) 180)))
+        (set si (abs (sin ang)))
+        (set co (abs (cos ang)))
+        (set w (width pix))
+        (set h (height pix))
+        (set ww (ceil (+ (* w co) (* h si))))
+        (set hh (ceil (+ (* h co) (* w si))))
+        (set w (width @pix))
+        (set h (height @pix))
+        (if (or (> w ww) (> h hh))
+        then    (set pc (pix-crop @pix (/ (- w ww) 2) (/ (- h hh) 2) ww hh))
+                (close @pix)
+                (set @pix pc) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun pix-subst-alpha-with-solid-color (pix color) net pix-subst-alpha-with-solid-color)
+(defnet pix-subst-alpha-with-solid-color (pix color @pix)
+        (deflocal w h)
+
+        (set w (width pix))
+        (set h (height pix))
+        (set @pix (pix-create w h))
+        (pix-draw-box @pix 0 0 w h (pix-color (pix-color-red color) (pix-color-green color) (pix-color-blue color) 0xff))
+        (pix-draw-pix-alpha @pix 0 0 pix) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun pix-affine-cairo (pix xx xy yx yy) net pix-affine-cairo)
 (defnet pix-affine-cairo (pix xx xy yx yy @pix)
         (deflocal w h xmin xmax ymin ymax o cr raw)
