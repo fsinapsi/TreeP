@@ -61,7 +61,7 @@
           [ "setopt-ftpport"                    1 2 ]
           [ "setopt-interface"                  1 2 ]
           [ "setopt-customrequest"              1 2 ]
-          [ "setopt-krblevel"                   1 2 ]
+          ;[ "setopt-krblevel"                   1 2 ]
           [ "setopt-nobody"                     2 2 ]
           [ "setopt-quote"                      1 undef ]
           [ "setopt-postquote"                  1 undef ]

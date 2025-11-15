@@ -76,7 +76,9 @@ uns8b trp_curl_easy_setopt_cainfo( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_ftpport( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_interface( trp_obj_t *curl, trp_obj_t *val );
 uns8b trp_curl_easy_setopt_customrequest( trp_obj_t *curl, trp_obj_t *val );
+/*
 uns8b trp_curl_easy_setopt_krblevel( trp_obj_t *curl, trp_obj_t *val );
+*/
 uns8b trp_curl_easy_setopt_nobody( trp_obj_t *curl, trp_obj_t *set_on_off );
 uns8b trp_curl_easy_setopt_quote( trp_obj_t *curl, ... );
 uns8b trp_curl_easy_setopt_postquote( trp_obj_t *curl, ... );

@@ -72,6 +72,8 @@ trp_obj_t *trp_pix_top_field( trp_obj_t *pix );
 trp_obj_t *trp_pix_bottom_field( trp_obj_t *pix );
 uns8b trp_pix_top_field_test( trp_obj_t *pix );
 uns8b trp_pix_bottom_field_test( trp_obj_t *pix );
+uns8b trp_pix_top_field_subst( trp_obj_t *pix, trp_obj_t *src );
+uns8b trp_pix_bottom_field_subst( trp_obj_t *pix, trp_obj_t *src );
 trp_obj_t *trp_pix_crop( trp_obj_t *pix, trp_obj_t *x, trp_obj_t *y, trp_obj_t *w, trp_obj_t *h );
 uns8b trp_pix_bgr( trp_obj_t *pix );
 uns8b trp_pix_noalpha( trp_obj_t *pix );

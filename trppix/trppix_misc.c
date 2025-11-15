@@ -109,6 +109,48 @@ uns8b trp_pix_bottom_field_test( trp_obj_t *pix )
     return trp_pix_top_bottom_field_test( 1, pix );
 }
 
+uns8b trp_pix_top_field_subst( trp_obj_t *pix, trp_obj_t *src )
+{
+    trp_pix_color_t *p = trp_pix_get_mapc( pix );
+    trp_pix_color_t *s = trp_pix_get_mapc( src );
+    uns32b w, h, w2, w4;
+
+    if ( ( p == NULL ) || ( s == NULL ) )
+        return 1;
+    w = ((trp_pix_t *)pix)->w;
+    h = ((trp_pix_t *)pix)->h;
+    if ( ( h & 1 ) || ( w != ((trp_pix_t *)src)->w ) || ( h != ((trp_pix_t *)src)->h ) )
+        return 1;
+    h >>= 1;
+    w2 = w << 1;
+    w4 = w << 2;
+    for ( ; h ; h--, p += w2, s += w2 )
+        memcpy( p, s, w4 );
+    return 0;
+}
+
+uns8b trp_pix_bottom_field_subst( trp_obj_t *pix, trp_obj_t *src )
+{
+    trp_pix_color_t *p = trp_pix_get_mapc( pix );
+    trp_pix_color_t *s = trp_pix_get_mapc( src );
+    uns32b w, h, w2, w4;
+
+    if ( ( p == NULL ) || ( s == NULL ) )
+        return 1;
+    w = ((trp_pix_t *)pix)->w;
+    h = ((trp_pix_t *)pix)->h;
+    if ( ( h & 1 ) || ( w != ((trp_pix_t *)src)->w ) || ( h != ((trp_pix_t *)src)->h ) )
+        return 1;
+    h >>= 1;
+    w2 = w << 1;
+    w4 = w << 2;
+    p += w;
+    s += w;
+    for ( ; h ; h--, p += w2, s += w2 )
+        memcpy( p, s, w4 );
+    return 0;
+}
+
 trp_obj_t *trp_pix_crop_low( trp_obj_t *pix, flt64b xx, flt64b yy, flt64b ww, flt64b hh )
 {
     trp_pix_color_t *p = trp_pix_get_mapc( pix );
