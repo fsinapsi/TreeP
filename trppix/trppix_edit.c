@@ -173,6 +173,66 @@ uns8b trp_pix_linear( trp_obj_t *pix, trp_obj_t *min1, trp_obj_t *max1, trp_obj_
     return 0;
 }
 
+uns8b trp_pix_linear_colors( trp_obj_t *pix, trp_obj_t *min1, trp_obj_t *max1, trp_obj_t *min2, trp_obj_t *max2 )
+{
+    trp_pix_color_t *c = trp_pix_get_mapc( pix );
+    uns32b i;
+    flt64b dmin1r, dmax1r, dmin2r, dmax2r, dmin1g, dmax1g, dmin2g, dmax2g, dmin1b, dmax1b, dmin2b, dmax2b, d;
+    uns8b r, g, b, a;
+
+    if ( c == NULL )
+        return 1;
+    if ( trp_pix_decode_color_uns8b( min1, NULL, &r, &g, &b, &a ) )
+        return 1;
+    dmin1r = (flt64b)r;
+    dmin1g = (flt64b)g;
+    dmin1b = (flt64b)b;
+    if ( trp_pix_decode_color_uns8b( max1, NULL, &r, &g, &b, &a ) )
+        return 1;
+    dmax1r = (flt64b)r;
+    dmax1g = (flt64b)g;
+    dmax1b = (flt64b)b;
+    if ( trp_pix_decode_color_uns8b( min2, NULL, &r, &g, &b, &a ) )
+        return 1;
+    dmin2r = (flt64b)r;
+    dmin2g = (flt64b)g;
+    dmin2b = (flt64b)b;
+    if ( trp_pix_decode_color_uns8b( max2, NULL, &r, &g, &b, &a ) )
+        return 1;
+    dmax2r = (flt64b)r;
+    dmax2g = (flt64b)g;
+    dmax2b = (flt64b)b;
+    if ( ( dmin1r == dmax1r ) || ( dmin1g == dmax1g ) || ( dmin1b == dmax1b ) )
+        return 1;
+    dmax1r = ( dmax2r - dmin2r ) / ( dmax1r - dmin1r );
+    dmax1g = ( dmax2g - dmin2g ) / ( dmax1g - dmin1g );
+    dmax1b = ( dmax2b - dmin2b ) / ( dmax1b - dmin1b );
+    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ ) {
+        d = ( (flt64b)( c->red ) - dmin1r ) * dmax1r + dmin2r;
+        if ( d <= 0.0 )
+            c->red = 0;
+        else if ( d >= 255.0 )
+            c->red = 255;
+        else
+            c->red = (uns8b)( d + 0.5 );
+        d = ( (flt64b)( c->green ) - dmin1g ) * dmax1g + dmin2g;
+        if ( d <= 0.0 )
+            c->green = 0;
+        else if ( d >= 255.0 )
+            c->green = 255;
+        else
+            c->green = (uns8b)( d + 0.5 );
+        d = ( (flt64b)( c->blue ) - dmin1b ) * dmax1b + dmin2b;
+        if ( d <= 0.0 )
+            c->blue = 0;
+        else if ( d >= 255.0 )
+            c->blue = 255;
+        else
+            c->blue = (uns8b)( d + 0.5 );
+    }
+    return 0;
+}
+
 uns8b trp_pix_negative( trp_obj_t *pix )
 {
     trp_pix_color_t *c = trp_pix_get_mapc( pix );
@@ -282,9 +342,8 @@ uns8b trp_pix_vflip( trp_obj_t *pix )
 uns8b trp_pix_snap_color( trp_obj_t *pix, trp_obj_t *src_color, trp_obj_t *thres, trp_obj_t *dst_color )
 {
     trp_pix_color_t *c = trp_pix_get_mapc( pix );
-    double th, diff;
+    flt64b th;
     uns32b i;
-    uns16b j;
     uns8b sr, sg, sb, sa, dr, dg, db, da;
 
     if ( ( c == NULL ) ||
@@ -301,22 +360,31 @@ uns8b trp_pix_snap_color( trp_obj_t *pix, trp_obj_t *src_color, trp_obj_t *thres
         da = sa;
     }
     th = th * th * 3.0;
-    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; ) {
-        i--;
-        diff = 0.0;
-        j = TRP_ABSDIFF( c[ i ].red, sr );
-        diff += (flt64b)( j * j );
-        j = TRP_ABSDIFF( c[ i ].green, sg );
-        diff += (flt64b)( j * j );
-        j = TRP_ABSDIFF( c[ i ].blue, sb );
-        diff += (flt64b)( j * j );
-        if ( diff <= th ) {
-            c[ i ].red = dr;
-            c[ i ].green = dg;
-            c[ i ].blue = db;
-            c[ i ].alpha = da;
+    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ )
+        if ( pix_color_diff_color( sr, sg, sb, c ) <= th ) {
+            c->red = dr;
+            c->green = dg;
+            c->blue = db;
+            c->alpha = da;
         }
-    }
+    return 0;
+}
+
+uns8b trp_pix_chroma_hold( trp_obj_t *pix, trp_obj_t *color, trp_obj_t *thres )
+{
+    trp_pix_color_t *c = trp_pix_get_mapc( pix );
+    flt64b th;
+    uns32b i;
+    uns8b r, g, b, a;
+
+    if ( ( c == NULL ) ||
+         trp_pix_decode_color_uns8b( color, NULL, &r, &g, &b, &a ) ||
+         trp_cast_flt64b_range( thres, &th, 0.0, 255.0 ) )
+        return 1;
+    th = th * th * 3.0;
+    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ )
+        if ( pix_color_diff_color( r, g, b, c ) > th )
+            c->red = c->green = c->blue = TRP_PIX_RGB_TO_GRAY_C( c );
     return 0;
 }
 

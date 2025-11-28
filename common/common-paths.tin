@@ -694,6 +694,8 @@
                                                 (set @ext "ogg") ))))
                 (seq    (search case "Macromedia Flash Video" m)
                         (set @ext "flv") )
+                (seq    (search case "NUT multimedia container" m)
+                        (set @ext "nut") )
                 (seq    (search case "Macromedia Flash Data" m)
                         (set @ext "swf") )
                 (seq    (search case "MPEG ADTS" m)

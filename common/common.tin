@@ -30,6 +30,7 @@
 (include "common-cfg.tin")
 (include "common-io.tin")
 (include "common-av.tin")
+(include "common-wav.tin")
 (include "common-iup.tin")
 (include "common-gtk.tin")
 (include "common-misc.tin")

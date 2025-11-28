@@ -102,6 +102,7 @@
           [ "scale"                             2 3 ]
           [ "mse"                               2 2 ]
           [ "gray-histogram"                    1 1 ]
+          [ "median-and-diff"                   1 1 ]
           [ "text"                              1 undef ]
           [ "ssim"                              2 3 ]
           [ "ssim-linear"                       2 2 ]

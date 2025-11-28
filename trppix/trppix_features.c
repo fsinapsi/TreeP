@@ -170,3 +170,34 @@ trp_obj_t *trp_pix_gray_histogram( trp_obj_t *pix )
     return (trp_obj_t *)obj;
 }
 
+trp_obj_t *trp_pix_median_and_diff( trp_obj_t *pix )
+{
+    trp_obj_t *res, *col;
+    trp_pix_color_t *c = trp_pix_get_mapc( pix );
+    flt64b d;
+    uns32b i;
+    uns16b rmin, rmax, gmin, gmax, bmin, bmax;
+
+    if ( c == NULL )
+        return UNDEF;
+    rmin = gmin = bmin = 0xff;
+    rmax = gmax = bmax = 0;
+    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ ) {
+        rmin = TRP_MIN( rmin, c->red );
+        rmax = TRP_MAX( rmax, c->red );
+        gmin = TRP_MIN( gmin, c->green );
+        gmax = TRP_MAX( gmax, c->green );
+        bmin = TRP_MIN( bmin, c->blue );
+        bmax = TRP_MAX( bmax, c->blue );
+    }
+    rmin = ( rmin + rmax ) >> 1;
+    gmin = ( gmin + gmax ) >> 1;
+    bmin = ( bmin + bmax ) >> 1;
+    col = trp_pix_create_color( 257 * rmin, 257 * gmin, 257 * bmin, 257 * 255 );
+    c = trp_pix_get_mapc( pix );
+    d = 0.0;
+    for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ )
+        d = TRP_MAX( d, pix_color_diff_color( (uns8b)rmin, (uns8b)gmin, (uns8b)bmin, c ) );
+    res = trp_cons( col, trp_double( sqrt( d ) ) );
+}
+

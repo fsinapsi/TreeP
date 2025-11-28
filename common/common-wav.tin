@@ -1,0 +1,363 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun wav-open (path) net wav-open)
+(defnet wav-open (path @info)
+        (deflocal f)
+
+        (set f (fopenro path))
+        (<> f undef)
+        (alt    (wav-open-low f @info)
+                (seq    (clr @info)
+                        (close f) )))
+
+(defnet wav-open-low (f @info)
+        (deflocal ch frequency samplesize bps offset samples)
+
+        (= (freadstr f 4) "RIFF")
+        (skip (freaduint-le f 32))
+        (= (freadstr f 8) "WAVEfmt ")
+        (set offset (freaduint-le f 32))
+        (>= offset 16)
+        (skip (freaduint-le f 16))
+        (set ch (freaduint-le f 16))
+        (set frequency (freaduint-le f 32))
+        (skip (freaduint-le f 32))
+        (set samplesize (freaduint-le f 16))
+        (set bps (freaduint-le f 16))
+        (fsetpos (+ offset 20) f)
+        (while (<> (freadstr f 4) "data") do
+                (fsetpos (+ (fpos f) (freaduint-le f 32)) f) )
+        (skip (freaduint-le f 32))
+        (set offset (fpos f))
+        (set samples (div (- (length f) offset) samplesize))
+        (> samples 0)
+        (set @info (assoc))
+        (set <@info "type"> "read")
+        (set <@info "fp"> f)
+        (set <@info "channels"> ch)
+        (set <@info "frequency"> frequency)
+        (set <@info "samplesize"> samplesize)
+        (set <@info "bps"> bps)
+        (set <@info "samples"> samples)
+        (set <@info "offset"> offset) )
+
+(defun wav-create (path ref-info) net wav-create)
+(defnet wav-create (path ref-info @info)
+        (deflocal f ch frequency samplesize bps)
+
+        (set f (fcreate path))
+        (<> f undef)
+        (set ch <ref-info "channels">)
+        (set frequency <ref-info "frequency">)
+        (set samplesize <ref-info "samplesize">)
+        (set bps <ref-info "bps">)
+        (if (= ch undef)
+        then    (set ch 2) )
+        (if (= frequency undef)
+        then    (set frequency 44100) )
+        (if (= samplesize undef)
+        then    (set samplesize 4) )
+        (if (= bps undef)
+        then    (set bps 16) )
+        (fprint f "RIFF")
+        (fwriteuint-le f 32 0)
+        (fprint f "WAVEfmt ")
+        (fwriteuint-le f 32 16)
+        (fwriteuint-le f 16 1)
+        (fwriteuint-le f 16 ch)
+        (fwriteuint-le f 32 frequency)
+        (fwriteuint-le f 32 (* frequency samplesize))
+        (fwriteuint-le f 16 samplesize)
+        (fwriteuint-le f 16 bps)
+        (fprint f "data")
+        (fwriteuint-le f 32 0)
+        (set @info (assoc))
+        (set <@info "type"> "write")
+        (set <@info "fp"> f)
+        (set <@info "channels"> ch)
+        (set <@info "frequency"> frequency)
+        (set <@info "samplesize"> samplesize)
+        (set <@info "bps"> bps)
+        (set <@info "samples"> 0)
+        (set <@info "offset"> 44) )
+
+(defnet wav-close (info)
+        (deflocal f l)
+
+        (assocp info)
+        (set f <info "fp">)
+        (if (= <info "type"> "write")
+        then    (set l (length f))
+                (fsetpos 4 f)
+                (fwriteuint-le f 32 (- l 8))
+                (fsetpos 40 f)
+                (fwriteuint-le f 32 (- l 44)) )
+        (close f) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun wav-frequency (info)
+        <info "frequency"> )
+
+(defun wav-samples (info)
+        <info "samples"> )
+
+(defun wav-duration (info)
+        (/ <info "samples"> <info "frequency">) )
+
+(defun wav-samplesize (info)
+        <info "samplesize"> )
+
+(defun wav-channels (info)
+        <info "channels"> )
+
+(defun wav-offset (info)
+        <info "offset"> )
+
+(defun wav-sample-val (info sample channel) net wav-sample-val)
+(defnet wav-sample-val (info sample channel @val)
+        (deflocal samplesize channels samplesize2 f)
+
+        (set samplesize (wav-samplesize info))
+        (integerp samplesize)
+        (set channels (wav-channels info))
+        (set samplesize2 (/ samplesize channels))
+        (integerp samplesize2)
+        (< sample (wav-samples info))
+        (< channel channels)
+        (set f <info "fp">)
+        (fsetpos (+ (wav-offset info) (* samplesize sample) (* samplesize2 channel)) f)
+        (set @val (freadsint-le f (* samplesize2 8))) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; converte un timestamp nel numero di campione più vicino
+
+(defun wav-timestamp->sample (info ts) net wav-timestamp->sample)
+(defnet wav-timestamp->sample (info ts @sample)
+        (deflocal frequency s t)
+
+        (set frequency (wav-frequency info))
+        (integerp frequency)
+        (if (stringp ts)
+        then    (set s ts)
+                (set ts 0)
+                (opt*   (search-and-cut ":" s t)
+                        (set ts (* 60 (+ ts (str->num t)))) )
+                (inc ts (str->num s)) )
+        (rationalp ts)
+        (set @sample (rint (* ts frequency)))
+        (>= @sample 0) )
+
+; converte un numero di campione nel timestamp
+
+(defun wav-sample->timestamp (info sample) net wav-sample->timestamp)
+(defnet wav-sample->timestamp (info sample @ts)
+        (deflocal frequency)
+
+        (set frequency (wav-frequency info))
+        (integerp frequency)
+        (set @ts (/ sample frequency))
+        (>= @ts 0) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; appende campioni muti
+
+(defnet wav-write-silence (info samples)
+        (deflocal fo rem buf i)
+
+        (= <info "type"> "write")
+        (set fo <info "fp">)
+        (set rem (* (wav-samplesize info) samples))
+        (set buf (raw 65536))
+        (raw-set buf (int->char 0))
+        (while (> rem 0) do
+                (set i (min rem 65536))
+                (= i (raw-write buf fo i))
+                (dec rem i) )
+        (close buf)
+        (assoc-inc info "samples" samples) )
+
+; appende un segmento
+
+(defnet wav-write-copy (info src-info beg samples)
+        (deflocal fi fo samplesize buf)
+
+        (set fi <src-info "fp">)
+        (<> fi undef)
+        (= <info "type"> "write")
+        (set fo <info "fp">)
+        (set samplesize (wav-samplesize src-info))
+        (= samplesize (wav-samplesize info))
+        (<= beg (wav-samples src-info))
+        (set samples (min (- (wav-samples src-info) beg) samples))
+        (fsetpos (+ (wav-offset src-info) (* samplesize beg)) fi)
+        (set buf (raw 65536))
+        (filecopy-basic fi fo (* samplesize samples) buf)
+        (close buf)
+        (assoc-inc info "samples" samples) )
+
+; silenzia un segmento in posizione arbitraria
+
+(defnet wav-mute-segment (info beg samples)
+        (deflocal fo samplesize rem buf i)
+
+        (= <info "type"> "write")
+        (set fo <info "fp">)
+        (<= beg (wav-samples info))
+        (set samples (min (- (wav-samples info) beg) samples))
+        (set samplesize (wav-samplesize info))
+        (fsetpos (+ (wav-offset info) (* samplesize beg)) fo)
+        (set rem (* samplesize samples))
+        (set buf (raw 65536))
+        (raw-set buf (int->char 0))
+        (while (> rem 0) do
+                (set i (min rem 65536))
+                (= i (raw-write buf fo i))
+                (dec rem i) )
+        (close buf)
+        (fsetpos (length fo) fo) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; stampa alcune info
+
+(defnet wav-info (info)
+        (deflocal duration extrabytes)
+
+        (set duration (wav-duration info))
+        (set extrabytes (- (length <info "fp">) (wav-offset info) (* (wav-samplesize info) (wav-samples info))))
+        (print "canali: " (wav-channels info) nl
+               "freq. campionamento: " (format-num (wav-frequency info)) " Hz" nl
+               "dimensione campioni: " (wav-samplesize info) " bytes" nl
+               "bits per sample: " <info "bps"> " bit" nl
+               "campioni: " (format-num (wav-samples info)) nl
+               "offset: " (wav-offset info) nl
+               "durata: " (approx6 duration) " s (" (date-s2hhmmss duration) ")" nl
+               (if (> extrabytes 0)
+                        (+ "note: contiene extra bytes in fondo (" (format-num extrabytes) ")" nl)
+                        "" )
+               (if (< extrabytes 0)
+                        (+ "note: mancano bytes (" (format-num -extrabytes) ")" nl)
+                        "" )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; crea una copia esatta
+
+(defnet wav-copy (path1 path2)
+        (deflocal info1 info2)
+
+        (set info1 (wav-open path1))
+        (<> info1 undef)
+        (set info2 (wav-create path2 info1))
+        (<> info2 undef)
+        (wav-write-copy info2 info1 0 (wav-samples info1))
+        (wav-close info2)
+        (wav-close info1) )
+
+; crea una copia muta
+
+(defnet wav-copy-mute (path1 path2)
+        (deflocal info1 info2)
+
+        (set info1 (wav-open path1))
+        (<> info1 undef)
+        (set info2 (wav-create path2 info1))
+        (<> info2 undef)
+        (wav-write-silence info2 (wav-samples info1))
+        (wav-close info2)
+        (wav-close info1) )
+
+; crea una copia preceduta da silenzio (ritardo)
+
+(defnet wav-copy-delay (path1 path2 ts)
+        (deflocal info1 info2 samples)
+
+        (set info1 (wav-open path1))
+        (<> info1 undef)
+        (set samples (wav-timestamp->sample info1 ts))
+        (integerp samples)
+        (> samples 0)
+        (set info2 (wav-create path2 info1))
+        (<> info2 undef)
+        (wav-write-silence info2 samples)
+        (wav-write-copy info2 info1 0 (wav-samples info1))
+        (wav-close info2)
+        (wav-close info1) )
+
+; crea una copia rimuovendo segmento iniziale (anticipo)
+
+(defnet wav-copy-antedate (path1 path2 ts)
+        (deflocal info1 info2 samples)
+
+        (set info1 (wav-open path1))
+        (<> info1 undef)
+        (set samples (wav-timestamp->sample info1 ts))
+        (integerp samples)
+        (> samples 0)
+        (set info2 (wav-create path2 info1))
+        (<> info2 undef)
+        (wav-write-copy info2 info1 samples (- (wav-samples info1) samples))
+        (wav-close info2)
+        (wav-close info1) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
