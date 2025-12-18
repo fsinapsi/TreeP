@@ -48,7 +48,8 @@ uns8b trp_sdl_init()
 
 void trp_sdl_quit()
 {
-    SDL_Quit();
+    if ( !trp_sdl_check() )
+        SDL_QuitSubSystem( SDL_INIT_AUDIO );
 }
 
 static uns8b trp_sdl_check()
