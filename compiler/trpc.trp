@@ -422,7 +422,7 @@
                   (if (cgraph) (+ " -ltrpcgraph" (pkg-config-libs "libgvc")) "")
                   (if (cairo) (+ " -ltrpcairo" (pkg-config-libs "cairo") (pkg-config-libs "freetype2") (pkg-config-libs "librsvg-2.0")) "")
                   (if (microhttpd) (+ " -ltrpmicrohttpd" (pkg-config-libs "libmicrohttpd")) "")
-                  (if (sdl) (+ " -ltrpsdl" (pkg-config-libs "sdl2")) "")
+                  (if (sdl) (+ " -ltrpsdl" (pkg-config-libs "sdl3")) "")
                   (if (chess) " -ltrpchess" "")
                   (if (pix) (+ " -ltrppix" (pkg-config-libs "libpng") " -ljpeg -lgif") "")
                   " -ltrp -lgmp" (pkg-config-libs "bdw-gc") " -lz -lm"

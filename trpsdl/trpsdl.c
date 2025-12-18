@@ -18,12 +18,11 @@
 
 #include "../trp/trp.h"
 #include "./trpsdl.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 typedef struct {
     uns8b *buf;
     uns32b len;
-    uns32b vol;
 } trp_sdl_audio_cback_t;
 
 typedef struct {
@@ -38,15 +37,12 @@ typedef struct {
 } trp_sdl_wave_header;
 
 static uns8b trp_sdl_check();
-static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns32b *len, uns8b **buf );
-static void trp_sdl_wavplay_cback( void *userdata, uns8b *stream, int len );
+static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *audiospec, uns8b **buf, uns32b *len );
+static void trp_sdl_play( SDL_AudioSpec *audiospec, trp_sdl_audio_cback_t *a, flt64b vol );
+static void SDLCALL trp_sdl_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total_amount );
 
 uns8b trp_sdl_init()
 {
-//    if ( SDL_Init( SDL_INIT_AUDIO ) < 0 ) {
-//        fprintf( stderr, "Initialization of SDL2 failed\n" );
-//        return 1;
-//    }
     return 0;
 }
 
@@ -60,14 +56,14 @@ static uns8b trp_sdl_check()
     static uns8b toinit = 1;
 
     if ( toinit ) {
-        if ( SDL_Init( SDL_INIT_AUDIO ) < 0 )
+        if ( !SDL_InitSubSystem( SDL_INIT_AUDIO ) )
             return 1;
         toinit = 0;
     }
     return 0;
 }
 
-static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns32b *len, uns8b **buf )
+static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *audiospec, uns8b **buf, uns32b *len )
 {
     uns8b *p;
     trp_sdl_wave_header *h;
@@ -89,13 +85,12 @@ static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns
     h = (trp_sdl_wave_header *)p;
     if ( strncmp( h->chunk_id, "fmt ", 4 ) )
         return 1;
-    memset( wav_spec, 0, sizeof( SDL_AudioSpec ) );
-    wav_spec->format = h->bits_per_sample;
+    memset( audiospec, 0, sizeof( SDL_AudioSpec ) );
+    audiospec->format = h->bits_per_sample;
     if ( h->bits_per_sample > 8 )
-        wav_spec->format |= SDL_AUDIO_MASK_SIGNED;
-    wav_spec->freq = h->sample_rate;
-    wav_spec->channels = h->num_channels;
-    wav_spec->samples = 4096;
+        audiospec->format |= SDL_AUDIO_MASK_SIGNED;
+    audiospec->freq = h->sample_rate;
+    audiospec->channels = h->num_channels;
     for ( ; ; ) {
         p += h->chunk_size + 8;
         if ( ( p - raw->data ) + 8 > raw->len )
@@ -111,20 +106,32 @@ static uns8b trp_sdl_raw2audiospec( trp_raw_t *raw, SDL_AudioSpec *wav_spec, uns
         *len = maxlen;
     *buf = p;
     /*
-     printf( "freq = %d, channels = %d, maxlen = %d, len = %d\n", wav_spec->freq, wav_spec->channels, maxlen, *len );
+     printf( "freq = %d, channels = %d, maxlen = %d, len = %d\n", audiospec->freq, audiospec->channels, maxlen, *len );
      */
     return 0;
 }
 
-static void trp_sdl_wavplay_cback( void *userdata, uns8b *stream, int len )
+static void trp_sdl_play( SDL_AudioSpec *audiospec, trp_sdl_audio_cback_t *a, flt64b vol )
+{
+    SDL_AudioStream *stream;
+
+    stream = SDL_OpenAudioDeviceStream( SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, audiospec, trp_sdl_play_cback, (void *)a );
+    SDL_SetAudioStreamGain( stream, (float)vol );
+    SDL_ResumeAudioDevice( SDL_GetAudioStreamDevice( stream ) );
+    while ( a->len )
+        SDL_Delay( 50 );
+    SDL_Delay( 350 );
+    SDL_DestroyAudioStream( stream );
+}
+
+static void SDLCALL trp_sdl_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total_amount )
 {
     trp_sdl_audio_cback_t *a = (trp_sdl_audio_cback_t *)userdata;
 
-    SDL_memset( stream, 0, len );
     if ( a->len ) {
         if ( len > a->len )
             len = a->len;
-        SDL_MixAudio( stream, a->buf, len, a->vol );
+        SDL_PutAudioStreamData( stream, a->buf, len );
         a->buf += len;
         a->len -= len;
     }
@@ -133,9 +140,10 @@ static void trp_sdl_wavplay_cback( void *userdata, uns8b *stream, int len )
 uns8b trp_sdl_playwav( trp_obj_t *path, trp_obj_t *volume )
 {
     uns8b *cpath;
+    uns8b *buf;
     trp_sdl_audio_cback_t a;
-    SDL_AudioSpec wav_spec;
-    double vol;
+    SDL_AudioSpec audiospec;
+    flt64b vol;
 
     if ( trp_sdl_check() )
         return 1;
@@ -145,50 +153,33 @@ uns8b trp_sdl_playwav( trp_obj_t *path, trp_obj_t *volume )
     } else
         vol = 1.0;
     cpath = trp_csprint( path );
-    if( SDL_LoadWAV( cpath, &wav_spec, &( a.buf ), &( a.len ) ) == NULL ) {
+    if( !SDL_LoadWAV( cpath, &audiospec, &( a.buf ), &( a.len ) ) ) {
         trp_csprint_free( cpath );
         return 1;
     }
     trp_csprint_free( cpath );
-    a.vol = (uns32b)( vol * (double)(SDL_MIX_MAXVOLUME) + 0.5 );
-    wav_spec.callback = trp_sdl_wavplay_cback;
-    wav_spec.userdata = (void *)( &a );
-    if ( SDL_OpenAudio( &wav_spec, NULL ) < 0 )
-        return 1;
-    SDL_PauseAudio( 0 );
-    while ( a.len )
-        SDL_Delay( 50 );
-    SDL_Delay( 350 );
-    SDL_CloseAudio();
-    SDL_FreeWAV( a.buf );
+    buf = a.buf;
+    trp_sdl_play( &audiospec, &a, vol );
+    SDL_free( buf );
     return 0;
 }
 
 uns8b trp_sdl_playwav_memory( trp_obj_t *raw, trp_obj_t *volume )
 {
     trp_sdl_audio_cback_t a;
-    SDL_AudioSpec wav_spec;
-    double vol;
+    SDL_AudioSpec audiospec;
+    flt64b vol;
 
     if ( trp_sdl_check() )
         return 1;
-    if ( trp_sdl_raw2audiospec( (trp_raw_t *)raw, &wav_spec, &( a.len ), &( a.buf ) ) )
+    if ( trp_sdl_raw2audiospec( (trp_raw_t *)raw, &audiospec, &( a.buf ), &( a.len ) ) )
         return 1;
     if ( volume ) {
         if ( trp_cast_flt64b_range( volume, &vol, 0.0, 1.0 ) )
             return 1;
     } else
         vol = 1.0;
-    a.vol = (uns32b)( vol * (double)(SDL_MIX_MAXVOLUME) + 0.5 );
-    wav_spec.callback = trp_sdl_wavplay_cback;
-    wav_spec.userdata = (void *)( &a );
-    if ( SDL_OpenAudio( &wav_spec, NULL ) < 0 )
-        return 1;
-    SDL_PauseAudio( 0 );
-    while ( a.len )
-        SDL_Delay( 50 );
-    SDL_Delay( 350 );
-    SDL_CloseAudio();
+    trp_sdl_play( &audiospec, &a, vol );
     return 0;
 }
 
