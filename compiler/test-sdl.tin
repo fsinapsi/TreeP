@@ -19,8 +19,7 @@
         (flag-true "sdl") )
 
 (defun test-sdl-table ()
-        [ [ "playwav"           1 2 ]
-          [ "playwav-memory"    1 2 ]
+        [ [ "audio-play"        5 6 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

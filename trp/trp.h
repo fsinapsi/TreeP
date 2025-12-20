@@ -586,6 +586,12 @@ trp_obj_t *trp_raw_load( trp_obj_t *path );
 trp_obj_t *trp_raw_cmp( trp_obj_t *raw1, trp_obj_t *raw2, trp_obj_t *cnt );
 uns8b trp_raw_swap( trp_obj_t *raw );
 uns8b trp_raw_set( trp_obj_t *raw, trp_obj_t *c );
+uns8b trp_raw_read_from_raw( trp_obj_t *raw_dst, trp_obj_t *raw_src, trp_obj_t *pos );
+trp_obj_t *trp_raw_readstr( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
+trp_obj_t *trp_raw_readuint_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
+trp_obj_t *trp_raw_readuint_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
+trp_obj_t *trp_raw_readfloat_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
+trp_obj_t *trp_raw_readfloat_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
 
 uns8b trp_char_print( trp_print_t *p, trp_char_t *obj );
 uns32b trp_char_size( trp_char_t *obj );

@@ -69,6 +69,7 @@ static trp_obj_t *trp_thread_env_stack();
 static trp_obj_t *trp_thread_create_internal();
 static void trp_thread_setspecific( trp_thread_t *th );
 static void *trp_thread_start_routine( void *arg );
+static void trp_thread_exit();
 static trp_obj_t *trp_thread_case_cmp( trp_thread_alternative_t *x, trp_thread_alternative_t *y );
 #ifdef TRP_FORCE_FREE
 static void trp_thread_case_free_array( trp_array_t *a );
@@ -160,14 +161,12 @@ static void trp_thread_setspecific( trp_thread_t *th )
 static void *trp_thread_start_routine( void *arg )
 {
     trp_obj_t **p = (trp_obj_t **)arg;
-    trp_thread_t *me;
     uns8bfun_t f;
     uns8b nargs;
 
     f = ((trp_netptr_t *)( p[ 0 ] ))->f;
     nargs = ((trp_netptr_t *)( p[ 0 ] ))->nargs;
-    me = (trp_thread_t *)( p[ nargs + 1 ] );
-    trp_thread_setspecific( me );
+    trp_thread_setspecific( (trp_thread_t *)( p[ nargs + 1 ] ) );
     switch ( nargs ) {
     case 0:
         (void)( (f)() );
@@ -264,6 +263,14 @@ static void *trp_thread_start_routine( void *arg )
         break;
     }
     trp_gc_free( arg );
+    trp_thread_exit();
+    return NULL;
+}
+
+static void trp_thread_exit()
+{
+    trp_thread_t *me = (trp_thread_t *)trp_thread_self();
+
     me->stato = TRP_THREAD_STATE_STOPPED;
     (void)pthread_setspecific( _trp_thread_key, NULL );
     /*
@@ -356,7 +363,6 @@ static void *trp_thread_start_routine( void *arg )
      sicuramente necessario, e probabilmente non lo e'
      nemmeno in tutte le altre implementazioni
      */
-    return NULL;
 }
 
 trp_obj_t *trp_thread_create( trp_obj_t *net, ... )
@@ -992,5 +998,26 @@ trp_obj_t *trp_thread_case( trp_obj_t *obj, ... )
     obj = trp_sig64( alt->retcode );
     trp_thread_case_free_array( a );
     return obj;
+}
+
+uns8b trp_thread_register_my_thread()
+{
+    if ( !GC_thread_is_registered() ) {
+        struct GC_stack_base *sb;
+
+        GC_get_stack_base( &sb );
+        if ( GC_register_my_thread( &sb ) != GC_SUCCESS )
+            return 1;
+        trp_thread_setspecific( (trp_thread_t *)trp_thread_create_internal() );
+    }
+    return 0;
+}
+
+void trp_thread_unregister_my_thread()
+{
+    if ( GC_thread_is_registered() ) {
+        trp_thread_exit();
+        GC_unregister_my_thread();
+    }
 }
 

@@ -714,6 +714,15 @@
                 "raw-load-static"
                                 (expr-raw-load-static const-state)
                 "raw-cmp"       (exprseq-basic 2 3 "trp_raw_cmp(" ')')
+                "raw-readstr"   (exprseq-basic 3 3 "trp_raw_readstr(" ')')
+                "raw-readuint-le"
+                                (exprseq-basic 3 3 "trp_raw_readuint_le(" ')')
+                "raw-readuint-be"
+                                (exprseq-basic 3 3 "trp_raw_readuint_be(" ')')
+                "raw-readfloat-le"
+                                (exprseq-basic 3 3 "trp_raw_readfloat_le(" ')')
+                "raw-readfloat-be"
+                                (exprseq-basic 3 3 "trp_raw_readfloat_be(" ')')
                 "system"        (exprseq-basic 1 undef "trp_system(" ')')
                 "getpid"        (exprseq-basic 0 0 "trp_getpid(" ')')
                 "fork"          (exprseq-basic 0 0 "trp_fork(" ')')

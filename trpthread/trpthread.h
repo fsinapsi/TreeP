@@ -31,5 +31,7 @@ trp_obj_t *trp_thread_list();
 uns8b trp_thread_send( uns8b flags, trp_obj_t *bmax, trp_obj_t *obj, trp_obj_t *th );
 uns8b trp_thread_receive( uns8b flags, trp_obj_t **obj, trp_obj_t **mitt, trp_obj_t *th, ... );
 trp_obj_t *trp_thread_case( trp_obj_t *obj, ... );
+uns8b trp_thread_register_my_thread();
+void trp_thread_unregister_my_thread();
 
 #endif /* !__trpthread__h */

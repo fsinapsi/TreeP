@@ -576,6 +576,8 @@
         (skip) )
 
 (defnet dependences ()
+        (if (sdl)
+        then    (flag-true "thread") )
         (if (or (webp) (qoi) (openjp2) (jbig2) (rsvg) (heif) (sail)
                 (sift) (gtk) (iup) (avcodec) (mgl) (lept) )
         then    (flag-true "pix") ))

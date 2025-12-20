@@ -14,13 +14,15 @@
 
         (set f (fopenro path))
         (<> f undef)
-        (alt    (wav-open-low f @info)
+        (alt    (wav-open-wav f @info)
+                (wav-open-sox f @info)
                 (seq    (clr @info)
                         (close f) )))
 
-(defnet wav-open-low (f @info)
-        (deflocal ch frequency samplesize bps offset samples)
+(defnet wav-open-wav (f @info)
+        (deflocal ch frequency samplesize bps samples offset datasize)
 
+        (fsetpos 0 f)
         (= (freadstr f 4) "RIFF")
         (skip (freaduint-le f 32))
         (= (freadstr f 8) "WAVEfmt ")
@@ -34,10 +36,11 @@
         (set bps (freaduint-le f 16))
         (fsetpos (+ offset 20) f)
         (while (<> (freadstr f 4) "data") do
-                (fsetpos (+ (fpos f) (freaduint-le f 32)) f) )
-        (skip (freaduint-le f 32))
+                (set offset (freaduint-le f 32))
+                (fsetpos (+ (fpos f) offset) f) )
+        (set datasize (freaduint-le f 32))
         (set offset (fpos f))
-        (set samples (div (- (length f) offset) samplesize))
+        (set samples (div (min datasize (- (length f) offset)) samplesize))
         (> samples 0)
         (set @info (assoc))
         (set <@info "type"> "read")
@@ -47,7 +50,50 @@
         (set <@info "samplesize"> samplesize)
         (set <@info "bps"> bps)
         (set <@info "samples"> samples)
-        (set <@info "offset"> offset) )
+        (set <@info "offset"> offset)
+        (set <@info "datasize"> datasize) )
+
+(defnet wav-open-sox (f @info)
+        (deflocal ch frequency samplesize bps samples offset comment-size datasize)
+
+        (fsetpos 0 f)
+        (= (freadstr f 4) ".SoX")
+        (set offset (freaduint-le f 32))
+        (skip (freaduint-le f 64))
+        (set frequency (floor (freadfloat-le f 64)))
+        (set ch (freaduint-le f 32))
+        (set comment-size (freaduint-le f 32))
+        (<= comment-size (- 0xFFFFFFFF (+ 4 8 8 4 4) 4))
+        (> frequency 0)
+        (< frequency (maxint))
+        (> ch 0)
+        (< ch (maxint))
+        (set samplesize (* 4 ch))
+        (set bps 32)
+        (inc offset 4)
+        (set samples (div (- (length f) offset) samplesize))
+        (> samples 0)
+        (set datasize (* samples samplesize))
+        (set @info (assoc))
+        (set <@info "type"> "read")
+        (set <@info "fp"> f)
+        (set <@info "channels"> ch)
+        (set <@info "frequency"> frequency)
+        (set <@info "samplesize"> samplesize)
+        (set <@info "bps"> bps)
+        (set <@info "samples"> samples)
+        (set <@info "offset"> offset)
+        (set <@info "datasize"> datasize) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun wav-create (path ref-info) net wav-create)
 (defnet wav-create (path ref-info @info)
@@ -55,10 +101,10 @@
 
         (set f (fcreate path))
         (<> f undef)
-        (set ch <ref-info "channels">)
-        (set frequency <ref-info "frequency">)
-        (set samplesize <ref-info "samplesize">)
-        (set bps <ref-info "bps">)
+        (set ch (wav-channels ref-info))
+        (set frequency (wav-frequency ref-info))
+        (set samplesize (wav-samplesize ref-info))
+        (set bps (wav-bps ref-info))
         (if (= ch undef)
         then    (set ch 2) )
         (if (= frequency undef)
@@ -87,14 +133,25 @@
         (set <@info "samplesize"> samplesize)
         (set <@info "bps"> bps)
         (set <@info "samples"> 0)
-        (set <@info "offset"> 44) )
+        (set <@info "offset"> 44)
+        (set <@info "datasize"> 0) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defnet wav-close (info)
         (deflocal f l)
 
         (assocp info)
-        (set f <info "fp">)
-        (if (= <info "type"> "write")
+        (set f (wav-fp info))
+        (if (= (wav-type info) "write")
         then    (set l (length f))
                 (fsetpos 4 f)
                 (fwriteuint-le f 32 (- l 8))
@@ -112,23 +169,114 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun wav-frequency (info)
-        <info "frequency"> )
+(defun wav-open-memory (raw) net wav-open-memory)
+(defnet wav-open-memory (raw @info)
+        (rawp raw)
+        (alt    (wav-open-memory-wav raw @info)
+                (wav-open-memory-sox raw @info) ))
 
-(defun wav-samples (info)
-        <info "samples"> )
+(defun wav-open-memory-wav (raw) net wav-open-memory-wav)
+(defnet wav-open-memory-wav (raw @info)
+        (deflocal ch frequency samplesize bps samples offset datasize)
 
-(defun wav-duration (info)
-        (/ <info "samples"> <info "frequency">) )
+        (= (raw-readstr raw 0 4) "RIFF")
+        (= (raw-readstr raw 8 8) "WAVEfmt ")
+        (set offset (raw-readuint-le raw 16 32))
+        (>= offset 16)
+        (set ch (raw-readuint-le raw 22 16))
+        (set frequency (raw-readuint-le raw 24 32))
+        (set samplesize (raw-readuint-le raw 32 16))
+        (set bps (raw-readuint-le raw 34 16))
+        (inc offset 20)
+        (while (<> (raw-readstr raw offset 4) "data") do
+                (inc offset 4)
+                (inc offset (raw-readuint-le raw offset 32) 4) )
+        (inc offset 4)
+        (set datasize (raw-readuint-le raw offset 32))
+        (inc offset 4)
+        (set samples (div (min datasize (- (length raw) offset)) samplesize))
+        (> samples 0)
+        (set @info (assoc))
+        (set <@info "type"> "read")
+        ;(set <@info "fp"> raw)
+        (set <@info "channels"> ch)
+        (set <@info "frequency"> frequency)
+        (set <@info "samplesize"> samplesize)
+        (set <@info "bps"> bps)
+        (set <@info "samples"> samples)
+        (set <@info "offset"> offset)
+        (set <@info "datasize"> datasize) )
 
-(defun wav-samplesize (info)
-        <info "samplesize"> )
+(defun wav-open-memory-sox (raw) net wav-open-memory-sox)
+(defnet wav-open-memory-sox (raw @info)
+        (deflocal ch frequency samplesize bps samples offset comment-size datasize)
+
+        (= (raw-readstr raw 0 4) ".SoX")
+        (set offset (raw-readuint-le raw 4 32))
+        (set frequency (floor (raw-readfloat-le raw 16 64)))
+        (set ch (raw-readuint-le raw 24 32))
+        (set comment-size (raw-readuint-le raw 28 32))
+        (<= comment-size (- 0xFFFFFFFF (+ 4 8 8 4 4) 4))
+        (> frequency 0)
+        (< frequency (maxint))
+        (> ch 0)
+        (< ch (maxint))
+        (set samplesize (* 4 ch))
+        (set bps 32)
+        (inc offset 4)
+        (set samples (div (- (length raw) offset) samplesize))
+        (> samples 0)
+        (set datasize (* samples samplesize))
+        (set @info (assoc))
+        (set <@info "type"> "read")
+        ;(set <@info "fp"> raw)
+        (set <@info "channels"> ch)
+        (set <@info "frequency"> frequency)
+        (set <@info "samplesize"> samplesize)
+        (set <@info "bps"> bps)
+        (set <@info "samples"> samples)
+        (set <@info "offset"> offset)
+        (set <@info "datasize"> datasize) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun wav-type (info)
+        <info "type"> )
+
+(defun wav-fp (info)
+        <info "fp"> )
 
 (defun wav-channels (info)
         <info "channels"> )
 
+(defun wav-frequency (info)
+        <info "frequency"> )
+
+(defun wav-samplesize (info)
+        <info "samplesize"> )
+
+(defun wav-bps (info)
+        <info "bps"> )
+
+(defun wav-samples (info)
+        <info "samples"> )
+
 (defun wav-offset (info)
         <info "offset"> )
+
+(defun wav-datasize (info)
+        <info "datasize"> )
+
+(defun wav-duration (info)
+        (/ (wav-samples info) (wav-frequency info)) )
 
 (defun wav-sample-val (info sample channel) net wav-sample-val)
 (defnet wav-sample-val (info sample channel @val)
@@ -141,7 +289,7 @@
         (integerp samplesize2)
         (< sample (wav-samples info))
         (< channel channels)
-        (set f <info "fp">)
+        (set f (wav-fp info))
         (fsetpos (+ (wav-offset info) (* samplesize sample) (* samplesize2 channel)) f)
         (set @val (freadsint-le f (* samplesize2 8))) )
 
@@ -197,11 +345,12 @@
 ; appende campioni muti
 
 (defnet wav-write-silence (info samples)
-        (deflocal fo rem buf i)
+        (deflocal fo samplesize rem buf i)
 
-        (= <info "type"> "write")
-        (set fo <info "fp">)
-        (set rem (* (wav-samplesize info) samples))
+        (= (wav-type info) "write")
+        (set fo (wav-fp info))
+        (set samplesize (wav-samplesize info))
+        (set rem (* samplesize samples))
         (set buf (raw 65536))
         (raw-set buf (int->char 0))
         (while (> rem 0) do
@@ -209,17 +358,18 @@
                 (= i (raw-write buf fo i))
                 (dec rem i) )
         (close buf)
-        (assoc-inc info "samples" samples) )
+        (assoc-inc info "samples" samples)
+        (assoc-inc info "datasize" (* samples samplesize)) )
 
 ; appende un segmento
 
 (defnet wav-write-copy (info src-info beg samples)
         (deflocal fi fo samplesize buf)
 
-        (set fi <src-info "fp">)
+        (= (wav-type info) "write")
+        (set fi (wav-fp src-info))
         (<> fi undef)
-        (= <info "type"> "write")
-        (set fo <info "fp">)
+        (set fo (wav-fp info))
         (set samplesize (wav-samplesize src-info))
         (= samplesize (wav-samplesize info))
         (<= beg (wav-samples src-info))
@@ -228,15 +378,16 @@
         (set buf (raw 65536))
         (filecopy-basic fi fo (* samplesize samples) buf)
         (close buf)
-        (assoc-inc info "samples" samples) )
+        (assoc-inc info "samples" samples)
+        (assoc-inc info "datasize" (* samples samplesize)) )
 
 ; silenzia un segmento in posizione arbitraria
 
 (defnet wav-mute-segment (info beg samples)
         (deflocal fo samplesize rem buf i)
 
-        (= <info "type"> "write")
-        (set fo <info "fp">)
+        (= (wav-type info) "write")
+        (set fo (wav-fp info))
         (<= beg (wav-samples info))
         (set samples (min (- (wav-samples info) beg) samples))
         (set samplesize (wav-samplesize info))
@@ -267,11 +418,11 @@
         (deflocal duration extrabytes)
 
         (set duration (wav-duration info))
-        (set extrabytes (- (length <info "fp">) (wav-offset info) (* (wav-samplesize info) (wav-samples info))))
+        (set extrabytes (- (* (wav-samplesize info) (wav-samples info)) (wav-datasize info)))
         (print "canali: " (wav-channels info) nl
                "freq. campionamento: " (format-num (wav-frequency info)) " Hz" nl
                "dimensione campioni: " (wav-samplesize info) " bytes" nl
-               "bits per sample: " <info "bps"> " bit" nl
+               "bits per sample: " (wav-bps info) " bit" nl
                "campioni: " (format-num (wav-samples info)) nl
                "offset: " (wav-offset info) nl
                "durata: " (approx6 duration) " s (" (date-s2hhmmss duration) ")" nl
@@ -350,6 +501,98 @@
         (wav-write-copy info2 info1 samples (- (wav-samples info1) samples))
         (wav-close info2)
         (wav-close info1) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet wav-play (path)
+        (wav-play-low path 1) )
+
+(defnet wav-play-low (path vol)
+        (deflocal info f udata)
+
+        (set info (wav-open path))
+        (<> info undef)
+        (set f (wav-fp info))
+        (set udata (array 3))
+        (set <udata 0> f)
+        (set <udata 1> (* (wav-samples info) (wav-samplesize info)))
+        (fsetpos (wav-offset info) f)
+        (sdl-audio-play (funptr wav-play-cback) udata (wav-channels info) (wav-frequency info) (wav-bps info) vol)
+        (if (rawp <udata 2>)
+        then    (close <udata 2>) )
+        (wav-close info) )
+
+(defun wav-play-cback (udata len) net wav-play-cback)
+(defnet wav-play-cback (udata len @raw)
+        (set len (min len <udata 1>))
+        (> len 0)
+        (set @raw <udata 2>)
+        (if (rawp @raw)
+        then    (if (<> (length @raw) len)
+                then    (close @raw)
+                        (clr @raw) ))
+        (if (= @raw undef)
+        then    (set @raw (raw len))
+                (rawp @raw)
+                (set <udata 2> @raw) )
+        (if (= (raw-read @raw <udata 0> len) len)
+        then    (dec <udata 1> len)
+        else    (clr @raw)
+                (set <udata 1> 0) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defnet wav-play-memory (raw)
+        (wav-play-memory-low raw 1) )
+
+(defnet wav-play-memory-low (raw vol)
+        (deflocal info udata)
+
+        (set info (wav-open-memory raw))
+        (<> info undef)
+        (set udata (array 3))
+        (set <udata 0> (array 2))
+        (set <udata 0 0> raw)
+        (set <udata 0 1> (wav-offset info))
+        (set <udata 1> (* (wav-samples info) (wav-samplesize info)))
+        (sdl-audio-play (funptr wav-play-memory-cback) udata (wav-channels info) (wav-frequency info) (wav-bps info) vol)
+        (if (rawp <udata 2>)
+        then    (close <udata 2>) ))
+
+(defun wav-play-memory-cback (udata len) net wav-play-memory-cback)
+(defnet wav-play-memory-cback (udata len @raw)
+        (set len (min len <udata 1>))
+        (> len 0)
+        (set @raw <udata 2>)
+        (if (rawp @raw)
+        then    (if (<> (length @raw) len)
+                then    (close @raw)
+                        (clr @raw) ))
+        (if (= @raw undef)
+        then    (set @raw (raw len))
+                (rawp @raw)
+                (set <udata 2> @raw) )
+        (alt    (seq    (raw-read-from-raw @raw <udata 0 0> <udata 0 1>)
+                        (dec <udata 1> len)
+                        (inc <udata 0 1> len) )
+                (seq    (clr @raw)
+                        (set <udata 1> 0) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

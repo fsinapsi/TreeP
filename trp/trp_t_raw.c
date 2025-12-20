@@ -582,3 +582,196 @@ uns8b trp_raw_set( trp_obj_t *raw, trp_obj_t *c )
     return 0;
 }
 
+uns8b trp_raw_read_from_raw( trp_obj_t *raw_dst, trp_obj_t *raw_src, trp_obj_t *pos )
+{
+    uns32b off, c;
+
+    if ( ( raw_dst->tipo != TRP_RAW ) || ( raw_src->tipo != TRP_RAW ) || trp_cast_uns32b( pos, &off ) )
+        return 1;
+    c = ((trp_raw_t *)raw_dst)->len;
+    if ( c == 0 )
+        return 0;
+    if ( off > ((trp_raw_t *)raw_src)->len )
+        return 1;
+    if ( c > ((trp_raw_t *)raw_src)->len - off )
+        return 1;
+    memcpy( (((trp_raw_t *)raw_dst)->data), (((trp_raw_t *)raw_src)->data) + off, c );
+    ((trp_raw_t *)raw_dst)->mode = 0;
+    ((trp_raw_t *)raw_dst)->unc_tipo = 0;
+    ((trp_raw_t *)raw_dst)->compression_level = 0;
+    ((trp_raw_t *)raw_dst)->unc_len = 0;
+    return 0;
+}
+
+trp_obj_t *trp_raw_readstr( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
+{
+    uns8b *p;
+    uns32b off, n, i;
+    int c;
+    CORD_ec x;
+
+    if ( ( raw->tipo != TRP_RAW ) || trp_cast_uns32b( pos, &off ) || trp_cast_uns32b( cnt, &n ) )
+        return UNDEF;
+    if ( off > ((trp_raw_t *)raw)->len )
+        return UNDEF;
+    if ( n > ((trp_raw_t *)raw)->len - off )
+        return UNDEF;
+    p = (((trp_raw_t *)raw)->data) + off;
+    CORD_ec_init( x );
+    for ( i = n ; i ; ) {
+        i--;
+        c = (int)( *p++ );
+        if ( c == 0 ) {
+            /* Append the right number of NULs */
+            /* Note that any string of NULs is represented in 4 words, */
+            /* independent of its length. */
+            register size_t count = 1;
+
+            CORD_ec_flush_buf( x );
+            while ( i ) {
+                i--;
+                if ( c = (int)( *p++ ) )
+                    break;
+                count++;
+            }
+            x[ 0 ].ec_cord = CORD_cat( x[ 0 ].ec_cord, CORD_nul( count ) );
+            if ( c == 0 )
+                break;
+        }
+        CORD_ec_append( x, c );
+    }
+    return trp_cord_cons( CORD_balance( CORD_ec_to_cord( x ) ), n );
+}
+
+trp_obj_t *trp_raw_readuint_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
+{
+    uns8b *p;
+    uns32b off, n;
+    uns64b c64;
+
+    if ( ( raw->tipo != TRP_RAW ) || trp_cast_uns32b( pos, &off ) || trp_cast_uns32b_range( cnt, &n, 8, 64 ) )
+        return UNDEF;
+    if ( ( off > ((trp_raw_t *)raw)->len ) || ( n & 7 ) )
+        return UNDEF;
+    n >>= 3;
+    if ( n > ((trp_raw_t *)raw)->len - off )
+        return UNDEF;
+    p = (((trp_raw_t *)raw)->data) + off + n - 1;
+    c64 = 0;
+    for ( ; n ; n-- ) {
+        c64 <<= 8;
+        c64 |= ( *p-- );
+    }
+    if ( c64 & 0x8000000000000000LL )
+        return trp_cat( trp_sig64( (sig64b)( c64 & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
+    return trp_sig64( (sig64b)c64 );
+}
+
+trp_obj_t *trp_raw_readuint_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
+{
+    uns8b *p;
+    uns32b off, n;
+    uns64b c64;
+
+    if ( ( raw->tipo != TRP_RAW ) || trp_cast_uns32b( pos, &off ) || trp_cast_uns32b_range( cnt, &n, 8, 64 ) )
+        return UNDEF;
+    if ( ( off > ((trp_raw_t *)raw)->len ) || ( n & 7 ) )
+        return UNDEF;
+    n >>= 3;
+    if ( n > ((trp_raw_t *)raw)->len - off )
+        return UNDEF;
+    p = (((trp_raw_t *)raw)->data) + off;
+    c64 = 0;
+    for ( ; n ; n-- ) {
+        c64 <<= 8;
+        c64 |= ( *p++ );
+    }
+    if ( c64 & 0x8000000000000000LL )
+        return trp_cat( trp_sig64( (sig64b)( c64 & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
+    return trp_sig64( (sig64b)c64 );
+}
+
+trp_obj_t *trp_raw_readfloat_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
+{
+    uns8b *p;
+    uns32b off, n;
+    uns64b c64;
+    uns32b c32;
+    flt64b d64;
+    flt32b d32;
+
+    if ( ( raw->tipo != TRP_RAW ) || trp_cast_uns32b( pos, &off ) || trp_cast_uns32b_range( cnt, &n, 32, 64 ) )
+        return UNDEF;
+    if ( off > ((trp_raw_t *)raw)->len )
+        return UNDEF;
+    if ( ( n >> 3 ) > ((trp_raw_t *)raw)->len - off )
+        return UNDEF;
+    p = (((trp_raw_t *)raw)->data) + off;
+    switch ( n ) {
+    case 32:
+#ifdef TRP_BIG_ENDIAN
+        memcpy( (uns8b *)(&c32), p, 4 );
+        c32 = trp_swap_endian32( c32 );
+        d32 = *((flt32b *)(&c32));
+#else
+        memcpy( (uns8b *)(&d32), p, 4 );
+#endif
+        d64 = (flt64b)d32;
+        break;
+    case 64:
+#ifdef TRP_BIG_ENDIAN
+        memcpy( (uns8b *)(&c64), p, 8 );
+        c64 = trp_swap_endian64( c64 );
+        d64 = *((flt64b *)(&c64));
+#else
+        memcpy( (uns8b *)(&d64), p, 8 );
+#endif
+        break;
+    default:
+        return UNDEF;
+    }
+    return trp_double( (double)d64 );
+}
+
+trp_obj_t *trp_raw_readfloat_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
+{
+    uns8b *p;
+    uns32b off, n;
+    uns64b c64;
+    uns32b c32;
+    flt64b d64;
+    flt32b d32;
+
+    if ( ( raw->tipo != TRP_RAW ) || trp_cast_uns32b( pos, &off ) || trp_cast_uns32b_range( cnt, &n, 32, 64 ) )
+        return UNDEF;
+    if ( off > ((trp_raw_t *)raw)->len )
+        return UNDEF;
+    if ( ( n >> 3 ) > ((trp_raw_t *)raw)->len - off )
+        return UNDEF;
+    p = (((trp_raw_t *)raw)->data) + off;
+    switch ( n ) {
+    case 32:
+#ifdef TRP_LITTLE_ENDIAN
+        memcpy( (uns8b *)(&c32), p, 4 );
+        c32 = trp_swap_endian32( c32 );
+        d32 = *((flt32b *)(&c32));
+#else
+        memcpy( (uns8b *)(&d32), p, 4 );
+#endif
+        d64 = (flt64b)d32;
+        break;
+    case 64:
+#ifdef TRP_LITTLE_ENDIAN
+        memcpy( (uns8b *)(&c64), p, 8 );
+        c64 = trp_swap_endian64( c64 );
+        d64 = *((flt64b *)(&c64));
+#else
+        memcpy( (uns8b *)(&d64), p, 8 );
+#endif
+        break;
+    default:
+        return UNDEF;
+    }
+    return trp_double( (double)d64 );
+}
+
