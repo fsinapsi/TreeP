@@ -137,6 +137,7 @@ enum {
     TRP_CAIRO,
     TRP_MHD,
     TRP_DBF,
+    TRP_SDL,
     TRP_MAX_T /* lasciarlo sempre per ultimo */
 };
 

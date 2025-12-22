@@ -105,6 +105,7 @@ static void SDLCALL trp_sdl_audio_play_cback( void *userdata, SDL_AudioStream *s
             SDL_PutAudioStreamData( stream, ((trp_raw_t *)raw)->data, ((trp_raw_t *)raw)->len );
         } else {
             a->run = 0;
+            trp_thread_unregister_my_thread();
             trp_sdl_audio_play_cback_signal( a );
         }
     }

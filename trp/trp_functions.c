@@ -69,7 +69,8 @@ uns8b *_trp_tipo_descr[ TRP_MAX_T ] = {
     "TRP_CHESS",
     "TRP_CAIRO",
     "TRP_MHD",
-    "TRP_DBF"
+    "TRP_DBF",
+    "TRP_SDL"
 };
 
 uns8bfun_t _trp_print_fun[ TRP_MAX_T ] = {
@@ -112,7 +113,8 @@ uns8bfun_t _trp_print_fun[ TRP_MAX_T ] = {
     trp_default_print, /* chess */
     trp_default_print, /* cairo */
     trp_default_print, /* mhd */
-    trp_default_print  /* dbf */
+    trp_default_print, /* dbf */
+    trp_default_print  /* sdl */
 };
 
 uns32bfun_t _trp_size_fun[ TRP_MAX_T ] = {
@@ -155,7 +157,8 @@ uns32bfun_t _trp_size_fun[ TRP_MAX_T ] = {
     trp_special_size, /* chess */
     trp_special_size, /* cairo */
     trp_special_size, /* mhd */
-    trp_special_size  /* dbf */
+    trp_special_size, /* dbf */
+    trp_special_size  /* sdl */
 };
 
 voidfun_t _trp_encode_fun[ TRP_MAX_T ] = {
@@ -198,7 +201,8 @@ voidfun_t _trp_encode_fun[ TRP_MAX_T ] = {
     trp_default_encode, /* chess */
     trp_default_encode, /* cairo */
     trp_default_encode, /* mhd */
-    trp_default_encode  /* dbf */
+    trp_default_encode, /* dbf */
+    trp_default_encode  /* sdl */
 };
 
 objfun_t _trp_decode_fun[ TRP_MAX_T ] = {
@@ -241,7 +245,8 @@ objfun_t _trp_decode_fun[ TRP_MAX_T ] = {
     trp_special_decode, /* chess */
     trp_special_decode, /* cairo */
     trp_special_decode, /* mhd */
-    trp_special_decode  /* dbf */
+    trp_special_decode, /* dbf */
+    trp_special_decode  /* sdl */
 };
 
 objfun_t _trp_equal_fun[ TRP_MAX_T ] = {
@@ -284,7 +289,8 @@ objfun_t _trp_equal_fun[ TRP_MAX_T ] = {
     trp_default_relation, /* chess */
     trp_default_relation, /* cairo */
     trp_default_relation, /* mhd */
-    trp_default_relation  /* dbf */
+    trp_default_relation, /* dbf */
+    trp_default_relation  /* sdl */
 };
 
 objfun_t _trp_less_fun[ TRP_MAX_T ] = {
@@ -327,7 +333,8 @@ objfun_t _trp_less_fun[ TRP_MAX_T ] = {
     trp_default_relation, /* chess */
     trp_default_relation, /* cairo */
     trp_default_relation, /* mhd */
-    trp_default_relation  /* dbf */
+    trp_default_relation, /* dbf */
+    trp_default_relation  /* sdl */
 };
 
 uns8bfun_t _trp_close_fun[ TRP_MAX_T ] = {
@@ -370,7 +377,8 @@ uns8bfun_t _trp_close_fun[ TRP_MAX_T ] = {
     trp_default_close, /* chess */
     trp_default_close, /* cairo */
     trp_default_close, /* mhd */
-    trp_default_close  /* dbf */
+    trp_default_close, /* dbf */
+    trp_default_close  /* sdl */
 };
 
 objfun_t _trp_length_fun[ TRP_MAX_T ] = {
@@ -413,7 +421,8 @@ objfun_t _trp_length_fun[ TRP_MAX_T ] = {
     trp_default_obj, /* chess */
     trp_default_obj, /* cairo */
     trp_default_obj, /* mhd */
-    trp_default_obj  /* dbf */
+    trp_default_obj, /* dbf */
+    trp_default_obj  /* sdl */
 };
 
 objfun_t _trp_width_fun[ TRP_MAX_T ] = {
@@ -456,7 +465,8 @@ objfun_t _trp_width_fun[ TRP_MAX_T ] = {
     trp_default_obj, /* chess */
     trp_default_obj, /* cairo */
     trp_default_obj, /* mhd */
-    trp_default_obj  /* dbf */
+    trp_default_obj, /* dbf */
+    trp_default_obj  /* sdl */
 };
 
 objfun_t _trp_height_fun[ TRP_MAX_T ] = {
@@ -499,7 +509,8 @@ objfun_t _trp_height_fun[ TRP_MAX_T ] = {
     trp_default_obj, /* chess */
     trp_default_obj, /* cairo */
     trp_default_obj, /* mhd */
-    trp_default_obj  /* dbf */
+    trp_default_obj, /* dbf */
+    trp_default_obj  /* sdl */
 };
 
 objfun_t _trp_nth_fun[ TRP_MAX_T ] = {
@@ -542,7 +553,8 @@ objfun_t _trp_nth_fun[ TRP_MAX_T ] = {
     trp_default_nth, /* chess */
     trp_default_nth, /* cairo */
     trp_default_nth, /* mhd */
-    trp_default_nth  /* dbf */
+    trp_default_nth, /* dbf */
+    trp_default_nth  /* sdl */
 };
 
 objfun_t _trp_sub_fun[ TRP_MAX_T ] = {
@@ -585,7 +597,8 @@ objfun_t _trp_sub_fun[ TRP_MAX_T ] = {
     trp_default_sub, /* chess */
     trp_default_sub, /* cairo */
     trp_default_sub, /* mhd */
-    trp_default_sub  /* dbf */
+    trp_default_sub, /* dbf */
+    trp_default_sub  /* sdl */
 };
 
 objfun_t _trp_cat_fun[ TRP_MAX_T ] = {
@@ -628,7 +641,8 @@ objfun_t _trp_cat_fun[ TRP_MAX_T ] = {
     trp_default_cat, /* chess */
     trp_default_cat, /* cairo */
     trp_default_cat, /* mhd */
-    trp_default_cat  /* dbf */
+    trp_default_cat, /* dbf */
+    trp_default_cat  /* sdl */
 };
 
 uns8bfun_t _trp_in_fun[ TRP_MAX_T ] = {
@@ -671,7 +685,8 @@ uns8bfun_t _trp_in_fun[ TRP_MAX_T ] = {
     trp_default_in, /* chess */
     trp_default_in, /* cairo */
     trp_default_in, /* mhd */
-    trp_default_in  /* dbf */
+    trp_default_in, /* dbf */
+    trp_default_in  /* sdl */
 };
 
 static trp_obj_t *trp_default_obj( trp_obj_t *obj )
