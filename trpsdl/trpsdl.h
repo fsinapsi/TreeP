@@ -21,6 +21,8 @@
 
 uns8b trp_sdl_init();
 void trp_sdl_quit();
+uns8b trp_sdl_enable_screen_saver();
+uns8b trp_sdl_disable_screen_saver();
 uns8b trp_sdl_audio_play( trp_obj_t *funptr, trp_obj_t *udata, trp_obj_t *ch, trp_obj_t *freq, trp_obj_t *bps, trp_obj_t *volume );
 
 #endif /* !__trpsdl__h */

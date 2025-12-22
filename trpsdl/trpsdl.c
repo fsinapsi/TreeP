@@ -21,8 +21,22 @@
 #include "../trpthread/trpthread.h"
 #include <SDL3/SDL.h>
 
-static uns8b trp_sdl_check();
-static void SDLCALL trp_sdl_audio_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total_amount );
+typedef struct {
+    objfun_t fun;
+    trp_obj_t *udata;
+    trp_obj_t *th;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+    uns8b run;
+} trp_sdl_audio_play_t;
+
+static uns8b trp_sdl_audio_init();
+static uns8b trp_sdl_video_init();
+static void SDLCALL trp_sdl_audio_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total );
+static void trp_sdl_audio_play_cback_signal( trp_sdl_audio_play_t *a );
+
+static uns8b _trp_sdl_audio_init = 0;
+static uns8b _trp_sdl_video_init = 0;
 
 uns8b trp_sdl_init()
 {
@@ -31,49 +45,76 @@ uns8b trp_sdl_init()
 
 void trp_sdl_quit()
 {
-    if ( !trp_sdl_check() )
+    if ( _trp_sdl_audio_init )
         SDL_QuitSubSystem( SDL_INIT_AUDIO );
+    if ( _trp_sdl_video_init )
+        SDL_QuitSubSystem( SDL_INIT_VIDEO );
+    SDL_Quit();
 }
 
-static uns8b trp_sdl_check()
+static uns8b trp_sdl_audio_init()
 {
-    static uns8b toinit = 1;
-
-    if ( toinit ) {
+    if ( _trp_sdl_audio_init == 0 ) {
         if ( !SDL_InitSubSystem( SDL_INIT_AUDIO ) )
             return 1;
-        toinit = 0;
+        _trp_sdl_audio_init = 1;
     }
     return 0;
 }
 
-typedef struct {
-    objfun_t fun;
-    trp_obj_t *udata;
-    uns8b run;
-} trp_sdl_audio_play_t;
+static uns8b trp_sdl_video_init()
+{
+    if ( _trp_sdl_video_init == 0 ) {
+        if ( !SDL_InitSubSystem( SDL_INIT_VIDEO ) )
+            return 1;
+        _trp_sdl_video_init = 1;
+    }
+    return 0;
+}
 
-static void SDLCALL trp_sdl_audio_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total_amount )
+uns8b trp_sdl_enable_screen_saver()
+{
+    if ( trp_sdl_video_init() )
+        return 1;
+    return ( SDL_EnableScreenSaver() == true ) ? 0 : 1;
+}
+
+uns8b trp_sdl_disable_screen_saver()
+{
+    if ( trp_sdl_video_init() )
+        return 1;
+    return ( SDL_DisableScreenSaver() == true ) ? 0 : 1;
+}
+
+static void SDLCALL trp_sdl_audio_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total )
 {
     trp_sdl_audio_play_t *a = (trp_sdl_audio_play_t *)userdata;
     trp_obj_t *raw;
 
     if ( a->run ) {
-        if ( a->run == 2 ) {
+        if ( a->th == NULL ) {
             if ( trp_thread_register_my_thread() ) {
                 a->run = 0;
+                trp_sdl_audio_play_cback_signal( a );
                 return;
             }
-            a->run = 1;
+            a->th = trp_thread_self();
         }
         raw = (a->fun)( a->udata, trp_sig64( (sig64b)len ) );
         if ( raw->tipo == TRP_RAW ) {
             SDL_PutAudioStreamData( stream, ((trp_raw_t *)raw)->data, ((trp_raw_t *)raw)->len );
         } else {
             a->run = 0;
-            trp_thread_unregister_my_thread();
+            trp_sdl_audio_play_cback_signal( a );
         }
     }
+}
+
+static void trp_sdl_audio_play_cback_signal( trp_sdl_audio_play_t *a )
+{
+    pthread_mutex_lock( &( a->mutex ) );
+    pthread_cond_signal( &( a->cond ) );
+    pthread_mutex_unlock( &( a->mutex ) );
 }
 
 uns8b trp_sdl_audio_play( trp_obj_t *funptr, trp_obj_t *udata, trp_obj_t *ch, trp_obj_t *freq, trp_obj_t *bps, trp_obj_t *volume )
@@ -84,7 +125,7 @@ uns8b trp_sdl_audio_play( trp_obj_t *funptr, trp_obj_t *udata, trp_obj_t *ch, tr
     uns32b i;
     flt64b vol;
 
-    if ( trp_sdl_check() )
+    if ( trp_sdl_audio_init() )
         return 1;
     if ( funptr->tipo != TRP_FUNPTR )
         return 1;
@@ -109,14 +150,18 @@ uns8b trp_sdl_audio_play( trp_obj_t *funptr, trp_obj_t *udata, trp_obj_t *ch, tr
         vol = 1.0;
     a.fun = ((trp_funptr_t *)funptr)->f;
     a.udata = udata;
-    a.run = 2;
+    a.th = NULL;
+    pthread_mutex_init( &( a.mutex ), NULL );
+    pthread_cond_init( &( a.cond ), NULL );
+    a.run = 1;
+    pthread_mutex_lock( &( a.mutex ) );
     stream = SDL_OpenAudioDeviceStream( SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audiospec, trp_sdl_audio_play_cback, (void *)( &a ) );
     SDL_SetAudioStreamGain( stream, (float)vol );
     SDL_ResumeAudioDevice( SDL_GetAudioStreamDevice( stream ) );
-    while ( a.run )
-        SDL_Delay( 50 );
-    SDL_Delay( 100 );
+    pthread_cond_wait( &( a.cond ), &( a.mutex ) );
+    pthread_mutex_unlock( &( a.mutex ) );
+    SDL_FlushAudioStream( stream );
     SDL_DestroyAudioStream( stream );
-    return 0;
+    return a.th ? 0 : 1;
 }
 
