@@ -8,40 +8,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet test-sdl (func)
+(defnet expr-sdl (func)
         (deflocal i)
 
         (lmatch remove func "sdl-")
-        (for i in (test-sdl-table) do
+        (for i in (expr-sdl-table) do
                 until (= <i 0> func) )
         (= <i 0> func)
-        (exprseq-ext <i 1> <i 2> (+ "  if(trp_sdl_" (dash->underscore func) "(") "))")
+        (exprseq-basic <i 1> <i 2> (+ "trp_sdl_" (dash->underscore func) "(") ")")
         (flag-true "sdl") )
 
-(defun test-sdl-table ()
-        [ [ "enable-screen-saver"               0 0 ]
-          [ "disable-screen-saver"              0 0 ]
-          [ "pause-audio-stream-device"         1 1 ]
-          [ "resume-audio-stream-device"        1 1 ]
-          [ "set-audio-stream-gain"             2 2 ]
-          [ "flush-audio-stream"                1 1 ]
-          [ "clear-audio-stream"                1 1 ]
-          [ "put-audio-stream-data"             3 3 ]
-          [ "audio-play"                        5 6 ]
-          [ "set-window-position"               3 3 ]
-          [ "set-window-size"                   3 3 ]
-          [ "set-window-icon"                   2 2 ]
-          [ "set-window-fullscreen"             2 2 ]
-          [ "set-window-aspect-ratio"           3 3 ]
-          [ "set-render-draw-color"             2 2 ]
-          [ "render-clear"                      1 1 ]
-          [ "render-texture"                    2 2 ]
-          [ "render-present"                    1 1 ]
-          [ "update-texture"                    2 2 ]
-          [ "poll-event"                        1 1 ]
-          [ "delay"                             1 1 ]
-          [ "delay-ns"                          1 1 ]
-          [ "delay-precise"                     1 1 ]
+(defun expr-sdl-table ()
+        [ [ "open-audio-stream"                 3 3 ]
+          [ "create-window-and-renderer"        4 4 ]
+          [ "get-display-for-window"            1 1 ]
+          [ "get-desktop-display-size"          1 1 ]
+          [ "get-current-display-size"          1 1 ]
+          [ "get-window-size"                   1 1 ]
+          [ "get-render-scale"                  1 1 ]
+          [ "create-texture"                    4 4 ]
+          [ "create-texture-from-surface"       2 2 ]
+          [ "create-event"                      0 0 ]
+          [ "event-type"                        1 1 ]
+          [ "event-key-scancode"                1 1 ]
+          [ "get-ticks"                         0 0 ]
+          [ "get-ticks-ns"                      0 0 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

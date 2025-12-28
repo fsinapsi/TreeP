@@ -13,6 +13,11 @@
 (include "expr.tin")
 (include "test.tin")
 
+(use webp)
+(use qoi)
+(use openjp2)
+(use heif)
+
 (defstart trpc)
 
 (defglobal
@@ -365,7 +370,7 @@
                   " -Wno-incompatible-pointer-types"
                   " -Wno-pointer-sign"
                   (if (darwin) " -headerpad_max_install_names" "")
-                  (if (and mswin (or (gtk) (iup)) (not nomwin)) " -mwindows" "")
+                  (if mswin (if (and (or (gtk) (iup)) (not nomwin)) " -mwindows" " -mconsole") "")
                   " -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
                   (if _mingw " -DMINGW -D__WORDSIZE=64" "")
                   (if _win32 " -DMINGW -D__WORDSIZE=32 -I/usr/i686-w64-mingw32/include -I/usr/local/mingw-w64/32/include" "")
@@ -579,7 +584,7 @@
         (if (sdl)
         then    (flag-true "thread") )
         (if (or (webp) (qoi) (openjp2) (jbig2) (rsvg) (heif) (sail)
-                (sift) (gtk) (iup) (avcodec) (mgl) (lept) )
+                (sift) (gtk) (iup) (avcodec) (mgl) (lept) (sdl) )
         then    (flag-true "pix") ))
 
 (defnet parse-pass ()
