@@ -700,6 +700,7 @@ uns8b trp_math_set_seed( trp_obj_t *obj );
 trp_obj_t *trp_math_get_seed();
 trp_obj_t *trp_math_gmp_version();
 trp_obj_t *trp_sig64( sig64b val );
+trp_obj_t *trp_uns64( uns64b val );
 trp_obj_t *trp_double( flt64b val );
 trp_obj_t *trp_complex( trp_obj_t *re, trp_obj_t *im );
 trp_obj_t *trp_zero();

@@ -1202,11 +1202,9 @@ trp_obj_t *trp_iup_calendar()
 
 trp_obj_t *trp_iup_image_rgba( trp_obj_t *pix )
 {
-    uns8b *p;
+    uns8b *p = trp_pix_get_mapp( pix );
 
-    if ( pix->tipo != TRP_PIX )
-        return UNDEF;
-    if ( ( p = ((trp_pix_t *)pix)->map.p ) == NULL )
+    if ( p == NULL )
         return UNDEF;
     return trp_iup_handle( IupImageRGBA( ((trp_pix_t *)pix)->w, ((trp_pix_t *)pix)->h, p ) );
 }
@@ -1317,23 +1315,30 @@ trp_obj_t *trp_iup_convert_xy_to_pos( trp_obj_t *ih, trp_obj_t *x, trp_obj_t *y 
 }
 
 static uns8bfun_t _trp_iup_post_call = NULL;
+static trp_obj_t *_trp_iup_post_call_udata = NULL;
 
 static int trp_iup_post_call_cback()
 {
     if ( _trp_iup_post_call ) {
-        (void)_trp_iup_post_call();
+        if ( _trp_iup_post_call_udata ) {
+            (void)_trp_iup_post_call( _trp_iup_post_call_udata );
+        } else {
+            (void)_trp_iup_post_call();
+        }
         _trp_iup_post_call = NULL;
+        _trp_iup_post_call_udata = NULL;
     }
     return IUP_IGNORE;
 }
 
-uns8b trp_iup_post_call( trp_obj_t *cback )
+uns8b trp_iup_post_call( trp_obj_t *cback, trp_obj_t *udata )
 {
     if ( ( _trp_iup_post_call ) || ( cback->tipo != TRP_NETPTR ) )
         return 1;
-    if ( ((trp_netptr_t *)cback)->nargs )
+    if ( ((trp_netptr_t *)cback)->nargs != ( udata ? 1 : 0 ) )
         return 1;
     _trp_iup_post_call = ((trp_netptr_t *)cback)->f;
+    _trp_iup_post_call_udata = udata;
     (void)IupSetFunction( "IDLE_ACTION", trp_iup_post_call_cback );
     return 0;
 }

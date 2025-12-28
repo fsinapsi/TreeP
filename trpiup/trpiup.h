@@ -148,6 +148,6 @@ trp_obj_t *trp_iup_get_dialog_child( trp_obj_t *ih, trp_obj_t *name );
 trp_obj_t *trp_iup_text_convert_lin_col_to_pos( trp_obj_t *ih, trp_obj_t *lin, trp_obj_t *col );
 trp_obj_t *trp_iup_text_convert_pos_to_lin_col( trp_obj_t *ih, trp_obj_t *pos );
 trp_obj_t *trp_iup_convert_xy_to_pos( trp_obj_t *ih, trp_obj_t *x, trp_obj_t *y );
-uns8b trp_iup_post_call( trp_obj_t *cback );
+uns8b trp_iup_post_call( trp_obj_t *cback, trp_obj_t *udata );
 
 #endif /* !__trpiup__h */

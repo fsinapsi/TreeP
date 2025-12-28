@@ -786,8 +786,6 @@ trp_obj_t *trp_getenv( trp_obj_t *obj )
     return trp_cord( p );
 }
 
-#ifndef MINGW
-
 uns8b trp_sleep( trp_obj_t *sec )
 {
     trp_obj_t *n = trp_math_floor( sec );
@@ -814,24 +812,6 @@ uns8b trp_sleep( trp_obj_t *sec )
     }
     return res;
 }
-
-#else
-
-uns8b trp_sleep( trp_obj_t *sec )
-{
-    uns32b msec;
-
-    if ( trp_cast_uns32b( trp_math_floor( trp_math_times( sec, trp_sig64( 1000 ), NULL ) ), &msec ) )
-        return 1;
-    if ( msec == 0 )
-        return 0;
-    if ( msec == INFINITE )
-        return 1;
-    Sleep( msec );
-    return 0;
-}
-
-#endif
 
 #ifndef MINGW
 

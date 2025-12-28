@@ -657,14 +657,11 @@ trp_obj_t *trp_raw_readuint_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
     if ( n > ((trp_raw_t *)raw)->len - off )
         return UNDEF;
     p = (((trp_raw_t *)raw)->data) + off + n - 1;
-    c64 = 0;
-    for ( ; n ; n-- ) {
+    for ( c64 = 0 ; n ; n-- ) {
         c64 <<= 8;
         c64 |= ( *p-- );
     }
-    if ( c64 & 0x8000000000000000LL )
-        return trp_cat( trp_sig64( (sig64b)( c64 & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
-    return trp_sig64( (sig64b)c64 );
+    return trp_uns64( c64 );
 }
 
 trp_obj_t *trp_raw_readuint_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
@@ -681,14 +678,11 @@ trp_obj_t *trp_raw_readuint_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )
     if ( n > ((trp_raw_t *)raw)->len - off )
         return UNDEF;
     p = (((trp_raw_t *)raw)->data) + off;
-    c64 = 0;
-    for ( ; n ; n-- ) {
+    for ( c64 = 0 ; n ; n-- ) {
         c64 <<= 8;
         c64 |= ( *p++ );
     }
-    if ( c64 & 0x8000000000000000LL )
-        return trp_cat( trp_sig64( (sig64b)( c64 & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
-    return trp_sig64( (sig64b)c64 );
+    return trp_uns64( c64 );
 }
 
 trp_obj_t *trp_raw_readfloat_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt )

@@ -472,9 +472,7 @@ trp_obj_t *trp_read_uint_le( trp_obj_t *stream, trp_obj_t *cnt )
 #ifdef TRP_BIG_ENDIAN
     c64 = trp_swap_endian64( c64 );
 #endif
-    if ( c64 & 0x8000000000000000LL )
-        return trp_cat( trp_sig64( (sig64b)( c64 & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
-    return trp_sig64( (sig64b)c64 );
+    return trp_uns64( c64 );
 }
 
 trp_obj_t *trp_read_uint_be( trp_obj_t *stream, trp_obj_t *cnt )
@@ -495,9 +493,7 @@ trp_obj_t *trp_read_uint_be( trp_obj_t *stream, trp_obj_t *cnt )
 #ifdef TRP_LITTLE_ENDIAN
     c64 = trp_swap_endian64( c64 );
 #endif
-    if ( c64 & 0x8000000000000000LL )
-        return trp_cat( trp_sig64( (sig64b)( c64 & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
-    return trp_sig64( (sig64b)c64 );
+    return trp_uns64( c64 );
 }
 
 trp_obj_t *trp_read_sint_le( trp_obj_t *stream, trp_obj_t *cnt )

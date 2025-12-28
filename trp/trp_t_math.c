@@ -499,6 +499,13 @@ trp_obj_t *trp_sig64( sig64b val )
     return (trp_obj_t *)obj;
 }
 
+trp_obj_t *trp_uns64( uns64b val )
+{
+    if ( val & 0x8000000000000000LL )
+        return trp_cat( trp_sig64( (sig64b)( val & 0x7fffffffffffffffLL ) ), TRP_MAXINT, UNO, NULL );
+    return trp_sig64( (sig64b)val );
+}
+
 trp_obj_t *trp_double( double val )
 {
     mpq_t mq;
