@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,10 @@ trp_obj_t *trp_av_avcodec_list();
 trp_obj_t *trp_av_sws_context( trp_obj_t *wi, trp_obj_t *hi, trp_obj_t *wo, trp_obj_t *ho, trp_obj_t *alg );
 uns8b trp_av_sws_scale( trp_obj_t *swsctx, trp_obj_t *pi, trp_obj_t *po );
 trp_obj_t *trp_av_avformat_open_input( trp_obj_t *path, trp_obj_t *par );
+trp_obj_t *trp_av_avformat_open_input_qsv( trp_obj_t *path, trp_obj_t *par );
+trp_obj_t *trp_av_avformat_open_input_amf( trp_obj_t *path, trp_obj_t *par );
 trp_obj_t *trp_av_avformat_open_input_cuvid( trp_obj_t *path, trp_obj_t *par );
+uns8b trp_av_ignore_invalid_data( trp_obj_t *fmtctx, trp_obj_t *val );
 uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno );
 uns8b trp_av_skip_frame( trp_obj_t *fmtctx, trp_obj_t *n );
 uns8b trp_av_read_scd_histogram_set( trp_obj_t *fmtctx, trp_obj_t *raw );
@@ -65,7 +68,7 @@ trp_obj_t *trp_av_metadata( trp_obj_t *fmtctx, trp_obj_t *streamno );
 trp_obj_t *trp_av_frameno2ts( trp_obj_t *fmtctx, trp_obj_t *frameno );
 trp_obj_t *trp_av_frameno( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_ts( trp_obj_t *fmtctx );
-trp_obj_t *trp_av_nearest_keyframe( trp_obj_t *fmtctx, trp_obj_t *frameno, trp_obj_t *max_diff );
+trp_obj_t *trp_av_nearest_keyframe( trp_obj_t *fmtctx, trp_obj_t *frameno, trp_obj_t *backward );
 trp_obj_t *trp_av_get_buf_size( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_get_buf_content( trp_obj_t *fmtctx );
 uns8b trp_av_set_buf_size( trp_obj_t *fmtctx, trp_obj_t *bufsize );
