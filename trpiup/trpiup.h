@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,14 @@
 #define K_csRIGHT iup_XkeyCtrl(K_sRIGHT)
 #define K_csUP iup_XkeyCtrl(K_sUP)
 #define K_csDOWN iup_XkeyCtrl(K_sDOWN)
+#define K_cmLEFT iup_XkeyCtrl(K_mLEFT)
+#define K_cmRIGHT iup_XkeyCtrl(K_mRIGHT)
+#define K_cmUP iup_XkeyCtrl(K_mUP)
+#define K_cmDOWN iup_XkeyCtrl(K_mDOWN)
+#define K_msLEFT iup_XkeyAlt(K_sLEFT)
+#define K_msRIGHT iup_XkeyAlt(K_sRIGHT)
+#define K_msUP iup_XkeyAlt(K_sUP)
+#define K_msDOWN iup_XkeyAlt(K_sDOWN)
 #define K_csA iup_XkeyShift(K_cA)
 #define K_csB iup_XkeyShift(K_cB)
 #define K_csC iup_XkeyShift(K_cC)

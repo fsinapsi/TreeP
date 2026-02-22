@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -600,6 +600,21 @@ uns8b trp_raw_read_from_raw( trp_obj_t *raw_dst, trp_obj_t *raw_src, trp_obj_t *
     ((trp_raw_t *)raw_dst)->unc_tipo = 0;
     ((trp_raw_t *)raw_dst)->compression_level = 0;
     ((trp_raw_t *)raw_dst)->unc_len = 0;
+    return 0;
+}
+
+uns8b trp_raw_copy_from_raw( trp_obj_t *raw_dst, trp_obj_t *raw_src, trp_obj_t *pos_dst, trp_obj_t *pos_src, trp_obj_t *len )
+{
+    uns32b off_dst, off_src, n;
+
+    if ( ( raw_dst->tipo != TRP_RAW ) || ( raw_src->tipo != TRP_RAW ) ||
+           trp_cast_uns32b( pos_dst, &off_dst ) || trp_cast_uns32b( pos_src, &off_src ) ||
+           trp_cast_uns32b( len, &n ) )
+        return 1;
+    if ( ( off_dst + n > ((trp_raw_t *)raw_dst)->len ) || ( off_src + n > ((trp_raw_t *)raw_src)->len ) )
+        return 1;
+    if ( n )
+        memcpy( (((trp_raw_t *)raw_dst)->data) + off_dst, (((trp_raw_t *)raw_src)->data) + off_src, n );
     return 0;
 }
 

@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "../trp/trp.h"
+#define __trpsdlnomain__
 #include "./trpsdl.h"
 #include "../trpthread/trpthread.h"
 #include "../trppix/trppix_internal.h"
@@ -39,6 +40,9 @@ typedef struct {
     union {
         void *aux_handle;
         SDL_Renderer *renderer;
+    };
+    union {
+        uns8b bps24;
     };
 } trp_sdl_t;
 
@@ -262,12 +266,32 @@ static SDL_Surface *trp_sdl_pix2surface( trp_obj_t *pix )
     return s;
 }
 
+trp_obj_t *trp_sdl_version()
+{
+    return trp_list( trp_sig64( SDL_MAJOR_VERSION ), trp_sig64( SDL_MINOR_VERSION ), trp_sig64( SDL_MICRO_VERSION ), NULL );
+}
+
+trp_obj_t *trp_sdl_get_version()
+{
+    int v = SDL_GetVersion();
+
+    return trp_list( trp_sig64( SDL_VERSIONNUM_MAJOR( v ) ), trp_sig64( SDL_VERSIONNUM_MINOR( v ) ), trp_sig64( SDL_VERSIONNUM_MICRO( v ) ), NULL );
+}
+
+trp_obj_t *trp_sdl_get_num_logical_cpu_cores()
+{
+    return ( trp_sig64( SDL_GetNumLogicalCPUCores() ) );
+}
+
+trp_obj_t *trp_sdl_get_system_ram()
+{
+    return ( trp_sig64( SDL_GetSystemRAM() ) );
+}
+
 uns8b trp_sdl_enable_screen_saver()
 {
     if ( trp_sdl_video_init() )
         return 1;
-    if ( SDL_ScreenSaverEnabled() == true )
-        return 0;
     return ( SDL_EnableScreenSaver() == true ) ? 0 : 1;
 }
 
@@ -275,16 +299,16 @@ uns8b trp_sdl_disable_screen_saver()
 {
     if ( trp_sdl_video_init() )
         return 1;
-    if ( SDL_ScreenSaverEnabled() == false )
-        return 0;
     return ( SDL_DisableScreenSaver() == true ) ? 0 : 1;
 }
 
 trp_obj_t *trp_sdl_open_audio_stream( trp_obj_t *ch, trp_obj_t *freq, trp_obj_t *bps )
 {
+    trp_obj_t *res;
     SDL_AudioStream *stream;
     SDL_AudioSpec audiospec;
     uns32b i;
+    uns8b bps24;
 
     if ( trp_sdl_audio_init() )
         return UNDEF;
@@ -297,13 +321,22 @@ trp_obj_t *trp_sdl_open_audio_stream( trp_obj_t *ch, trp_obj_t *freq, trp_obj_t 
     audiospec.freq = i;
     if ( trp_cast_uns32b( bps, &i ) )
         return UNDEF;
+    if ( ( i != 8 ) && ( i != 16 ) && ( i != 24 ) && ( i != 32 ) )
+        return UNDEF;
+    if ( i == 24 ) {
+        i = 32;
+        bps24 = 1;
+    } else
+        bps24 = 0;
     audiospec.format = i;
     if ( audiospec.format > 8 )
         audiospec.format |= SDL_AUDIO_MASK_SIGNED;
     stream = SDL_OpenAudioDeviceStream( SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audiospec, NULL, NULL );
     if ( stream == NULL )
         return UNDEF;
-    return trp_sdl_create( TRP_SDL_AUDIO_STREAM, (void *)stream, NULL );
+    res = trp_sdl_create( TRP_SDL_AUDIO_STREAM, (void *)stream, NULL );
+    ((trp_sdl_t *)res)->bps24 = bps24;
+    return res;
 }
 
 uns8b trp_sdl_pause_audio_stream_device( trp_obj_t *stream )
@@ -356,6 +389,7 @@ uns8b trp_sdl_put_audio_stream_data( trp_obj_t *stream, trp_obj_t *raw, trp_obj_
 {
     SDL_AudioStream *s = trp_sdl_audio_stream( stream );
     uns32b l;
+    bool res;
 
     if ( ( s == NULL ) || ( raw->tipo != TRP_RAW ) )
         return 1;
@@ -368,7 +402,27 @@ uns8b trp_sdl_put_audio_stream_data( trp_obj_t *stream, trp_obj_t *raw, trp_obj_
         l = ((trp_raw_t *)raw)->len;
     if ( l == 0 )
         return 0;
-    return ( SDL_PutAudioStreamData( s, ((trp_raw_t *)raw)->data, l ) == true ) ? 0 : 1;
+    if ( ((trp_sdl_t *)stream)->bps24 ) {
+        uns8b *buf, *p;
+        uns32b ll, off_src, off_dst;
+
+        if ( l % 3 )
+            return 1;
+        ll = ( l / 3 ) * 4;
+        if ( ( buf = malloc( ll ) ) == NULL )
+            return 1;
+        p = ((trp_raw_t *)raw)->data;
+        for ( off_src = 0, off_dst = 0 ; off_src < l ; off_src += 3, off_dst += 4 ) {
+            buf[ off_dst ] = 0;
+            buf[ off_dst + 1 ] = p[ off_src ];
+            buf[ off_dst + 2 ] = p[ off_src + 1 ];
+            buf[ off_dst + 3 ] = p[ off_src + 2 ];
+        }
+        res = SDL_PutAudioStreamData( s, buf, ll );
+        free( buf );
+    } else
+        res = SDL_PutAudioStreamData( s, ((trp_raw_t *)raw)->data, l );
+    return ( res == true ) ? 0 : 1;
 }
 
 static void SDLCALL trp_sdl_audio_play_cback( void *userdata, SDL_AudioStream *stream, int len, int total )
@@ -402,6 +456,11 @@ static void trp_sdl_audio_play_cback_signal( trp_sdl_audio_play_t *a )
     pthread_cond_signal( &( a->cond ) );
     pthread_mutex_unlock( &( a->mutex ) );
 }
+
+/*
+ * FIXME
+ * attualmente disabilitata perché libwinpthread è diventata incompatibile con gc
+ */
 
 uns8b trp_sdl_audio_play( trp_obj_t *funptr, trp_obj_t *udata, trp_obj_t *ch, trp_obj_t *freq, trp_obj_t *bps, trp_obj_t *gain )
 {
@@ -476,6 +535,13 @@ trp_obj_t *trp_sdl_create_window_and_renderer( trp_obj_t *title, trp_obj_t *widt
     return trp_sdl_create( TRP_SDL_WINDOW, (void *)window, (void *)renderer );
 }
 
+trp_obj_t *trp_sdl_get_primary_display()
+{
+    if ( trp_sdl_video_init() )
+        return UNDEF;
+    return trp_sig64( SDL_GetPrimaryDisplay() );
+}
+
 trp_obj_t *trp_sdl_get_display_for_window( trp_obj_t *window )
 {
     SDL_Window *w = trp_sdl_window( window );
@@ -485,11 +551,28 @@ trp_obj_t *trp_sdl_get_display_for_window( trp_obj_t *window )
     return trp_sig64( SDL_GetDisplayForWindow( w ) );
 }
 
+trp_obj_t *trp_sdl_get_display_name( trp_obj_t *display_id )
+{
+    const uns8b *p;
+    uns32b id;
+
+    if ( trp_sdl_video_init() )
+        return UNDEF;
+    if ( trp_cast_uns32b( display_id, &id ) )
+        return UNDEF;
+    p = SDL_GetDisplayName( id );
+    if ( p == NULL )
+        return UNDEF;
+    return trp_cord( p );
+}
+
 trp_obj_t *trp_sdl_get_desktop_display_size( trp_obj_t *display_id )
 {
     const SDL_DisplayMode *dm;
     uns32b id;
 
+    if ( trp_sdl_video_init() )
+        return UNDEF;
     if ( trp_cast_uns32b( display_id, &id ) )
         return UNDEF;
     dm = SDL_GetDesktopDisplayMode( (SDL_DisplayID)id );
@@ -503,6 +586,8 @@ trp_obj_t *trp_sdl_get_current_display_size( trp_obj_t *display_id )
     const SDL_DisplayMode *dm;
     uns32b id;
 
+    if ( trp_sdl_video_init() )
+        return UNDEF;
     if ( trp_cast_uns32b( display_id, &id ) )
         return UNDEF;
     dm = SDL_GetCurrentDisplayMode( (SDL_DisplayID)id );
@@ -770,5 +855,27 @@ uns8b trp_sdl_delay_precise( trp_obj_t *ns )
     if ( n <= 0 )
         return 0;
     SDL_DelayPrecise( (uns64b)n );
+}
+
+uns8b trp_sdl_bps24_to_bps32( trp_obj_t *raw_src, trp_obj_t *raw_dst )
+{
+    uns8b *psrc, *pdst;
+    uns32b len_src, len_dst, off_src, off_dst;
+
+    if ( ( raw_src->tipo != TRP_RAW ) || ( raw_dst->tipo != TRP_RAW ) )
+        return 1;
+    psrc = ((trp_raw_t *)raw_src)->data;
+    pdst = ((trp_raw_t *)raw_dst)->data;
+    len_src = ((trp_raw_t *)raw_src)->len;
+    len_dst = ((trp_raw_t *)raw_dst)->len;
+    for ( off_src = 0, off_dst = 0 ;
+          ( off_src + 3 <= len_src ) && ( off_dst + 4 <= len_dst ) ;
+          off_src += 3, off_dst += 4 ) {
+        pdst[ off_dst ] = 0;
+        pdst[ off_dst + 1 ] = psrc[ off_src ];
+        pdst[ off_dst + 2 ] = psrc[ off_src + 1 ];
+        pdst[ off_dst + 3 ] = psrc[ off_src + 2 ];
+    }
+    return 0;
 }
 

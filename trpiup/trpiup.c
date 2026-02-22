@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ typedef struct {
     void *next;
 } trp_queue_elem;
 
+static trp_obj_t *_trp_iup_post_call_queue = NULL;
+
+static uns8b trp_iup_print( trp_print_t *p, trp_iup_t *obj );
 static uns8b trp_iup_close( trp_iup_t *obj );
 static trp_obj_t *trp_iup_equal( trp_iup_t *obj1, trp_iup_t *obj2 );
 static trp_obj_t *trp_iup_length( trp_iup_t *obj );
@@ -46,6 +49,7 @@ static trp_obj_t *trp_iup_container_low_low( uns8b flags, ihandle_t f, trp_obj_t
 
 uns8b trp_iup_init( int *argc, char ***argv )
 {
+    extern uns8bfun_t _trp_print_fun[];
     extern uns8bfun_t _trp_close_fun[];
     extern objfun_t _trp_equal_fun[];
     extern objfun_t _trp_length_fun[];
@@ -66,6 +70,7 @@ uns8b trp_iup_init( int *argc, char ***argv )
 //    IupImageLibOpen();
     IupSetGlobal( "UTF8MODE", "YES" );
     IupSetGlobal( "UTF8MODE_FILE", "YES" );
+    _trp_print_fun[ TRP_IUP ] = trp_iup_print;
     _trp_close_fun[ TRP_IUP ] = trp_iup_close;
     _trp_equal_fun[ TRP_IUP ] = trp_iup_equal;
     _trp_length_fun[ TRP_IUP ] = trp_iup_length;
@@ -78,6 +83,16 @@ uns8b trp_iup_init( int *argc, char ***argv )
 void trp_iup_quit()
 {
     IupClose();
+}
+
+static uns8b trp_iup_print( trp_print_t *p, trp_iup_t *obj )
+{
+    if ( trp_print_char_star( p, "#iup" ) )
+        return 1;
+    if ( obj->h == NULL )
+        if ( trp_print_char_star( p, " (closed)" ) )
+            return 1;
+    return trp_print_char( p, '#' );
 }
 
 static uns8b trp_iup_close( trp_iup_t *obj )
@@ -1314,31 +1329,40 @@ trp_obj_t *trp_iup_convert_xy_to_pos( trp_obj_t *ih, trp_obj_t *x, trp_obj_t *y 
     return trp_sig64( IupConvertXYToPos( h, xx, yy ) );
 }
 
-static uns8bfun_t _trp_iup_post_call = NULL;
-static trp_obj_t *_trp_iup_post_call_udata = NULL;
-
 static int trp_iup_post_call_cback()
 {
-    if ( _trp_iup_post_call ) {
-        if ( _trp_iup_post_call_udata ) {
-            (void)_trp_iup_post_call( _trp_iup_post_call_udata );
-        } else {
-            (void)_trp_iup_post_call();
+    if ( _trp_iup_post_call_queue ) {
+        trp_obj_t *cback;
+        trp_obj_t *udata_exists;
+        trp_obj_t *udata;
+        uns8bfun_t fun;
+
+        while ( ((trp_queue_t *)_trp_iup_post_call_queue)->len ) {
+            cback = trp_queue_get( _trp_iup_post_call_queue );
+            udata_exists = trp_queue_get( _trp_iup_post_call_queue );
+            udata = trp_queue_get( _trp_iup_post_call_queue );
+            fun = ((trp_netptr_t *)cback)->f;
+            if ( udata_exists == TRP_TRUE ) {
+                (void)fun( udata );
+            } else {
+                (void)fun();
+            }
         }
-        _trp_iup_post_call = NULL;
-        _trp_iup_post_call_udata = NULL;
     }
     return IUP_IGNORE;
 }
 
 uns8b trp_iup_post_call( trp_obj_t *cback, trp_obj_t *udata )
 {
-    if ( ( _trp_iup_post_call ) || ( cback->tipo != TRP_NETPTR ) )
+    if ( cback->tipo != TRP_NETPTR )
         return 1;
     if ( ((trp_netptr_t *)cback)->nargs != ( udata ? 1 : 0 ) )
         return 1;
-    _trp_iup_post_call = ((trp_netptr_t *)cback)->f;
-    _trp_iup_post_call_udata = udata;
+    if ( _trp_iup_post_call_queue == NULL )
+        _trp_iup_post_call_queue = trp_queue();
+    trp_queue_put( _trp_iup_post_call_queue, cback );
+    trp_queue_put( _trp_iup_post_call_queue, udata ? TRP_TRUE : TRP_FALSE );
+    trp_queue_put( _trp_iup_post_call_queue, udata ? udata : UNDEF );
     (void)IupSetFunction( "IDLE_ACTION", trp_iup_post_call_cback );
     return 0;
 }

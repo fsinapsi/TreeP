@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,9 +20,16 @@
 #define __trpsdl__h
 
 #include <SDL3/SDL.h>
+#ifndef __trpsdlnomain__
+#include <SDL3/SDL_main.h>
+#endif
 
 uns8b trp_sdl_init();
 void trp_sdl_quit();
+trp_obj_t *trp_sdl_version();
+trp_obj_t *trp_sdl_get_version();
+trp_obj_t *trp_sdl_get_num_logical_cpu_cores();
+trp_obj_t *trp_sdl_get_system_ram();
 uns8b trp_sdl_enable_screen_saver();
 uns8b trp_sdl_disable_screen_saver();
 trp_obj_t *trp_sdl_open_audio_stream( trp_obj_t *ch, trp_obj_t *freq, trp_obj_t *bps );
@@ -32,9 +39,13 @@ uns8b trp_sdl_set_audio_stream_gain( trp_obj_t *stream, trp_obj_t *gain );
 uns8b trp_sdl_flush_audio_stream( trp_obj_t *stream );
 uns8b trp_sdl_clear_audio_stream( trp_obj_t *stream );
 uns8b trp_sdl_put_audio_stream_data( trp_obj_t *stream, trp_obj_t *raw, trp_obj_t *len );
+/*
 uns8b trp_sdl_audio_play( trp_obj_t *funptr, trp_obj_t *udata, trp_obj_t *ch, trp_obj_t *freq, trp_obj_t *bps, trp_obj_t *gain );
+*/
 trp_obj_t *trp_sdl_create_window_and_renderer( trp_obj_t *title, trp_obj_t *width, trp_obj_t *height, trp_obj_t *flags );
+trp_obj_t *trp_sdl_get_primary_display();
 trp_obj_t *trp_sdl_get_display_for_window( trp_obj_t *window );
+trp_obj_t *trp_sdl_get_display_name( trp_obj_t *display_id );
 trp_obj_t *trp_sdl_get_desktop_display_size( trp_obj_t *display_id );
 trp_obj_t *trp_sdl_get_current_display_size( trp_obj_t *display_id );
 trp_obj_t *trp_sdl_get_window_size( trp_obj_t *window );
@@ -60,5 +71,6 @@ trp_obj_t *trp_sdl_get_ticks_ns();
 uns8b trp_sdl_delay( trp_obj_t *ms );
 uns8b trp_sdl_delay_ns( trp_obj_t *ns );
 uns8b trp_sdl_delay_precise( trp_obj_t *ns );
+uns8b trp_sdl_bps24_to_bps32( trp_obj_t *raw_src, trp_obj_t *raw_dst );
 
 #endif /* !__trpsdl__h */

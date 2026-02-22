@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -394,6 +394,7 @@ uns8b trp_downcase( uns8b c );
 void trp_skip( trp_obj_t *obj );
 void trp_segfault();
 trp_obj_t *trp_cc_version();
+trp_obj_t *trp_trp2ptr( trp_obj_t *obj );
 
 uns8b trp_cast_uns32b( trp_obj_t *obj, uns32b *val );
 uns8b trp_cast_uns32b_range( trp_obj_t *obj, uns32b *val, uns32b min, uns32b max );
@@ -447,6 +448,7 @@ trp_obj_t *trp_booleanp( trp_obj_t *obj );
 #define trp_gtkp(p) (((p)->tipo==TRP_GTK)?TRP_TRUE:TRP_FALSE)
 #define trp_audp(p) (((p)->tipo==TRP_AUD)?TRP_TRUE:TRP_FALSE)
 #define trp_vidp(p) (((p)->tipo==TRP_VID)?TRP_TRUE:TRP_FALSE)
+#define trp_avcodecp(p) (((p)->tipo==TRP_AVCODEC)?TRP_TRUE:TRP_FALSE)
 
 uns8b trp_print( trp_obj_t *obj, ... );
 uns8b trp_fprint( trp_obj_t *stream, trp_obj_t *obj, ... );
@@ -588,6 +590,7 @@ trp_obj_t *trp_raw_cmp( trp_obj_t *raw1, trp_obj_t *raw2, trp_obj_t *cnt );
 uns8b trp_raw_swap( trp_obj_t *raw );
 uns8b trp_raw_set( trp_obj_t *raw, trp_obj_t *c );
 uns8b trp_raw_read_from_raw( trp_obj_t *raw_dst, trp_obj_t *raw_src, trp_obj_t *pos );
+uns8b trp_raw_copy_from_raw( trp_obj_t *raw_dst, trp_obj_t *raw_src, trp_obj_t *pos_dst, trp_obj_t *pos_src, trp_obj_t *len );
 trp_obj_t *trp_raw_readstr( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
 trp_obj_t *trp_raw_readuint_le( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );
 trp_obj_t *trp_raw_readuint_be( trp_obj_t *raw, trp_obj_t *pos, trp_obj_t *cnt );

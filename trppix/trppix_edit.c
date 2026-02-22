@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,11 @@
 
 uns8b trp_pix_bgr( trp_obj_t *pix )
 {
-    trp_pix_color_t *c;
+    trp_pix_color_t *c = trp_pix_get_mapc( pix );
     uns32b i;
     uns8b t;
 
-    if ( pix->tipo != TRP_PIX )
-        return 1;
-    if ( ( c = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( c == NULL )
         return 1;
     for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ ) {
         t = c->red;
@@ -38,12 +36,10 @@ uns8b trp_pix_bgr( trp_obj_t *pix )
 
 uns8b trp_pix_noalpha( trp_obj_t *pix )
 {
-    trp_pix_color_t *c;
+    trp_pix_color_t *c = trp_pix_get_mapc( pix );
     uns32b i;
 
-    if ( pix->tipo != TRP_PIX )
-        return 1;
-    if ( ( c = ((trp_pix_t *)pix)->map.c ) == NULL )
+    if ( c == NULL )
         return 1;
     for ( i = ((trp_pix_t *)pix)->w * ((trp_pix_t *)pix)->h ; i ; i--, c++ )
         c->alpha = 0xff;

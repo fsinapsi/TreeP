@@ -1,6 +1,6 @@
 /*
     TreeP Run Time Support
-    Copyright (C) 2008-2025 Frank Sinapsi
+    Copyright (C) 2008-2026 Frank Sinapsi
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,11 @@ void trp_init( int argc, char *argv[] )
     GC_set_handle_fork( -1 );
 #endif
     GC_INIT();
-    GC_allow_register_threads();
+    /*
+     * FIXME
+     * attualmente disabilitata perché libwinpthread è diventata incompatibile con gc
+     */
+//    GC_allow_register_threads();
 //    _trp_gc_warn_proc =
     GC_set_warn_proc( trp_gc_warn_proc );
     if ( _trp_env_stack == NULL )
@@ -417,5 +421,10 @@ void trp_segfault()
 trp_obj_t *trp_cc_version()
 {
     return trp_cord( _trp_cc_ver );
+}
+
+trp_obj_t *trp_trp2ptr( trp_obj_t *obj )
+{
+    return trp_sig64( (sig64b)obj );
 }
 
