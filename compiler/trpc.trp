@@ -242,12 +242,13 @@
                 (flag-false lib) )
         (gc) )
 
-(defnet parse-args (@tpath @optim @debug @static @conly @overw @const @nomwin @win32 @win64 @wunus @log @libpaths)
+(defnet parse-args (@tpath @optim @debug @sanitize @static @conly @overw @const @nomwin @win32 @win64 @wunus @log @libpaths)
         (deflocal i)
 
         (clr @tpath)
         (set @optim (optim-default))
         (set @debug false)
+        (set @sanitize false)
         (set @static false)
         (set @conly false)
         (set @overw false)
@@ -267,6 +268,8 @@
                         "-O3"           (set @optim 3)
                         "-O4"           (set @optim 4)
                         "-g"            (set @debug true)
+                        "-s"            (seq    (set @sanitize true)
+                                                (set @debug true) )
                         "-static"       (set @static true)
                         "-c"            (set @conly true)
                         "-f"            (set @overw true)
@@ -280,7 +283,7 @@
                                         then    (queue-put @libpaths (sub 2 (maxint) (argv i)))
                                         else    (set @tpath (argv i)) )))
         (if (or (= @tpath undef) (and @win32 @win64) (and _mingw (or @win32 @win64)))
-        then    (error (+ "usage: " (app-name) " [ -O0 | ... | -O4 ] [ -g ] [ -static ] [ -c ] [ -f ] [ -d ] [ -w ] [ -win32 | -win64 ] [ -l ] [ -L<path> ] <path>")) )
+        then    (error (+ "usage: " (app-name) " [ -O0 | ... | -O4 ] [ -g ] [ -s ] [ -static ] [ -c ] [ -f ] [ -d ] [ -w ] [ -win32 | -win64 ] [ -l ] [ -L<path> ] <path>")) )
 
         (if @win32
         then    (queue-put @libpaths "/usr/i686-w64-mingw32/lib")
@@ -292,11 +295,11 @@
                 (queue-put @libpaths "/opt/local/lib") )))
 
 (defnet trpc ()
-        (deflocal i unused tpath cpath lpath epath exepath bpath ipath optim debug conly overw nomwin wunus log libpaths
+        (deflocal i unused tpath cpath lpath epath exepath bpath ipath optim debug sanitize conly overw nomwin wunus log libpaths
                   net fun glb mswin strip-command )
 
         (init-globals)
-        (parse-args tpath optim debug _cstatic conly overw _expr_const_optimize nomwin _win32 _win64 wunus log libpaths)
+        (parse-args tpath optim debug sanitize _cstatic conly overw _expr_const_optimize nomwin _win32 _win64 wunus log libpaths)
         (set mswin (or _mingw _win32 _win64))
         (if (not (pathexists tpath))
         then    (error (+ tpath ": file not found")) )
@@ -366,7 +369,8 @@
         (close _dst)
 
         (set i (+ (cc) " -O" optim " -pipe"
-                  (if debug " -g" "")
+                  (if debug " -g3" "")
+                  (if sanitize " -fsanitize=address" "")
                   " -Wno-incompatible-pointer-types"
                   " -Wno-pointer-sign"
                   (if (darwin) " -headerpad_max_install_names" "")

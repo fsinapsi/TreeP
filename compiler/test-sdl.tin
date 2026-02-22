@@ -26,8 +26,8 @@
           [ "set-audio-stream-gain"             2 2 ]
           [ "flush-audio-stream"                1 1 ]
           [ "clear-audio-stream"                1 1 ]
-          [ "put-audio-stream-data"             3 3 ]
-          [ "audio-play"                        5 6 ]
+          [ "put-audio-stream-data"             2 3 ]
+          ;[ "audio-play"                        5 6 ]
           [ "set-window-position"               3 3 ]
           [ "set-window-size"                   3 3 ]
           [ "set-window-icon"                   2 2 ]
@@ -42,6 +42,7 @@
           [ "delay"                             1 1 ]
           [ "delay-ns"                          1 1 ]
           [ "delay-precise"                     1 1 ]
+          [ "bps24-to-bps32"                    2 2 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

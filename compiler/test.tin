@@ -190,6 +190,7 @@
                 "gtkp"          (exprseq-ext 1 1 "  if(((" ")->tipo)!=TRP_GTK)")
                 "audp"          (exprseq-ext 1 1 "  if(((" ")->tipo)!=TRP_AUD)")
                 "vidp"          (exprseq-ext 1 1 "  if(((" ")->tipo)!=TRP_VID)")
+                "avcodecp"      (exprseq-ext 1 1 "  if(((" ")->tipo)!=TRP_AVCODEC)")
 
                 "gc"            (exprseq 0 0 "  trp_gc(" ");\n")
                 "link"          (exprseq-ext 2 2 "  if(trp_link(" "))")
@@ -300,6 +301,8 @@
                 "raw-set"       (exprseq-ext 2 2 "  if(trp_raw_set(" "))")
                 "raw-read-from-raw"
                                 (exprseq-ext 3 3 "  if(trp_raw_read_from_raw(" "))")
+                "raw-copy-from-raw"
+                                (exprseq-ext 5 5 "  if(trp_raw_copy_from_raw(" "))")
 
                 default         (fail) ))
 

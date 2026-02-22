@@ -403,7 +403,7 @@
                                         then    (set _expr_code (+ _expr_code "trp_sig64(" _tokenval ")")) )
                                         (chiusa) )
 
-                ;"trp2ptr"       (exprseq-basic 1 1 "trp_trp2ptr(" ')')
+                "trp2ptr"       (exprseq-basic 1 1 "trp_trp2ptr(" ')')
                 ;"ptr2trp"       (exprseq-basic 1 1 "trp_ptr2trp(" ')')
 
                 "nostatic"      (expr-nostatic)
@@ -436,6 +436,7 @@
                 "gtkp"          (exprseq-basic 1 1 "trp_gtkp(" ')')
                 "audp"          (exprseq-basic 1 1 "trp_audp(" ')')
                 "vidp"          (exprseq-basic 1 1 "trp_vidp(" ')')
+                "avcodecp"      (exprseq-basic 1 1 "trp_avcodecp(" ')')
 
                 "eq"            (exprseq-basic 2 2 "TRP_EQP(" ')')
 

@@ -19,14 +19,21 @@
         (flag-true "avcodec") )
 
 (defun test-avcodec-table ()
-        [ [ "sws-scale"                 3 3 ]
-          [ "read-frame"                2 3 ]
-          [ "skip-frame"                1 2 ]
-          [ "read-scd-histogram-set"    2 2 ]
-          [ "rewind"                    1 1 ]
+        [ [ "read-frame"                3 3 ]
+          [ "set-video-frame-rate"      1 2 ]
+          [ "set-dar"                   1 2 ]
           [ "set-buf-size"              2 2 ]
-          [ "set-filter"                1 2 ]
+          [ "set-ignore-invalid-data"   2 2 ]
+          [ "set-debug"                 2 2 ]
           [ "set-filter-rows"           1 2 ]
+          [ "set-filter"                1 2 ]
+          [ "set-gamma"                 1 2 ]
+          [ "set-contrast"              1 2 ]
+          [ "set-hue"                   1 2 ]
+          [ "set-temperature"           1 2 ]
+          [ "set-hflip"                 2 2 ]
+          [ "set-vflip"                 2 2 ]
+          [ "sws-scale"                 3 3 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

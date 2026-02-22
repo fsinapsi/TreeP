@@ -20,14 +20,14 @@ PREFIX = $(LOCAL_LINUX)
 endif
 endif
 
-CFLAGS ?= -O3 -pipe # -g
+CFLAGS ?= -O3 -pipe # -g3
 CFLAGS += -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CFLAGS += -Wfatal-errors -Wno-parentheses -Wno-unused-result -Wno-incompatible-pointer-types -Wno-pointer-sign
 ifeq ($(TARGET), Linux)
 CFLAGS += -fPIC
 CFLAGS += -I/usr/local/include -I/opt/local/include
 endif
-ifeq ($(TARGET), MINGW64_NT-10.0-26100)
+ifeq ($(TARGET), MINGW64_NT-10.0-26200)
 CFLAGS += -mms-bitfields
 CFLAGS += -DMINGW -D__WORDSIZE=64
 CFLAGS += -I/usr/local/include -I/opt/local/include
@@ -52,11 +52,9 @@ all:		rts
 
 ifeq ($(TARGET), Linux)
 install:	rts
-	cp -f libs/libtrp* $(PREFIX)/lib
-	ldconfig
 endif
 
-ifeq ($(TARGET), MINGW64_NT-10.0-26100)
+ifeq ($(TARGET), MINGW64_NT-10.0-26200)
 install:	rts
 	cp -f libs/libtrp* $(PREFIX)/lib
 endif

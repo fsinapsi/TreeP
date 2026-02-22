@@ -19,9 +19,15 @@
         (flag-true "sdl") )
 
 (defun expr-sdl-table ()
-        [ [ "open-audio-stream"                 3 3 ]
+        [ [ "version"                           0 0 ]
+          [ "get-version"                       0 0 ]
+          [ "get-num-logical-cpu-cores"         0 0 ]
+          [ "get-system-ram"                    0 0 ]
+          [ "open-audio-stream"                 3 3 ]
           [ "create-window-and-renderer"        4 4 ]
+          [ "get-primary-display"               0 0 ]
           [ "get-display-for-window"            1 1 ]
+          [ "get-display-name"                  1 1 ]
           [ "get-desktop-display-size"          1 1 ]
           [ "get-current-display-size"          1 1 ]
           [ "get-window-size"                   1 1 ]
