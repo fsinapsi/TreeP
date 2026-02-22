@@ -8,6 +8,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defglobal _iup_lock)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun iup-gtk2 ()
         (if (clinux)
                 (lmatch (iup-get-global "GTKVERSION") "2.")
@@ -30,6 +42,70 @@
 
 (defnet iup-set-lang ()
         (set-lang (if (lmatch case (iup-get-global "SYSTEMLANGUAGE") "it") 1 0)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-fullsize-width () net iup-fullsize-width)
+(defnet iup-fullsize-width (@w)
+        (deflocal s t)
+
+        (set s (iup-get-global "FULLSIZE"))
+        (search-and-cut "x" s t)
+        (set @w (str->num t)) )
+
+(defun iup-fullsize-height () net iup-fullsize-height)
+(defnet iup-fullsize-height (@h)
+        (deflocal s t)
+
+        (set s (iup-get-global "FULLSIZE"))
+        (search-and-cut "x" s t)
+        (set @h (str->num s)) )
+
+(defun iup-screensize-width () net iup-screensize-width)
+(defnet iup-screensize-width (@w)
+        (deflocal s t)
+
+        (set s (iup-get-global "SCREENSIZE"))
+        (search-and-cut "x" s t)
+        (set @w (str->num t)) )
+
+(defun iup-screensize-height () net iup-screensize-height)
+(defnet iup-screensize-height (@h)
+        (deflocal s t)
+
+        (set s (iup-get-global "SCREENSIZE"))
+        (search-and-cut "x" s t)
+        (set @h (str->num s)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun iup-default-font-size ()
+        (str->num (iup-get-global "DEFAULTFONTSIZE")) )
+
+(defnet iup-set-default-font-size (size)
+        (iup-set-str-global "DEFAULTFONTSIZE" size) )
+
+(defun iup-little-icon-size ()
+        (max 16 (rint (linear (iup-fullsize-width) 0 1366 0 16))) )
+
+(defun iup-big-icon-size ()
+        (max 24 (rint (linear (iup-fullsize-width) 0 1366 0 24))) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -215,8 +291,29 @@
         (iup-set-int @wid "SPACING" spacing)
         (queue-put q img) )
 
+(defun iup-button-icon-svg (title cback iconraw w h q) net iup-button-icon-svg)
+(defnet iup-button-icon-svg (title cback iconraw w h q @wid)
+        (deflocal pix pixt)
+
+        (if (= h undef)
+        then    (set iconraw (svg->svg-size iconraw w w))
+                (rawp iconraw)
+                (set pix (rsvg-load iconraw))
+                (close iconraw)
+        else    (set pix (rsvg-load-size iconraw w h))
+                (if (or (< (width pix) w) (< (height pix) h))
+                then    (set pixt (pix-create w h))
+                        (pix-clear-and-copy-pix pixt pix)
+                        (close pix)
+                        (set pix pixt) ))
+        (set @wid (iup-button-icon title cback pix q))
+        (close pix) )
+
+(defun iup-button-icon-svg-little (title cback iconraw q)
+        (iup-button-icon-svg title cback iconraw (iup-little-icon-size) undef q) )
+
 (defun iup-button-icon-ok-low (title cback q)
-        (iup-button-icon title (if (<> cback undef) cback (netptr iup-ok-cb)) (pix-load-static "16x16/dialog-apply.png") q) )
+        (iup-button-icon-svg-little title (if (<> cback undef) cback (netptr iup-ok-cb)) (raw-load-static "svg/oxygen480-actions-dialog-ok-apply2.svg") q) )
 
 (defun iup-button-icon-ok (cback q)
         (iup-button-icon-ok-low "Ok" cback q) )
@@ -225,26 +322,24 @@
         (iup-button-icon-ok-low $"Confirm" cback q) )
 
 (defun iup-button-icon-cancel (cback q)
-        (iup-button-icon $"Cancel" (if (<> cback undef) cback (netptr iup-cancel-cb)) (pix-load-static "16x16/dialog-cancel-3.png") q) )
+        (iup-button-icon-svg-little $"Cancel" (if (<> cback undef) cback (netptr iup-cancel-cb)) (raw-load-static "svg/oxygen15-04-1-dialog-cancel2.svg") q) )
+
+(defun iup-button-icon-close (cback q)
+        (iup-button-icon-svg-little $"Close" (if (<> cback undef) cback (netptr iup-cancel-cb)) (raw-load-static "svg/oxygen15-04-1-dialog-cancel2.svg") q) )
 
 (defun iup-box-ok (cback q) net iup-box-ok)
 (defnet iup-box-ok (cback q @wid)
         (deflocal pre btn-ok hbox)
 
         (set pre (iup-hbox))
-        (iup-set-str-attribute pre "MARGIN" "0x3")
 
         (set btn-ok (iup-button-icon-ok cback q))
         (iup-set-bool btn-ok "CANFOCUS" (cmingw))
 
-        (set hbox (iup-hbox
-                (iup-fill)
-                btn-ok
-                (iup-fill) ))
+        (set hbox (iup-hbox (iup-fill) btn-ok (iup-fill)))
 
         (set @wid (iup-vbox pre (iup-horizontal-separator) hbox))
-        (iup-set-str-attribute @wid "MARGIN" "6x6")
-        (iup-set-int @wid "GAP" 4) )
+        (iup-set-int @wid "NGAP" 10) )
 
 (defun iup-box-ok-btn (butbox)
         <butbox 2 1> )
@@ -254,23 +349,19 @@
         (deflocal pre sep btn-ok btn-cancel hbox)
 
         (set pre (iup-hbox))
-        (iup-set-str-attribute pre "MARGIN" "0x3")
 
         (set sep (iup-horizontal-separator))
 
         (set btn-ok (iup-button-icon-ok-low title-ok cback-ok q))
-        (iup-set-str-attribute btn-ok "CANFOCUS" (if (cmingw) "YES" "NO"))
+        (iup-set-bool btn-ok "CANFOCUS" (cmingw))
         (set btn-cancel (iup-button-icon-cancel cback-cancel q))
-        (iup-set-str-attribute btn-cancel "CANFOCUS" (if (cmingw) "YES" "NO"))
+        (iup-set-bool btn-cancel "CANFOCUS" (cmingw))
 
-        (set hbox (iup-hbox
-                (iup-fill)
-                btn-ok
-                btn-cancel ))
+        (set hbox (iup-hbox (iup-fill) btn-ok btn-cancel))
+        (iup-set-int hbox "NGAP" 4)
 
         (set @wid (iup-vbox pre sep hbox))
-        (iup-set-str-attribute @wid "MARGIN" "6x6")
-        (iup-set-int @wid "GAP" 4) )
+        (iup-set-int @wid "NGAP" 10) )
 
 (defun iup-box-ok-cancel (cback-ok cback-cancel q)
         (iup-box-ok-cancel-low "Ok" cback-ok cback-cancel q) )
@@ -305,8 +396,8 @@
         (set butbox (iup-box-ok-cancel undef undef q))
 
         (set vbox (iup-vbox cal butbox))
-        (iup-set-str-attribute vbox "MARGIN" "6x6")
-        (iup-set-int vbox "GAP" 0)
+        (iup-set-str-attribute vbox "NMARGIN" "12x12")
+        (iup-set-int vbox "NGAP" 4)
 
         (set dlg (iup-dialog vbox))
         (iup-set-dlg-parent self dlg)
@@ -531,24 +622,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet iup-info (self msg) (iup-info-low self "Info" (pix-load-static "48x48/dialog-information-2.png") msg 0))
-(defnet iup-warning (self msg) (iup-info-low self $"Warning" (pix-load-static "48x48/dialog-important-2.png") msg 0))
-(defnet iup-error (self msg) (iup-info-low self $"Error" (pix-load-static "48x48/dialog-error-4.png") msg 0))
+(defnet iup-info (self msg) (iup-info-low self "Info" (raw-load-static "svg/dialog-information2.svg") msg 0))
+(defnet iup-warning (self msg) (iup-info-low self $"Warning" (raw-load-static "svg/gnome-dialog-warning2.svg") msg 0))
+(defnet iup-error (self msg) (iup-info-low self $"Error" (raw-load-static "svg/dialog-error.svg") msg 0))
 
-(defnet iup-info60 (self msg) (iup-info-low self "Info" (pix-load-static "48x48/dialog-information-2.png") msg 60))
-(defnet iup-warning60 (self msg) (iup-info-low self $"Warning" (pix-load-static "48x48/dialog-important-2.png") msg 60))
-(defnet iup-error60 (self msg) (iup-info-low self $"Error" (pix-load-static "48x48/dialog-error-4.png") msg 60))
+(defnet iup-info60 (self msg) (iup-info-low self "Info" (raw-load-static "svg/dialog-information2.svg") msg 60))
+(defnet iup-warning60 (self msg) (iup-info-low self $"Warning" (raw-load-static "svg/gnome-dialog-warning2.svg") msg 60))
+(defnet iup-error60 (self msg) (iup-info-low self $"Error" (raw-load-static "svg/dialog-error.svg") msg 60))
 
-(defnet iup-info-pix (self pix msg) (iup-info-low self "Info" pix msg 0))
-(defnet iup-info60-pix (self pix msg) (iup-info-low self "Info" pix msg 60))
+(defnet iup-info-pix (self raw msg) (iup-info-low self "Info" raw msg 0))
+(defnet iup-info60-pix (self raw msg) (iup-info-low self "Info" raw msg 60))
 
-(defnet iup-info-low (self title pix msg maxlen)
-        (deflocal q img hbox butbox dlg i)
+(defnet iup-info-low (self title raw msg maxlen)
+        (deflocal q pix img hbox butbox dlg i j)
 
         (set q (queue))
 
         (set i (iup-label))
-        (set img (iup-image-rgba pix))
+        (if (pixp raw)
+        then    (set img (iup-image-rgba pix))
+        else    (set j (rint (linear (iup-fullsize-width) 0 1366 0 48)))
+                (set pix (rsvg-load-size raw j j))
+                (if (or (< (width pix) j) (< (height pix) j))
+                then    (set j (pix-create j j))
+                        (pix-clear-and-copy-pix j pix)
+                        (close pix)
+                        (set pix j) )
+                (set img (iup-image-rgba pix))
+                (close pix) )
         (iup-set-attribute-handle i "IMAGE" img)
         (queue-put q img)
 
@@ -561,15 +662,15 @@
 
         (set hbox (iup-hbox i msg))
         (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
-        (iup-set-int hbox "GAP" 14)
+        (iup-set-int hbox "NGAP" 24)
 
         (set butbox (iup-box-ok undef q))
 
         (set i (iup-vbox
                         hbox
                         butbox ))
-        (iup-set-str-attribute i "MARGIN" "4x4")
-        (iup-set-int i "GAP" 0)
+        (iup-set-str-attribute i "NMARGIN" "12x12")
+        (iup-set-int i "NGAP" 4)
 
         (set dlg (iup-dialog i))
         (iup-set-dlg-parent self dlg)
@@ -593,21 +694,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defglobal _iup_confirm_lock)
-
 (defnet iup-confirm (self msg) (iup-confirm-low self msg 0))
 
 (defnet iup-confirm60 (self msg) (iup-confirm-low self msg 60))
 
 (defnet iup-confirm-low (self msg maxlen)
-        (deflocal q img hbox butbox dlg i)
-
-        (set _iup_confirm_lock true)
+        (deflocal q pix img hbox butbox dlg i j)
 
         (set q (queue))
 
         (set i (iup-label))
-        (set img (iup-image-rgba (pix-load-static "48x48/dialog-question-2.png")))
+        (set j (rint (linear (iup-fullsize-width) 0 1366 0 48)))
+        (set pix (rsvg-load-size (raw-load-static "svg/gnome-dialog-question2.svg") j j))
+        (if (or (< (width pix) j) (< (height pix) j))
+        then    (set j (pix-create j j))
+                (pix-clear-and-copy-pix j pix)
+                (close pix)
+                (set pix j) )
+        (set img (iup-image-rgba pix))
+        (close pix)
         (iup-set-attribute-handle i "IMAGE" img)
         (queue-put q img)
 
@@ -620,27 +725,24 @@
 
         (set hbox (iup-hbox i msg))
         (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
-        (iup-set-int hbox "GAP" 14)
+        (iup-set-int hbox "NGAP" 24)
 
         (set butbox (iup-box-confirm-cancel undef undef q))
 
         (set i (iup-vbox
                         hbox
                         butbox ))
-        (iup-set-str-attribute i "MARGIN" "4x4")
-        (iup-set-int i "GAP" 0)
+        (iup-set-str-attribute i "NMARGIN" "12x12")
+        (iup-set-int i "NGAP" 4)
 
         (set dlg (iup-dialog i))
         (iup-set-dlg-parent self dlg)
-        (iup-set-callback dlg "K_ANY" (netptr iup-confirm-cb))
         (iup-set-str-attribute dlg "TITLE" $"Confirmation request")
         (iup-set-bool dlg "DIALOGFRAME" true)
-        ; notare che defaultenter è il pulsante annulla
-        ; perché vogliamo che l'utente confermi cliccando sul pulsante conferma
-        ;(iup-set-attribute-handle dlg "DEFAULTENTER" (iup-box-ok-cancel-btn-cancel butbox))
-        ;(iup-set-attribute-handle dlg "DEFAULTESC" (iup-box-ok-cancel-btn-cancel butbox))
+        (iup-set-callback dlg "K_ANY" (netptr iup-confirm-kb-cb))
         (iup-set-int dlg "STATUS" 0)
 
+        (set _iup_lock true)
         (iup-post-call (netptr iup-confirm-unlock))
 
         (iup-popup dlg (cmacro IUP_CENTERPARENT) (cmacro IUP_CENTERPARENT))
@@ -651,15 +753,19 @@
         (= i 1) )
 
 (defnet iup-confirm-unlock ()
-        (set _iup_confirm_lock false) )
+        (set _iup_lock false) )
 
-(defnet iup-confirm-cb (dlg c)
-        (if (not _iup_confirm_lock)
+(defnet iup-confirm-kb-cb (dlg c)
+        (if (not _iup_lock)
         then    (case c of
-                        (cmacro K_y)    (iup-ok-cb dlg)
-                        (cmacro K_s)    (iup-ok-cb dlg)
+                        (cmacro K_CR)   (success)
                         (cmacro K_ESC)  (iup-cancel-cb dlg)
                         (cmacro K_n)    (iup-cancel-cb dlg)
+                        (cmacro K_N)    (iup-cancel-cb dlg)
+                        (cmacro K_y)    (iup-ok-cb dlg)
+                        (cmacro K_s)    (iup-ok-cb dlg)
+                        (cmacro K_Y)    (iup-ok-cb dlg)
+                        (cmacro K_S)    (iup-ok-cb dlg)
                         default         (fail) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -712,15 +818,15 @@
         then    (inc label "\n") )
         (set hbox (iup-hbox (iup-label label) text))
         (iup-set-str-attribute hbox "ALIGNMENT" "ACENTER")
-        (iup-set-int hbox "GAP" 10)
+        (iup-set-int hbox "NGAP" 10)
 
         (set butbox (iup-box-confirm-cancel undef undef q))
 
         (set i (iup-vbox
                         hbox
                         butbox ))
-        (iup-set-str-attribute i "MARGIN" "4x4")
-        (iup-set-int i "GAP" 0)
+        (iup-set-str-attribute i "NMARGIN" "12x12")
+        (iup-set-int i "NGAP" 4)
 
         (set dlg (iup-dialog i))
         (iup-set-dlg-parent self dlg)
@@ -817,7 +923,7 @@
 
 (defun iup-list->menu-item (item) net iup-list->menu-item)
 (defnet iup-list->menu-item (item @wid)
-        (deflocal title state icon asc asckey l i m)
+        (deflocal title state icon asc asckey l i m n)
 
         (if (listp item)
         then    (list-pop item title)
@@ -829,15 +935,22 @@
                                 (if (booleanp i)
                                 then    (set state i)
                                 else    (set m (car i))
-                                        (if (pixp m)
-                                        then    (if (and (= (width m) 16) (= (height m) 16))
-                                                then    (set icon (iup-image-rgba m))
-                                                else    (set m (pix-scale m 16 16))
-                                                        (set icon (iup-image-rgba m))
-                                                        (close m) )
+                                        (if (rawp m)
+                                        then    (set m (svg->svg-size m 16 16))
+                                                (set n (rsvg-load m))
+                                                (close m)
+                                                (set icon (iup-image-rgba n))
+                                                (close n)
                                                 (queue-put (cdr i) icon)
-                                        else    (set asc m)
-                                                (set asckey (cdr i)) ))))
+                                        else    (if (pixp m)
+                                                then    (if (and (= (width m) 16) (= (height m) 16))
+                                                        then    (set icon (iup-image-rgba m))
+                                                        else    (set m (pix-scale m 16 16))
+                                                                (set icon (iup-image-rgba m))
+                                                                (close m) )
+                                                        (queue-put (cdr i) icon)
+                                                else    (set asc m)
+                                                        (set asckey (cdr i)) )))))
                 ; title deve essere una stringa
                 (if (cmingw)
                 then    (opt    (search "\t" title i)
@@ -874,10 +987,10 @@
         (if (iup-gtk3)
         then    ; hack necessario per gtk3...
                 (set hbox (iup-hbox))
-                (iup-set-str-attribute hbox "MARGIN" "0x2")
+                (iup-set-str-attribute hbox "NMARGIN" "0x2")
                 (set vbox (iup-vbox wid hbox))
         else    (set vbox (iup-vbox wid)) )
-        (iup-set-str-attribute vbox "MARGIN" "2x2")
+        (iup-set-str-attribute vbox "NMARGIN" "2x2")
         (set @wid (iup-frame vbox))
         (iup-set-str-attribute @wid "TITLE" title)
         (iup-set-int @wid "MINSIZE" (ceil (* (utf8-length title) 9))) )
@@ -894,6 +1007,7 @@
 
 (defun iup-text-spin (vmin vmax vcur) net iup-text-spin)
 (defnet iup-text-spin (vmin vmax vcur @wid)
+        (set vcur (clamp vcur vmin vmax))
         (set @wid (iup-text))
         (iup-set-str-attribute @wid "MASK"
                 (if (< vmin 0) "[+/-]?/d+" "/d+") )
@@ -916,6 +1030,7 @@
 (defnet iup-text-spin-ratio (vmin vmax vcur vinc @wid)
         (deflocal spinmax)
 
+        (set vcur (clamp vcur vmin vmax))
         (set spinmax (rint (/ (- vmax vmin) vinc)))
         (set @wid (iup-text))
         (iup-set-str-attribute @wid "MASK"
@@ -923,44 +1038,41 @@
         (iup-set-bool @wid "SPIN" true)
         (iup-set-bool @wid "SPINAUTO" false)
         (iup-set-int @wid "SPINMAX" spinmax)
-        (iup-set-int @wid "SPINVALUE" (rint (/ (* spinmax (- vcur vmin)) (- vmax vmin))))
-        (iup-set-str-attribute @wid "TRPVMIN" (approx3 vmin))
-        (iup-set-str-attribute @wid "TRPVMAX" (approx3 (/ (- vmax vmin) spinmax)))
-        (iup-set-str-attribute @wid "VALUE" (approx3 vcur))
+        (iup-set-int @wid "SPINVALUE" (rint (linear vcur vmin vmax 0 spinmax)))
+        (iup-set-str-attribute @wid "TRPVMIN" vmin)
+        (iup-set-str-attribute @wid "TRPVMAX" vmax)
+        (iup-set-str-attribute @wid "VALUE" vcur)
         (iup-set-callback @wid "SPIN_CB" (netptr iup-text-spin-ratio-cb))
         (iup-set-callback @wid "VALUECHANGED_CB" (netptr iup-text-spin-ratio-changed-cb)) )
 
 (defnet iup-text-spin-ratio-cb (spin v)
-        (iup-set-str-attribute spin "VALUE" (approx3
-                (+ (str->num (iup-get-str-attribute spin "TRPVMIN"))
-                   (* v (str->num (iup-get-str-attribute spin "TRPVMAX"))) ))))
+        (deflocal vmin vmax spinmax)
+
+        (set vmin (str->num (iup-get-str-attribute spin "TRPVMIN")))
+        (set vmax (str->num (iup-get-str-attribute spin "TRPVMAX")))
+        (set spinmax (iup-get-int spin "SPINMAX"))
+        (iup-set-str-attribute spin "VALUE" (approx6 (linear (clamp v 0 spinmax) 0 spinmax vmin vmax))) )
 
 (defnet iup-text-spin-ratio-changed-cb (spin)
-        (deflocal v vmin vmax smax)
+        (deflocal v vmin vmax)
 
         (opt    (set v (str->num (iup-get-str-attribute spin "VALUE")))
                 (rationalp v)
-                (set v (rint (/ (- v (str->num (iup-get-str-attribute spin "TRPVMIN")))
-                                (str->num (iup-get-str-attribute spin "TRPVMAX")) )))
-                (in v 0 .. (iup-get-int spin "SPINMAX"))
-                (iup-set-int spin "SPINVALUE" v) ))
+                (set vmin (str->num (iup-get-str-attribute spin "TRPVMIN")))
+                (set vmax (str->num (iup-get-str-attribute spin "TRPVMAX")))
+                (iup-set-int spin "SPINVALUE" (rint (linear (clamp v vmin vmax) vmin vmax 0 (iup-get-int spin "SPINMAX")))) ))
 
 (defun iup-text-spin-ratio-val (spin) net iup-text-spin-ratio-val)
 (defnet iup-text-spin-ratio-val (spin @v)
-        (deflocal vmin vmax smax)
+        (deflocal vmin vmax spinmax)
 
-        (set @v (str->num (iup-get-str-attribute spin "VALUE")))
         (set vmin (str->num (iup-get-str-attribute spin "TRPVMIN")))
         (set vmax (str->num (iup-get-str-attribute spin "TRPVMAX")))
-        (alt    (seq    (rationalp @v)
-                        (if (< @v vmin)
-                        then    (iup-set-int spin "SPINVALUE" 0)
-                                (fail) )
-                        (set smax (iup-get-int spin "SPINMAX"))
-                        (if (> @v (+ vmin (* vmax smax)))
-                        then    (iup-set-int spin "SPINVALUE" smax)
-                                (fail) ))
-                (set @v (+ vmin (* (iup-get-int spin "SPINVALUE") vmax))) ))
+        (set @v (str->num (iup-get-str-attribute spin "VALUE")))
+        (if (rationalp @v)
+        then    (set @v (clamp @v vmin vmax))
+        else    (set spinmax (iup-get-int spin "SPINMAX"))
+                (set @v (linear (clamp (iup-get-int spin "SPINVALUE") 0 spinmax) 0 spinmax vmin vmax)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1152,8 +1264,6 @@
                         (iup-append box lbl-trem)
                         (iup-append box (iup-label " - end "))
                         (iup-append box lbl-tend) )
-                (iup-set-str-attribute box "MARGIN" "0x0")
-                (iup-set-int box "GAP" 0)
                 (iup-append vbox box) )
 
         (if marquee
@@ -1173,8 +1283,7 @@
                 (iup-set-str-attribute gauge-aux "FGCOLOR" "0 120 220")
                 (iup-set-str-attribute gauge-aux "EXPAND" "HORIZONTAL")
                 (set box (iup-vbox gauge gauge-aux))
-                (iup-set-str-attribute box "MARGIN" "0x0")
-                (iup-set-int box "GAP" 4) )
+                (iup-set-int box "NGAP" 4) )
         (iup-append vbox box)
 
         (if (or label interruptible)
@@ -1188,17 +1297,16 @@
                 else    (iup-append box (iup-fill)) )
 
                 (if interruptible
-                then    (set cnt (iup-button-icon $"Abort" (netptr iup-progress-abort-cb) (pix-load-static "16x16/dialog-cancel-3.png") q))
+                then    (set cnt (iup-button-icon-svg-little $"Abort" (netptr iup-progress-abort-cb) (raw-load-static "svg/oxygen15-04-1-dialog-cancel2.svg") q))
                         (iup-set-bool cnt "EXPAND" false)
                         (iup-append box cnt) )
 
                 (iup-append vbox box)
                 (iup-set-str-attribute box "ALIGNMENT" "ACENTER")
-                (iup-set-str-attribute box "MARGIN" "0x0")
-                (iup-set-int box "GAP" 4) )
+                (iup-set-int box "NGAP" 4) )
 
-        (iup-set-str-attribute vbox "MARGIN" "6x6")
-        (iup-set-int vbox "GAP" 4)
+        (iup-set-str-attribute vbox "NMARGIN" "12x12")
+        (iup-set-int vbox "NGAP" 10)
 
         (set dlg (iup-dialog vbox))
         (iup-set-int dlg "TRP_ABORTED" 0)

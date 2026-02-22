@@ -170,6 +170,50 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defnet pix-clear (pix)
+        (pix-draw-box pix 0 0 (maxint) (maxint) (pix-color 0 0 0 0)) )
+
+(defnet pix-clear-and-copy-pix (pix icon)
+        (pix-clear pix)
+        (pix-draw-pix pix
+                (/ (- (width pix) (width icon)) 2)
+                (/ (- (height pix) (height icon)) 2)
+                icon ))
+
+(defnet pix-black (pix)
+        (pix-draw-box pix 0 0 (maxint) (maxint) (black)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun rsvg-load-size-square (raw x) net rsvg-load-size-square)
+(defnet rsvg-load-size-square (raw x @pix)
+        (deflocal pixt)
+
+        (set @pix (rsvg-load-size raw x x))
+        (if (or (< (width @pix) x) (< (height @pix) x))
+        then    (set pixt (pix-create x x))
+                (pix-clear-and-copy-pix pixt @pix)
+                (close @pix)
+                (set @pix pixt) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun pix-rotate-hack (pix ang) net pix-rotate-hack)
 (defnet pix-rotate-hack (pix ang @pix)
         (deflocal si co w h ww hh pc)

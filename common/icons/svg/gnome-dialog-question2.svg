@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="42.003559"
+   height="43.044567"
+   version="1.1"
+   id="svg9"
+   sodipodi:docname="Gnome-dialog-question2.svg"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="9.5625"
+     inkscape:cx="20.915033"
+     inkscape:cy="22.013072"
+     inkscape:window-width="1366"
+     inkscape:window-height="668"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg9" />
+  <defs
+     id="defs6">
+    <radialGradient
+       id="a"
+       cx="10.84"
+       cy="17.440001"
+       r="10.72"
+       gradientTransform="matrix(1,0,0,0.338,0,11.54)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         id="stop1" />
+      <stop
+         offset="1"
+         stop-opacity="0"
+         id="stop2" />
+    </radialGradient>
+    <radialGradient
+       id="c"
+       cx="79.400002"
+       cy="44.529999"
+       r="50.669998"
+       gradientTransform="matrix(0.511,0,0,0.492,-22.097423,-14.457474)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#fff"
+         id="stop3" />
+      <stop
+         offset="1"
+         stop-color="#fff"
+         stop-opacity="0"
+         id="stop4" />
+    </radialGradient>
+    <linearGradient
+       id="b"
+       x1="-3.8800001"
+       x2="-23.860001"
+       y1="20.51"
+       y2="67.300003"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#729fcf"
+         id="stop5" />
+      <stop
+         offset="1"
+         stop-color="#3465a4"
+         id="stop6" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#a"
+       id="radialGradient9"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.338,0,11.54)"
+       cx="10.84"
+       cy="17.440001"
+       r="10.72" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#a"
+       id="radialGradient10"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.338,0,11.54)"
+       cx="10.84"
+       cy="17.440001"
+       r="10.72" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#a"
+       id="radialGradient11"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.338,0,11.54)"
+       cx="10.84"
+       cy="17.440001"
+       r="10.72" />
+  </defs>
+  <g
+     fill="url(#a)"
+     id="g7"
+     style="fill:url(#radialGradient11)"
+     transform="translate(-2.9974234,-2.0074741)">
+    <ellipse
+       cx="10.84"
+       cy="17.440001"
+       opacity="0.2"
+       rx="10.72"
+       ry="3.6300001"
+       transform="matrix(1.726,0,0,2,5.28,2.88)"
+       id="ellipse6"
+       style="fill:url(#radialGradient9)" />
+    <ellipse
+       cx="10.84"
+       cy="17.440001"
+       opacity="0.25"
+       rx="10.72"
+       ry="3.6300001"
+       transform="matrix(0.467,0,0,0.572,18.94,33)"
+       id="ellipse7"
+       style="fill:url(#radialGradient10)" />
+  </g>
+  <g
+     stroke-dashoffset="0.7"
+     stroke-linecap="round"
+     id="g8"
+     transform="translate(-2.9974234,-2.0074741)">
+    <rect
+       width="30.799999"
+       height="30.799999"
+       x="-14.7"
+       y="17.84"
+       fill="url(#b)"
+       stroke="#3465a4"
+       rx="3.0799999"
+       transform="rotate(-45)"
+       id="rect7"
+       style="fill:url(#b)" />
+    <path
+       fill="none"
+       stroke="#ffffff"
+       stroke-width="1.9997"
+       d="m 5.45097,21.83923 c -0.6601259,0.660126 -0.6698118,1.644906 -0.022624,2.292094 l 17.43462,17.43462 c 0.647541,0.647541 1.631756,0.637714 2.292094,-0.02262 L 42.5614,24.13698 c 0.660126,-0.660126 0.659772,-1.609698 0,-2.26947 L 25.12678,4.43289 c -0.660126,-0.6601259 -1.609698,-0.6597724 -2.26947,0 z"
+       id="path7" />
+  </g>
+  <path
+     fill="#ffffff"
+     d="m 23.102577,24.092526 h -3.95 v -0.54 c 0,-0.6 0.12,-1.13 0.36,-1.59 0.24,-0.47 0.75,-1.06 1.52,-1.77 l 0.7,-0.63 c 0.42,-0.38 0.72,-0.74 0.91,-1.07 0.2,-0.34 0.3,-0.67 0.3,-1 0,-0.51 -0.18,-0.91 -0.53,-1.19 -0.35,-0.29 -0.84,-0.44 -1.47,-0.44 -0.59,0 -1.23,0.12 -1.91,0.37 -0.69,0.24 -1.4,0.6 -2.14,1.08 v -3.44 c 0.88,-0.31 1.69,-0.53 2.42,-0.68 0.73,-0.15 1.43,-0.22 2.11,-0.22 1.78,0 3.14,0.36 4.07,1.09 0.93,0.72 1.4,1.78 1.4,3.17 0,0.71 -0.14,1.36 -0.43,1.93 -0.28,0.56 -0.77,1.17 -1.46,1.82 l -0.7,0.62 c -0.5,0.45 -0.82,0.82 -0.97,1.09 -0.15,0.27 -0.23,0.57 -0.23,0.9 v 0.49 m -4,1.99 h 3.95 v 3.89 h -3.95 v -3.89"
+     id="path8" />
+  <path
+     fill="url(#c)"
+     d="m 20.372577,2.2925259 c -1,0 -1.9,0.6 -2.4,1.5 L 1.0025766,19.992526 l 8,8 32.0000004,-8 -18.24,-16.3000001 c -0.5,-0.9 -1.39,-1.4 -2.39,-1.4 z"
+     opacity="0.47"
+     id="path9"
+     style="fill:url(#c)" />
+</svg>

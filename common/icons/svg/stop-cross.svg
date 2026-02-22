@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="90.000000"
+   inkscape:export-xdpi="90.000000"
+   inkscape:export-filename="/home/silsor/graphics/mine/stop_hand.png"
+   sodipodi:docname="stop_cross.svg"
+   sodipodi:docbase="/tmp"
+   height="64.000000px"
+   width="64.000000px"
+   inkscape:version="0.43"
+   sodipodi:version="0.32"
+   id="svg1337">
+  <metadata
+     id="metadata1342">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>stop hand</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>silsor</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>http://commons.wikimedia.org/wiki/Image:Stop_hand.svg</dc:source>
+        <dc:description>A stop hand inside a red octagon.  Designed by silsor for Wikipedia.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/2.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Attribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1340" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg1337"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="32.436464"
+     inkscape:cx="46.236986"
+     inkscape:zoom="5.890625"
+     gridoriginx="0.0000000px"
+     gridoriginy="0.0000000px"
+     gridspacingx="1px"
+     gridspacingy="1px"
+     gridempspacing="8"
+     gridtolerance="50"
+     inkscape:grid-points="false"
+     inkscape:grid-bbox="false"
+     showgrid="false"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="800"
+     inkscape:window-height="573" />
+  <path
+     sodipodi:type="star"
+     style="fill:#000000;fill-opacity:1"
+     id="path3717"
+     sodipodi:sides="8"
+     sodipodi:cx="32"
+     sodipodi:cy="32"
+     sodipodi:r1="32"
+     sodipodi:r2="1"
+     sodipodi:arg1="-1.5707963"
+     sodipodi:arg2="-1.1780972"
+     inkscape:flatsided="true"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="M 32.000001,1.0658141e-014 L 54.627418,9.3725836 L 64,32.000001 L 54.627416,54.627418 L 31.999999,64 L 9.3725824,54.627416 L 1.0658141e-014,31.999999 L 9.3725836,9.3725824 L 32.000001,1.0658141e-014 z "
+     transform="matrix(1,-0.414213,0.414213,1,-13.25482,13.25482)" />
+  <path
+     transform="matrix(0.96875,-0.401269,0.401269,0.96875,-11.8406,13.84061)"
+     d="M 32.000001,1.0658141e-014 L 54.627418,9.3725836 L 64,32.000001 L 54.627416,54.627418 L 31.999999,64 L 9.3725824,54.627416 L 1.0658141e-014,31.999999 L 9.3725836,9.3725824 L 32.000001,1.0658141e-014 z "
+     inkscape:randomized="0"
+     inkscape:rounded="0"
+     inkscape:flatsided="true"
+     sodipodi:arg2="-1.1780972"
+     sodipodi:arg1="-1.5707963"
+     sodipodi:r2="1"
+     sodipodi:r1="32"
+     sodipodi:cy="32"
+     sodipodi:cx="32"
+     sodipodi:sides="8"
+     id="path3741"
+     style="fill:#350000;fill-opacity:1"
+     sodipodi:type="star" />
+  <path
+     sodipodi:type="star"
+     style="fill:#680000;fill-opacity:1"
+     id="path3743"
+     sodipodi:sides="8"
+     sodipodi:cx="32"
+     sodipodi:cy="32"
+     sodipodi:r1="32"
+     sodipodi:r2="1"
+     sodipodi:arg1="-1.5707963"
+     sodipodi:arg2="-1.1780972"
+     inkscape:flatsided="true"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="M 32.000001,1.0658141e-014 L 54.627418,9.3725836 L 64,32.000001 L 54.627416,54.627418 L 31.999999,64 L 9.3725824,54.627416 L 1.0658141e-014,31.999999 L 9.3725836,9.3725824 L 32.000001,1.0658141e-014 z "
+     transform="matrix(0.9375,-0.388325,0.388325,0.9375,-10.42639,14.4264)" />
+  <path
+     transform="matrix(0.90625,-0.375381,0.375381,0.90625,-9.012176,15.01219)"
+     d="M 32.000001,1.0658141e-014 L 54.627418,9.3725836 L 64,32.000001 L 54.627416,54.627418 L 31.999999,64 L 9.3725824,54.627416 L 1.0658141e-014,31.999999 L 9.3725836,9.3725824 L 32.000001,1.0658141e-014 z "
+     inkscape:randomized="0"
+     inkscape:rounded="0"
+     inkscape:flatsided="true"
+     sodipodi:arg2="-1.1780972"
+     sodipodi:arg1="-1.5707963"
+     sodipodi:r2="1"
+     sodipodi:r1="32"
+     sodipodi:cy="32"
+     sodipodi:cx="32"
+     sodipodi:sides="8"
+     id="path3745"
+     style="fill:#9b0000;fill-opacity:1"
+     sodipodi:type="star" />
+  <path
+     sodipodi:type="star"
+     style="fill:#ce0000;fill-opacity:1"
+     id="path3747"
+     sodipodi:sides="8"
+     sodipodi:cx="32"
+     sodipodi:cy="32"
+     sodipodi:r1="32"
+     sodipodi:r2="1"
+     sodipodi:arg1="-1.5707963"
+     sodipodi:arg2="-1.1780972"
+     inkscape:flatsided="true"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="M 32.000001,1.0658141e-014 L 54.627418,9.3725836 L 64,32.000001 L 54.627416,54.627418 L 31.999999,64 L 9.3725824,54.627416 L 1.0658141e-014,31.999999 L 9.3725836,9.3725824 L 32.000001,1.0658141e-014 z "
+     transform="matrix(0.875,-0.362437,0.362437,0.875,-7.597965,15.59798)" />
+  <path
+     style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
+     d="M 14.914082,42.65234 L 25.531269,32.035152 L 14.843769,21.382809 L 21.382832,14.843746 L 32.070332,25.49609 L 42.687519,14.878902 L 49.0508,21.27734 L 38.433613,31.894527 L 49.156269,42.617184 L 42.617207,49.156246 L 31.89455,38.43359 L 21.277363,49.050777 L 14.914082,42.65234"
+     id="text2234" />
+</svg>

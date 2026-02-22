@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="422" height="450.6" viewBox="0 0 422 450.6">
+<defs>
+<filter id="filter-remove-color" x="0%" y="0%" width="100%" height="100%">
+<feColorMatrix color-interpolation-filters="sRGB" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
+</filter>
+<mask id="mask-0">
+<g filter="url(#filter-remove-color)">
+<rect x="-42.2" y="-45.06" width="506.4" height="540.72" fill="rgb(0%, 0%, 0%)" fill-opacity="0.6"/>
+</g>
+</mask>
+<radialGradient id="radial-pattern-0" gradientUnits="userSpaceOnUse" cx="23.857" cy="40" fx="23.857" fy="40" r="17.143" gradientTransform="matrix(10.259917, 0, 0, 2.515625, 121.444384, 316.249995)">
+<stop offset="0" stop-color="rgb(0%, 0%, 0%)" stop-opacity="1"/>
+<stop offset="1" stop-color="rgb(0%, 0%, 0%)" stop-opacity="0"/>
+</radialGradient>
+<clipPath id="clip-0">
+<rect x="0" y="0" width="720" height="460"/>
+</clipPath>
+<g id="source-17860" clip-path="url(#clip-0)">
+<path fill-rule="nonzero" fill="url(#radial-pattern-0)" d="M 542.101562 416.875 C 542.101562 440.691406 463.355469 460 366.214844 460 C 269.078125 460 190.328125 440.691406 190.328125 416.875 C 190.328125 393.058594 269.078125 373.75 366.214844 373.75 C 463.355469 373.75 542.101562 393.058594 542.101562 416.875 Z M 542.101562 416.875 "/>
+</g>
+<linearGradient id="linear-pattern-0" gradientUnits="userSpaceOnUse" x1="36.917999" y1="66.288002" x2="19.070999" y2="5.541">
+<stop offset="0" stop-color="rgb(64.313725%, 0%, 0%)" stop-opacity="1"/>
+<stop offset="1" stop-color="rgb(100%, 9.019608%, 9.019608%)" stop-opacity="1"/>
+</linearGradient>
+<mask id="mask-1">
+<g filter="url(#filter-remove-color)">
+<rect x="-42.2" y="-45.06" width="506.4" height="540.72" fill="rgb(0%, 0%, 0%)" fill-opacity="0.34659"/>
+</g>
+</mask>
+<clipPath id="clip-1">
+<path clip-rule="nonzero" d="M 108 0 L 612 0 L 612 460 L 108 460 Z M 108 0 "/>
+</clipPath>
+<linearGradient id="linear-pattern-1" gradientUnits="userSpaceOnUse" x1="43.936001" y1="53.835999" x2="20.065001" y2="-8.5627" gradientTransform="matrix(1, 0, 0, 1, 0, -0.000000000000000028)">
+<stop offset="0" stop-color="rgb(100%, 90.196078%, 60.784314%)" stop-opacity="1"/>
+<stop offset="1" stop-color="rgb(100%, 100%, 100%)" stop-opacity="1"/>
+</linearGradient>
+<clipPath id="clip-2">
+<rect x="0" y="0" width="720" height="460"/>
+</clipPath>
+<g id="source-17865" clip-path="url(#clip-2)">
+<g clip-path="url(#clip-1)">
+<path fill="none" stroke-width="1.1681" stroke-linecap="butt" stroke-linejoin="miter" stroke="url(#linear-pattern-1)" stroke-miterlimit="4" d="M 49.902106 26.635001 C 49.902106 39.885176 39.160651 50.626631 25.910476 50.626631 C 12.660301 50.626631 1.918847 39.885176 1.918847 26.635001 C 1.918847 13.384826 12.660301 2.643371 25.910476 2.643371 C 39.160651 2.643371 49.902106 13.384826 49.902106 26.635001 Z M 49.902106 26.635001 " transform="matrix(8.204196, 0, 0, 8.204196, 147.425375, 1.895296)"/>
+</g>
+</g>
+<linearGradient id="linear-pattern-2" gradientUnits="userSpaceOnUse" x1="21.993999" y1="33.955002" x2="20.917" y2="15.815" gradientTransform="matrix(9.612084, 0, 0, 9.612084, -19.688649, -9.211362)">
+<stop offset="0" stop-color="rgb(100%, 99.607843%, 100%)" stop-opacity="0.33333"/>
+<stop offset="1" stop-color="rgb(100%, 99.607843%, 100%)" stop-opacity="0.21569"/>
+</linearGradient>
+</defs>
+<g mask="url(#mask-0)">
+<use xlink:href="#source-17860" transform="matrix(1, 0, 0, 1, -149, -9.4)"/>
+</g>
+<path fill-rule="nonzero" fill="url(#linear-pattern-0)" stroke-width="1.0864" stroke-linecap="butt" stroke-linejoin="miter" stroke="rgb(69.803922%, 0%, 0%)" stroke-opacity="1" stroke-miterlimit="4" d="M 46.856812 23.928797 C 46.856812 36.828501 36.399687 47.286069 23.499983 47.286069 C 10.600279 47.286069 0.143154 36.828501 0.143154 23.928797 C 0.143154 11.029093 10.600279 0.571968 23.499983 0.571968 C 36.399687 0.571968 46.856812 11.029093 46.856812 23.928797 Z M 46.856812 23.928797 " transform="matrix(8.821363, 0, 0, 8.821363, 3.698125, -0.0650664)"/>
+<g mask="url(#mask-1)">
+<use xlink:href="#source-17865" transform="matrix(1, 0, 0, 1, -149, -9.4)"/>
+</g>
+<path fill-rule="nonzero" fill="rgb(93.72549%, 93.72549%, 93.72549%)" fill-opacity="1" d="M 76.835938 172.683594 L 345.171875 172.683594 L 345.171875 249.351562 L 76.835938 249.351562 Z M 76.835938 172.683594 "/>
+<path fill-rule="nonzero" fill="url(#linear-pattern-2)" d="M 397.195312 199.515625 C 397.195312 303.625 297.664062 139.285156 217.691406 203.234375 C 139.582031 265.683594 19.710938 320.40625 19.710938 216.308594 C 19.710938 109.765625 103.289062 10.925781 207.398438 10.925781 C 311.503906 10.925781 397.195312 95.417969 397.195312 199.515625 Z M 397.195312 199.515625 "/>
+</svg>

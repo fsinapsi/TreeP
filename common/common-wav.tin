@@ -43,6 +43,7 @@
         (set samples (div (min datasize (- (length f) offset)) samplesize))
         (> samples 0)
         (set @info (assoc))
+        (set <@info "codec"> "WAV")
         (set <@info "type"> "read")
         (set <@info "fp"> f)
         (set <@info "channels"> ch)
@@ -75,6 +76,7 @@
         (> samples 0)
         (set datasize (* samples samplesize))
         (set @info (assoc))
+        (set <@info "codec"> "SOX")
         (set <@info "type"> "read")
         (set <@info "fp"> f)
         (set <@info "channels"> ch)
@@ -126,6 +128,7 @@
         (fprint f "data")
         (fwriteuint-le f 32 0)
         (set @info (assoc))
+        (set <@info "codec"> "WAV")
         (set <@info "type"> "write")
         (set <@info "fp"> f)
         (set <@info "channels"> ch)
@@ -197,6 +200,7 @@
         (set samples (div (min datasize (- (length raw) offset)) samplesize))
         (> samples 0)
         (set @info (assoc))
+        (set <@info "codec"> "WAV")
         (set <@info "type"> "read")
         ;(set <@info "fp"> raw)
         (set <@info "channels"> ch)
@@ -228,6 +232,7 @@
         (> samples 0)
         (set datasize (* samples samplesize))
         (set @info (assoc))
+        (set <@info "codec"> "SOX")
         (set <@info "type"> "read")
         ;(set <@info "fp"> raw)
         (set <@info "channels"> ch)
@@ -247,6 +252,9 @@
 ;;;;                                                                      ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun wav-codec (info)
+        <info "codec"> )
 
 (defun wav-type (info)
         <info "type"> )
@@ -512,87 +520,69 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defnet wav-play (path)
-        (wav-play-low path 1) )
+(defnet wav-play (raw)
+        (wav-play-low raw 1 false) )
 
-(defnet wav-play-low (path vol)
-        (deflocal info f udata)
+(defnet wav-play-low (raw vol verbose)
+        (deflocal info duration samplesize frequency rem len buf s pos f ts0 ts)
 
-        (set info (wav-open path))
+        (set info (if (rawp raw) (wav-open-memory raw) (wav-open raw)))
         (<> info undef)
-        (set f (wav-fp info))
-        (set udata (array 3))
-        (set <udata 0> f)
-        (set <udata 1> (* (wav-samples info) (wav-samplesize info)))
-        (fsetpos (wav-offset info) f)
-        (sdl-audio-play (funptr wav-play-cback) udata (wav-channels info) (wav-frequency info) (wav-bps info) vol)
-        (if (rawp <udata 2>)
-        then    (close <udata 2>) )
+        (set duration (date-s2hhmmss (wav-duration info)))
+        (set samplesize (wav-samplesize info))
+        (set frequency (wav-frequency info))
+        (set rem (* samplesize (wav-samples info)))
+        (if (= rem 0)
+        then    (wav-close info)
+                (fail) )
+        (set len (* samplesize frequency))
+        (set buf (raw len))
+        (set s (sdl-open-audio-stream (wav-channels info) frequency (wav-bps info)))
+        (if (= s undef)
+        then    (close buf)
+                (wav-close info)
+                (fail) )
+        (sdl-set-audio-stream-gain s vol)
+        (set len (min len rem))
+        (set pos (wav-offset info))
+        (if (rawp raw)
+        then    (raw-copy-from-raw buf raw 0 pos len)
+        else    (set f (wav-fp info))
+                (fsetpos pos f)
+                (set len (min len rem))
+                (if (<> (raw-read buf f len) len)
+                then    (close buf s)
+                        (wav-close info)
+                        (fail) ))
+        (set ts0 (sdl-get-ticks-ns))
+        (set ts (- ts0 1000000000))
+        (if verbose
+        then    (wav-info info)
+                (print "tipo riproduzione: " (if (rawp raw) "memoria" "file") nl
+                       "volume: " (approx3 vol) nl ))
+        (sdl-resume-audio-stream-device s)
+        (opt*   (sdl-put-audio-stream-data s buf len)
+                (dec rem len)
+                (inc pos len)
+                (inc ts (* 1000000000 (/ len samplesize frequency)))
+                (if verbose
+                then    (print ' ' (date-s2hhmmss (/ (- (sdl-get-ticks-ns) ts0) 1000000000)) '/' duration '\r')
+                        (fflush (stdout)) )
+                (if (= rem 0)
+                then    ; prima di uscire attendiamo ancora 10 ms
+                        (inc ts 1000000000 10000000)
+                        (sdl-delay-ns (rint (- ts (sdl-get-ticks-ns))))
+                        (fail) )
+                (set len (min len rem))
+                (if (rawp raw)
+                then    (raw-copy-from-raw buf raw 0 pos len)
+                else    (= (raw-read buf f len) len) )
+                (sdl-delay-ns (rint (- ts (sdl-get-ticks-ns)))) )
+        (if verbose
+        then    (print nl)
+                (fflush (stdout)) )
+        (close buf s)
         (wav-close info) )
-
-(defun wav-play-cback (udata len) net wav-play-cback)
-(defnet wav-play-cback (udata len @raw)
-        (set len (min len <udata 1>))
-        (> len 0)
-        (set @raw <udata 2>)
-        (if (rawp @raw)
-        then    (if (<> (length @raw) len)
-                then    (close @raw)
-                        (clr @raw) ))
-        (if (= @raw undef)
-        then    (set @raw (raw len))
-                (rawp @raw)
-                (set <udata 2> @raw) )
-        (if (= (raw-read @raw <udata 0> len) len)
-        then    (dec <udata 1> len)
-        else    (clr @raw)
-                (set <udata 1> 0) ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;                                                                      ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defnet wav-play-memory (raw)
-        (wav-play-memory-low raw 1) )
-
-(defnet wav-play-memory-low (raw vol)
-        (deflocal info udata)
-
-        (set info (wav-open-memory raw))
-        (<> info undef)
-        (set udata (array 3))
-        (set <udata 0> (array 2))
-        (set <udata 0 0> raw)
-        (set <udata 0 1> (wav-offset info))
-        (set <udata 1> (* (wav-samples info) (wav-samplesize info)))
-        (sdl-audio-play (funptr wav-play-memory-cback) udata (wav-channels info) (wav-frequency info) (wav-bps info) vol)
-        (if (rawp <udata 2>)
-        then    (close <udata 2>) ))
-
-(defun wav-play-memory-cback (udata len) net wav-play-memory-cback)
-(defnet wav-play-memory-cback (udata len @raw)
-        (set len (min len <udata 1>))
-        (> len 0)
-        (set @raw <udata 2>)
-        (if (rawp @raw)
-        then    (if (<> (length @raw) len)
-                then    (close @raw)
-                        (clr @raw) ))
-        (if (= @raw undef)
-        then    (set @raw (raw len))
-                (rawp @raw)
-                (set <udata 2> @raw) )
-        (alt    (seq    (raw-read-from-raw @raw <udata 0 0> <udata 0 1>)
-                        (dec <udata 1> len)
-                        (inc <udata 0 1> len) )
-                (seq    (clr @raw)
-                        (set <udata 1> 0) )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

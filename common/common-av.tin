@@ -8,10 +8,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun av-video-duration (fmt)
+        (av-duration fmt (av-video-stream-idx fmt)) )
+
 (defun av-approximated-number-of-frames (fmt)
-        (rint (* (av-video-frame-rate fmt)
-                 (av-duration fmt)
-                 (av-time-base fmt) )))
+        (rint (* (av-video-frame-rate fmt) (av-duration fmt))) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -23,14 +24,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun av-par (fmt) net av-par)
-(defnet av-par (fmt @par)
-        (set @par (av-sample-aspect-ratio fmt (av-video-stream-idx fmt)))
-        (if (= @par 0)
-        then    (set @par 1) ))
-
-(defun av-dar (fmt)
-        (* (/ (width fmt) (height fmt)) (av-par fmt)) )
+(defun av-par (fmt)
+        (/ (av-dar fmt) (/ (width fmt) (height fmt))) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

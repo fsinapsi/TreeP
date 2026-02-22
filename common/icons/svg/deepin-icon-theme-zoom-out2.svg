@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="11"
+   height="11"
+   viewBox="0 0 11 11"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="Deepin_Icon_Theme_–_zoom-out2.svg"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="19.125"
+     inkscape:cx="5.9607843"
+     inkscape:cy="5.9869281"
+     inkscape:window-width="1366"
+     inkscape:window-height="668"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <g
+     fill="none"
+     fill-rule="evenodd"
+     id="g1"
+     transform="translate(-6,-6)">
+    <path
+       fill="#536076"
+       fill-rule="nonzero"
+       d="m 7,7 v 9 h 9 V 7 Z M 6.9166667,6 H 16.083333 C 16.591167,6 17,6.4088333 17,6.9166667 V 16.083333 C 17,16.591167 16.591167,17 16.083333,17 H 6.9166667 C 6.4088333,17 6,16.591167 6,16.083333 V 6.9166667 C 6,6.4088333 6.4088333,6 6.9166667,6 Z"
+       id="path1"
+       style="fill:#000000;fill-opacity:1" />
+    <polygon
+       fill="#536076"
+       fill-rule="nonzero"
+       points="14,12 9,12 9,11 14,11 "
+       id="polygon1"
+       style="fill:#000000;fill-opacity:1" />
+  </g>
+</svg>
