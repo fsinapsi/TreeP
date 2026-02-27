@@ -40,6 +40,8 @@ trp_obj_t *trp_av_avcodec_license();
 trp_obj_t *trp_av_avcodec_list();
 trp_obj_t *trp_av_decoder_name_list();
 trp_obj_t *trp_av_encoder_name_list();
+trp_obj_t *trp_av_sws_context( trp_obj_t *wi, trp_obj_t *hi, trp_obj_t *wo, trp_obj_t *ho, trp_obj_t *alg );
+uns8b trp_av_sws_scale( trp_obj_t *swsctx, trp_obj_t *pi, trp_obj_t *po );
 trp_obj_t *trp_av_avformat_open_input( trp_obj_t *path, trp_obj_t *hwaccel );
 trp_obj_t *trp_av_avformat_open_input_failure_cause( trp_obj_t *path, trp_obj_t *hwaccel );
 uns8b trp_av_read_frame( trp_obj_t *fmtctx, trp_obj_t *pix, trp_obj_t *frameno );
@@ -89,7 +91,12 @@ uns8b trp_av_set_hue( trp_obj_t *fmtctx, trp_obj_t *hue );
 uns8b trp_av_set_temperature( trp_obj_t *fmtctx, trp_obj_t *temperature );
 uns8b trp_av_set_hflip( trp_obj_t *fmtctx, trp_obj_t *hflip );
 uns8b trp_av_set_vflip( trp_obj_t *fmtctx, trp_obj_t *vflip );
-trp_obj_t *trp_av_sws_context( trp_obj_t *wi, trp_obj_t *hi, trp_obj_t *wo, trp_obj_t *ho, trp_obj_t *alg );
-uns8b trp_av_sws_scale( trp_obj_t *swsctx, trp_obj_t *pi, trp_obj_t *po );
+trp_obj_t *trp_av_avformat_open_input_audio( trp_obj_t *path, trp_obj_t *nth );
+trp_obj_t *trp_av_audio_read_frame( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_audio_seek_and_read_frame( trp_obj_t *fmtctx, trp_obj_t *ts );
+trp_obj_t *trp_av_audio_stream_idx( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_audio_sample_rate( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_audio_channels( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_audio_ts( trp_obj_t *fmtctx );
 
 #endif /* !__trpavcodec__h */
