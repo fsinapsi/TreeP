@@ -29,6 +29,7 @@
           [ "avcodec-list"                              0 0 ]
           [ "decoder-name-list"                         0 0 ]
           [ "encoder-name-list"                         0 0 ]
+          [ "sws-context"                               4 5 ]
           [ "avformat-open-input"                       1 2 ]
           [ "avformat-open-input-failure-cause"         1 2 ]
           [ "path"                                      1 1 ]
@@ -64,7 +65,13 @@
           [ "get-temperature"                           1 1 ]
           [ "get-hflip"                                 1 1 ]
           [ "get-vflip"                                 1 1 ]
-          [ "sws-context"                               4 5 ]
+          [ "avformat-open-input-audio"                 1 2 ]
+          [ "audio-read-frame"                          1 1 ]
+          [ "audio-seek-and-read-frame"                 2 2 ]
+          [ "audio-stream-idx"                          1 1 ]
+          [ "audio-sample-rate"                         1 1 ]
+          [ "audio-channels"                            1 1 ]
+          [ "audio-ts"                                  1 1 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

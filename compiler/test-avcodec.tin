@@ -19,7 +19,8 @@
         (flag-true "avcodec") )
 
 (defun test-avcodec-table ()
-        [ [ "read-frame"                3 3 ]
+        [ [ "sws-scale"                 3 3 ]
+          [ "read-frame"                3 3 ]
           [ "set-video-frame-rate"      1 2 ]
           [ "set-dar"                   1 2 ]
           [ "set-buf-size"              2 2 ]
@@ -33,7 +34,6 @@
           [ "set-temperature"           1 2 ]
           [ "set-hflip"                 2 2 ]
           [ "set-vflip"                 2 2 ]
-          [ "sws-scale"                 3 3 ]
         ] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
