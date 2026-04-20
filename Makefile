@@ -14,6 +14,9 @@ AR = x86_64-w64-mingw32-ar
 PREFIX = $(LOCAL_WIN_64)
 else
 TARGET = $(shell uname -s)
+ifeq ($(TARGET), MINGW64_NT-10.0-26200)
+TARGET = MSYS2
+endif
 CC = gcc
 AR = ar
 PREFIX = $(LOCAL_LINUX)
@@ -27,7 +30,7 @@ ifeq ($(TARGET), Linux)
 CFLAGS += -fPIC
 CFLAGS += -I/usr/local/include -I/opt/local/include
 endif
-ifeq ($(TARGET), MINGW64_NT-10.0-26200)
+ifeq ($(TARGET), MSYS2)
 CFLAGS += -mms-bitfields
 CFLAGS += -DMINGW -D__WORDSIZE=64
 CFLAGS += -I/usr/local/include -I/opt/local/include
@@ -52,9 +55,11 @@ all:		rts
 
 ifeq ($(TARGET), Linux)
 install:	rts
+	cp -f libs/libtrp* $(PREFIX)/lib
+	ldconfig
 endif
 
-ifeq ($(TARGET), MINGW64_NT-10.0-26200)
+ifeq ($(TARGET), MSYS2)
 install:	rts
 	cp -f libs/libtrp* $(PREFIX)/lib
 endif
