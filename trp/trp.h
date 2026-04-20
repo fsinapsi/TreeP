@@ -87,6 +87,7 @@
 #include <poll.h>
 #else
 #define GC_WIN32_PTHREADS
+#define GC_MARKERS 1
 #endif
 #define GC_THREADS
 #define CORD_BUILD

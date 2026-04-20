@@ -106,9 +106,9 @@ typedef struct {
     uns8b                *last_error_fun;
     enum AVPixelFormat    hw_pix_fmt;
     int                   last_error;
+    int                   video_stream_idx;
     uns32b                buf_max;
     uns32b                buf_cur;
-    uns32b                video_stream_idx;
     uns8b                 accel;
     uns8b                 filter_rows;
     uns8b                 hflip;
@@ -131,7 +131,7 @@ typedef struct {
     uns8b                *last_error_fun;
     int                   last_error;
     int                   buf_max_nsamples;
-    uns32b                audio_stream_idx;
+    int                   audio_stream_idx;
     uns8b                 ignore_invalid_data;
 } trp_avcodec_audio_t;
 
@@ -186,6 +186,7 @@ static struct SwsContext *trp_av_extract_sws_context( trp_avcodec_sws_t *swsctx 
 static trp_obj_t *trp_av_rational( struct AVRational *r );
 static trp_obj_t *trp_av_ts_sig64_to_trp( trp_avcodec_t *fmtctx, sig64b ts );
 static sig64b trp_av_ts_trp_to_sig64( trp_avcodec_t *fmtctx, trp_obj_t *ts );
+static sig64b trp_av_ts_trp_to_sig64_seek( trp_obj_t *ts );
 static trp_obj_t *trp_av_pts( trp_avcodec_t *fmtctx, AVFrame *frame );
 static trp_obj_t *trp_av_error( int errnum );
 static void trp_av_frame_unref( trp_avcodec_buf_t *cbuf, uns32b idx );
@@ -672,6 +673,15 @@ static sig64b trp_av_ts_trp_to_sig64( trp_avcodec_t *fmtctx, trp_obj_t *ts )
     return ( (trp_sig64_t *)( trp_math_rint( trp_av_ratio( ts, time_base ) ) ) )->val;
 }
 
+static sig64b trp_av_ts_trp_to_sig64_seek( trp_obj_t *ts )
+{
+    if ( ( ts->tipo != TRP_SIG64 ) &&
+         ( ts->tipo != TRP_MPI ) &&
+         ( ts->tipo != TRP_RATIO ) )
+        return AV_NOPTS_VALUE;
+    return ( (trp_sig64_t *)( trp_math_rint( trp_av_times( ts, trp_sig64( AV_TIME_BASE ) ) ) ) )->val;
+}
+
 static trp_obj_t *trp_av_pts( trp_avcodec_t *fmtctx, AVFrame *frame )
 {
     if ( frame->pkt_dts == AV_NOPTS_VALUE )
@@ -790,13 +800,13 @@ static uns8b trp_av_read_frame_no_seek( trp_avcodec_video_t *fmtctx, uns32b bufi
     trp_avcodec_buf_t *cbuf = fmtctx->cbuf;
     AVFrame *frame = cbuf[ bufidx ].frame, *read_frame;
     sig64b pkt_dts = AV_NOPTS_VALUE;
-    uns32b video_stream_idx = fmtctx->video_stream_idx;
     uns32b read = 0;
     int must_read = 0, res;
+    int video_stream_idx = fmtctx->video_stream_idx;
 
     TRP_AV_LOCK( fmtctx );
     PRINT_BEGIN( "trp_av_read_frame_no_seek", expected_frameno );
-    read_frame = fmtctx->accel ? fmtctx->hw_frame : frame;
+    read_frame = ( fmtctx->accel == TRP_AV_ACCEL_QSV ) ? fmtctx->hw_frame : frame;
     trp_av_frame_unref( cbuf, bufidx );
     for ( ; ; ) {
         if ( must_read ) {
@@ -841,7 +851,7 @@ static uns8b trp_av_read_frame_no_seek( trp_avcodec_video_t *fmtctx, uns32b bufi
             fprintf( stderr, "must_read = %d\n", must_read );
         }
     }
-    if ( fmtctx->accel ) {
+    if ( fmtctx->accel == TRP_AV_ACCEL_QSV ) {
         fmtctx->hw_pix_fmt = fmtctx->hw_frame->format;
         res = av_hwframe_transfer_data( frame, fmtctx->hw_frame, 0 );
         av_frame_unref( fmtctx->hw_frame );
@@ -1081,7 +1091,8 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
     AVFrame *hw_frame = NULL;
     AVPacket *packet;
     enum AVHWDeviceType hw_type;
-    uns32b video_stream_idx, cnt;
+    uns32b cnt;
+    int video_stream_idx;
     int res;
     uns8b accel;
 
@@ -1232,7 +1243,7 @@ static trp_obj_t *trp_av_avformat_open_input_low( uns8b flags, trp_obj_t *path, 
         goto error1;
     }
 
-    if ( accel ) {
+    if ( accel == TRP_AV_ACCEL_QSV ) {
         res = av_hwdevice_ctx_create( &hw_device_ref, hw_type, NULL, NULL, 0 );
         if ( res < 0 ) {
             if ( flags & 1 )
@@ -1659,13 +1670,19 @@ trp_obj_t *trp_av_codec_id( trp_obj_t *fmtctx, trp_obj_t *streamno )
 trp_obj_t *trp_av_codec_name( trp_obj_t *fmtctx, trp_obj_t *streamno )
 {
     AVFormatContext *fmt_ctx = trp_av_extract_fmt_context_video( (trp_avcodec_video_t *)fmtctx );
+    const AVCodec *codec;
     uns32b n;
 
     if ( ( fmt_ctx == NULL ) || trp_cast_uns32b( streamno, &n ) )
         return UNDEF;
     if ( n >= fmt_ctx->nb_streams )
         return UNDEF;
-    return trp_cord( ((trp_avcodec_video_t *)fmtctx)->avctx->codec->name );
+    if ( n == ((trp_avcodec_video_t *)fmtctx)->video_stream_idx )
+        return trp_cord( ((trp_avcodec_video_t *)fmtctx)->avctx->codec->name );
+    codec = avcodec_find_decoder( fmt_ctx->streams[ n ]->codecpar->codec_id );
+    if ( codec == NULL )
+        return UNDEF;
+    return trp_cord( codec->name );
 }
 
 trp_obj_t *trp_av_start_time( trp_obj_t *fmtctx, trp_obj_t *streamno )
@@ -1870,7 +1887,7 @@ trp_obj_t *trp_av_get_hw_pix_fmt( trp_obj_t *fmtctx )
 
     if ( fmt_ctx == NULL )
         return UNDEF;
-    if ( ((trp_avcodec_video_t *)fmtctx)->accel == TRP_AV_ACCEL_NONE )
+    if ( ((trp_avcodec_video_t *)fmtctx)->accel != TRP_AV_ACCEL_QSV )
         return UNDEF;
     return trp_cord( av_get_pix_fmt_name( ((trp_avcodec_video_t *)fmtctx)->hw_pix_fmt ) );
 }
@@ -2409,7 +2426,8 @@ trp_obj_t *trp_av_avformat_open_input_audio( trp_obj_t *path, trp_obj_t *nth )
     SwrContext *swr_ctx = NULL;
     AVPacket *packet = NULL;
     AVFrame *frame = NULL;
-    uns32b n, audio_stream_idx;
+    uns32b n;
+    int audio_stream_idx;
     int res;
 
     if ( nth ) {
@@ -2579,13 +2597,13 @@ trp_obj_t *trp_av_audio_seek_and_read_frame( trp_obj_t *fmtctx, trp_obj_t *ts )
 
     if ( fmt_ctx == NULL )
         return UNDEF;
-    tts = trp_av_ts_trp_to_sig64( av, ts );
+    tts = trp_av_ts_trp_to_sig64_seek( ts );
     if ( tts == AV_NOPTS_VALUE )
         return UNDEF;
     avcodec_flush_buffers( av->avctx );
-    res = av_seek_frame( fmt_ctx, av->audio_stream_idx, tts, AVSEEK_FLAG_BACKWARD );
+    res = av_seek_frame( fmt_ctx, -1, tts, AVSEEK_FLAG_BACKWARD );
     if ( res < 0 ) {
-        res = av_seek_frame( fmt_ctx, av->audio_stream_idx, tts, 0 );
+        res = av_seek_frame( fmt_ctx, -1, tts, 0 );
         if ( res < 0 ) {
             av->last_error_fun = "av_seek_frame";
             av->last_error = res;
@@ -2646,6 +2664,101 @@ trp_obj_t *trp_av_audio_ts( trp_obj_t *fmtctx )
     if ( fmt_ctx == NULL )
         return UNDEF;
     return trp_av_pts( (trp_avcodec_t *)fmtctx, ((trp_avcodec_audio_t *)fmtctx)->frame );
+}
+
+/*************************************************************************************
+ *                                                                                   *
+ *                                                                                   *
+ *                                                                                   *
+ *                                                                                   *
+ *                                                                                   *
+ *************************************************************************************
+ */
+
+trp_obj_t *trp_av_extract_subtitle( trp_obj_t *path, trp_obj_t *idx )
+{
+    trp_obj_t *res = UNDEF;
+    uns8b *cpath;
+    AVFormatContext *fmt_ctx = NULL;
+    AVCodecParameters *origin_par;
+    const AVCodec *codec;
+    AVCodecContext *avctx = NULL;
+    AVPacket *packet = NULL;
+    trp_obj_t *time_base, *ts1, *ts2;
+    uns32b n;
+    int i;
+    int subtitle_stream_idx;
+    int got;
+    AVSubtitleRect *rect;
+    AVSubtitle sub;
+
+    if ( trp_cast_uns32b( idx, &n ) )
+        return UNDEF;
+    cpath = trp_csprint( path );
+    i = avformat_open_input( &fmt_ctx, cpath, NULL, NULL );
+    trp_csprint_free( cpath );
+    if ( i )
+        return UNDEF;
+    i = avformat_find_stream_info( fmt_ctx, NULL );
+    if ( i < 0 )
+        goto end;
+    subtitle_stream_idx = n;
+    if ( subtitle_stream_idx >= fmt_ctx->nb_streams )
+        goto end;
+    if ( fmt_ctx->streams[ subtitle_stream_idx ]->codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE )
+        goto end;
+    origin_par = fmt_ctx->streams[ subtitle_stream_idx ]->codecpar;
+    codec = avcodec_find_decoder( origin_par->codec_id );
+    if ( codec == NULL )
+        goto end;
+    avctx = avcodec_alloc_context3( codec );
+    if ( avctx == NULL )
+        goto end;
+    i = avcodec_open2( avctx, codec, NULL );
+    if ( i < 0 )
+        goto end;
+    packet = av_packet_alloc();
+    if ( packet == NULL )
+        goto end;
+    time_base = trp_av_rational( &( fmt_ctx->streams[ subtitle_stream_idx ]->time_base ) );
+    res = trp_queue();
+    while ( av_read_frame( fmt_ctx, packet ) >= 0 ) {
+        if ( packet->stream_index != subtitle_stream_idx ) {
+            av_packet_unref( packet );
+            continue;
+        }
+        memset( &sub, 0, sizeof( sub ) );
+        i = avcodec_decode_subtitle2( avctx, &sub, &got, packet );
+        if ( ( i < 0 ) || ( got == 0 ) ) {
+            av_packet_unref( packet );
+            continue;
+        }
+        ts1 = trp_av_times( trp_sig64( packet->pts ), time_base );
+        ts2 = trp_av_times( trp_av_plus( trp_sig64( packet->pts ), trp_sig64( packet->duration ) ), time_base );
+        for ( i = 0 ; i < sub.num_rects ; i++ ) {
+            rect = sub.rects[ i ];
+            switch ( rect->type ) {
+                case SUBTITLE_BITMAP:
+//                    printf( "%d\n", rect->nb_colors );
+                    break;
+                case SUBTITLE_TEXT:
+                    trp_queue_put( res, trp_cons( trp_cons( ts1, ts2 ), trp_cord( rect->text ) ) );
+                    break;
+                case SUBTITLE_ASS:
+                    trp_queue_put( res, trp_cons( trp_cons( ts1, ts2 ), trp_cord( rect->ass ) ) );
+                    break;
+            }
+        }
+        avsubtitle_free( &sub );
+        av_packet_unref( packet );
+    }
+end:
+    avformat_close_input( &fmt_ctx );
+    if ( avctx )
+        avcodec_free_context( &avctx );
+    if ( packet )
+        av_packet_free( &packet );
+    return res;
 }
 
 /*************************************************************************************

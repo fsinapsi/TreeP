@@ -48,11 +48,7 @@ void trp_init( int argc, char *argv[] )
     GC_set_handle_fork( -1 );
 #endif
     GC_INIT();
-    /*
-     * FIXME
-     * attualmente disabilitata perché libwinpthread è diventata incompatibile con gc
-     */
-//    GC_allow_register_threads();
+    GC_allow_register_threads();
 //    _trp_gc_warn_proc =
     GC_set_warn_proc( trp_gc_warn_proc );
     if ( _trp_env_stack == NULL )

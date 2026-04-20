@@ -25,7 +25,7 @@
 #include <windows.h>
 #include <direct.h>
 #include <fcntl.h>
-#include <iowin32.h>
+#include <minizip/iowin32.h>
 #else
 #include <sys/sysinfo.h>
 #include <sys/utsname.h>
