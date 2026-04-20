@@ -640,7 +640,7 @@
 
         (set i (iup-label))
         (if (pixp raw)
-        then    (set img (iup-image-rgba pix))
+        then    (set img (iup-image-rgba raw))
         else    (set j (rint (linear (iup-fullsize-width) 0 1366 0 48)))
                 (set pix (rsvg-load-size raw j j))
                 (if (or (< (width pix) j) (< (height pix) j))
@@ -1126,6 +1126,7 @@
 (defnet iup-text-buffer-flush (buf wid)
         (deflocal uu u color i)
 
+        (iup-set-str-attribute wid "REMOVEFORMATTING" "ALL")
         (iup-set-str-attribute wid "VALUE" <buf 0>)
         (set uu (iup-user))
         (iup-set-bool uu "BULK" true)
@@ -1135,11 +1136,6 @@
                 (set color <i 2>)
                 (iup-set-str-attribute u "SELECTIONPOS" <i 0> ":" <i 1>)
                 (iup-set-fgcolor u color)
-                (iup-append uu u) )
-        (if false ; (cmingw)
-        then    (set u (iup-user))
-                (iup-set-str-attribute u "FONTSCALE" 1.1)
-                (iup-set-str-attribute u "SELECTIONPOS" "0:" <buf 1>)
                 (iup-append uu u) )
         (iup-set-attribute wid "ADDFORMATTAG_HANDLE" uu) )
 
@@ -1187,6 +1183,7 @@
         then    (set i (iup-get-int wid "COUNT"))
                 (iup-set-str-attribute wid "APPEND" msg)
         else    (set i 0)
+                (iup-set-str-attribute wid "REMOVEFORMATTING" "ALL")
                 (iup-set-str-attribute wid "VALUE" msg) )
         (set j (iup-get-int wid "COUNT"))
         (if (<> color undef)

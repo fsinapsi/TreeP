@@ -14,6 +14,46 @@
 (defun av-approximated-number-of-frames (fmt)
         (rint (* (av-video-frame-rate fmt) (av-duration fmt))) )
 
+(defun av-audio-duration (fmt)
+        (av-duration fmt (av-audio-stream-idx fmt)) )
+
+(defun av-audio-buf-duration (fmt raw)
+        (/ (length raw) 2 (av-audio-channels fmt) (av-audio-sample-rate fmt)) )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;                                                                      ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun av-type-streams (av type) net av-type-streams)
+(defnet av-type-streams (av type @n)
+        (deflocal i)
+
+        (set @n 0)
+        (for i in 0 .. (- (av-nb-streams av) 1) do
+                (if (= (av-codec-type av i) type)
+                then    (inc @n) )))
+
+(defun av-type-streams-path (path type) net av-type-streams-path)
+(defnet av-type-streams-path (path type @n)
+        (deflocal av)
+
+        (set av (av-avformat-open-input path))
+        (avcodecp av)
+        (set @n (av-type-streams av type))
+        (close av) )
+
+(defun av-audio-streams (path)
+        (av-type-streams-path path (cmacro AVMEDIA_TYPE_AUDIO)) )
+
+(defun av-subtitle-streams (path)
+        (av-type-streams-path path (cmacro AVMEDIA_TYPE_SUBTITLE)) )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;                                                                      ;;;;
