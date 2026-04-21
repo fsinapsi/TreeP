@@ -2684,11 +2684,13 @@ trp_obj_t *trp_av_extract_subtitle( trp_obj_t *path, trp_obj_t *idx )
     const AVCodec *codec;
     AVCodecContext *avctx = NULL;
     AVPacket *packet = NULL;
-    trp_obj_t *time_base, *ts1, *ts2;
+    trp_obj_t *time_base, *ts1, *ts2, *obj;
+    trp_pix_color_t *p, *pal;
+    uns8b *q;
     uns32b n;
     int i;
     int subtitle_stream_idx;
-    int got;
+    int got, x, y, v;
     AVSubtitleRect *rect;
     AVSubtitle sub;
 
@@ -2737,17 +2739,35 @@ trp_obj_t *trp_av_extract_subtitle( trp_obj_t *path, trp_obj_t *idx )
         ts2 = trp_av_times( trp_av_plus( trp_sig64( packet->pts ), trp_sig64( packet->duration ) ), time_base );
         for ( i = 0 ; i < sub.num_rects ; i++ ) {
             rect = sub.rects[ i ];
+            obj = NULL;
             switch ( rect->type ) {
                 case SUBTITLE_BITMAP:
-//                    printf( "%d\n", rect->nb_colors );
+                    p = malloc( rect->w * rect->h * 4 );
+                    if ( p ) {
+                        obj = trp_pix_create_image_from_data( 0, rect->w, rect->h, (uns8b *)p );
+                        pal = (trp_pix_color_t *)( rect->data[ 1 ] );
+                        for ( y = 0 ; y < rect->h ; y++ ) {
+                            q = rect->data[ 0 ] + y * rect->linesize[ 0 ];
+                            for ( x = 0 ; x < rect->w ; x++ ) {
+                                v = *q++;
+                                p->red = pal[ v ].blue;
+                                p->green = pal[ v ].green;
+                                p->blue = pal[ v ].red;
+                                p->alpha = pal[ v ].alpha;
+                                p++;
+                            }
+                        }
+                    }
                     break;
                 case SUBTITLE_TEXT:
-                    trp_queue_put( res, trp_cons( trp_cons( ts1, ts2 ), trp_cord( rect->text ) ) );
+                    obj = trp_cord( rect->text );
                     break;
                 case SUBTITLE_ASS:
-                    trp_queue_put( res, trp_cons( trp_cons( ts1, ts2 ), trp_cord( rect->ass ) ) );
+                    obj = trp_cord( rect->ass );
                     break;
             }
+            if ( obj )
+                trp_queue_put( res, trp_cons( trp_cons( ts1, ts2 ), obj ) );
         }
         avsubtitle_free( &sub );
         av_packet_unref( packet );
