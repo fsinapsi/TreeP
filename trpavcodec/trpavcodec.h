@@ -98,6 +98,8 @@ trp_obj_t *trp_av_audio_stream_idx( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_audio_sample_rate( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_audio_channels( trp_obj_t *fmtctx );
 trp_obj_t *trp_av_audio_ts( trp_obj_t *fmtctx );
-trp_obj_t *trp_av_extract_subtitle( trp_obj_t *path, trp_obj_t *idx );
+trp_obj_t *trp_av_avformat_open_input_subtitle( trp_obj_t *path, trp_obj_t *nth );
+trp_obj_t *trp_av_subtitle_read_frame( trp_obj_t *fmtctx );
+trp_obj_t *trp_av_subtitle_seek_and_read_frame( trp_obj_t *fmtctx, trp_obj_t *ts );
 
 #endif /* !__trpavcodec__h */
