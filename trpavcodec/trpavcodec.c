@@ -1781,14 +1781,14 @@ trp_obj_t *trp_av_duration( trp_obj_t *fmtctx, trp_obj_t *streamno )
 
 static trp_obj_t *trp_av_metadata_low( AVDictionary *metadata )
 {
-    trp_obj_t *res = NIL;
+    trp_obj_t *res = trp_assoc();
     AVDictionaryEntry *elems;
     int count;
 
     if ( metadata )
         for ( count = metadata->count ; count ; ) {
             elems = &( metadata->elems[ --count ] );
-            res = trp_cons( trp_cons( trp_cord( elems->key ), trp_cord( elems->value ) ), res );
+            trp_assoc_set( res, trp_cord( elems->key ), trp_cord( elems->value ) );
         }
     return res;
 }
@@ -2741,9 +2741,17 @@ static uns8b trp_av_read_frame_no_seek_subtitle( trp_avcodec_subtitle_t *fmtctx 
             av_packet_unref( packet );
             continue;
         }
-        ts1 = trp_av_times( trp_sig64( packet->pts ), fmtctx->subtitle_time_base );
-        ts2 = trp_av_times( trp_av_plus( trp_sig64( packet->pts ), trp_sig64( packet->duration ) ), fmtctx->subtitle_time_base );
-//        printf( "start = %u - end = %u\n", sub->start_display_time, sub->end_display_time );
+        ts1 = trp_av_times( trp_av_plus( trp_sig64( packet->pts ), trp_sig64( sub->start_display_time ) ), fmtctx->subtitle_time_base );
+        if ( ( sub->end_display_time > sub->start_display_time ) &&
+             ( sub->end_display_time < 0x7fffffff ) ) {
+            ts2 = trp_av_times( trp_av_plus( trp_sig64( packet->pts ), trp_sig64( sub->end_display_time ) ), fmtctx->subtitle_time_base );
+        } else {
+            if ( packet->duration > 0 ) {
+                ts2 = trp_av_plus( ts1, trp_av_times( trp_sig64( packet->duration ), fmtctx->subtitle_time_base ) );
+            } else {
+                ts2 = trp_av_plus( ts1, trp_sig64( 2 ) );
+            }
+        }
         got = 0;
         for ( i = 0 ; i < sub->num_rects ; i++ ) {
             rect = sub->rects[ i ];
@@ -2932,6 +2940,10 @@ trp_obj_t *trp_av_subtitle_seek_and_read_frame( trp_obj_t *fmtctx, trp_obj_t *ts
         return UNDEF;
     trp_av_subtitle_clear_queue( av );
     avcodec_flush_buffers( av->avctx );
+    if ( tts < 8 * AV_TIME_BASE )
+        tts = 0;
+    else
+        tts -= 8 * AV_TIME_BASE;
     res = av_seek_frame( fmt_ctx, -1, tts, AVSEEK_FLAG_BACKWARD );
     if ( res < 0 ) {
         res = av_seek_frame( fmt_ctx, -1, tts, 0 );
